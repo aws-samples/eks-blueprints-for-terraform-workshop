@@ -1,0 +1,43 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv: [".env", "{{.ENV}}/.env.", "{{.HOME}}/.env"]
+
+tasks:
+  pre:
+    cmds:
+      - pre-commit run --all-files
+
+  preview:
+    desc: preview local webwite
+    cmds:
+      - preview_build
+
+  assets-upload:
+    desc: upload assets to workshop studio s3 Bucket
+    deps: [check_creds, build]
+    cmds:
+      - aws s3 sync ./assets s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc
+
+  assets-list:
+    desc: list assets in Bucket
+    deps: [check_creds]    
+    cmds:
+      - aws s3 ls s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc
+
+  check_creds:
+    desc: check workshop studio credendials are SessionToken
+    cmds:
+      - aws sts get-caller-identity | jq ".Arn" | grep WSDataPlaneContentCreatorRole || (echo "Error - you need to retrieve credentials in Workshop Studio https://studio.us-east-1.prod.workshops.aws/workshops/25d0d383-8c35-4e03-b549-fd7cbf3ad9a2#builds" && false)
+
+  pre_commit_1:
+    desc: scheck cloud9-template.yaml is up to date with static/event/cloud9-template.yaml
+    cmds:
+      - sdiff -s assets/cloud9-template.yaml static/event
+
+  pre_commit:
+    desc: some check that needs to be run before commit
+    cmds:
+      - task: pre_commit_1
+      - task: assets-upload
