@@ -34,7 +34,7 @@ variable "gitops_workload_url" {
 }
 variable "gitops_addons_basepath" {
   description = "Git repository base path for addons"
-  default     = "platform/addons/"
+  default     = "assets/platform/addons/"
 }
 variable "gitops_addons_path" {
   description = "Git repository path for addons"
@@ -46,7 +46,7 @@ variable "gitops_addons_revision" {
 }
 variable "gitops_platform_basepath" {
   description = "Git repository base path for platform"
-  default     = "platform/"
+  default     = "assets/platform/"
 }
 variable "gitops_platform_path" {
   description = "Git repository path for platform"
@@ -58,7 +58,7 @@ variable "gitops_platform_revision" {
 }
 variable "gitops_workload_basepath" {
   description = "Git repository base path for platform"
-  default     = "developer/"
+  default     = "assets/developer/"
 }
 variable "gitops_workload_path" {
   description = "Git repository path for workload"
@@ -76,17 +76,19 @@ EOF
 
 ```bash
 cat <<'EOF' >> ~/environment/terraform.tfvars
-gitops_addons_url            =
-gitops_platform_url          =
-gitops_workload_url          =
+gitops_addons_url            = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
+gitops_platform_url          = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
+gitops_workload_url          = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
 EOF
 ```
 
-::alert[Edit the file located in the ~/environment/terraform.tfvars directory of your Cloud9 environment. Find the variable definitions for `gitops_addons_url`, `gitops_platform_url`, and `gitops_workload_url`. Update with the actual forked GitHub repository clone URL. Be sure to save the changes.  ]{header="Important" type="warning"}
+::alert[Edit the file located in the ~/environment/terraform.tfvars directory of your Cloud9 environment. Find the variable definitions for `gitops_addons_url`, `gitops_platform_url`, and `gitops_workload_url`. Update with the actual forked GitHub repository clone URL (change **aws-samples**, with **your github login**). Be sure to save the changes.]{header="Important" type="warning"}
 
-You can get git URL from your forked repository.
+```bash
+c9 open ~/environment/terraform.tfvars
+```
 
-![Git-Clone](/static/images/gitclone.png)
+::alert[For simplicity in this workshop, we use the same Git repository for add-ons, platform, and workloads. However, the project is structured to allow you to easily use separate Git repositories for each functionality.]{header="Important" type="warning"}
 
 ### 2. Define local variables.
 
@@ -196,7 +198,7 @@ EOF
 ```
 ### 3. Define outputs
 
-The purpose of these outputs is to provide data for upcoming spoke modules.
+The purpose of these outputs is to provide data for upcoming spoke modules (in advanced sections).
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/outputs.tf

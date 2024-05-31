@@ -180,7 +180,6 @@ cat > ~/environment/hub/outputs.tf << 'EOF'
 output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = <<-EOT
-    export KUBECONFIG="/tmp/hub-spoke"
     aws eks --region ${local.region} update-kubeconfig --name ${module.eks.cluster_name} --alias hub
   EOT
 }
@@ -219,11 +218,17 @@ eks_admin_role_name          = "WSParticipantRole"
 
 EOF
 ```
-::alert[The following role update is only required if this is not an AWS-run workshop]{header="Important" type="warning"}
+::alert[If you are NOT at an AWS event workshop, you may need to update this parameter with your console Role Name.]{header="Important" type="warning"}
 
 "WSParticipantRole" is the given role name when participating in the AWS run workshop. When working through the workshop independently, you should update it to reflect your own AWS role.
 
 You can get your role on the console,choose your user name/role on the navigation bar in the upper right. Your role is after Account Id. Your role name is anything before "/" if it exists. In the Cloud9 IDE, open the terraform.tfvars file, modify the role as needed, then ***save your changes***.
+
+You can use the following command to edit the file in Cloud9 IDE.
+
+```bash
+c9 open ~/environment/terraform.tfvars
+```
 
 ![AWS Console Role](/static/images/aws-console-role.png)
 

@@ -7,7 +7,7 @@ weight: 10
 App of Apps workload application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new workload it detects the change and creates workload specific  applicationset without requiring manual intervention.
 
 ```bash
-cat > ~/environment/wgit/platform/appofapps/workload-applicationset.yaml << 'EOF'
+cat > ~/environment/wgit/assets/platform/appofapps/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:

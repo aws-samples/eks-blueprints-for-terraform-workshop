@@ -1,11 +1,16 @@
 ---
-title: 'Install Loadbalancer addon'
+title: 'Install AWS Load Balancer Controller addon'
 weight: 50
 ---
 
 The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using ArgoCD. The steps will show you how a simple change to the Git repository can trigger ArgoCD to deploy and manage an addon in an automated way.
 
-In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your Git repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
+In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your Git repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
+
+```bash
+c9 open ~/environment/wgit/assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
+```
+
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='7-10'}
 generators:
   - clusters:
@@ -19,7 +24,7 @@ generators:
               - 'true'
 :::
 
-### 1. Set load balancer label
+### 1. Set load balancer label in terraform variables
 
 ```bash
 sed -i "s/#enable_aws_load_balancer_controller = true/enable_aws_load_balancer_controller = true/g" ~/environment/hub/main.tf
@@ -56,7 +61,7 @@ Using EKS Blueprint Addons module improves security and reduces complexity.
 You can configure the Terraform module to create the IAM roles only and not the kubernetes resources by setting **create_kubernetes_resources = false** as set in line 12 below.
 
 
-```bash
+:::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='12'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
@@ -90,7 +95,7 @@ module "eks_blueprints_addons" {
   tags = local.tags
 }
 EOF
-```
+:::
 
 
 ### 3. Provide addon IAM role to ArgoCD

@@ -33,22 +33,25 @@ Make a clone of your GitHub repository locally so that you can add applicationse
 ```bash
 cd ~/environment
 ```
-Copy the provided code snippet, replace the placeholder value "<<replace with your github repo url>>" with the actual URL for your GitHub repository. Use the full HTTPS clone URL in the format "https<span>://</span>github.com/<span><<</span>your github username<span>>></span>/<span><<</span>github repo name<span>>></span>.git". **Then execute the updated code.**
 
+Copy the provided code snippet, replace the placeholder value "<<replace with your github login>>" with your actual GitHub login, used to fork the repository. We use the full HTTPS clone URL in the format "https<span>://</span>github.com/<span><<</span>your github username<span>>></span>/<span><<</span>github repo name<span>>></span>.git". **Then execute the updated code.**
+
+```bash
+export GITHUB_LOGIN="<<replace with your github repo login>>"
 ```
-git clone  <<replace with your github repo url>> wgit
+
+Instead of cloning the entire repo, checkout only assets/platform/bootstrap folder to keep things simple.
+
+```bash
+git clone --no-checkout https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit
+cd wgit
+git sparse-checkout init --cone
+git sparse-checkout set assets
+git checkout
 ```
-
-<!--Instead of cloning the entire repo, checkout only platform/bootstrap folder to keep things simple.-->
-
-<!--```bash-->
-<!--cd ~/environment/wgit-->
-<!--git sparse-checkout set platform/appofapps -->
-<!--git checkout-->
-<!--```-->
 
 ::::expand{header="What is in my cloned repo?"}
-This repository contains resources for managing Kubernetes clusters. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
+This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
 
 ![Kubernetes Addons](/static/images/platform-github-folders.png)
 ::::
@@ -138,6 +141,6 @@ terraform apply --auto-approve
 
 ### 4 Validate appofapps Application
 
-Navigate to the ArgoCD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps ArgoCD Application is currently configured to point to the platform/appofapps folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
+Navigate to the ArgoCD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps ArgoCD Application is currently configured to point to the `assets/platform/appofapps` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
 
 ![bootstrap-application](/static/images/bootstrap-application.png)

@@ -10,6 +10,12 @@ weight: 11
 
 You can download the the CloudFormation script to launch the stack for the workshop:
 
-:button[Download Template]{href="https://raw.githubusercontent.com/seb-tmp/eks-blueprints-for-terraform-workshop/main/static/cfn.yml?token=GHSAT0AAAAAACGSEW6IZ733BPPS3G5NIB66ZSZTZDQ"}
+:button[Download Template]{href="https://raw.githubusercontent.com/aws-samples/eks-blueprints-for-terraform-workshop/mainline/static/cfn.yml" download}
 
-Todo: Add steps to create the stack
+Then go to CloudFormation and create a stack for the Workshop
+
+![](/static/images/cfn-create-stack.png)
+
+![](/static/images/cfn-create-stack2.png)
+
+Validate the next steps keeping default options to create the stack, and wait to the CloudFormation stack to be `CREATE_COMPLETE`.

@@ -7,6 +7,6 @@ In this chapter, you will deploy the webstore workload. The webstore workload is
 
 ![Webstore](/static/images/webstore.png)
 
-Developer webstore workload code is in your git repo.
+Developer webstore workload code is in your git repo in `assets/developer` directory.
 
 ![Webstore](/static/images/developer-webstore.png)

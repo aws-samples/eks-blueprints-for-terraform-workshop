@@ -36,11 +36,3 @@ infrastructure:
       parameters:
         - templateParameter: WorkshopSetup
           defaultValue: 'aws-event'
-        # - templateParameter: ParticipantRoleArn
-        #   defaultValue: '{{.ParticipantRoleArn}}'
-        # - templateParameter: AssetsBucketName
-        #   defaultValue: '{{.AssetsBucketName}}'
-        # - templateParameter: AssetsBucketPrefix
-        #   defaultValue: '{{.AssetsBucketPrefix}}'
-        # - templateParameter: C9EnvType
-        #   defaultValue: 'aws-event'

@@ -95,7 +95,7 @@ echo "ArgoCD admin password: $ARGOCD_PWD"
 ```
 
 
-> You can ignore the warning about self signed certificate when you access the dashboard.  
+> As we are in a lab workshop, we don't have custom domain, so we uses default one. You can ignore the warning about self signed certificate when you access the dashboard, this is fine for this workshop.
 
 After GitOps Bridge installs ArgoCD, you can access the ArgoCD dashboard using the default admin user and the auto-generated password. 
 In the ArgoCD UI, you will find the hub cluster already registered under **Settings > Clusters**. This means ArgoCD has capability to administer the hub-cluster.  

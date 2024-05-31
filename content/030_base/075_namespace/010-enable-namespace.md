@@ -15,7 +15,7 @@ AppofApps Namespace application set scans workload folders under `config/workloa
 workload it detects the change and creates workload specific namespace applicationset without requiring manual intervention. 
 
 ```bash
-cat > ~/environment/wgit/platform/appofapps/namespace-applicationset.yaml << 'EOF'
+cat > ~/environment/wgit/assets/platform/appofapps/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -84,8 +84,8 @@ On the ArgoCD dashboard click on appofapps Application to see newly created name
 The Webstore Namespace ApplicationSet automatically creates an ArgoCD Namespace Application for any clusters that have the label `workload_webstore: 'true'`
 
 ```bash
-mkdir -p ~/environment/wgit/platform/config/workload/webstore/namespace
-cat > ~/environment/wgit/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
+mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace
+cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -142,8 +142,8 @@ For example, for the hub-cluster which has the environment label `"hub"`, it wil
 The `default-values.yaml` contains the namespaces to create, along with the **limitRanges** and **resourceQuotas** to apply for each namespace. 
 
 ```bash
-mkdir -p ~/environment/wgit/platform/config/workload/webstore/namespace/values
-cat > ~/environment/wgit/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
+mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values
+cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
 name: webstore
 labels:
   environment: hub
