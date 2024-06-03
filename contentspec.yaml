@@ -1,0 +1,44 @@
+version: 2.0
+
+defaultLocaleCode: en-US
+localeCodes:
+  - en-US
+awsAccountConfig:
+  accountSources:
+    - WorkshopStudio
+  serviceLinkedRoles:
+    - spot.amazonaws.com
+    - spotfleet.amazonaws.com
+  participantRole:
+    managedPolicies:
+      - 'arn:aws:iam::aws:policy/AmazonEC2FullAccess'
+      - 'arn:aws:iam::aws:policy/IAMReadOnlyAccess'
+      - 'arn:aws:iam::aws:policy/AmazonPrometheusFullAccess'
+      - 'arn:aws:iam::aws:policy/AWSGrafanaAccountAdministrator'
+    iamPolicies:
+      - static/iam_policy.json
+  regionConfiguration:
+    minAccessibleRegions: 1
+    maxAccessibleRegions: 3
+    deployableRegions:
+      recommended:
+        - us-west-2
+      optional:
+        - us-east-2
+        - us-east-1
+        - eu-west-1
+        - eu-west-3
+
+infrastructure:
+  cloudformationTemplates:
+    - templateLocation: static/cfn.yml
+      label: EKS Workshop Stack
+      parameters:
+        - templateParameter: ParticipantRoleArn
+          defaultValue: '{{.ParticipantRoleArn}}'
+        - templateParameter: AssetsBucketName
+          defaultValue: '{{.AssetsBucketName}}'
+        - templateParameter: AssetsBucketPrefix
+          defaultValue: '{{.AssetsBucketPrefix}}'
+        - templateParameter: C9EnvType
+          defaultValue: 'aws-event'

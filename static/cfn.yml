@@ -1,0 +1,436 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Base stack to create a Cloud9 instance for use with EKS Blueprint workshop
+
+Parameters:
+  # EKS Parameters
+  Cloud9IDEInstanceType:
+    Description: The type of instance to connect to the environment
+    Type: String
+    Default: t3.medium
+    AllowedValues:
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+
+  Cloud9EnvironmentName:
+    Description: How the name appears in the console
+    Type: String
+    Default: eks-blueprints-for-terraform-workshop
+
+  AssetsBucketName:
+    Description: Workshop Studio assets bucket name
+    Type: String
+
+  AssetsBucketPrefix:
+    Description: Workshop Studio assets bucket prefix
+    Type: String
+
+  WorkstationRoleName:
+    Description: Workshop Studio participant role arn
+    Type: String
+    Default: eks-blueprints-for-terraform-workshop-admin
+
+  C9EnvType:
+    Description: Environment type.
+    Default: 3rdParty
+    Type: String
+    AllowedValues:
+      - 3rdParty
+      - aws-event
+    ConstraintDescription: must specify aws-event or 3rdParty.
+
+  ParticipantRoleArn:
+    Type: String
+    Description: The Arn of the Cloud9 Owner to be set if 3rdParty deployment.
+    Default: ''
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: 'Cloud9 Configuration'
+        Parameters:
+          - Cloud9EnvironmentName
+          - Cloud9IDEInstanceType
+          - AssetsBucketName
+          - AssetsBucketPrefix
+          - WorkstationRoleName
+          - C9EnvType
+          - ParticipantRoleArn
+
+Conditions:
+  Create3rdPartyResources: !Equals [!Ref C9EnvType, 3rdParty]
+  CreateAWSEventResources: !Equals [!Ref C9EnvType, aws-event]
+
+Resources:
+  EKSEnvironment:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      Name: !Ref Cloud9EnvironmentName
+      AutomaticStopTimeMinutes: 900
+      OwnerArn:
+        !If [
+          Create3rdPartyResources,
+          !Ref ParticipantRoleArn,
+          !If [
+            CreateAWSEventResources,
+            !Join ['', ['arn:aws:iam::', !Ref 'AWS::AccountId', ':assumed-role/WSParticipantRole/Participant']],
+            !Ref 'AWS::NoValue',
+          ],
+        ]
+      Description: Use this to work with EKS Labs
+      InstanceType: !Ref Cloud9IDEInstanceType
+      ImageId: resolve:ssm:/aws/service/cloud9/amis/amazonlinux-2-x86_64
+      Tags:
+        - Key: SSMBootstrap
+          Value: Active
+        - Key: Environment
+          Value: !Sub ${Cloud9EnvironmentName}
+
+  EKSWorkshopRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref WorkstationRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+                - codebuild.amazonaws.com
+                - ssm.amazonaws.com
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  EKSEnvironmentInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    DependsOn: [EKSWorkshopRole]
+    Properties:
+      InstanceProfileName: !Ref WorkstationRoleName
+      Path: /
+      Roles:
+        - Ref: EKSWorkshopRole
+
+  KMSSecretsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: 'key for EKS secrets encryption'
+      Enabled: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: '*'
+
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    #DependsOn: [EKSEnvironment, EKSEnvironmentInstanceProfile]
+    Properties:
+      Name: !Sub CodeBuild-${AWS::StackName}
+      ServiceRole: !Ref EKSWorkshopRole
+      Artifacts:
+        Type: NO_ARTIFACTS
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:1.0
+        EnvironmentVariables:
+          - Name: CFN_RESPONSE_URL
+            Value: !Ref WaitForStackCreationHandle
+          - Name: CLOUD9_INSTANCE_PROFILE_NAME
+            Value: !Ref EKSEnvironmentInstanceProfile
+          - Name: CLOUD9_ENVIRONMENT_ID
+            Value: !Ref EKSEnvironment
+          - Name: KMS_ARN
+            Value: !GetAtt KMSSecretsKey.Arn
+
+      Source:
+        Type: NO_SOURCE
+        BuildSpec:
+          #!Sub |
+          |
+          version: 0.2
+          phases:
+            install:
+              runtime-versions:
+                python: 3.7
+              commands:
+                - echo ">>> installed python 3.7"
+            pre_build:
+              commands:
+                - echo ">>> install awscli "
+                - pip3 install --upgrade --user awscli
+               
+            build:
+              commands:
+                - echo ">>> find instance using environment Id= $CLOUD9_ENVIRONMENT_ID"
+                - CLOUD9_INSTANCE_ID=$(aws ec2 describe-instances --filter Name=tag:aws:cloud9:environment,Values=$CLOUD9_ENVIRONMENT_ID --query Reservations[0].Instances[0].InstanceId --output text)
+                - echo ">>> cloud9 instance id= $CLOUD9_INSTANCE_ID"
+                - echo ">>> assign profile $CLOUD9_INSTANCE_PROFILE_NAME to instance $CLOUD9_INSTANCE_ID"
+                - associationID=$(aws ec2 describe-iam-instance-profile-associations --filters "Name=instance-id,Values=$CLOUD9_INSTANCE_ID" --query IamInstanceProfileAssociations[0].AssociationId --output text)
+                - |
+                  if [ "$associationID" = "None" ]
+                  then 
+                    aws ec2 associate-iam-instance-profile --instance-id $CLOUD9_INSTANCE_ID --iam-instance-profile Name=$CLOUD9_INSTANCE_PROFILE_NAME
+                  else 
+                    aws ec2 replace-iam-instance-profile-association --association-id $associationID --iam-instance-profile Name=$CLOUD9_INSTANCE_PROFILE_NAME
+                  fi
+               
+            post_build:
+              commands: 
+                # CODEBUILD_BUILD_SUCCEEDING = 1 Set to 0 if the build is failing, or 1 if the build is succeeding.
+                - echo ">>> build status $CODEBUILD_BUILD_SUCCEEDING "
+                - |
+                  if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq "1" ]
+                  then
+                    curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "SUCCESS","Reason" : "Creation Complete", "UniqueId" : "$CODEBUILD_BUILD_ID","Data" : "Creation complete"}' $CFN_RESPONSE_URL
+                  else
+                    curl -X PUT -H 'Content-Type:' --data-binary '{"Status" : "FAILURE","Reason" : "Creation Failed", "UniqueId" : "$CODEBUILD_BUILD_ID","Data" : "See Codebuild logs for details. $CODEBUILD_LOG_PATH"}' $CFN_RESPONSE_URL
+                  fi
+      TimeoutInMinutes: 60
+
+  WaitForStackCreationHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    # dont start till we create a lambda function
+    DependsOn: [CustomTriggerBuild]
+    Properties:
+      Handle: !Ref WaitForStackCreationHandle
+      # wait for 55 minutes before giving up
+      Timeout: 3300
+      # success or failure signal count
+      Count: 1
+
+  CustomTriggerBuild:
+    Type: Custom::ManageCloud9IDEIamRole
+    #DependsOn: BuildProject
+    Properties:
+      ServiceToken: !GetAtt TriggerBuildLambda.Arn
+      CodebuildProjectName: !Ref BuildProject
+
+  TriggerBuildLambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      Policies:
+        - PolicyName: !Sub IAMPolicy-${AWS::StackName}
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codebuild:*
+                Resource: !GetAtt BuildProject.Arn
+
+  TriggerBuildLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: function to retrive User info
+      Handler: index.handler
+      Role: !GetAtt TriggerBuildLambdaIamRole.Arn
+      Runtime: python3.7
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
+          import sys
+          import json
+          import urllib3
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+          http = urllib3.PoolManager()
+
+
+          codebuild_client = boto3.client('codebuild')
+
+          # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html
+          def handler(event, context):
+              logger.info('Incoming Event: {0}'.format(event))
+              response = {}
+              response['PhysicalResourceId'] = 'hardcodedphyscialid'
+              response['StackId'] = event['StackId']
+              response['RequestId'] = event['RequestId']    
+              response['LogicalResourceId'] = event['LogicalResourceId']
+              cfn_response_url = event['ResponseURL']
+
+              if event['RequestType'] == 'Delete':
+                  # return 
+                  logger.info('Nothing to do. Request Type : {0}'.format(event['RequestType']))
+                  response['Status'] = 'SUCCESS'
+
+              elif event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
+
+                try:
+                  codebuild_client.start_build(projectName=event['ResourceProperties']['CodebuildProjectName'])
+                  response['Status'] = 'SUCCESS'
+
+                except:
+                  logging.error('Error: {0}'.format(sys.exc_info() ))
+                  response['Status'] = 'FAILED'
+
+              http.request('PUT', cfn_response_url, body=json.dumps(response).encode('utf-8'), headers={'Content-Type': 'application/json'})
+              return 'Done'
+
+  ################## SSM BOOTSRAP HANDLER ###############
+  C9OutputBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      AccessControl: Private
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # # C9OutputBucketPolicy:
+  #   Type: AWS::S3::BucketPolicy
+  #   Properties:
+  #     Bucket: !Ref C9OutputBucket
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Action:
+  #             - 's3:GetObject'
+  #             - 's3:PutObject'
+  #             - 's3:PutObjectAcl'
+  #           Effect: Allow
+  #           Resource: !Join
+  #             - ''
+  #             - - 'arn:aws:s3:::'
+  #               - !Ref C9OutputBucket
+  #               - /*
+  #           Principal:
+  #             AWS:
+  #               Fn::GetAtt:
+  #                 #- C9LambdaExecutionRole
+  #                 - Arn
+  C9SSMDocument:
+    Type: AWS::SSM::Document
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: !Sub ${Cloud9EnvironmentName}
+      DocumentType: Command
+      Content:
+        schemaVersion: '2.2'
+        description: Bootstrap Cloud9 Instance
+        mainSteps:
+          - action: aws:runShellScript
+            name: C9bootstrap
+            inputs:
+              runCommand:
+                - '#!/bin/bash'
+                - set -x
+                - date
+                - id
+                - pwd
+                - export HOME=/home/ec2-user
+                - echo '=== INSTALL Some Tools ==='
+                - sudo yum -y -q install jq gettext bash-completion moreutils
+                - echo '=== Configure workshop code ==='
+                - pip install --user --upgrade awscli
+                - curl 'https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip' -o 'awscliv2.zip'
+                - unzip awscliv2.zip -d /tmp
+                - sudo /tmp/aws/install -i /home/ec2-user/.local/aws -b /home/ec2-user/.local/bin --update
+                - rm -rf aws awscliv2.zip
+                - sudo curl --silent --location -o /usr/local/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.24.7/2022-10-31/bin/linux/amd64/kubectl
+                - sudo chmod +x /usr/local/bin/kubectl
+                - echo "source <(kubectl completion bash)" >> /home/ec2-user/.bash_completion
+                - echo "complete -F __start_kubectl k" >> /home/ec2-user/.bashrc
+                - echo ". /etc/profile.d/bash_completion.sh" >> /home/ec2-user/.bashrc
+                - echo ". /home/ec2-user/.bash_completion" >> /home/ec2-user/.bashrc
+                - curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+                - sudo mv /tmp/eksctl /usr/local/bin
+                - curl -sSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+                - sudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+                - sudo chmod +x /usr/local/bin/kubectl-argo-rollouts
+                - curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+                - sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+                - rm argocd-linux-amd64
+                - /home/ec2-user/.nvm/versions/node/v16.20.0/bin/npm  i -g c9
+                - curl -sS https://webinstall.dev/k9s | bash
+                - sudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.2.1/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_
+                - echo "export TERM=xterm-color" >> /home/ec2-user/.bashrc
+                - git clone --depth 1 https://github.com/junegunn/fzf.git /home/ec2-user/.fzf
+                - /home/ec2-user/.fzf/install --all
+                - sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/kns -o /usr/local/bin/kns && sudo chmod +x $_
+                - sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/ktx -o /usr/local/bin/ktx && sudo chmod +x $_
+                - echo "alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'" | tee -a /home/ec2-user/.bashrc
+                - echo "alias k=kubectl" | tee -a /home/ec2-user/.bashrc
+                - echo "alias ll='ls -la'" | tee -a /home/ec2-user/.bashrc
+                - echo "alias kgp='kubectl get pods'" | tee -a /home/ec2-user/.bashrc
+                - echo "alias tfi='terraform init'" | tee -a /home/ec2-user/.bashrc
+                - echo "alias tfp='terraform plan'" | tee -a /home/ec2-user/.bashrc
+                - echo "alias tfy='terraform apply --auto-approve'" | tee -a /home/ec2-user/.bashrc
+                - source /home/ec2-user/.bashrc
+                - !Sub |
+                  mkdir -p /home/ec2-user/environment/code-eks-blueprint ; 
+                  cd /home/ec2-user/environment/code-eks-blueprint ; 
+                  echo aws s3 ls s3://${AssetsBucketName}/${AssetsBucketPrefix}/ ;
+                  aws s3 ls s3://${AssetsBucketName}/${AssetsBucketPrefix} ;
+                  aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}code-eks-blueprint.zip .
+                  unzip -o code-eks-blueprint.zip -d ~/environment/code-eks-blueprint
+                - chown -R 1000:1000 /home/ec2-user/environment/code-eks-blueprint ; ls -la
+                - echo '=== Installing c9 ==='
+                - /home/ec2-user/.nvm/versions/node/v16.20.0/bin/npm install -g c9
+                - echo '=== Exporting ENV Vars ==='
+                - export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)" && echo "export AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}" >> /home/ec2-user/.bashrc
+                - export AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | cut -d'"' -f4)" && echo "export AWS_REGION=${AWS_REGION}" >> /home/ec2-user/.bashrc
+                - echo "export AWS_DEFAULT_REGION=\$AWS_REGION" >>  /home/ec2-user/.bashrc
+                - echo 'aws sts get-caller-identity --query Arn | grep eks-blueprints-for-terraform-workshop-admin -q || aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE' >> /home/ec2-user/.bashrc
+                - rm -vf /home/ec2-user/.aws/credentials
+                - sudo chown -R ec2-user:ec2-user /home/ec2-user/
+                - echo "Bootstrap completed with return code $?"
+                - shutdown -r +1
+
+  C9BootstrapAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: !Ref C9SSMDocument
+      OutputLocation:
+        S3Location:
+          OutputS3BucketName: !Ref C9OutputBucket
+          OutputS3KeyPrefix: bootstrapoutput
+      Targets:
+        - Key: tag:SSMBootstrap
+          Values:
+            - Active
+        - Key: tag:Environment
+          Values:
+            - !Sub ${Cloud9EnvironmentName}
+
+Outputs:
+  EKSCloud9EnvId:
+    Description: ID of the EKS Lab IDE
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/cloud9/ide/${EKSEnvironment}?region=${AWS::Region}

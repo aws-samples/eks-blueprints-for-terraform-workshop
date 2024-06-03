@@ -1,0 +1,1 @@
+/home/ec2-user/environment/eks-blueprint/terraform.tfvars

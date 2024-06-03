@@ -1,0 +1,8 @@
+.vscode
+demo
+TODO
+demo-lt
+terraform.tfstate
+.DS_Store
+**/.DS_Store
+preview_build
