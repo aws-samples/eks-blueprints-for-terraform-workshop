@@ -8,16 +8,22 @@ In this chapter you will associate both namespace and workload application to we
 ### 1. Set Project
 
 ```bash
-sed -i "s/project: default/project: webstore/g" ~/environment/wgit/platform/config/workload/webstore/workload/webstore-applicationset.yaml 
+sed -i "s/project: default/project: webstore/g" ~/environment/wgit/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml 
 ```
 Changes by the code snippet is highlighted below.
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4-4'}
-  .
-  .
-  spec:
-    project: webstore 
-  .
-  .
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='9'}
+$ git diff
+--- a/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml
++++ b/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml
+@@ -31,7 +31,7 @@ spec:
+         component: '{{path.basename}}'
+         workloads: 'true'
+     spec:
+-      project: default
++      project: webstore
+       source:
+         repoURL: '{{metadata.annotations.workload_repo_url}}'
+         path: '{{path}}/{{metadata.labels.environment}}'
 :::
 
 ### 2. Git commit
@@ -47,5 +53,11 @@ terraform apply --auto-approve
 ::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
-kubectl get svc ui-nlb -n ui  --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+echo -n "Click here to open -> http://" ; kubectl get svc ui-nlb -n ui  --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'; echo ""
 ```
+
+Access  webstore in the browser.
+
+![webstore](/static/images/webstore-ui.png)
+
+Congratulations!, with this setup, you are able to deploy workloads applications using ArgoCD Projects and ApplicationSets, from a configuration cluster (the Hub) to one spoke cluster, but you can easilly duplicate this to manage severals spoke clusters with the same mechanisms.

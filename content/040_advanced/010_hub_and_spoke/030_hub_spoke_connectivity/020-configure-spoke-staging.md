@@ -7,7 +7,6 @@ In the previous chapter, an IAM role was created for the Hub Cluster's ArgoCD. I
 
 ![Hub Role](/static/images/hub-spoke-spoke-role.png)
 
-
 ### 1. Create ArgoCD spoke-staging cluster with  hub-cluster
 
 The Hub Cluster manages all cluster objects created in the Hub's ArgoCD. The spoke-staging cluster should also be managed by the Hub's ArgoCD. Use GitOps Bridge to create the spoke-staging cluster object in the hub cluster. The spoke Terraform can update the Hub because the provider setting `'kubernetes = kubernetes.hub'` allows access. 

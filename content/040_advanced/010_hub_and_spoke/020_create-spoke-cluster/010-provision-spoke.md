@@ -254,22 +254,6 @@ module "eks" {
     #enablespokearn }    
   } 
 
-  # aws_auth_roles = [
-  #     {
-  #       rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks_admin_role_name}" # The ARN of the IAM role
-  #       username = "ops-role"                                                                                      # The user name within Kubernetes to map to the IAM role
-  #       groups   = ["system:masters"]                                                                              # A list of groups within Kubernetes to which the role is mapped; Checkout K8s Role and Rolebindings
-  #     },
-  #     #enablespokearn {
-  #     #enablespokearn   rolearn  = aws_iam_role.spoke.arn
-  #     #enablespokearn   username = "gitops-role"
-  #     #enablespokearn   groups = [
-  #     #enablespokearn     "system:masters"
-  #     #enablespokearn   ]
-  #     #enablespokearn }      
-       
-  # ]
-
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
@@ -344,7 +328,6 @@ cat > ~/environment/spoke/outputs.tf << 'EOF'
 output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = <<-EOT
-    export KUBECONFIG="/tmp/hub-spoke"
     aws eks --region ${local.region} update-kubeconfig --name ${module.eks.cluster_name} --alias ${module.eks.cluster_name}
   EOT
 }

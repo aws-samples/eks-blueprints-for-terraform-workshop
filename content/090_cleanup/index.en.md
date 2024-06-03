@@ -3,35 +3,38 @@ title: 'Clean up'
 weight: 90
 ---
 
-If you created a blue or green cluster, you may want to delete the old cluster. For this, we are going to delete a cluster. Choose the blue or green, depending on which one you want to delete.
-If you created a blue or green cluster, you may want to delete the old cluster. For this, we are going to delete a cluster. Choose the blue or green, depending on which one you want to delete.
 
-If you want to totally remove what has been created in this workshop, you will need to destroy both the blue and green clusters and then destroy the **environment** terraform stack.
-If you want to totally remove what has been created in this workshop, you will need to destroy both the blue and green clusters and then destroy the **environment** terraform stack.
 
 ### Step 1: Delete an eks-blue or eks-green stack.
 
 To cleanup your cluster stack, simply run the following commands in this specific order:
-To cleanup your cluster stack, simply run the following commands in this specific order:
+
 
 ::alert[Removing resources in this specific order ensures dependencies are deleted entirely.  VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}
-::alert[Removing resources in this specific order ensures dependencies are deleted entirely.  VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}
+
 
 
 #### Step 1.1: Delete the workloads
-#### Step 1.1: Delete the workloads
 
 We have deployed all our workloads using ArgoCD. But we also used ArgoCD to deploy all our AWS controllers (like the AWS load blancer controller and Karpenter).
-We have deployed all our workloads using ArgoCD. But we also used ArgoCD to deploy all our AWS controllers (like the AWS load blancer controller and Karpenter).
 
-Those controllers, in response to some workload events, were able to create additional AWS resources that were not known by Terraform.
-In order to let Terraform cleanup all resources it has created, we first need to delete resources created outside of Terraform like load balancers, Karpenter nodes, EBS volumes, etc.
+
 Those controllers, in response to some workload events, were able to create additional AWS resources that were not known by Terraform.
 In order to let Terraform cleanup all resources it has created, we first need to delete resources created outside of Terraform like load balancers, Karpenter nodes, EBS volumes, etc.
 
 For that, we will update our Terraform ArgoCD configuration and comment on or delete the lines deploying the workloads, but it is very important to keep the line that has deployed those add-ons. So when the workload resources are deleted, the add-ons can free up the additional AWS resources they created.
 
 Update our `main.tf` with the removal of workloads except addons.
+
+
+
+
+
+
+ ~/environment/wgit/assets/scripts/destroy.sh staging
+
+
+
 
 ```bash
   argocd_applications = {

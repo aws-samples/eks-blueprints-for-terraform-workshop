@@ -6,7 +6,7 @@ weight: 40
 ArgoCD [Projects](https://argo-cd.readthedocs.io/en/stable/user-guide/projects/) is a logical grouping of ArgoCD Applications. Projects provide the following features:
 
 - Restrict what may be deployed:
-    - Specify trusted Git source repositories. In this workshop, `argoproject-applicationset` replaces with your workload Git repo URL.
+    - Specify trusted Git source repositories. In this workshop we uses an ApplicationSet named `argoprojects` to dynamically create ArgoProjects pointing to the platform git repository.
 
 - Restrict where apps may be deployed:
     - Specify destination clusters and namespaces. We will restrict webstore microservices (UI, catalog, etc.) to the spoke-staging namespace. This will prevent the webstore from accidentally being deployed to the hub cluster.

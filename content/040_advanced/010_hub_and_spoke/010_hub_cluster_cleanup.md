@@ -28,6 +28,7 @@ To undeploy the webstore namespaces and workload from the hub-cluster, you can s
 
 ```bash
 sed -i "s/workload_webstore = true/workload_webstore = false/g" ~/environment/hub/main.tf
+sed -i "s/workloads = true/workloads = false/g" ~/environment/hub/main.tf
 ```
 ### 2 Terraform Apply
 
