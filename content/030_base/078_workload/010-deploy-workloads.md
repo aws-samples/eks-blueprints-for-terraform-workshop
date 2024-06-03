@@ -77,8 +77,8 @@ In this example, the Webstore ApplicationSet will deploy the `"hub"` version of 
 - That cluster also has the label `environment: 'hub'`
 
 ```bash
-mkdir -p ~/environment/wgit/platform/config/workload/webstore/workload
-cat > ~/environment/wgit/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
+mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/workload
+cat > ~/environment/wgit/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -151,4 +151,3 @@ kubectl get svc ui-nlb -n ui  --context hub --output jsonpath='{.status.loadBala
 Access  webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)
-

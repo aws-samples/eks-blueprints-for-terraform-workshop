@@ -74,11 +74,17 @@ EOF
 
 ### Set git Values
 
+Copy the provided code snippet, replace the placeholder value "<<replace with your github login>>" with your actual GitHub login, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**
+
 ```bash
-cat <<'EOF' >> ~/environment/terraform.tfvars
-gitops_addons_url            = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
-gitops_platform_url          = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
-gitops_workload_url          = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
+export GITHUB_LOGIN="<<replace with your github repo login>>"
+```
+
+```bash
+cat <<EOF >> ~/environment/terraform.tfvars
+gitops_addons_url            = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
+gitops_platform_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
+gitops_workload_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
 EOF
 ```
 

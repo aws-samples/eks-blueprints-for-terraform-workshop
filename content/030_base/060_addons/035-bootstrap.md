@@ -34,7 +34,7 @@ Make a clone of your GitHub repository locally so that you can add applicationse
 cd ~/environment
 ```
 
-Copy the provided code snippet, replace the placeholder value "<<replace with your github login>>" with your actual GitHub login, used to fork the repository. We use the full HTTPS clone URL in the format "https<span>://</span>github.com/<span><<</span>your github username<span>>></span>/<span><<</span>github repo name<span>>></span>.git". **Then execute the updated code.**
+Copy the provided code snippet, replace the placeholder value "<<replace with your github login>>" with your actual GitHub login, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**
 
 ```bash
 export GITHUB_LOGIN="<<replace with your github repo login>>"
