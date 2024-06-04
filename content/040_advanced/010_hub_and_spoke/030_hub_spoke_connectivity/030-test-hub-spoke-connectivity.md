@@ -7,9 +7,12 @@ In this chapter, you will test hub-spoke connectivity by installing the AWS Load
 
 ### 1. Set spoke load balancer label
 
+<!-->
 ```bash
 sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/spoke/variables.tf
 ```
+-->
+
 The code snippet above sets `enable_aws_load_balancer_controller = true`. The updated code is highlighted as follows:
 
 ```bash

@@ -334,10 +334,10 @@ output "configure_kubectl" {
 EOF
 ```
 
-### 5. Link variable values file to the cluster
+### 5. Copy variable values file to the cluster
 
 ```bash
-ln -s ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
+cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
 ```
 ### 6. Create terraform workspace
 
