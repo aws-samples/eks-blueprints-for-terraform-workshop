@@ -513,8 +513,7 @@ Resources:
                 echo "alias tfp='terraform plan'" | tee -a /home/ec2-user/.bashrc
                 echo "alias tfo='terraform output'" | tee -a /home/ec2-user/.bashrc                
                 echo "alias tfy='terraform apply --auto-approve'" | tee -a /home/ec2-user/.bashrc
-
-                #source /home/ec2-user/.bashrc
+                echo "alias kctx=ktx" | tee -a /home/ec2-user/.bashrc
 
                 echo '=== Installing c9 ==='
                 su -l -c '$NVM_BIN/npm  i -g c9' ec2-user            
@@ -528,8 +527,8 @@ Resources:
                 su -l -c 'aws configure set default.region ${AWS::Region}' ec2-user
                 su -l -c 'aws configure set cli_pager ""' ec2-user
 
-                #echo 'aws sts get-caller-identity --query Arn | grep eks-blueprints-for-terraform-workshop-admin -q || aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE' >> /home/ec2-user/.bashrc
-                rm -vf /home/ec2-user/.aws/credentials
+                echo "source ~/.bashrc" | tee -a /home/ec2-user/.bashrc
+
                 sudo chown -R ec2-user:ec2-user /home/ec2-user/
                 sudo chown -R ec2-user:ec2-user /home/ec2-user/.*
                 echo "Bootstrap completed with return code $?"
