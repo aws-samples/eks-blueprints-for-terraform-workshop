@@ -25,7 +25,7 @@ terraform destroy -target="module.eks_blueprints_addons" -auto-approve
 #Remove EKS cluster
 terraform destroy -target="module.eks" -auto-approve
 
-
+# clean everything else
 terraform destroy -auto-approve
 
 if [ $? -eq 0 ]; then

@@ -13,14 +13,7 @@ terraform destroy -target="module.eks_blueprints_addons" -auto-approve
 #Remove EKS cluster
 terraform destroy -target="module.eks" -auto-approve
 
-cleanup_vpc_resources $WORKSPACE
-
-# # clean everything else
-terraform destroy -auto-approve || true
-
-#Do it 2 tims to be sure to delete everything
-cleanup_vpc_resources $WORKSPACE
-
+# clean everything else
 terraform destroy -auto-approve
 
 if [ $? -eq 0 ]; then
