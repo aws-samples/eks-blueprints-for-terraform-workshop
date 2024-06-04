@@ -27,20 +27,16 @@ generators:
 ### 1. Set load balancer label in terraform variables
 
 ```bash
-sed -i "s/#enable_aws_load_balancer_controller = true/enable_aws_load_balancer_controller = true/g" ~/environment/hub/main.tf
+sed -i "s/#enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/terraform.tfvars
 ```
 The above code snippet will uncomment the label `enable_aws_load_balancer_controller=true` as shown highlighted below.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='6-6'}
-locals{
-  aws_addons = {
-    .
-    .
-    #enable_external_secrets                      = true
+...
+addons = {
+    ...
     enable_aws_load_balancer_controller = true
-    #enable_fargate_fluentbit                     = true
-    .
-    .
+}
     
 :::
 
