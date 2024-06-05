@@ -443,8 +443,8 @@ Resources:
             inputs:
               runCommand:
               - !Sub |
-                #set -x -e
-                set -x
+                set -x -e
+                #set -x
                 date
                 id
                 pwd
@@ -484,8 +484,10 @@ Resources:
                 curl -sS https://webinstall.dev/k9s | bash
                 sudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.2.1/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_
 
+                sudo chown -R ec2-user:ec2-user /home/ec2-user/.*
                 su -l -c 'helm repo add eks https://aws.github.io/eks-charts' ec2-user
                 su -l -c 'helm repo update' ec2-user
+
                 #Install Krew and stern
                 su -l -c "(cd \$(mktemp -d) && pwd &&
                   OS=\$(uname | tr '[:upper:]' '[:lower:]') &&
@@ -495,8 +497,8 @@ Resources:
                   tar zxvf \${!KREW}.tar.gz &&
                   ./\${!KREW} install krew
                 )" ec2-user 
-                su -l -c 'echo "export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:$PATH" | tee -a ~/.bash_profile &&
-                source /home/ec2-user/.bash_profile &&
+                su -l -c 'echo "export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:$PATH" | tee -a ~/.bashrc &&
+                source /home/ec2-user/.bashrc &&
                 kubectl krew install stern' ec2-user
 
                 su -l -c 'echo "export TERM=xterm-color" >> /home/ec2-user/.bashrc' ec2-user
@@ -511,7 +513,7 @@ Resources:
                 echo "alias kgp='kubectl get pods'" | tee -a /home/ec2-user/.bashrc
                 echo "alias tfi='terraform init'" | tee -a /home/ec2-user/.bashrc
                 echo "alias tfp='terraform plan'" | tee -a /home/ec2-user/.bashrc
-                echo "alias tfo='terraform output'" | tee -a /home/ec2-user/.bashrc                
+                echo "alias tfo='terraform output'" | tee -a /home/ec2-user/.bashrc
                 echo "alias tfy='terraform apply --auto-approve'" | tee -a /home/ec2-user/.bashrc
                 echo "alias kctx=ktx" | tee -a /home/ec2-user/.bashrc
 
@@ -519,15 +521,15 @@ Resources:
                 su -l -c '$NVM_BIN/npm  i -g c9' ec2-user            
 
                 echo '=== Exporting ENV Vars ==='
-                su -l -c 'echo "export AWS_ACCOUNT_ID=${AWS::AccountId}" >> ~/.bash_profile' ec2-user
-                su -l -c 'echo "export ACCOUNT_ID=${AWS::AccountId}" >> ~/.bash_profile' ec2-user
-                su -l -c 'echo "export AWS_DEFAULT_REGION=${AWS::Region}" >> ~/.bash_profile' ec2-user
-                su -l -c 'echo "export AWS_REGION=${AWS::Region}" >> ~/.bash_profile' ec2-user
+                su -l -c 'echo "export AWS_ACCOUNT_ID=${AWS::AccountId}" >> ~/.bashrc' ec2-user
+                su -l -c 'echo "export ACCOUNT_ID=${AWS::AccountId}" >> ~/.bashrc' ec2-user
+                su -l -c 'echo "export AWS_DEFAULT_REGION=${AWS::Region}" >> ~/.bashrc' ec2-user
+                su -l -c 'echo "export AWS_REGION=${AWS::Region}" >> ~/.bashrc' ec2-user
 
                 su -l -c 'aws configure set default.region ${AWS::Region}' ec2-user
                 su -l -c 'aws configure set cli_pager ""' ec2-user
 
-                echo "source ~/.bashrc" | tee -a /home/ec2-user/.bashrc
+                echo "source ~/.bashrc" | tee -a /home/ec2-user/.bash_profile
 
                 sudo chown -R ec2-user:ec2-user /home/ec2-user/
                 sudo chown -R ec2-user:ec2-user /home/ec2-user/.*

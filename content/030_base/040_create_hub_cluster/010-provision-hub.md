@@ -46,7 +46,7 @@ variable "addons" {
   type        = any
   default = {
     enable_aws_load_balancer_controller = false
-    enable_argocd = false
+    enable_aws_argocd = false
   }
 }
 
