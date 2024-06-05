@@ -165,7 +165,7 @@ locals {
 
   tags = {
     Blueprint  = local.name
-    GithubRepo = "github.com/csantanapr/terraform-gitops-bridge"
+    GithubRepo = "github.com/aws-samples/eks-blueprints-for-terraform-workshop"
   }
 }
 
@@ -268,6 +268,9 @@ module "eks" {
   }
   # EKS Addons
   cluster_addons = {
+    eks-pod-identity-agent = {
+      most_recent = true
+    }    
     vpc-cni = {
       # Specify the VPC CNI addon should be deployed before compute to ensure
       # the addon is configured before data plane compute resources are created
@@ -292,16 +295,16 @@ EOF
 ### 3. Define variables
 ```bash
 cat > ~/environment/spoke/variables.tf << 'EOF'
-variable "eks_admin_role_name" {
-  description = "EKS admin role"
-  type        = string
-  default     = "WSParticipantRole"
-}
-
 variable "kubernetes_version" {
   description = "EKS version"
   type        = string
   default     = "1.28"
+}
+
+variable "eks_admin_role_name" {
+  description = "EKS admin role"
+  type        = string
+  default     = "WSParticipantRole"
 }
 
 variable "addons" {
@@ -334,10 +337,10 @@ output "configure_kubectl" {
 EOF
 ```
 
-### 5. Link variable values file to the cluster
+### 5. Copy variable values file to the cluster
 
 ```bash
-ln -s ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
+cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
 ```
 ### 6. Create terraform workspace
 

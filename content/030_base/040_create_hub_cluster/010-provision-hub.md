@@ -41,10 +41,19 @@ variable "eks_admin_role_name" {
   default     = "WSParticipantRole"
 }
 
+variable "addons" {
+  description = "EKS addons"
+  type        = any
+  default = {
+    enable_aws_load_balancer_controller = false
+    enable_argocd = false
+  }
+}
+
 variable "authentication_mode" {
   description = "The authentication mode for the cluster. Valid values are CONFIG_MAP, API or API_AND_CONFIG_MAP"
   type        = string
-  default     = "API"
+  default     = "API_AND_CONFIG_MAP"
 }
 
 EOF
@@ -80,16 +89,17 @@ provider "kubernetes" {
 
 locals{
   name            = "hub-cluster"
-  cluster_version = var.kubernetes_version
   region          = data.aws_region.current.id
+  cluster_version = var.kubernetes_version
   
-  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id  
+  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
+  private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets 
   
   authentication_mode = var.authentication_mode
   
   tags = {
     Blueprint  = local.name
-    GithubRepo = "github.com/csantanapr/terraform-gitops-bridge"
+    GithubRepo = "github.com/aws-samples/eks-blueprints-for-terraform-workshop"
   }  
 }
 
@@ -115,13 +125,12 @@ module "eks" {
   kms_key_administrators = distinct(concat([
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"],
     [data.aws_iam_session_context.current.issuer_arn]
-
   ))
   
   enable_cluster_creator_admin_permissions = true
   access_entries = {
     # One access entry with a policy associated
-    example = {
+    eks_admin = {
       principal_arn     = data.aws_iam_role.eks_admin_role_name.arn
       policy_associations = {
         argocd = {
@@ -135,7 +144,7 @@ module "eks" {
   } 
   
   vpc_id     = local.vpc_id
-  subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
+  subnet_ids = local.private_subnets
 
   eks_managed_node_groups = {
     initial = {

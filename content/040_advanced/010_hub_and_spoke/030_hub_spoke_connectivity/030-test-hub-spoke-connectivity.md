@@ -8,26 +8,17 @@ In this chapter, you will test hub-spoke connectivity by installing the AWS Load
 ### 1. Set spoke load balancer label
 
 ```bash
-sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/spoke/variables.tf
+sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/spoke/terraform.tfvars
 ```
+
 The code snippet above sets `enable_aws_load_balancer_controller = true`. The updated code is highlighted as follows:
 
-```bash
-cat << EOF >> ~/environment/spoke/terraform.tfvars
+
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4'}
+$ cat ~/environment/spoke/terraform.tfvars
+...
 addons = {
     enable_aws_load_balancer_controller = true
-}
-EOF
-```
-
-
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='5-5'}
-variable "addons" {
-  description = "EKS addons"
-  type        = any
-  default = {
-    enable_aws_load_balancer_controller = true
-  }
 }
 :::
 
