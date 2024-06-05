@@ -86,18 +86,14 @@ gitops_addons_url            = "https://github.com/${GITHUB_LOGIN}/eks-blueprint
 gitops_platform_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
 gitops_workload_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
 
-```bash
-cat << EOF >> ~/environment/spoke/terraform.tfvars
 addons = {
     enable_aws_load_balancer_controller = false
-    enable_argocd = false
+    enable_aws_argocd = false
 }
 EOF
 ```
-EOF
-```
 
-::alert[Edit the file located in the ~/environment/terraform.tfvars directory of your Cloud9 environment. Find the variable definitions for `gitops_addons_url`, `gitops_platform_url`, and `gitops_workload_url`. Update with the actual forked GitHub repository clone URL (change **aws-samples**, with **your github login**). Be sure to save the changes.]{header="Important" type="warning"}
+::alert[Check the file is correctly filled]{header="Important" type="warning"}
 
 ```bash
 c9 open ~/environment/terraform.tfvars
@@ -114,6 +110,7 @@ cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
   aws_addons = {
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd, false)    
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
     enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
     enable_aws_fsx_csi_driver                    = try(var.addons.enable_aws_fsx_csi_driver, false)

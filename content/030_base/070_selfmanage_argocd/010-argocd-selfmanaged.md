@@ -6,9 +6,9 @@ weight: 10
 ### 1. Set ArgoCD label
 
 ```bash
-sed -i "s/enable_argocd = false/enable_argocd = true/g" ~/environment/terraform.tfvars
+sed -i "s/enable_aws_argocd = false/enable_aws_argocd = true/g" ~/environment/terraform.tfvars
 ```
-The code snippet sets `enable_argocd = true`. It causes the GitOps bootstrap module to add the label on the hub cluster, which enables ArgoCD deployment.
+The code snippet sets `enable_aws_argocd = true`. It causes the GitOps bootstrap module to add the label on the hub cluster, which enables ArgoCD deployment.
 
 Changes by the code snippet is highlighted below.
 
@@ -16,7 +16,7 @@ Changes by the code snippet is highlighted below.
 ...
 addons = {
     ...
-    enable_argocd = true
+    enable_aws_argocd = true
 }
 
 :::
