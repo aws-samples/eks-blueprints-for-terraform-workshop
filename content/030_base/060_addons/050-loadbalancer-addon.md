@@ -27,7 +27,7 @@ generators:
 ### 1. Set load balancer label in terraform variables
 
 ```bash
-sed -i "s/#enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/terraform.tfvars
+sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/terraform.tfvars
 ```
 The above code snippet will uncomment the label `enable_aws_load_balancer_controller=true` as shown highlighted below.
 
