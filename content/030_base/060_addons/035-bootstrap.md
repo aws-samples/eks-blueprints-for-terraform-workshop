@@ -40,7 +40,7 @@ Copy the provided code snippet, replace the placeholder value "<<replace with yo
 export GITHUB_LOGIN="<<replace with your github repo login>>"
 ```
 
-Instead of cloning the entire repo, checkout only assets/platform/bootstrap folder to keep things simple.
+Instead of cloning the entire repo, checkout only `assets` folder to keep things simple. (Note, this also checkouts files not tied to a directory)
 
 ```bash
 git clone --no-checkout https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit

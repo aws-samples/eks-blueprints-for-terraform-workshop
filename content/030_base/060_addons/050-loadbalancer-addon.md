@@ -29,7 +29,7 @@ generators:
 ```bash
 sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/terraform.tfvars
 ```
-The above code snippet will uncomment the label `enable_aws_load_balancer_controller=true` as shown highlighted below.
+The above code snippet will uncomment the label `enable_aws_load_balancer_controller=true` in the `~/environment/terraform.tfvars` file, as shown highlighted below.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='6-6'}
 ...
@@ -42,7 +42,7 @@ addons = {
 
 ### 2. Create IAM roles for addon
 
-Several addons use the AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies need to be configured to grant the addons necessary permissions.
+Several addons use the AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies or other AWS ressources may need to be configured to grant the addons necessary permissions.
 For example loadbalancer interact with EC2 AWS APIs to provision NLB/ALB and Karpenter interact with EC2 AWS APIs to provision compute (EC2/Fargate)
 
 ![addons-lb-role](/static/images/addon-lb-role.png)
@@ -54,7 +54,7 @@ This module allows both installing the addons and creating their IAM roles. Howe
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create the IAM roles only and not the kubernetes resources by setting **create_kubernetes_resources = false** as set in line 12 below.
+You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a bast pracitce to let ArgoCD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
 
 
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='12'}
@@ -97,9 +97,9 @@ EOF
 ### 3. Provide addon IAM role to ArgoCD
 
 
-We use the Terraform EKS Blueprints addons module to create IAM roles for EKS addons. These IAM roles need to be provided to ArgoCD, which handles actually installing the addons on the Kubernetes cluster. The roles will be set on the service accounts of the addon  by ArgoCD. 
+We use the Terraform EKS Blueprints addons module to create AWS ressources for EKS addons. These resources identifiers need to be provided to ArgoCD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by ArgoCD. 
 
-The EKS addons module makes it easy to access the created IAM roles using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the IAM role info and can be accessed by the addon applications deployed by ArgoCD.
+The EKS addons module makes it easy to access the created AWS ressources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by ArgoCD.
 
 ```bash
 sed -i "s/#enableaddonmetadata//g" ~/environment/hub/main.tf

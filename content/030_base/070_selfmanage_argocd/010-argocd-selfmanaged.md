@@ -42,5 +42,6 @@ ArgoCD dashboard should have ArgoCD Application.
 
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
+<!--
 > If you can't access the dashboard then reopen the browser, try another browser, try http, clear browser history 
-
+-->

@@ -35,7 +35,7 @@ git push
 ```
 
 
-### 3. Enable workloads and workload_webstore labels
+### 3. Enable workload_webstore labels on spoke cluster
 
 ```bash
 sed -i "s/workload_webstore = false/workload_webstore = true/g" ~/environment/spoke/main.tf
