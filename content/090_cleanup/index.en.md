@@ -12,7 +12,7 @@ To ease this, we prepared a `destroy.sh` script, that will clean properly the in
 
 If you have deployed additional resources, that may have created Wloud resources, you also need to clean them prior to destroy the clusters, otherwise thoses resources may be not cleaned properly.
 
-### Use the cleanup script.
+### Use the cleanup script
 
 You can just execute the cleanup script. In this script, there can be somme errors, but that is normal and the script will repeat some of the actions until normally cleanup sucess.
 

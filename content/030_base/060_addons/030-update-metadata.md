@@ -11,12 +11,12 @@ In the ArgoCD user interface, go to the hub cluster. The hub-cluster currently h
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-metadata.png)
 
-> Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide addiational information.
+> Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information.
 
 ### 1. Add variables
 You can have separate git repository for addons, platform and workloads. In this workshop they all exist in the same repository.
 
-Define Git repository variables for addons, platform , and workloads. These repository variables will be referenced in upcoming chapters when generating Applications.
+Define Git repository variables for addons, platform, and workloads. These repository variables will be referenced in upcoming chapters when generating Applications.
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/variables.tf
@@ -101,7 +101,7 @@ c9 open ~/environment/terraform.tfvars
 
 ::alert[For simplicity in this workshop, we use the same Git repository for add-ons, platform, and workloads. However, the project is structured to allow you to easily use separate Git repositories for each functionality.]{header="Important" type="warning"}
 
-### 2. Define local variables.
+### 2. Define local variables
 
 Define a label variable called *'addons'* and an annotation variable called *'addons_metadata'*. The variable definitions include some commented-out. We will cover them in in upcoming chapters.
 
@@ -279,7 +279,7 @@ We need to update the labels and annotations on the hub-cluster Cluster object. 
 sed -i "s/#enablemetadata//g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments metdata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels , while the metadata values are assigned to Annotations on the cluster object.
+The code provided above uncomments metdata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
 
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7-8'}
 module "gitops_bridge_bootstrap" {
