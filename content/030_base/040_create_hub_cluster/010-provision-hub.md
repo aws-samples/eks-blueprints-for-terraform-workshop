@@ -262,7 +262,7 @@ terraform apply -auto-approve
 To configure kubectl, execute the following:
 
 ```bash
-eval `terraform output -raw configure_kubectl`
+eval $(terraform output -raw configure_kubectl)
 ```
 
 Run the command below to see the nodes in the hub cluster.

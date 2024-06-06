@@ -52,4 +52,4 @@ The following generator creates 2 applications because 2 cluster labels match th
 ```
 ![applicationset](/static/images/applicationset-workloads.png)
 
-You can add addiational labels to meet your criteria.
+You can add additional labels to meet your criteria.
