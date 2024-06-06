@@ -5,7 +5,7 @@ weight: 10
 
 ### 1. Create App of Apps Project ApplicationSet
 
-The App of Apps Project ApplicationSet functionality offers a seamless approach to managing and deploying workloads within your Git repository. By automatically scanning the designated assets/platform/config/workload folder, it dynamically identifies any new or modified workloads. Consequently, it creates or updates the corresponding Project ApplicationSets without requiring manual intervention. You can link many different project to many different Git repository as source, and control which cluster and namespace destination they are allowed to deploy into.
+The App of Apps Project ApplicationSet functionality offers a seamless approach to managing and deploying workloads within your Git repository. By automatically scanning the designated `assets/platform/config/workload` folder, it dynamically identifies any new or modified workloads. Consequently, it creates or updates the corresponding Project ApplicationSets without requiring manual intervention. You can link many different project to many different Git repository as source, and control which cluster and namespace destination they are allowed to deploy into.
 
 
 This automated process not only saves valuable time but also mitigates the risk of human errors, ensuring a consistent and reliable deployment experience across your environment. With this feature, you can dedicate your efforts to developing and maintaining workloads, while the App of Apps Project ApplicationSet handles the deployment aspect efficiently.

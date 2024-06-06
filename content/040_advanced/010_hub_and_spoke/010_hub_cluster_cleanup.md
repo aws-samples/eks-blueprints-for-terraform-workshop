@@ -1,10 +1,10 @@
 ---
-title: 'ArgoCD Hub Cluster Cleanup'
+title: '[Optional] ArgoCD Hub Cluster Cleanup'
 weight: 10
 ---
 
 In ArgoCD hub-spoke deployment architecture, hub is dedicated to only ArgoCD. In the previous chapter you have deployed webstore namespace and workload in the hub cluster.
-In this chapter you will undeploy webstore namespace and workload.
+In this chapter you can undeploy webstore namespace and workload, from the hub cluster, we will redeploy them later in the spoke cluster.
 
 ### 1. Set label workload_webstore = false and workloads = false
 

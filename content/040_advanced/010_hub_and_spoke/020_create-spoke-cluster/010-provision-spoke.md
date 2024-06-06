@@ -339,9 +339,13 @@ EOF
 
 ### 5. Copy variable values file to the cluster
 
+We copy and reeset the addons, so that we enable when required
+
 ```bash
 cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
+sed -i 's/enable_aws_load_balancer_controller = true/enable_aws_load_balancer_controller = false/; s/enable_aws_argocd = true/enable_aws_argocd = false/' ~/environment/spoke/terraform.tfvars
 ```
+
 ### 6. Create terraform workspace
 
 Create new staging workspace
@@ -365,7 +369,7 @@ terraform apply --auto-approve
 To configure kubectl, execute the following:
 
 ```bash
-eval `terraform output -raw configure_kubectl`
+eval $(terraform output -raw configure_kubectl)
 ```
 
 Run the command below to see the nodes in the hub cluster.

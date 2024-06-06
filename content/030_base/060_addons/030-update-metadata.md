@@ -18,53 +18,65 @@ You can have separate git repository for addons, platform and workloads. In this
 
 Define Git repository variables for addons, platform, and workloads. These repository variables will be referenced in upcoming chapters when generating Applications.
 
-```bash
+```json
 cat <<'EOF' >> ~/environment/hub/variables.tf
 variable "gitops_addons_url" {
   type        = string
   description = "Git repository addons url"
+  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
 }
 variable "gitops_platform_url" {
   type        = string
   description = "Git repository platform url"
+  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
 }
 variable "gitops_workload_url" {
   type        = string
   description = "Git repository platform url"
+  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
 }
 variable "gitops_addons_basepath" {
+  type        = string  
   description = "Git repository base path for addons"
   default     = "assets/platform/addons/"
 }
 variable "gitops_addons_path" {
+  type        = string  
   description = "Git repository path for addons"
   default     = "applicationset/"
 }
 variable "gitops_addons_revision" {
+  type        = string  
   description = "Git repository revision/branch/ref for addons"
   default     = "HEAD"
 }
 variable "gitops_platform_basepath" {
+  type        = string  
   description = "Git repository base path for platform"
   default     = "assets/platform/"
 }
 variable "gitops_platform_path" {
+  type        = string  
   description = "Git repository path for platform"
   default     = "bootstrap"
 }
 variable "gitops_platform_revision" {
+  type        = string  
   description = "Git repository revision/branch/ref for platform"
   default     = "HEAD"
 }
 variable "gitops_workload_basepath" {
+  type        = string  
   description = "Git repository base path for platform"
   default     = "assets/developer/"
 }
 variable "gitops_workload_path" {
+  type        = string  
   description = "Git repository path for workload"
   default     = "gitops/apps"
 }
 variable "gitops_workload_revision" {
+  type        = string  
   description = "Git repository revision/branch/ref for platform"
   default     = "HEAD"
 }
@@ -80,7 +92,7 @@ Copy the provided code snippet, replace the placeholder value "<<replace with yo
 export GITHUB_LOGIN="<<replace with your github repo login>>"
 ```
 
-```bash
+```json
 cat <<EOF >> ~/environment/terraform.tfvars
 gitops_addons_url            = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
 gitops_platform_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
@@ -99,13 +111,31 @@ EOF
 c9 open ~/environment/terraform.tfvars
 ```
 
-::alert[For simplicity in this workshop, we use the same Git repository for add-ons, platform, and workloads. However, the project is structured to allow you to easily use separate Git repositories for each functionality.]{header="Important" type="warning"}
+Example:
+```
+eks_admin_role_name          = "WSParticipantRole"
+
+gitops_addons_url            = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
+gitops_platform_url          = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
+gitops_workload_url          = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
+
+addons = {
+    enable_aws_load_balancer_controller = false
+    enable_aws_argocd = false
+}
+```
+
+::alert[For simplicity in this workshop, we use the same Git repository for add-ons, platform, and workloads. However, the project is structured to allow you to easily use separate Git repositories for each functionality, depending on your needs.]{header="Important" type="warning"}
 
 ### 2. Define local variables
 
-Define a label variable called *'addons'* and an annotation variable called *'addons_metadata'*. The variable definitions include some commented-out. We will cover them in in upcoming chapters.
+Define some local variables, that include:
+- *'addons'* local, which represents the Labels that will be sent to the Cluster Secret
+- *'addons_metadata'* local, which represents the annotations that will be sent to the Cluster Secfret
 
-```bash
+Some values are commented and will be used later in the workshop.
+
+:::code{showCopyAction=true showLineNumbers=false language=json highlightLines='48,73'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
@@ -213,7 +243,8 @@ locals{
 }
 
 EOF
-```
+:::
+
 ### 3. Define outputs
 
 The purpose of these outputs is to provide data for upcoming spoke modules (in advanced sections).
