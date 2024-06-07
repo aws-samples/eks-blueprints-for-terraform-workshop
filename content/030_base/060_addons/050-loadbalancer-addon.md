@@ -54,7 +54,7 @@ This module allows both installing the addons and creating their IAM roles. Howe
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a bast pracitce to let ArgoCD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
+You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let ArgoCD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
 
 
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='12'}
