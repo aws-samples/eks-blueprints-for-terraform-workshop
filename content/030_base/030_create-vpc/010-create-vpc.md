@@ -195,8 +195,11 @@ cd ~/environment/vpc
 terraform apply -auto-approve
 ```
 
-You can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprint)
+::alert[The process of creating a Virtual Private Cloud (VPC) may require up to 5 minutes to complete.]{header="Wait for resources to create"}
 
-Next, you will create a EKS cluster.
+
+Once completed, you can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprint)
+
+Next, you will create an EKS cluster.
 
 ::alert[This workshop uses local Terraform state. To learn about a proper setup, take a look at https://www.terraform.io/language/state]{header="Terraform State Management"}

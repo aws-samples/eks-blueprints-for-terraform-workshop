@@ -61,7 +61,7 @@ EOF
 
 ### 3. Configure EKS Cluster
 
-It uses Terraform blueprint EKS module to configure the cluster in the private subnets with 3 EC2 instances. 
+It uses Terraform blueprint EKS module to configure the cluster in the private subnets with a Managed Node Group of 3 EC2 instances (one in each availability zone). 
 
 ```bash
 cat > ~/environment/hub/main.tf << 'EOF'
@@ -183,6 +183,8 @@ EOF
 
 ### 4. Define outputs
 
+The Terraform outputs will provide information about the resources we just created, including the command to access the EKS cluster and additional details that will be used later in the workshop.
+
 ```bash
 cat > ~/environment/hub/outputs.tf << 'EOF'
 
@@ -255,17 +257,21 @@ cd ~/environment/hub
 terraform init
 terraform apply -auto-approve
 ```
-***It takes around 15 minutes to create the cluster***
+
+The process of creating a Virtual Private Cloud (VPC) may require up to 5 minutes to complete.
+
+::alert[The process of creating the cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
+
 
 ### 8. Access Hub Cluster
 
-To configure kubectl, execute the following:
+To configure kubectl, execute the following command, which retrieves the connection details from the Terraform output to access the cluster:
 
 ```bash
 eval $(terraform output -raw configure_kubectl)
 ```
 
-Run the command below to see the nodes in the hub cluster.
+To verify that kubectl is correctly configured, run the command below to see the nodes in the EKS cluster.
 
 ```bash
 kubectl get nodes --context hub

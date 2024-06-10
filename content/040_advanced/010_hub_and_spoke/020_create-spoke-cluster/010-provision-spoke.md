@@ -362,7 +362,8 @@ cd ~/environment/spoke
 terraform init
 terraform apply --auto-approve
 ```
-***It takes around 15 minutes to create the cluster***
+
+::alert[The process of creating the cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
 ### 8. Access Spoke Staging Cluster
 
