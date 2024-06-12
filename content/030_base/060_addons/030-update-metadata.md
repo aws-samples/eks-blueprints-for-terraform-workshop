@@ -7,7 +7,7 @@ As you have seen in the previous chapter Cluster generator work on Cluster label
 
 ![eks-blueprint-blue](/static/images/argocd-update-metadata.png)
 
-In the ArgoCD user interface, go to the hub cluster. The hub-cluster currently has some existing Labels and Annotations defined. These are added by GitOps Bridge.
+In the Argo CD user interface, go to the hub cluster. The hub-cluster currently has some existing Labels and Annotations defined. These are added by GitOps Bridge.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-metadata.png)
 
@@ -334,7 +334,7 @@ terraform apply --auto-approve
 ### 6. Validate update to labels and addons
 
 
-Goto to the **Settings > Clusters > hub-cluster**  in the ArgoCD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
+Goto to the **Settings > Clusters > hub-cluster**  in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 

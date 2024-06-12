@@ -60,4 +60,4 @@ Access  webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)
 
-Congratulations!, with this setup, you are able to deploy workloads applications using ArgoCD Projects and ApplicationSets, from a configuration cluster (the Hub) to one spoke cluster, but you can easilly duplicate this to manage severals spoke clusters with the same mechanisms.
+Congratulations!, with this setup, you are able to deploy workloads applications using Argo CD Projects and ApplicationSets, from a configuration cluster (the Hub) to one spoke cluster, but you can easilly duplicate this to manage severals spoke clusters with the same mechanisms.

@@ -3,24 +3,24 @@ title: 'Bootstrap'
 weight: 35
 ---
 
-You want to configure ArgoCD such that when a new addon, namespace, or workload is enabled through label, ArgoCD should detect this and automatically generate the corresponding Application resource.
+You want to configure Argo CD such that when a new addon, namespace, or workload is enabled through label, Argo CD should detect this and automatically generate the corresponding Application resource.
 
-To automatically generate ArgoCD applications, you will implement the "App of Apps" pattern.
+To automatically generate Argo CD applications, you will implement the "App of Apps" pattern.
 
 ### App of Apps pattern
 
-Normally an ArgoCD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the git repo https://aws.github.io/eks-charts.
+Normally an Argo CD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the git repo https://aws.github.io/eks-charts.
 
  
  ![applicationset](/static/images/lb-helmchart-folder.png)
 
 
-In the App of Apps pattern, a top-level ArgoCD Application resource points to a Git repository folder that contains ApplicationSet files. The ApplicationSet files define how to generate the child Applications. 
+In the App of Apps pattern, a top-level Argo CD Application resource points to a Git repository folder that contains ApplicationSet files. The ApplicationSet files define how to generate the child Applications. 
 
 ![applicationset](/static/images/app-of-apps.png)
 
 
-In this chapter, you will create a appofapps ArgoCD application that points to the `platform/appofapps` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, ArgoCD will automatically detect the changes and generate corresponding Applications.
+In this chapter, you will create a appofapps Argo CD application that points to the `platform/appofapps` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
 
 
 ![applicationset](/static/images/bootstrap-appofapps.png)
@@ -59,7 +59,7 @@ This repository contains resources for managing Kubernetes clusters in the **ass
 
 ### 2 Create appofapps applicationset 
 
-The ApplicationSet creates a new ArgoCD Application named "appofapps" that points to the platform/appofapps directory in your Git repository.
+The ApplicationSet creates a new Argo CD Application named "appofapps" that points to the platform/appofapps directory in your Git repository.
 
 ```bash
 mkdir ~/environment/hub/appofapps
@@ -115,7 +115,7 @@ EOF
 ```bash
 sed -i "s/#enableapps//g" ~/environment/hub/main.tf
 ```
-The code provided above uncomments GitOps Bridge to create the ArgoCD Application. In this case it creates appofapps Application.
+The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates appofapps Application.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
 module "gitops_bridge_bootstrap" {
@@ -141,6 +141,6 @@ terraform apply --auto-approve
 
 ### 4 Validate appofapps Application
 
-Navigate to the ArgoCD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps ArgoCD Application is currently configured to point to the `assets/platform/appofapps` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
+Navigate to the Argo CD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps Argo CD Application is currently configured to point to the `assets/platform/appofapps` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
 
 ![bootstrap-application](/static/images/bootstrap-application.png)

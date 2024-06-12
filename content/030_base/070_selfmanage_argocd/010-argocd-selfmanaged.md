@@ -1,14 +1,14 @@
 ---
-title: 'ArgoCD self manage'
+title: 'Argo CD self manage'
 weight: 10
 ---
 
-### 1. Set ArgoCD label
+### 1. Set Argo CD label
 
 ```bash
 sed -i "s/enable_aws_argocd = false/enable_aws_argocd = true/g" ~/environment/terraform.tfvars
 ```
-The code snippet sets `enable_aws_argocd = true`. It causes the GitOps bootstrap module to add the label on the hub cluster, which enables ArgoCD deployment.
+The code snippet sets `enable_aws_argocd = true`. It causes the GitOps bootstrap module to add the label on the hub cluster, which enables Argo CD deployment.
 
 Changes by the code snippet is highlighted below.
 
@@ -21,7 +21,7 @@ addons = {
 
 :::
 
-The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configuration values for ArgoCD from the `assets/platform/addons/environments/default/addons/argo-cd/values.yaml` file. You can update the `values.yaml` as per your need. The default Refresh interval for the ArgoCD is 3 minutes (180 seconds). For this workshop, the Refresh interval has been updated to 5 seconds by setting the `timeout.reconciliation` value in `values.yaml` to 5. This shorter interval allows changes to happen faster during the workshop demonstrations.
+The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configuration values for Argo CD from the `assets/platform/addons/environments/default/addons/argo-cd/values.yaml` file. You can update the `values.yaml` as per your need. The default Refresh interval for the Argo CD is 3 minutes (180 seconds). For this workshop, the Refresh interval has been updated to 5 seconds by setting the `timeout.reconciliation` value in `values.yaml` to 5. This shorter interval allows changes to happen faster during the workshop demonstrations.
 
 ![argocd-values](/static/images/argocd-values.png)
 
@@ -38,7 +38,7 @@ cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-ArgoCD dashboard should have ArgoCD Application.
+Argo CD dashboard should have Argo CD Application.
 
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
