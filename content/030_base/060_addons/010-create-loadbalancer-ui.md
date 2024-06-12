@@ -3,11 +3,11 @@ title: 'Manually install AWS Load Balancer controller addon'
 weight: 10
 ---
 
-In this chapter, you will install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the ArgoCD UI. It will be automated in the upcoming chapters. The Load Balancer addon provides Kubernetes resources access to AWS Elastic Load Balancers.
+In this chapter, you will install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. It will be automated in the upcoming chapters. The Load Balancer addon provides Kubernetes resources access to AWS Elastic Load Balancers.
 
 
 ### 1. Create Application
-1. Log into the ArgoCD dashboard as the admin user. 
+1. Log into the Argo CD dashboard as the admin user. 
 
 2. Click "+ NEW APP" to start creating a new Application.
 
@@ -85,7 +85,7 @@ Click "SYNC" and click "SYNCHRONIZE". This will deploy the Load Balancer control
 
 ### 3. Validate loadBalancer controller
 
-You can validate the ArgoCD loadblanncer addon created deployment object.
+You can validate the Argo CD loadblanncer addon created deployment object.
 
 ```bash
 kubectl get deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
@@ -98,23 +98,23 @@ For testing, let's delete the loadBalancer controller.
 ```bash
 kubectl delete deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
 ```
-ArgoCD flags loabBalancer as "OutOfSync"
+Argo CD flags loabBalancer as "OutOfSync"
 
 ![delete-loadBalancer](/static/images/delete-lb.png)
 
-(Optional) If you "Sync" then ArgoCD recreates loabBalancer deployment object, we can see the value of having ArgoCD monitoring our deployed objects and fixing them if needed.
+(Optional) If you "Sync" then Argo CD recreates loabBalancer deployment object, we can see the value of having Argo CD monitoring our deployed objects and fixing them if needed.
 
 ### 5. Delete loadBalancer Application
 
 We prefer not to install things manually and instead want to rely on syncing with a Git repository to properly bootstrap our cluster add-ons. Therefore, let's remove the current add-on for now and reinstall it from Git.
 
-From ArgoCD UI, select loadbalancer application and select Delete. 
+From Argo CD UI, select loadbalancer application and select Delete. 
 
-### ArgoCD
+### Argo CD
 
 In this load balancer example, the Git repository we deployed from is https://aws.github.io/eks-charts. This contains the manifests in Helm format, defining the desired state of the load balancer addon.
 
-ArgoCD will continuously monitor the hub cluster to detect any configuration drift from this desired state in Git. If the live state of the hub cluster diverges from the manifests in the Git repo, ArgoCD will automatically alert  notifying of drift.
+Argo CD will continuously monitor the hub cluster to detect any configuration drift from this desired state in Git. If the live state of the hub cluster diverges from the manifests in the Git repo, Argo CD will automatically alert  notifying of drift.
 
 ![argocd-sync](/static/images/argocd-sync.png)
 

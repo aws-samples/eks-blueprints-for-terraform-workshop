@@ -1,5 +1,5 @@
 ---
-title: 'ArgoCD Project'
+title: 'Argo CD Project'
 weight: 10
 ---
 
@@ -165,6 +165,6 @@ git push
 
 ### 4. Validate Project
 
-On the ArgoCD dashboard, go to **Settings** and **Projects** to validate that the webstore project has been created.
+On the Argo CD dashboard, go to **Settings** and **Projects** to validate that the webstore project has been created.
 
 ![Webstore-Project](/static/images/webstore-project.png)

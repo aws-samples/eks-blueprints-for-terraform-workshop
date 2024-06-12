@@ -4,9 +4,9 @@ weight: 90
 ---
 
 
-In this workshop, we created a VPC, then 2 or more clusters. The EKS clusters were created using Terraform, but the Applications were deployed using ArgoCD.
+In this workshop, we created a VPC, then 2 or more clusters. The EKS clusters were created using Terraform, but the Applications were deployed using Argo CD.
 
-As Terraform does not know what ArgoCD Applications are installed on each EKS cluster, we need to clean thoses applications before destroying the clusters with Terraform.
+As Terraform does not know what Argo CD Applications are installed on each EKS cluster, we need to clean thoses applications before destroying the clusters with Terraform.
 
 To ease this, we prepared a `destroy.sh` script, that will clean properly the installed resources in appropriate order.
 

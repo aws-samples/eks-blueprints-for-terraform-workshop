@@ -2,7 +2,7 @@
 
 function delete_argocd_appset_except_pattern() {
   # List all your app to destroy
-  # Get the list of ArgoCD applications and store them in an array
+  # Get the list of Argo CD applications and store them in an array
   #applicationsets=($(kubectl get applicationset -A -o json | jq -r '.items[] | .metadata.namespace + "/" + .metadata.name'))
   applicationsets=($(kubectl get applicationset -A -o json | jq -r '.items[] | .metadata.name'))
 
@@ -19,7 +19,7 @@ function delete_argocd_appset_except_pattern() {
   #Wait for everything to delete
   continue_process=true
   while $continue_process; do
-    # Get the list of ArgoCD applications and store them in an array
+    # Get the list of Argo CD applications and store them in an array
     applicationsets=($(kubectl get applicationset -A -o json | jq -r '.items[] | .metadata.name'))
 
     still_have_application=false
@@ -38,7 +38,7 @@ function delete_argocd_appset_except_pattern() {
 
 function delete_argocd_app_except_pattern() {
   # List all your app to destroy
-  # Get the list of ArgoCD applications and store them in an array
+  # Get the list of Argo CD applications and store them in an array
   #applications=($(argocd app list -o name))
   applications=($(kubectl get application -A -o json | jq -r '.items[] | .metadata.name'))
 
@@ -56,7 +56,7 @@ function delete_argocd_app_except_pattern() {
   # Wait for everything to delete
   continue_process=true
   while $continue_process; do
-    # Get the list of ArgoCD applications and store them in an array
+    # Get the list of Argo CD applications and store them in an array
     #applications=($(argocd app list -o name))
     applications=($(kubectl get application -A -o json | jq -r '.items[] | .metadata.name'))
 

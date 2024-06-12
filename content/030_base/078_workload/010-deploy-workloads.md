@@ -62,14 +62,14 @@ git commit -m "add appofapps workload applicationset"
 git push
 ```
 
-On the ArgoCD dashboard click on appofapps Application to see newly created workload applicationset.
+On the Argo CD dashboard click on appofapps Application to see newly created workload applicationset.
 
 
 ![appofapps-workload-applicationset](/static/images/appofapps-workload-applicationset.png)
 
 ### 3. Create webstore workload applicationset
 
-The Webstore Workload ApplicationSet automatically creates an ArgoCD Workload Application for any clusters that have the label `workload_webstore: 'true'`. It deploys label environment version of the workload application version. 
+The Webstore Workload ApplicationSet automatically creates an Argo CD Workload Application for any clusters that have the label `workload_webstore: 'true'`. It deploys label environment version of the workload application version. 
 
 In this example, the Webstore ApplicationSet will deploy the `"hub"` version of the application to the hub-cluster. This is because:
 

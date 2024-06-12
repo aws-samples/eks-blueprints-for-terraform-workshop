@@ -3,7 +3,7 @@ title: 'Install AWS Load Balancer Controller addon'
 weight: 50
 ---
 
-The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using ArgoCD. The steps will show you how a simple change to the Git repository can trigger ArgoCD to deploy and manage an addon in an automated way.
+The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using Argo CD. The steps will show you how a simple change to the Git repository can trigger Argo CD to deploy and manage an addon in an automated way.
 
 In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your Git repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
 
@@ -50,11 +50,11 @@ For example loadbalancer interact with EC2 AWS APIs to provision NLB/ALB and Kar
 
 Instead of manually creating these IAM roles, the Terraform EKS Blueprints addons module [eks_blueprints_addons](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest) can automatically provision least privilege roles for each addon. 
 
-This module allows both installing the addons and creating their IAM roles. However, we only want it to create the IAM roles, not deploy the addons themselves. The installation of the addons onto the EKS cluster is done by ArgoCD
+This module allows both installing the addons and creating their IAM roles. However, we only want it to create the IAM roles, not deploy the addons themselves. The installation of the addons onto the EKS cluster is done by Argo CD
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a bast pracitce to let ArgoCD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
+You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a bast pracitce to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
 
 
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='12'}
@@ -94,12 +94,12 @@ EOF
 :::
 
 
-### 3. Provide addon IAM role to ArgoCD
+### 3. Provide addon IAM role to Argo CD
 
 
-We use the Terraform EKS Blueprints addons module to create AWS ressources for EKS addons. These resources identifiers need to be provided to ArgoCD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by ArgoCD. 
+We use the Terraform EKS Blueprints addons module to create AWS ressources for EKS addons. These resources identifiers need to be provided to Argo CD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by Argo CD. 
 
-The EKS addons module makes it easy to access the created AWS ressources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by ArgoCD.
+The EKS addons module makes it easy to access the created AWS ressources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by Argo CD.
 
 ```bash
 sed -i "s/#enableaddonmetadata//g" ~/environment/hub/main.tf
@@ -126,7 +126,7 @@ terraform init
 terraform apply --auto-approve
 ```
 
-The ArgoCD dashboard should have a load balancer application.
+The Argo CD dashboard should have a load balancer application.
 
 ![hubcluster-lb-addon](/static/images/hubcluster-lb-addon.png)
 
@@ -135,8 +135,8 @@ The ArgoCD dashboard should have a load balancer application.
 ```bash
 kubectl get deployment -n kube-system aws-load-balancer-controller --context hub
 ```
-::::expand{header="Where is the IAM load balancer role, created by the EKS Blueprint addon module, provided to ArgoCD?"}
-You can find it in the hub cluster's 'aws_load_balancer_controller_iam_role_arn' annotation on the ArgoCD dashboard.
+::::expand{header="Where is the IAM load balancer role, created by the EKS Blueprint addon module, provided to Argo CD?"}
+You can find it in the hub cluster's 'aws_load_balancer_controller_iam_role_arn' annotation on the Argo CD dashboard.
 
 ![hubcluster-lb-arn](/static/images/lb-arn.png)
 

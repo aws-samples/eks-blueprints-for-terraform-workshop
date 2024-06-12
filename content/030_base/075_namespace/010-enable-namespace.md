@@ -71,9 +71,9 @@ git commit -m "add appofapps namespace applicationset"
 git push
 ```
 
-On the ArgoCD dashboard click on appofapps Application to see newly created namespace applicationset.
+On the Argo CD dashboard click on appofapps Application to see newly created namespace applicationset.
 
-::alert[If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.]{header="Sync Application"}
+::alert[If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.]{header="Sync Application"}
 
 ![namespace-helm](/static/images/appofapps-namespace-applicationset.png)
 
@@ -81,7 +81,7 @@ On the ArgoCD dashboard click on appofapps Application to see newly created name
 
 ### 3. Create webstore namespace applicationset
 
-The Webstore Namespace ApplicationSet automatically creates an ArgoCD Namespace Application for any clusters that have the label `workload_webstore: 'true'`
+The Webstore Namespace ApplicationSet automatically creates an Argo CD Namespace Application for any clusters that have the label `workload_webstore: 'true'`
 
 ```bash
 mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace
@@ -423,7 +423,7 @@ To view the LimitRange set for the ui namespace in the spoke-staging cluster.
 kubectl get limitrange  -n ui --context hub -o yaml
 ```
 
-You can also see the application namespace-hub-webstore on the ArgoCD dashboard.
+You can also see the application namespace-hub-webstore on the Argo CD dashboard.
 
 ![namespace-hub-webstore](/static/images/namespace-hub-webstore.png)
 
