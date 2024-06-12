@@ -503,7 +503,7 @@ Resources:
 
                 su -l -c 'echo "export TERM=xterm-color" >> /home/ec2-user/.bashrc' ec2-user
 
-                git clone --depth 1 https://github.com/junegunn/fzf.git /home/ec2-user/.fzf
+                git clone --depth 1 https://github.com/junegunn/fzf.git /home/ec2-user/.fzf || true
                 /home/ec2-user/.fzf/install --all
                 sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/kns -o /usr/local/bin/kns && sudo chmod +x $_
                 sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/ktx -o /usr/local/bin/ktx && sudo chmod +x $_
