@@ -451,7 +451,7 @@ Resources:
                 export HOME=/home/ec2-user
                 echo '=== INSTALL Some Tools ==='
                 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-                sudo yum -y -q install jq gettext bash-completion moreutils terraform
+                sudo yum -y -q install jq gettext bash-completion moreutils terraform tree
 
                 echo '=== Configure workshop code ==='
                 su -l -c 'aws ecr get-login-password --region ${AWS::Region} | docker login --username AWS --password-stdin ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com' ec2-user

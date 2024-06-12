@@ -339,11 +339,12 @@ EOF
 
 ### 5. Copy variable values file to the cluster
 
-We copy and reeset the addons, so that we enable when required
+We copy and reset the addons, so that we enable when required.
+We copy the terraform configuration file to define the variable, but we deactivate ArgoCD, as we don't want to deploy it on spoke cluster.
 
 ```bash
 cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
-sed -i 's/enable_aws_load_balancer_controller = true/enable_aws_load_balancer_controller = false/; s/enable_aws_argocd = true/enable_aws_argocd = false/' ~/environment/spoke/terraform.tfvars
+sed -i 's/enable_aws_argocd = true/enable_aws_argocd = false/' ~/environment/spoke/terraform.tfvars
 ```
 
 ### 6. Create terraform workspace
