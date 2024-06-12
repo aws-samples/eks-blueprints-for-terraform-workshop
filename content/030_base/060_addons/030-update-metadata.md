@@ -86,10 +86,13 @@ EOF
 
 ### Set git Values
 
-Copy the provided code snippet, replace the placeholder value "<<replace with your GitHub User Name>>" with your actual GitHub User Name, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**
+Copy the provided code snippet, replace the placeholder value "<<replace with your GitHub User Name>>" with your actual GitHub User Name, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**. 
+>If you have clone the repo in another organisation than you're GitHub User, you can also update the GITHUB_LOGIN with your org name.
 
 ```bash
-export GITHUB_LOGIN="<<replace with your GitHub User Name>>"
+export GITHUB_USER="<<replace with your GitHub User Name>>"
+export GITHUB_LOGIN=$GITHUB_USER
+export GITHUB_TOKEN="<<replace with your GitHub Token retrieve in pre-requisite>>
 ```
 
 ```json
@@ -346,6 +349,7 @@ You can check that the Labels and annotations are correctly propagated to the cl
 kubectl --context hub get secrets -n argocd hub-cluster -o yaml
 ```
 
+:::expand{header="Example of output"}
 ```
 apiVersion: v1
 data:
@@ -431,3 +435,4 @@ metadata:
   uid: 1156e385-97af-4732-83ae-55aafeb9ec62
 type: Opaque
 ```
+:::

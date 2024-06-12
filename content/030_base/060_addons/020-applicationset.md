@@ -60,8 +60,7 @@ You can view how gitops-bridge populate the cluster secret that creates Argo CD 
 kubectl --context hub get secrets -n argocd hub-cluster -o yaml
 ```
 
-Example of output
-
+:::expand{header="Example of output"}
 ```
 apiVersion: v1
 data:
@@ -132,3 +131,4 @@ metadata:
   uid: 1156e385-97af-4732-83ae-55aafeb9ec62
 type: Opaque
 ```
+:::

@@ -5,7 +5,27 @@ weight: 40
 
 The focus of this chapter is to set up Argo CD to install and manage add-ons for EKS clusters.
 
-### 1. Addons
+### 1. Clone repository
+
+Make a clone of your GitHub repository locally so that you can add applicationset files to it. Instead of cloning the entire repo, checkout only `assets` folder to keep things simple using sparse-checkout. (Note, this also checkouts files not tied to a directory)
+
+
+```bash
+cd ~/environment
+git clone --no-checkout https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit
+cd wgit
+git sparse-checkout init --cone
+git sparse-checkout set assets
+git checkout
+```
+
+::::expand{header="What is in my cloned repo?"}
+This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
+
+![Kubernetes Addons](/static/images/platform-github-folders.png)
+::::
+
+### 2. Configure Addons ApplicationSet
 
 Previously, you created an "App of Apps" Application that referenced the "appofapps" folder to include all the files in this folder. You will add "cluster-addons" Argo CD Application, which is configured to point to the cloned copy of the GitOps Bridge ApplicationSet repository in your own Git repo. Addons repo is under `assets/platform/addons/applicationset` folder.
 
@@ -47,7 +67,7 @@ spec:
 EOF
 ```
 
-### 2. Commit addons ApplicationSet to Git
+### 3. Commit addons ApplicationSet to Git
 
  When pushing to from a remote git repository, if you haven't authenticated before, it will prompt you for your credentials.
 
@@ -60,7 +80,7 @@ git push
 
 > You may need to authenticate with username="<your github login>" and password="<github token>" to push on the repository
 
-### 3. Validate addons ApplicationSet
+### 4. Validate addons ApplicationSet
 
 ::alert[The default configuration for Argo CD is to check for updates in a git repository every 3 minutes. It might take upto 3 minutes to recognize the new file in the git repo. Click on REFRESH APPS on the Argo CD Dashboard to refresh rightaway.]{header="cluster-addons Application"}
 

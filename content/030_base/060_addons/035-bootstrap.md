@@ -9,7 +9,7 @@ To automatically generate Argo CD applications, you will implement the "App of A
 
 ### App of Apps pattern
 
-Normally an Argo CD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the git repo https://aws.github.io/eks-charts.
+Normally an Argo CD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an ìndex.yaml` file that reference the chart package (tgz file).
 
  
  ![applicationset](/static/images/lb-helmchart-folder.png)
@@ -26,38 +26,9 @@ In this chapter, you will create a appofapps Argo CD application that points to 
 ![applicationset](/static/images/bootstrap-appofapps.png)
 
 
-### 1. Clone repository
-
-Make a clone of your GitHub repository locally so that you can add applicationset files to it.
-
-```bash
-cd ~/environment
-```
-
-Copy the provided code snippet, replace the placeholder value "<<replace with your github login>>" with your actual GitHub login, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**
-
-```bash
-export GITHUB_LOGIN="<<replace with your github repo login>>"
-```
-
-Instead of cloning the entire repo, checkout only `assets` folder to keep things simple. (Note, this also checkouts files not tied to a directory)
-
-```bash
-git clone --no-checkout https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit
-cd wgit
-git sparse-checkout init --cone
-git sparse-checkout set assets
-git checkout
-```
-
-::::expand{header="What is in my cloned repo?"}
-This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
-
-![Kubernetes Addons](/static/images/platform-github-folders.png)
-::::
 
 
-### 2 Create appofapps applicationset 
+### 1. Create appofapps applicationset 
 
 The ApplicationSet creates a new Argo CD Application named "appofapps" that points to the platform/appofapps directory in your Git repository.
 
@@ -97,8 +68,13 @@ spec:
 EOF
 ```
 
+Note, that it uses the annotations from the secret like `{{metadata.annotations.platform_repo_url}}`, which means that it will retrieve the value from the secret, like we can do manually with:
 
-### 3. Local variable to read appofapps applicationset
+```bash
+kubectl --context hub get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url"
+```
+
+### 2. Local variable to read appofapps applicationset
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -132,14 +108,14 @@ module "gitops_bridge_bootstrap" {
     namespace        = local.argocd_namespace
 :::
 
-### 4 Apply Terraform
+### 4. Apply Terraform
 
 ```bash
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### 4 Validate appofapps Application
+### 5. Validate appofapps Application
 
 Navigate to the Argo CD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps Argo CD Application is currently configured to point to the `assets/platform/appofapps` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
 
