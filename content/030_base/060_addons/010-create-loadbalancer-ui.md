@@ -1,5 +1,5 @@
 ---
-title: 'Manually install AWS Load Balancer controller addon'
+title: '[Optional] Manually install AWS Load Balancer controller addon'
 weight: 10
 ---
 
