@@ -6,7 +6,7 @@ weight: 10
 
 App of Apps workload application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new workload it detects the change and creates workload specific  applicationset without requiring manual intervention.
 
-```bash
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='13,17,21,32'}
 cat > ~/environment/wgit/assets/platform/appofapps/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -52,7 +52,10 @@ spec:
         syncOptions:
           - CreateNamespace=true
 EOF
-```
+:::
+
+Again, we have the git generator that will iterate in the directory `assets/platform/config/workload/*`, and will create it from the `path: '{{path}}/workload'`, so we will need to create this directory.
+
 ### 2. Git commit
 
 ```bash
@@ -69,14 +72,18 @@ On the Argo CD dashboard click on appofapps Application to see newly created wor
 
 ### 3. Create webstore workload applicationset
 
-The Webstore Workload ApplicationSet automatically creates an Argo CD Workload Application for any clusters that have the label `workload_webstore: 'true'`. It deploys label environment version of the workload application version. 
+The Webstore Workload ApplicationSet automatically activate for for any clusters that have the label `workload_webstore: 'true'`, and will iterate for each items present in the target directory. 
+So we define a `webstore` ApplicationSet there, that will create Argo CD Application for each of our microservice. 
 
-In this example, the Webstore ApplicationSet will deploy the `"hub"` version of the application to the hub-cluster. This is because:
+In this example, the Webstore ApplicationSet will deploy the `"hub"` version of the application to the hub-cluster, which is defined in the directory `assets/developer/webstore/xxx/hub/`:
 
 - There is only one cluster labeled with `workload_webstore: 'true'` 
 - That cluster also has the label `environment: 'hub'`
+- `{{metadata.annotations.workload_repo_basepath}}` points to `assets/developer`
+- `{{values.workload}}` points to `webstore`
+- `'{{path}}/{{metadata.labels.environment}}'` (line 39) points to `assets/developer/webstore/xxx/hub/` where xxx is each webstore microservice
 
-```bash
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='14,21,25,39'}
 mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/workload
 cat > ~/environment/wgit/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
@@ -130,7 +137,8 @@ spec:
           limit: 100
 
 EOF
-```
+:::
+
 ### 4. Git commit
 
 ```bash

@@ -13,7 +13,7 @@ Argo CD is a declarative continuous delivery tool for Kubernetes.
 [Argo CD](https://argo-cd.readthedocs.io/en/stable/) is an open source GitOps continuous delivery tool for Kubernetes.
 ::::
 
-::::expand{header="Why use Argo CD instead of Terraform for infrastructure automation?"}
+::::expand{header="Why use Argo CD instead of Terraform to deploy Kubernetes resources?"}
 Terraform and Argo CD are complementary tools for infrastructure automation. Terraform excels at provisioning infrastructure like VPCs, EKS clusters, RDS instances, etc. However, it can become complex when trying to use it for ongoing infrastructure operations like managing addons, deploying workloads, creating namespaces, etc. 
 
 Argo CD specializes in continuous delivery for Kubernetes. It monitors the live state of a cluster and automatically syncs any configuration drift back to the desired state defined in Git. This makes Argo CD well-suited for deploying applications and managing configuration for a Kubernetes cluster.
@@ -30,7 +30,7 @@ A key difference is that Terraform performs one-time provisioning, while Argo CD
 
 - Automated initial installation of Argo CD
 
-- Creation of root applications for an "App of Apps" pattern 
+- Cluster Bootstrap using ”App of ApplicationSets” pattern
 
 - Simple Self-management of the Argo CD configuration
 

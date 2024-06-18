@@ -75,25 +75,27 @@ terraform init
 terraform apply -auto-approve
 ```
 
-
-
-### 2. Validate Argo CD install
+### 3. Validate Argo CD install
 
 Get Argo CD dashboard URL:
 
 ```bash
-export ARGOCD_SERVER=$(kubectl get svc argo-cd-argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname')
+export ARGOCD_SERVER=$(kubectl --context hub get svc argo-cd-argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname')
 echo export ARGOCD_SERVER=\"$ARGOCD_SERVER\" >> ~/.bashrc
 echo "https://$ARGOCD_SERVER"
 ```
-Get Argo CD password: 
+
+You can click on the outputed link and select **Open**, to access the Argo CD user interface.
+
+Get ArgoCD password: 
 
 ```bash
-ARGOCD_PWD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+ARGOCD_PWD=$(kubectl --context hub -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 echo export ARGOCD_PWD=\"$ARGOCD_PWD\" >> ~/.bashrc
 echo "Argo CD admin password: $ARGOCD_PWD"
 ```
 
+The user will be **admin** and the password the result of the previous command.
 
 > As we are in a lab workshop, we don't have custom domain, so we uses default one. You can ignore the warning about self signed certificate when you access the dashboard, this is fine for this workshop.
 
@@ -103,3 +105,8 @@ In the Argo CD UI, you will find the hub cluster already registered under **Sett
 ![EKS Cluster](/static/images/argocd-cluster-object.png)
 
 
+You can also validate that the gitops-bridge as correctly created the secrets for this EKS cluster in the argocd namespace:
+
+```bash
+kubectl --context hub get secrets -n argocd hub-cluster
+```

@@ -1,6 +1,7 @@
 ---
 title: '[Optional] Argo CD Hub Cluster Cleanup'
 weight: 10
+hidden: true
 ---
 
 In Argo CD hub-spoke deployment architecture, hub is dedicated to only Argo CD. In the previous chapter you have deployed webstore namespace and workload in the hub cluster.

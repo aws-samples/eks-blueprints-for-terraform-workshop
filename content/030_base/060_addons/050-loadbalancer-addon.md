@@ -54,7 +54,7 @@ This module allows both installing the addons and creating their IAM roles. Howe
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a bast pracitce to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
+You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
 
 
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='12'}
@@ -139,5 +139,101 @@ kubectl get deployment -n kube-system aws-load-balancer-controller --context hub
 You can find it in the hub cluster's 'aws_load_balancer_controller_iam_role_arn' annotation on the Argo CD dashboard.
 
 ![hubcluster-lb-arn](/static/images/lb-arn.png)
+
+You can check that the Labels and annotations are correctly propagated to the cluster secret: 
+
+
+```bash
+kubectl --context hub get secrets -n argocd hub-cluster -o yaml
+```
+
+:::expand{header="Example of output"}
+```
+apiVersion: v1
+data:
+  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7AiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
+  name: aHViLWNsdXN0ZXI=
+  server: aHR0cHM6Ly9rdWJlcm5VzLmRlZmF1bHQuc3Zj
+kind: Secret
+metadata:
+  annotations:
+    addons_repo_basepath: assets/platform/addons/
+    addons_repo_path: applicationset/
+    addons_repo_revision: HEAD
+    addons_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
+    argocd_namespace: argocd
+    aws_account_id: "382076407153"
+    aws_cluster_name: hub-cluster
+    aws_load_balancer_controller_iam_role_arn: arn:aws:iam::12345678910:role/alb-controller-20240604085058813100000015
+    aws_load_balancer_controller_namespace: kube-system
+    aws_load_balancer_controller_service_account: aws-load-balancer-controller-sa
+    aws_region: us-east-2
+    aws_vpc_id: vpc-09924bd9e1637d9a1
+    cluster_name: hub-cluster
+    environment: hub
+    platform_repo_basepath: assets/platform/
+    platform_repo_path: bootstrap
+    platform_repo_revision: HEAD
+    platform_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
+    workload_repo_basepath: assets/developer/
+    workload_repo_path: gitops/apps
+    workload_repo_revision: HEAD
+    workload_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
+  creationTimestamp: "2024-06-04T08:52:40Z"
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+    aws_cluster_name: hub-cluster
+    cluster_name: hub-cluster
+    enable_ack_apigatewayv2: "false"
+    enable_ack_dynamodb: "false"
+    enable_ack_emrcontainers: "false"
+    enable_ack_eventbridge: "false"
+    enable_ack_prometheusservice: "false"
+    enable_ack_rds: "false"
+    enable_ack_s3: "false"
+    enable_ack_sfn: "false"
+    enable_argo_events: "false"
+    enable_argo_rollouts: "false"
+    enable_argo_workflows: "false"
+    enable_argocd: "true"
+    enable_aws_cloudwatch_metrics: "false"
+    enable_aws_ebs_csi_resources: "false"
+    enable_aws_efs_csi_driver: "false"
+    enable_aws_for_fluentbit: "false"
+    enable_aws_fsx_csi_driver: "false"
+    enable_aws_gateway_api_controller: "false"
+    enable_aws_load_balancer_controller: "true"
+    enable_aws_node_termination_handler: "false"
+    enable_aws_privateca_issuer: "false"
+    enable_aws_secrets_store_csi_driver_provider: "false"
+    enable_cert_manager: "false"
+    enable_cluster_autoscaler: "false"
+    enable_cluster_proportional_autoscaler: "false"
+    enable_external_dns: "false"
+    enable_external_secrets: "false"
+    enable_fargate_fluentbit: "false"
+    enable_gatekeeper: "false"
+    enable_gpu_operator: "false"
+    enable_ingress_nginx: "false"
+    enable_karpenter: "false"
+    enable_kube_prometheus_stack: "false"
+    enable_kyverno: "false"
+    enable_metrics_server: "false"
+    enable_prometheus_adapter: "false"
+    enable_secrets_store_csi_driver: "false"
+    enable_velero: "false"
+    enable_vpa: "false"
+    environment: hub
+    kubernetes_version: "1.28"
+    workload_webstore: "false"
+    workloads: "false"
+  name: hub-cluster
+  namespace: argocd
+  resourceVersion: "309742"
+  uid: 1156e385-97af-4732-83ae-55aafeb9ec62
+type: Opaque
+```
+::: 
+
 
 ::::
