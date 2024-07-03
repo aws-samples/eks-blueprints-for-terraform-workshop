@@ -28,7 +28,7 @@ The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configu
 You can open the file in cloud9. Don't forget to commit if you make any changes.
 
 ```bash
-c9 open ~/environment/wgit/assets/platform/addons/environments/default/addons/argo-cd/values.yaml
+c9 open $GITOPS_DIR/platform/addons/environments/default/addons/argo-cd/values.yaml
 ```
 
 ### 2. Apply Terraform

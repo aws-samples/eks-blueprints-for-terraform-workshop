@@ -14,8 +14,8 @@ You will use namespace helm templates to create namespace, limitrange, networkpo
 AppofApps Namespace application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new
 workload it detects the change and creates workload specific namespace applicationset without requiring manual intervention. 
 
-:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='18, 21, 33'}
-cat > ~/environment/wgit/assets/platform/appofapps/namespace-applicationset.yaml << 'EOF'
+```json
+cat > $GITOPS_DIR/platform/appofapps/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -61,7 +61,7 @@ spec:
         syncOptions:
           - CreateNamespace=true
 EOF
-:::
+```
 
 Again, we can note, that it uses the annotations from the secret like {{metadata.annotations.platform_repo_url}}, which means that it will retrieve the value 
 from the secret, like we can do manually with:
@@ -74,7 +74,7 @@ Additionaly, we are using a git generator, that will watch the defined directory
 to your git repository, which is normally checkout locally, so you can check the content here: 
 
 ```bash
-ls -la ~/environment/wgit/assets/platform/config/workload/
+ls -la $GITOPS_DIR/platform/config/workload/
 ```
 
 The git generator will iterate for each item present in this directory and then generate an ApplicationSet that will add the `/namespace` to the item find, 
@@ -86,7 +86,7 @@ find by the git generator.
 ### 2. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add appofapps namespace applicationset"
 git push
@@ -106,9 +106,9 @@ Now, we create an ApplicationSet stored in the directory that is watched by the 
 
 The Webstore Namespace ApplicationSet automatically creates an Argo CD Namespace Application for any clusters that have the label `workload_webstore: 'true'`, and use the `environment` label (line 20) from the cluster secret to customize the name of the Application, in our case the name will be `namespace-staging-webstore`.
 
-:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='15,20'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
+```json
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace
+cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -155,7 +155,7 @@ spec:
           limit: 100
 
 EOF
-:::
+```
 
 ### 4. Create default namespace values 
 
@@ -164,9 +164,9 @@ The Webstore ApplicationSet reads the default namespace configuration values (li
 For example, for the hub-cluster which has the environment label `"hub"`, it will check `assets/platform/config/workload/webstore/namespace/values/hub-values.yaml` for any overrides. If the override file for a specific environment label does not exist, such as `<environment label>-values.yaml`, then the Webstore ApplicationSet will ignore it and just use the default values in `default-values.yaml`.
 The `default-values.yaml` contains the namespaces to create, along with the **limitRanges** and **resourceQuotas** to apply for each namespace. 
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='7,39,71,103,135,167,199'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
+```json
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace/values
+cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
 name: webstore
 labels:
   environment: hub
@@ -396,12 +396,12 @@ namespaces:
             scopeName: PriorityClass
             values: ["high"]            
 EOF
-:::
+```
 
 Thoses values will be used with the namespace helm Chart that you can find in the Application target which is `assets/platform/charts/namespace`.
 
 ```bash
-tree ~/environment/wgit/assets/platform/charts/namespace
+tree $GITOPS_DIR/platform/charts/namespace
 ```
 
 Output:
@@ -435,7 +435,7 @@ Output:
 ### 5. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add webstore namespace applicationset and namespace values"
 git push

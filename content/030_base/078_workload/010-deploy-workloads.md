@@ -6,8 +6,9 @@ weight: 10
 
 App of Apps workload application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new workload it detects the change and creates workload specific  applicationset without requiring manual intervention.
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='13,17,21,32'}
-cat > ~/environment/wgit/assets/platform/appofapps/workload-applicationset.yaml << 'EOF'
+<!--:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='13,17,21,32'}-->
+```json
+cat > $GITOPS_DIR/platform/appofapps/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -52,14 +53,15 @@ spec:
         syncOptions:
           - CreateNamespace=true
 EOF
-:::
+```
+<!--:::-->
 
 Again, we have the git generator that will iterate in the directory `assets/platform/config/workload/*`, and will create it from the `path: '{{path}}/workload'`, so we will need to create this directory.
 
 ### 2. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add appofapps workload applicationset"
 git push
@@ -83,9 +85,10 @@ In this example, the Webstore ApplicationSet will deploy the `"hub"` version of 
 - `{{values.workload}}` points to `webstore`
 - `'{{path}}/{{metadata.labels.environment}}'` (line 39) points to `assets/developer/webstore/xxx/hub/` where xxx is each webstore microservice
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='14,21,25,39'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/workload
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
+<!--:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='14,21,25,39'}-->
+```json
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/workload
+cat > $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -137,14 +140,15 @@ spec:
           limit: 100
 
 EOF
-:::
+```
+<!--:::-->
 
 ### 4. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add webstore workload applicationset"
+git commit -m "add appofapps workload applicationset"
 git push
 ```
 

@@ -8,7 +8,7 @@ The goal of this chapter is to demonstrate how easy it can be to install an addo
 In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your Git repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
 
 ```bash
-c9 open ~/environment/wgit/assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
+c9 open $GITOPS_DIR/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
 ```
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='7-10'}

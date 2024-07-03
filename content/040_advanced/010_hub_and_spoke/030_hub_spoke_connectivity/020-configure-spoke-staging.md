@@ -156,4 +156,3 @@ The Argo CD Dashboard should have the spoke-staging cluster
 
 ![Stagging Cluster](/static/images/spoke-staging-cluster.png)
 
-It's perfectly normal to see the "Unknown" status displayed, as Argo CD has not yet attempted to deploy any resources to the spoke cluster.

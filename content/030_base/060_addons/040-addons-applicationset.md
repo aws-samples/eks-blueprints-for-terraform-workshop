@@ -5,19 +5,20 @@ weight: 40
 
 The focus of this chapter is to set up Argo CD to install and manage add-ons for EKS clusters.
 
-### 1. Clone repository
+<!--Satish-->
+<!--### 1. Clone repository-->
 
-Make a clone of your GitHub repository locally so that you can add applicationset files to it. Instead of cloning the entire repo, checkout only `assets` folder to keep things simple using sparse-checkout. (Note, this also checkouts files not tied to a directory)
+<!--Make a clone of your GitHub repository locally so that you can add applicationset files to it. Instead of cloning the entire repo, checkout only `assets` folder to keep things simple using sparse-checkout. (Note, this also checkouts files not tied to a directory)-->
 
 
-```bash
-cd ~/environment
-git clone --no-checkout https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit
-cd wgit
-git sparse-checkout init --cone
-git sparse-checkout set assets
-git checkout
-```
+<!--```bash-->
+<!--cd ~/environment-->
+<!--git clone --no-checkout https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit-->
+<!--cd wgit-->
+<!--git sparse-checkout init --cone-->
+<!--git sparse-checkout set assets-->
+<!--git checkout-->
+<!--```-->
 
 ::::expand{header="What is in my cloned repo?"}
 This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
@@ -33,7 +34,8 @@ Previously, you created an "App of Apps" Application that referenced the "appofa
 
 
 ```bash
-cat > ~/environment/wgit/assets/platform/appofapps/addons-applicationset.yaml << 'EOF'
+
+cat > ~/environment/gitops-repos/platform/appofapps/addons-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -67,18 +69,24 @@ spec:
 EOF
 ```
 
-### 3. Commit addons ApplicationSet to Git
+<!--### 3. Commit addons ApplicationSet to Git-->
 
- When pushing to from a remote git repository, if you haven't authenticated before, it will prompt you for your credentials.
+<!-- When pushing to from a remote git repository, if you haven't authenticated before, it will prompt you for your credentials.-->
+
+<!--```bash-->
+<!--cd ~/environment/wgit-->
+<!--git add .-->
+<!--git commit -m "add addons applicationset"-->
+<!--git push-->
+<!--```-->
+
+<!--> You may need to authenticate with username="<your github login>" and password="<github token>" to push on the repository-->
 
 ```bash
-cd ~/environment/wgit
-git add .
-git commit -m "add addons applicationset"
-git push
+git -C ${GITOPS_DIR}/platform add .  || true
+git -C ${GITOPS_DIR}/platform commit -m "add addon applicationset" || true
+git -C ${GITOPS_DIR}/platform push || true
 ```
-
-> You may need to authenticate with username="<your github login>" and password="<github token>" to push on the repository
 
 ### 4. Validate addons ApplicationSet
 

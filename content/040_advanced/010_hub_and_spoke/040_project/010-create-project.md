@@ -14,7 +14,7 @@ This automated process not only saves valuable time but also mitigates the risk 
 Overall, the App of Apps Project ApplicationSet feature streamlines workload management, enhances productivity, and promotes a more automated and consistent application lifecycle management process within your Git repository.
 
 ```bash
-cat > ~/environment/wgit/assets/platform/appofapps/argoproject-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/appofapps/argoproject-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -80,8 +80,8 @@ EOF
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Few values are commented for the upcoming chapters.
 
 ```bash
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/project
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/project
+cat > $GITOPS_DIR/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
 projects:
 - name: webstore
@@ -157,7 +157,7 @@ EOF
 ### 3. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add appofapps project applicationset and webstore project values"
 git push

@@ -17,7 +17,7 @@ If you have deployed additional resources, that may have created Wloud resources
 You can just execute the cleanup script. In this script, there can be somme errors, but that is normal and the script will repeat some of the actions until normally cleanup sucess.
 
 ```bash
-~/environment/wgit/assets/scripts/destroy.sh 
+$SOURCE_DIR/assets/scripts/destroy.sh 
 ```
 
 
