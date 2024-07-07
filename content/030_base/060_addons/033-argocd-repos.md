@@ -1,8 +1,11 @@
 ---
-title: 'Create ArgoCD Repository'
+title: 'Create ArgoCD Repositories'
 weight: 33
 ---
 
+In the previous chapter, we created "gitops-platform" and "gitops-workload" CodeCommit repositories. There are [different ways](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/) to provide ArgoCD access to these repositories. In this chapter, we will use SSH private keys to grant ArgoCD access to the CodeCommit repositories.
+
+### 1. Create ArgoCD git repositories
 
 ```json
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -38,7 +41,22 @@ resource "kubernetes_secret" "git_secrets" {
 EOF
 ```
 
+### 2. Apply Terraform
+
 ```bash
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
+
+Navigate to the ArgoCD dashboard, then go to the Settings page, and select Repositories to view gitops-platform and gitops-workload repositories
+
+![ArgoCD Repositories](/static/images/argocd-repositories.png)
+
+The Git repository connection data for ArgoCD is stored in a Kubernetes Secret. You can verify that ArgoCD has created the Secret object that contains the configuration, including the SSH private keys, to access  Git repositories. 
+
+```json
+kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repository --context hub
+```
+
+![ArgoCD Repository Secret](/static/images/argocd_k8s_repos.png)
+

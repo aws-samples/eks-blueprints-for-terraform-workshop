@@ -5,37 +5,16 @@ weight: 40
 
 The focus of this chapter is to set up Argo CD to install and manage add-ons for EKS clusters.
 
-<!--Satish-->
-<!--### 1. Clone repository-->
+### 1. Configure Addons ApplicationSet
 
-<!--Make a clone of your GitHub repository locally so that you can add applicationset files to it. Instead of cloning the entire repo, checkout only `assets` folder to keep things simple using sparse-checkout. (Note, this also checkouts files not tied to a directory)-->
-
-
-<!--```bash-->
-<!--cd ~/environment-->
-<!--git clone --no-checkout https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git wgit-->
-<!--cd wgit-->
-<!--git sparse-checkout init --cone-->
-<!--git sparse-checkout set assets-->
-<!--git checkout-->
-<!--```-->
-
-::::expand{header="What is in my cloned repo?"}
-This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
-
-![Kubernetes Addons](/static/images/platform-github-folders.png)
-::::
-
-### 2. Configure Addons ApplicationSet
-
-Previously, you created an "App of Apps" Application that referenced the "appofapps" folder to include all the files in this folder. You will add "cluster-addons" Argo CD Application, which is configured to point to the cloned copy of the GitOps Bridge ApplicationSet repository in your own Git repo. Addons repo is under `assets/platform/addons/applicationset` folder.
+Previously, you created an "App of Apps" Application that referenced the "appofapps" folder. You will add "cluster-addons" Argo CD ApplicationSet in appofapps folder, which is configured to point to the cloned copy of the GitOps Bridge ApplicationSet repository in your own "gitops-platform" repo.
 
 ![cluster-addons](/static/images/cluster-addons.png)
 
 
 ```bash
 
-cat > ~/environment/gitops-repos/platform/appofapps/addons-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/appofapps/addons-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:

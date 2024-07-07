@@ -3,17 +3,20 @@ title: 'Argo CD Project'
 weight: 10
 ---
 
+Projects define guardrails that set constraints for associated applications. When an application is associated with a project, it must operate within the guardrails established by that project. 
+
+In this chapter we will create a project for the webstore workload. In upcoming chapters, we will associate the webstore workload deployment with this project. 
+
+
 ### 1. Create App of Apps Project ApplicationSet
 
-The App of Apps Project ApplicationSet functionality offers a seamless approach to managing and deploying workloads within your Git repository. By automatically scanning the designated `assets/platform/config/workload` folder, it dynamically identifies any new or modified workloads. Consequently, it creates or updates the corresponding Project ApplicationSets without requiring manual intervention. You can link many different project to many different Git repository as source, and control which cluster and namespace destination they are allowed to deploy into.
+Create an applicationset that creates Argo CD project for each workload.
+
+![Project AppofApps](/static/images/project-applicationset.png)
 
 
-This automated process not only saves valuable time but also mitigates the risk of human errors, ensuring a consistent and reliable deployment experience across your environment. With this feature, you can dedicate your efforts to developing and maintaining workloads, while the App of Apps Project ApplicationSet handles the deployment aspect efficiently.
 
-
-Overall, the App of Apps Project ApplicationSet feature streamlines workload management, enhances productivity, and promotes a more automated and consistent application lifecycle management process within your Git repository.
-
-```bash
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,20,25,44,46,47'}
 cat > $GITOPS_DIR/platform/appofapps/argoproject-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -73,13 +76,27 @@ spec:
         syncOptions:
           - CreateNamespace=true
 EOF
-```
+
+:::
+
+Line 16: Projects are installed on the hub cluster and not on the spoke clusters.  
+Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from argoproject.  
+Line 25: Iterates through all the workload folders under config/workload folder  
+Line 44: project values for each workload.  
+Line 46,47: Replace sourceRepos value with the gitops-workload url(  Line 7 below in the project-values.yaml) 
+
 
 ### 2. Create Project Values
 
+Lets create webstore project values. 
+
+![project-values](/static/images/project-values.png)
+
+
+
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Few values are commented for the upcoming chapters.
 
-```bash
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='7,12,39,47'}
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/project
 cat > $GITOPS_DIR/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
@@ -152,7 +169,12 @@ projects:
   - group: 'autoscaling'
     kind: HorizontalPodAutoscaler      
 EOF
-```
+:::
+
+Line 7(Restrict what may be deployed): List of premitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of argoproject-applicationset.yaml).  
+Line 12(Restrict where apps may be deployed to): Permitted destionation of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
+Line 39: Restricted resource creation list. 
+Line 47: Allowed resource creation list. 
 
 ### 3. Git commit
 

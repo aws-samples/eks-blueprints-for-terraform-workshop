@@ -5,7 +5,7 @@ weight: 50
 
 The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using Argo CD. The steps will show you how a simple change to the Git repository can trigger Argo CD to deploy and manage an addon in an automated way.
 
-In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `assets/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your Git repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
+In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your "gitops-platform" repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
 
 ```bash
 c9 open $GITOPS_DIR/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
@@ -26,19 +26,17 @@ generators:
 
 ### 1. Set load balancer label in terraform variables
 
-```bash
-sed -i "s/enable_aws_load_balancer_controller = false/enable_aws_load_balancer_controller = true/g" ~/environment/terraform.tfvars
-```
-The above code snippet will uncomment the label `enable_aws_load_balancer_controller=true` in the `~/environment/terraform.tfvars` file, as shown highlighted below.
+We will set enable_aws_argocd to true in upcoming capter.
 
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='6-6'}
-...
+```json
+cat <<EOF >> ~/environment/terraform.tfvars
+
 addons = {
-    ...
     enable_aws_load_balancer_controller = true
+    enable_aws_argocd = false
 }
-    
-:::
+EOF
+```
 
 ### 2. Create IAM roles for addon
 

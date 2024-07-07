@@ -13,8 +13,8 @@ sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/work
 Changes by the code snippet is highlighted below.
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='9'}
 $ git diff
---- a/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml
-+++ b/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml
+--- a/config/workload/webstore/workload/webstore-applicationset.yaml
++++ b/config/workload/webstore/workload/webstore-applicationset.yaml
 @@ -31,7 +31,7 @@ spec:
          component: '{{path.basename}}'
          workloads: 'true'

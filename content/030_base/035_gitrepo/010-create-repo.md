@@ -3,16 +3,13 @@ title: 'Create CodeCommit Repository'
 weight: 10
 ---
 
-### 1. Create Terraform project
+### 1. Create Terraform providers
+
+Define Terraform and providers versions
 
 ```bash
 mkdir -p ~/environment/codecommit
 cd ~/environment/codecommit
-```
-
-Define Terraform and providers versions:
-
-```bash
 cat > ~/environment/codecommit/versions.tf << 'EOF'
 terraform {
   required_version = ">= 1.4.0"
@@ -31,6 +28,8 @@ EOF
 ```
 
 ### 2. Define variables
+
+Define values for CodeCommit repository names and repo path within the repositories. 
 
 ```bash
 cat > ~/environment/codecommit/variables.tf << 'EOF'
@@ -98,6 +97,7 @@ EOF
 
 ### 3. Create repositories 
 
+Create repositories, IAM user and configure the user to access repositories.
 
 ```bash
 cat > ~/environment/codecommit/main.tf <<'EOF'
@@ -257,9 +257,9 @@ resource "aws_iam_user_policy_attachment" "gitops_access" {
 EOF
 ```
 
-### 3. Create outputs
+### 4. Create outputs
 
-VPC and private subnets are used when creating EKS Clusters.
+The outputs are referenced in upcoming chapters.
 
 ```bash
 cat > ~/environment/codecommit/outputs.tf <<'EOF'
@@ -362,6 +362,8 @@ output "codecommit_key_name" {
 
 EOF
 ```
+### 5. Provision CodeCommit repositories
+
 ```bash
 cd ~/environment/codecommit
 terraform init
@@ -370,21 +372,23 @@ terraform apply --auto-approve
 
 ## Populate git repositories
 
-### 1 Set environment variables
+The CodeCommit repositories will be populated with starter files first. These starter files will provide a foundation for the workshop. In the following workshop chapters, we will build on top of these starter files.
+### 1. Set environment variables
 
 ```bash
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 export AWS_DEFAULT_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 export WORKING_DIR="$HOME/environment"
-export SOURCE_DIR="source"
-export WORKSHOP_DIR="$WORKING_DIR/$SOURCE_DIR"
+export SOURCE_DIR="$WORKING_DIR/source/assets"
+export SCRIPT_DIR="$SOURCE_DIR/scripts"
 export GITOPS_DIR="$WORKING_DIR/gitops-repos"
+
 
 echo "export ACCOUNT_ID=${ACCOUNT_ID}" | tee -a ~/.bash_profile
 echo "export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" | tee -a ~/.bash_profile
 echo "export WORKING_DIR=${WORKING_DIR}" | tee -a ~/.bash_profile
 echo "export SOURCE_DIR=${SOURCE_DIR}" | tee -a ~/.bash_profile
-echo "export WORKSHOP_DIR=${WORKSHOP_DIR}" | tee -a ~/.bash_profile
+echo "export SCRIPT_DIR=${SCRIPT_DIR}" | tee -a ~/.bash_profile
 echo "export GITOPS_DIR=${GITOPS_DIR}" | tee -a ~/.bash_profile
 source ~/.bash_profile
 
@@ -392,19 +396,40 @@ source ~/.bash_profile
 
 
 
-### 2 Clone source workload and platform
+### 2. Clone starter files
+
+Clone webstore workload , starter files for platform and cleanup scripts.
+
+![Clone Repository](/static/images/clone_starterfiles.png)
 
 ```bash
 cd $WORKING_DIR
-git clone --depth 1 --no-checkout https://github.com/aws-samples/eks-blueprints-for-terraform-workshop $SOURCE_DIR
+git clone --depth 1 --no-checkout https://github.com/aws-samples/eks-blueprints-for-terraform-workshop source
 cd $WORKSHOP_DIR
 git sparse-checkout set assets 
 git checkout
 cd $WORKING_DIR
 
 ```
+::::expand{header="What is in my cloned repo?"}
+This repository contains resources for managing Kubernetes clusters in the **assets** directory. It includes Kubernetes YAML files for deploying workloads, ApplicationSets, and configuration values for addons, namespaces, and projects.
 
-### 3 Populate codecommit platform repository
+Asset Folder:![Asset Folders](/static/images/asset-github-folders.png)
+
+Platform Folder:![Platform Folders](/static/images/platform-github-folders.png)
+
+Webstore Workload Folder:![Workload Folders](/static/images/workload-github-folders.png)
+::::
+
+### 3. Populate codecommit gitops-platform repository
+
+Copy platform starter files to "gitops-repos" folder from the cloned repository.
+
+![Local Platform](/static/images/local_platform.png)
+
+Push "gitops-repos" platform folder to codecommit "gitops-platform" repository
+
+![CodeCommit Platform](/static/images/codecommit_platform.png)
 
 
 ```bash
@@ -412,19 +437,16 @@ mkdir -p ${GITOPS_DIR}
 gitops_platform_url=https://git-codecommit.${AWS_DEFAULT_REGION}.amazonaws.com/v1/repos/gitops-platform
 # populate platform repository
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
-cp -r $WORKSHOP_DIR/assets/platform/* ${GITOPS_DIR}/platform
+cp -r $SOURCE_DIR/platform/* ${GITOPS_DIR}/platform
 cd ${GITOPS_DIR}/platform
-#mkdir -p ${GITOPS_DIR}/platform/charts && cp -r ${WORKSHOP_DIR}/gitops/platform/charts/* ${GITOPS_DIR}/platform/charts/
-#mkdir -p ${GITOPS_DIR}/platform/bootstrap && cp -r ${WORKSHOP_DIR}/gitops/platform/bootstrap/* ${GITOPS_DIR}/platform/bootstrap/
 git -C ${GITOPS_DIR}/platform add .  || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push || true
-
 ```
 
 
 
-### 3 Populate codecommit workload repository
+### 4. Populate codecommit gitops-workload repository
 
 
 ```bash
@@ -432,7 +454,7 @@ cd ~/environment
 gitops_workload_url=https://git-codecommit.${AWS_DEFAULT_REGION}.amazonaws.com/v1/repos/gitops-workload
 # populate workload repository
 git clone ${gitops_workload_url} ${GITOPS_DIR}/workload
-cp -r $WORKSHOP_DIR/assets/workload/* ${GITOPS_DIR}/workload
+cp -r $SOURCE_DIR/workload/* ${GITOPS_DIR}/workload
 cd ${GITOPS_DIR}/workload
 git -C ${GITOPS_DIR}/workload add .  || true
 git -C ${GITOPS_DIR}/workload commit -m "initial commit" || true

@@ -21,7 +21,7 @@ addons = {
 
 :::
 
-The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configuration values for Argo CD from the `assets/platform/addons/environments/default/addons/argo-cd/values.yaml` file. You can update the `values.yaml` as per your need. The default Refresh interval for the Argo CD is 3 minutes (180 seconds). For this workshop, the Refresh interval has been updated to 5 seconds by setting the `timeout.reconciliation` value in `values.yaml` to 5. This shorter interval allows changes to happen faster during the workshop demonstrations.
+The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configuration values for Argo CD from the `addons/environments/default/addons/argo-cd/values.yaml` file in gitops-platform . You can update the `values.yaml` as per your need. The default Refresh interval for the Argo CD is 3 minutes (180 seconds). For this workshop, the Refresh interval has been updated to 5 seconds by setting the `timeout.reconciliation` value in `values.yaml` to 5. This shorter interval allows changes to happen faster during the workshop demonstrations.
 
 ![argocd-values](/static/images/argocd-values.png)
 
