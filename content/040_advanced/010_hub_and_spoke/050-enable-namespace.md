@@ -11,8 +11,10 @@ In this chapter you will associate both namespace and workload application to we
 sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml 
 ```
 Changes by the code snippet is highlighted below.
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='9'}
-$ git diff
+:::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='0'}
+git diff
+:::
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='8'}
 --- a/config/workload/webstore/workload/webstore-applicationset.yaml
 +++ b/config/workload/webstore/workload/webstore-applicationset.yaml
 @@ -31,7 +31,7 @@ spec:
