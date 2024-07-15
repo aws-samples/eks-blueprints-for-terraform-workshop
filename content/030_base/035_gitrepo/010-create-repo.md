@@ -455,7 +455,7 @@ git -C ${GITOPS_DIR}/platform push || true
 
 ```bash
 cd ~/environment
-gitops_workload_url=https://git-codecommit.${AWS_DEFAULT_REGION}.amazonaws.com/v1/repos/gitops-workload
+gitops_workload_url=ssh://git-codecommit.${AWS_DEFAULT_REGION}.amazonaws.com/v1/repos/gitops-workload
 # populate workload repository
 git clone ${gitops_workload_url} ${GITOPS_DIR}/workload
 cp -r $SOURCE_DIR/workload/* ${GITOPS_DIR}/workload
