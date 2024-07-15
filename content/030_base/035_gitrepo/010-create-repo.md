@@ -222,7 +222,7 @@ resource "null_resource" "append_string_block" {
       file="${self.triggers.file}"
 
       if grep -q "$start_marker" "$file"; then
-        sed -i '' "/$start_marker/,/$end_marker/d" "$file"
+        sed -i "/$start_marker/,/$end_marker/d" "$file"
       fi
     EOL
 
