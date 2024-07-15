@@ -128,7 +128,7 @@ locals {
   ssh_config                 = <<-EOF
   # AWS Workshop https://github.com/aws-samples/argocd-on-amazon-eks-workshop.git
   Host ${local.ssh_host}
-    User ${aws_iam_user.gitops.unique_id}
+  User ${aws_iam_user_ssh_key.gitops.id}
     IdentityFile ${local.git_private_ssh_key}
   EOF
 
