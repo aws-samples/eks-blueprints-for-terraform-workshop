@@ -53,7 +53,7 @@ terraform apply --auto-approve
 ::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
-echo -n "Click here to open -> http://" ; kubectl get svc ui-nlb -n ui  --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'; echo ""
+echo "Click here to open -> http://$(kubectl get svc ui-nlb -n ui --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 ```
 
 Access  webstore in the browser.
