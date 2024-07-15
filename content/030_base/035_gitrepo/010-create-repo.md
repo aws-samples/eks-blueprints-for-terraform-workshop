@@ -205,7 +205,7 @@ resource "null_resource" "append_string_block" {
     command = <<-EOL
       start_marker="### START BLOCK AWS Workshop ###"
       end_marker="### END BLOCK AWS Workshop ###"
-      block="$start_marker\n${local.ssh_config}\n$end_marker"
+      block="$start_marker\n${replace(local.ssh_config, "\n", "\n")}\n$end_marker"      
       file="${self.triggers.file}"
 
       if ! grep -q "$start_marker" "$file"; then
