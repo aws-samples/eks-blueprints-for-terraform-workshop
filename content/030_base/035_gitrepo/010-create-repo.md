@@ -408,7 +408,7 @@ Clone webstore workload , starter files for platform and cleanup scripts.
 ```bash
 cd $WORKING_DIR
 git clone --depth 1 --no-checkout https://github.com/aws-samples/eks-blueprints-for-terraform-workshop source
-cd $WORKSHOP_DIR
+cd source
 git sparse-checkout set assets 
 git checkout
 cd $WORKING_DIR
