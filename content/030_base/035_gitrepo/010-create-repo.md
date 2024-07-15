@@ -439,6 +439,7 @@ Push "gitops-repos" platform folder to codecommit "gitops-platform" repository
 mkdir -p ${GITOPS_DIR}
 gitops_platform_url=https://git-codecommit.${AWS_DEFAULT_REGION}.amazonaws.com/v1/repos/gitops-platform
 # populate platform repository
+ssh-keyscan -H git-codecommit.${AWS_REGION}.amazonaws.com &> ~/.ssh/known_hosts
 git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
 cp -r $SOURCE_DIR/platform/* ${GITOPS_DIR}/platform
 cd ${GITOPS_DIR}/platform
