@@ -188,6 +188,9 @@ resource "local_file" "ssh_config" {
   content         = local.ssh_config
   filename        = pathexpand(local.git_private_ssh_key_config)
   file_permission = "0600"
+  
+  # Ensure that the local_file resource is created/updated after the local-exec provisioner
+  depends_on = [null_resource.append_string_block]  
 }
 
 resource "null_resource" "append_string_block" {
