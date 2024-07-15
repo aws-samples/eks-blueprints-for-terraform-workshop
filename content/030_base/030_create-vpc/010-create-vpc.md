@@ -160,6 +160,4 @@ terraform apply -auto-approve
 
 Once completed, you can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprint)
 
-Next, you will create an EKS cluster.
-
 ::alert[This workshop uses local Terraform state. To learn about a proper setup, take a look at https://www.terraform.io/language/state]{header="Terraform State Management"}

@@ -2,15 +2,15 @@
 
 set -uo pipefail
 
-~/environment/wgit/assets/scripts/destroy-applications.sh
+$SOURCE_DIR/assets/scripts/destroy-applications.sh
 
-~/environment/wgit/assets/scripts/destroy-spoke.sh staging
+$SOURCE_DIR/assets/scripts/destroy-spoke.sh staging
 
-~/environment/wgit/assets/scripts/destroy-hub.sh
+$SOURCE_DIR/assets/scripts/destroy-hub.sh
 
+$SOURCE_DIR/assets/scripts/destroy-git.sh
 
-~/environment/wgit/assets/scripts/destroy-vpc.sh 
-
+$SOURCE_DIR/assets/scripts/destroy-vpc.sh 
 
 
 

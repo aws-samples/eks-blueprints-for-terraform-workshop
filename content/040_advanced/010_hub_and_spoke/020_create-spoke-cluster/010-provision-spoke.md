@@ -24,6 +24,13 @@ data "terraform_remote_state" "hub" {
     path = "${path.module}/../hub/terraform.tfstate"
   }
 }
+data "terraform_remote_state" "git" {
+  backend = "local"
+
+  config = {
+    path = "${path.module}/../codecommit/terraform.tfstate"
+  }
+}
 
 EOF
 ```
@@ -66,22 +73,23 @@ locals {
   
   
 
-  gitops_addons_url      = data.terraform_remote_state.hub.outputs.gitops_addons_url
-  gitops_addons_basepath = data.terraform_remote_state.hub.outputs.gitops_addons_basepath
-  gitops_addons_path     = data.terraform_remote_state.hub.outputs.gitops_addons_path
-  gitops_addons_revision = data.terraform_remote_state.hub.outputs.gitops_addons_revision
+  gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
+  gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
+  gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
+  gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
 
-  gitops_platform_url      = data.terraform_remote_state.hub.outputs.gitops_platform_url
-  gitops_platform_basepath = data.terraform_remote_state.hub.outputs.gitops_platform_basepath
-  gitops_platform_path     = data.terraform_remote_state.hub.outputs.gitops_platform_path
-  gitops_platform_revision = data.terraform_remote_state.hub.outputs.gitops_platform_revision
+  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
+  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
+  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
+  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
 
-  gitops_workload_url      = data.terraform_remote_state.hub.outputs.gitops_workload_url
-  gitops_workload_basepath = data.terraform_remote_state.hub.outputs.gitops_workload_basepath
-  gitops_workload_path     = data.terraform_remote_state.hub.outputs.gitops_workload_path
-  gitops_workload_revision = data.terraform_remote_state.hub.outputs.gitops_workload_revision
+  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
+  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
+  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
+  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
 
   aws_addons = {
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd, false)    
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
     enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
     enable_aws_fsx_csi_driver                    = try(var.addons.enable_aws_fsx_csi_driver, false)

@@ -16,7 +16,8 @@ The IAM policy aws_assume_policy attached to the hub-cluster-argocd-hub role inc
 By creating this role and policy, you establish a centralized identity management approach, enabling Argo CD to seamlessly deploy applications and manage resources across multiple EKS clusters within the same AWS account while maintaining proper access controls and security best practices.
 
 
-:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='29,35,50,56'}
+<!--:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='29,35,50,56'}-->
+```json
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 ################################################################################
@@ -80,7 +81,8 @@ resource "aws_eks_pod_identity_association" "argocd_api_server" {
 }
 
 EOF
-:::
+```
+<!--:::-->
 
 We also configure EKS Pod Identity, with a Pod association, allowing our Argo CD application server and controller, to assume that role.
 
@@ -118,7 +120,7 @@ kubectl rollout restart -n argocd statefulset argo-cd-argocd-application-control
 You can verify that EKS Pod Identity is correctly applied by looking at the injected environment variables:
 
 ```bash
-kubectl exec -it deployment/argo-cd-argocd-server -n argocd -- env | grep AWS
+kubectl --context hub exec -it deployment/argo-cd-argocd-server -n argocd -- env | grep AWS
 ```
 
 should be like: 

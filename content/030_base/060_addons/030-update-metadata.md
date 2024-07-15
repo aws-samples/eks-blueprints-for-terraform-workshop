@@ -13,132 +13,60 @@ In the Argo CD user interface, go to the hub cluster. The hub-cluster currently 
 
 > Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information.
 
-### 1. Add variables
-You can have separate git repository for addons, platform and workloads. In this workshop they all exist in the same repository.
 
-Define Git repository variables for addons, platform, and workloads. These repository variables will be referenced in upcoming chapters when generating Applications.
+### 1. Codecommit Remote State
+The hub cluster references codecommit module outputs. 
 
 ```json
-cat <<'EOF' >> ~/environment/hub/variables.tf
-variable "gitops_addons_url" {
-  type        = string
-  description = "Git repository addons url"
-  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
-}
-variable "gitops_platform_url" {
-  type        = string
-  description = "Git repository platform url"
-  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
-}
-variable "gitops_workload_url" {
-  type        = string
-  description = "Git repository platform url"
-  default     = "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git"
-}
-variable "gitops_addons_basepath" {
-  type        = string  
-  description = "Git repository base path for addons"
-  default     = "assets/platform/addons/"
-}
-variable "gitops_addons_path" {
-  type        = string  
-  description = "Git repository path for addons"
-  default     = "applicationset/"
-}
-variable "gitops_addons_revision" {
-  type        = string  
-  description = "Git repository revision/branch/ref for addons"
-  default     = "HEAD"
-}
-variable "gitops_platform_basepath" {
-  type        = string  
-  description = "Git repository base path for platform"
-  default     = "assets/platform/"
-}
-variable "gitops_platform_path" {
-  type        = string  
-  description = "Git repository path for platform"
-  default     = "bootstrap"
-}
-variable "gitops_platform_revision" {
-  type        = string  
-  description = "Git repository revision/branch/ref for platform"
-  default     = "HEAD"
-}
-variable "gitops_workload_basepath" {
-  type        = string  
-  description = "Git repository base path for platform"
-  default     = "assets/developer/"
-}
-variable "gitops_workload_path" {
-  type        = string  
-  description = "Git repository path for workload"
-  default     = "gitops/apps"
-}
-variable "gitops_workload_revision" {
-  type        = string  
-  description = "Git repository revision/branch/ref for platform"
-  default     = "HEAD"
+cat <<'EOF' >> ~/environment/hub/remote_state.tf 
+
+data "terraform_remote_state" "git" {
+  backend = "local"
+
+  config = {
+    path = "${path.module}/../codecommit/terraform.tfstate"
+  }
 }
 
 EOF
 ```
 
-### Set git Values
-
-Copy the provided code snippet, replace the placeholder value "<<replace with your GitHub User Name>>" with your actual GitHub User Name, used to fork the repository. We use the full HTTPS clone URL **Then you can proceed.**. 
->If you have clone the repo in another organisation than you're GitHub User, you can also update the GITHUB_LOGIN with your org name.
-
-```bash
-export GITHUB_USER="<<replace with your GitHub User Name>>"
-export GITHUB_LOGIN=$GITHUB_USER
-export GITHUB_TOKEN="<<replace with your GitHub Token retrieve in pre-requisite>>
-```
+### 2. Reference Codecommit outputs values
 
 ```json
-cat <<EOF >> ~/environment/terraform.tfvars
-gitops_addons_url            = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
-gitops_platform_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
-gitops_workload_url          = "https://github.com/${GITHUB_LOGIN}/eks-blueprints-for-terraform-workshop.git"
+cat <<'EOF' >> ~/environment/hub/main.tf 
+locals{
 
-addons = {
-    enable_aws_load_balancer_controller = false
-    enable_aws_argocd = false
+  gitops_addons_url      = data.terraform_remote_state.git.outputs.gitops_addons_url
+  gitops_addons_basepath = data.terraform_remote_state.git.outputs.gitops_addons_basepath
+  gitops_addons_path     = data.terraform_remote_state.git.outputs.gitops_addons_path
+  gitops_addons_revision = data.terraform_remote_state.git.outputs.gitops_addons_revision
+
+  gitops_platform_url      = data.terraform_remote_state.git.outputs.gitops_platform_url
+  gitops_platform_basepath = data.terraform_remote_state.git.outputs.gitops_platform_basepath
+  gitops_platform_path     = data.terraform_remote_state.git.outputs.gitops_platform_path
+  gitops_platform_revision = data.terraform_remote_state.git.outputs.gitops_platform_revision
+
+  gitops_workload_url      = data.terraform_remote_state.git.outputs.gitops_workload_url
+  gitops_workload_basepath = data.terraform_remote_state.git.outputs.gitops_workload_basepath
+  gitops_workload_path     = data.terraform_remote_state.git.outputs.gitops_workload_path
+  gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
+  
 }
 EOF
 ```
 
-::alert[Check the file is correctly filled]{header="Important" type="warning"}
 
-```bash
-c9 open ~/environment/terraform.tfvars
-```
 
-Example:
-```
-eks_admin_role_name          = "WSParticipantRole"
 
-gitops_addons_url            = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
-gitops_platform_url          = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
-gitops_workload_url          = "https://github.com/seb-workshop/eks-blueprints-for-terraform-workshop.git"
+### 2. Define addons variables
 
-addons = {
-    enable_aws_load_balancer_controller = false
-    enable_aws_argocd = false
-}
-```
+Define  enable-* addons boolean variables. These provide a simple way to control whether addons are installed or removed. Define addons variable as a list of key/value pairs of addon(enable-*) values. Define addons_metadata variable as a list of key/value pairs of mainly codecommit values.
 
-::alert[For simplicity in this workshop, we use the same Git repository for add-ons, platform, and workloads. However, the project is structured to allow you to easily use separate Git repositories for each functionality, depending on your needs.]{header="Important" type="warning"}
-
-### 2. Define local variables
-
-Define some local variables, that include:
-- *'addons'* local, which represents the Labels that will be sent to the Cluster Secret
-- *'addons_metadata'* local, which represents the annotations that will be sent to the Cluster Secfret
 
 Some values are commented and will be used later in the workshop.
 
-:::code{showCopyAction=true showLineNumbers=false language=json highlightLines='48,73'}
+:::code{showCopyAction=true showLineNumbers=false language=json highlightLines='48,58'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
@@ -196,21 +124,6 @@ locals{
   )
 
 
-  gitops_addons_url      = var.gitops_addons_url
-  gitops_addons_basepath = var.gitops_addons_basepath
-  gitops_addons_path     = var.gitops_addons_path
-  gitops_addons_revision = var.gitops_addons_revision
-
-  gitops_platform_url      = var.gitops_platform_url
-  gitops_platform_basepath = var.gitops_platform_basepath
-  gitops_platform_path     = var.gitops_platform_path
-  gitops_platform_revision = var.gitops_platform_revision
-
-  gitops_workload_url      = var.gitops_workload_url
-  gitops_workload_basepath = var.gitops_workload_basepath
-  gitops_workload_path     = var.gitops_workload_path
-  gitops_workload_revision = var.gitops_workload_revision
-
   addons_metadata = merge(
     #enableaddonmetadata module.eks_blueprints_addons.gitops_metadata,
     {
@@ -248,63 +161,6 @@ locals{
 EOF
 :::
 
-### 3. Define outputs
-
-The purpose of these outputs is to provide data for upcoming spoke modules (in advanced sections).
-
-```bash
-cat <<'EOF' >> ~/environment/hub/outputs.tf
-
-output "gitops_addons_url" {
-  value = local.gitops_addons_url
-}
-
-output "gitops_addons_path" {
-  value = local.gitops_addons_path
-}
-
-output "gitops_addons_revision" {
-  value = local.gitops_addons_revision
-}
-    
-output "gitops_addons_basepath" {
-  value = local.gitops_addons_basepath
-} 
-
-output "gitops_platform_url" {
-  value = local.gitops_platform_url
-}
-
-output "gitops_platform_path" {
-  value = local.gitops_platform_path
-}
-
-output "gitops_platform_revision" {
-  value = local.gitops_platform_revision
-}
-    
-output "gitops_platform_basepath" {
-  value = local.gitops_platform_basepath
-} 
-
-output "gitops_workload_url" {
-  value = local.gitops_workload_url
-}
-
-output "gitops_workload_path" {
-  value = local.gitops_workload_path
-}
-
-output "gitops_workload_revision" {
-  value = local.gitops_workload_revision
-}
-    
-output "gitops_workload_basepath" {
-  value = local.gitops_workload_basepath
-} 
-
-EOF
-```
 ### 4. Update Labels and Annotations
 
 We need to update the labels and annotations on the hub-cluster Cluster object. To do this, we will use the GitOps Bridge. The GitOps Bridge is configured to update labels and annotations on the specified cluster object.
@@ -342,8 +198,9 @@ Goto to the **Settings > Clusters > hub-cluster**  in the Argo CD dashboard. Exa
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 
 
-You can check that the Labels and annotations are correctly propagated to the cluster secret: 
+ArgoCD pulls lables and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret. 
 
+You can check  the Labels and annotations on the cluster secret: 
 
 ```bash
 kubectl --context hub get secrets -n argocd hub-cluster -o yaml

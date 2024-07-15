@@ -3,19 +3,23 @@ title: 'Create Namespace'
 weight: 10
 ---
 
-You will use namespace helm templates to create namespace, limitrange, networkpolicy, rbac and resource quota.
+In this chapter you will create webstore workload namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup ArgoCD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
 
-![namespace-helm](/static/images/namespace-helm.png)
-
-::alert[In this workshop helm chart is in the GitHub repository to make it easy to understand. Use a Helm chart repository to store and serve charts - This is the preferred way to share charts. ]{header="Important" type="warning"}
+![appofapps-applicationset-watch](/static/images/namespace-design.png)
 
 ### 1. Create AppofApps namespace applicationset 
 
-AppofApps Namespace application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new
-workload it detects the change and creates workload specific namespace applicationset without requiring manual intervention. 
+In the "Kubernetes Addons" chapter, we added a file called "appofapps-applicationset.yaml" that watches the "appofapps" folder and processes any changes.
 
-:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='18, 21, 33'}
-cat > ~/environment/wgit/assets/platform/appofapps/namespace-applicationset.yaml << 'EOF'
+![namespace-begin](/static/images/namespace-begin.png)
+
+Lets Add namespace applicationset into the appofapps folder.
+
+![namespace-add-namespace-applicationset](/static/images/namespace-namespace-applicationset.png)
+
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='22,34'}
+
+cat > $GITOPS_DIR/platform/appofapps/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -63,30 +67,14 @@ spec:
 EOF
 :::
 
-Again, we can note, that it uses the annotations from the secret like {{metadata.annotations.platform_repo_url}}, which means that it will retrieve the value 
-from the secret, like we can do manually with:
+This ApplicationSet initiates the creation of namespaces for all the workloads.
 
-```bash
-kubectl --context hub get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url"
-```
-
-Additionaly, we are using a git generator, that will watch the defined directory : `{{metadata.annotations.platform_repo_basepath}}config/workload/*` which points 
-to your git repository, which is normally checkout locally, so you can check the content here: 
-
-```bash
-ls -la ~/environment/wgit/assets/platform/config/workload/
-```
-
-The git generator will iterate for each item present in this directory and then generate an ApplicationSet that will add the `/namespace` to the item find, 
-this is done with the syntax: `path: '{{path}}/namespace'`, so the target will be `assets/platform/config/workload/xxxx/namespace/`where xxxx is every directory 
-find by the git generator.
-
-> Later we will use the same git generator to deploy also our workloads.
+Git generator(line 22) iterates through folders under "config/workload" in gitops-workload repository. For each folder( line 34), ApplicationSet process files under "namespace" folder. Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add appofapps namespace applicationset"
 git push
@@ -99,16 +87,16 @@ On the Argo CD dashboard click on appofapps Application to see newly created nam
 ![namespace-helm](/static/images/appofapps-namespace-applicationset.png)
 
 
+### 3. Create webstore namespace 
 
-### 3. Create webstore namespace applicationset
+Let's create an ApplicationSet that is responsible for the namespaces associated with the webstore workload.
 
-Now, we create an ApplicationSet stored in the directory that is watched by the `namespace` ApplicationSet we juste created.
+![namespace-helm](/static/images/namespace-webstore-applicationset.png)
 
-The Webstore Namespace ApplicationSet automatically creates an Argo CD Namespace Application for any clusters that have the label `workload_webstore: 'true'`, and use the `environment` label (line 20) from the cluster secret to customize the name of the Application, in our case the name will be `namespace-staging-webstore`.
 
-:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='15,20'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='15,29,35,36'}
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace
+cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -157,16 +145,22 @@ spec:
 EOF
 :::
 
-### 4. Create default namespace values 
+Line 17: Only clusters that have label workload_webstore: 'true' are selected  
+Line 29: Install the helm chart in the folder charts/namespace  
+![namespace-helm](/static/images/namespace-helm.png)
 
-The Webstore ApplicationSet reads the default namespace configuration values (line 35) from `assets/platform/config/workload/webstore/namespace/values/default-values.yaml` in the git repository. It then looks for environment specific overrides in the `<environment label>-values.yaml` files if it exists. 
+::alert[In this workshop helm chart is in the GitHub repository to make it easy to understand. Use a Helm chart repository to store and serve charts - This is the preferred way to share charts. ]{header="Important" type="warning"}
 
-For example, for the hub-cluster which has the environment label `"hub"`, it will check `assets/platform/config/workload/webstore/namespace/values/hub-values.yaml` for any overrides. If the override file for a specific environment label does not exist, such as `<environment label>-values.yaml`, then the Webstore ApplicationSet will ignore it and just use the default values in `default-values.yaml`.
-The `default-values.yaml` contains the namespaces to create, along with the **limitRanges** and **resourceQuotas** to apply for each namespace. 
+Line 35: Default values for the namespace helm chart   
+Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = hub with the file  hub-values.yaml 
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='7,39,71,103,135,167,199'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
+### 4. Create webstore namespace values 
+
+![namespace-helm](/static/images/namespace-webstore-defalut-values.png)
+
+```json
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace/values
+cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
 name: webstore
 labels:
   environment: hub
@@ -396,12 +390,11 @@ namespaces:
             scopeName: PriorityClass
             values: ["high"]            
 EOF
-:::
+```
 
-Thoses values will be used with the namespace helm Chart that you can find in the Application target which is `assets/platform/charts/namespace`.
 
 ```bash
-tree ~/environment/wgit/assets/platform/charts/namespace
+tree $GITOPS_DIR/platform/charts/namespace
 ```
 
 Output:
@@ -432,18 +425,10 @@ Output:
 └── values.yaml
 ```
 
-### 5. Git commit
 
-```bash
-cd ~/environment/wgit
-git add . 
-git commit -m "add webstore namespace applicationset and namespace values"
-git push
-```
+### 5. Enable hub cluster for webstore workload
 
-### 6. Set workload_webstore: 'true' label on the hub cluster
-
-You want to deploy the webstore workload  on the hub cluster . You can do this by setting the label workload_webstore: 'true' on the hub cluster.
+The webstore Namespace applicationset( step 5) only creates webstore namespaces on clusters labeled with workload_webstore: 'true'. Let's add this label to the hub cluster.
 
 ```bash
 sed -i "s/#enablewebstore//g" ~/environment/hub/main.tf
@@ -461,7 +446,7 @@ locals{
 }
 :::
 
-### 7. Apply Terraform
+### 6. Apply Terraform
 
 This will set the label workload_webstore: 'true' on the hub cluster.
 
@@ -469,6 +454,22 @@ This will set the label workload_webstore: 'true' on the hub cluster.
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
+### 7. Git commit
+
+```bash
+cd $GITOPS_DIR/platform
+git add . 
+git commit -m "add webstore namespace applicationset and namespace values"
+git push
+```
+The namespace-applicationset.yaml file iterates through the folders under config/workload/\<\<workload>>/namespace. 
+With the recent commit, it now processes the files located under config/workload/webstore/namespace. 
+
+![namespace-helm](/static/images/namespace-process-webstore-applicationset.png)
+
+The namespace-webstore-applicationset.yaml file installs the namespace Helm chart using the default values.  
+![namespace-helm](/static/images/namespace-create-webstore-namespace.png)
+
 
 ### 8. Validate namespaces 
 

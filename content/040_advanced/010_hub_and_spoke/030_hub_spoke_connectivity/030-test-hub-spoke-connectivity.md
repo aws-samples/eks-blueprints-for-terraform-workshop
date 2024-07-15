@@ -3,33 +3,33 @@ title: 'Test Hub Spoke Connectivity'
 weight: 30
 ---
 
-In this chapter, you will test hub-spoke connectivity by checking the installation of the AWS Load Balancer Controller on the spoke Kubernetes cluster. We have configured the `enable_aws_load_balancer_controller = true` on the spoke cluster's labels. As soon as the Hub's Argo CD has connectivity, it can reconcile the labels and install associated addons.
 
+This chapter validates hub-spoke connectivity by checking for the AWS Load Balancer Controller installed on the spoke-staging cluster. In this workhshop, ArgoCD was configured to install addon by setting a label to true. The label enable_aws_load_balancer_controller=true installs the load balancer addon. This label was set during creation of the spoke cluster. Once hub-spoke connectivity between hub and spoke was established, ArgoCD installed the load balancer on the spoke by detecting this label had been set.
+
+:::code{showCopyAction=true showLineNumbers=false language=yaml}
+cat ~/environment/spoke/terraform.tfvars
+:::
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4'}
-$ cat ~/environment/spoke/terraform.tfvars
 ...
 addons = {
     enable_aws_load_balancer_controller = true
 }
 :::
 
-In this contexte, the eks-blueprints-addons module from spoke-staging, will create necessary AWS resources for the load balancer controller to work, then it will update the spoke-staging secret in the hub-cluster with the label to activate the addon, and also provide additional metadatas like the IAM role to be used by the load balancer controller. 
 
-
-You can check the label with: 
+You can check the label on the spoke-staging cluster: 
 
 ```bash
 kubectl --context hub get secrets -n argocd spoke-staging -o json | jq ".metadata.labels" | grep load_balancer
 ```
 
-and the annotations with:
+The Terraform blueprint modules and gitops bridge set up an IAM role that gets assigned to the service account for the load balancer. This configures the necessary permissions for the load balancer to operate.
+
+You can check the IAM role on the spoke-stagging annotations:
 
 ```bash
 kubectl --context hub get secrets -n argocd spoke-staging -o json | jq ".metadata.annotations"  | grep load_balancer
 ```
-
-From then, Argo CD in the hub-cluster will trigger some deployments using the annoations in the secret to configure the addon, targeting the spoke-staging cluster, and installing the load balancer controller addon.
-
 
 The Argo CD dashboard should have the stagging load balancer addon.
 

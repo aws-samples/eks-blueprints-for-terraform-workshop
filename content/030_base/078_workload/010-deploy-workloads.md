@@ -2,12 +2,18 @@
 title: 'Deploy Workloads'
 weight: 10
 ---
+In this chapter you will deploy webstore workload. Similiar to namespace in the previous chater , we will setup ArgoCD so that deploying a new workload  is as simple as creating a new  a folder with manifests.
+
 ### 1. Create AppofApps workload applicationset
 
-App of Apps workload application set scans workload folders under `config/workload` and creates specific application sets for each workload. When you add a new workload it detects the change and creates workload specific  applicationset without requiring manual intervention.
+This ApplicationSet initiates the deployment of all the workloads.
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='13,17,21,32'}
-cat > ~/environment/wgit/assets/platform/appofapps/workload-applicationset.yaml << 'EOF'
+![workload-appofapps](/static/images/workload-appofapps.png)
+
+
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='22,33'}
+
+cat > $GITOPS_DIR/platform/appofapps/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -52,40 +58,50 @@ spec:
         syncOptions:
           - CreateNamespace=true
 EOF
+
 :::
 
-Again, we have the git generator that will iterate in the directory `assets/platform/config/workload/*`, and will create it from the `path: '{{path}}/workload'`, so we will need to create this directory.
+Line 22: Git generator iterates through folders under "config/workload" in gitops-platform repository  
+Line 33: {path} maps to each workload folder under config/workload. For webstore {path} maps to config/workload/webstore. Since there is no folder "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
 git commit -m "add appofapps workload applicationset"
 git push
 ```
+
+As the appofapps folder is monitored, when a new file like workload-applicationset.yaml is added, it gets processed. 
+
+![workload-appofapps-monitor](/static/images/workload-appofapps-monitor.png)
+
+The newly added workload-applicationset.yaml file iterates through the config/workload folders and processes any workload config files found under config/workload/\<<workload-name\>>/workload. Since the folder config/workload/webstore/workload does not exist it has nothing to process.
+
+![workload-appofapps-monitor](/static/images/workload-appofapps-iteration.png)
+
 
 On the Argo CD dashboard click on appofapps Application to see newly created workload applicationset.
 
 
 ![appofapps-workload-applicationset](/static/images/appofapps-workload-applicationset.png)
 
-### 3. Create webstore workload applicationset
+### 3. Deploy webstore workload 
 
-The Webstore Workload ApplicationSet automatically activate for for any clusters that have the label `workload_webstore: 'true'`, and will iterate for each items present in the target directory. 
-So we define a `webstore` ApplicationSet there, that will create Argo CD Application for each of our microservice. 
+The webstore workload configuration files are in the **gitops-workload** repository, not in the **gitops-platform** repository.
 
-In this example, the Webstore ApplicationSet will deploy the `"hub"` version of the application to the hub-cluster, which is defined in the directory `assets/developer/webstore/xxx/hub/`:
+The webstore workload supports multiple environments like hub, staging and prod. Environment-specific configurations are applied using kustomization.
 
-- There is only one cluster labeled with `workload_webstore: 'true'` 
-- That cluster also has the label `environment: 'hub'`
-- `{{metadata.annotations.workload_repo_basepath}}` points to `assets/developer`
-- `{{values.workload}}` points to `webstore`
-- `'{{path}}/{{metadata.labels.environment}}'` (line 39) points to `assets/developer/webstore/xxx/hub/` where xxx is each webstore microservice
+![workload-webstore-folders](/static/images/workload-webstore-folders.png)
 
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='14,21,25,39'}
-mkdir -p ~/environment/wgit/assets/platform/config/workload/webstore/workload
-cat > ~/environment/wgit/assets/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
+Lets add webstore applicationset to deploy the webstore workload in the gitops-workload repository.
+
+![workload-webstore](/static/images/workload-webstore.png)
+
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
+mkdir -p $GITOPS_DIR/platform/config/workload/webstore/workload
+cat > $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -137,14 +153,25 @@ spec:
           limit: 100
 
 EOF
+
 :::
+
+Line 17: The webstore workload is only deployed on clusters that have the label workload_webstore = true. The hub cluster has workload_webstore = true label.  
+Line 22: metadata.annotations.workload_repo_url i.e workload_repo_url annotation on the hub cluster has the value of the gitops-worload repository.  
+Line 25: It maps to webstore/* ( microservices under webstore folder). 
+Line 39: Path gets the value each microservice directory. The label environment on the hub cluster is "hub". Kustomization deploys "hub" environment of each microservice.  
+Line 42: path.basename maps to the microservice directory name, which maps to the target namespace for deployment. So each microservice deploys into its own matching namespace. This makes asset microservice deploy to asset namespace, carts to carts and so on.  
+
+
+![workload-webstore-folders](/static/images/workload-webstore-deployment.png)
+
 
 ### 4. Git commit
 
 ```bash
-cd ~/environment/wgit
+cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add webstore workload applicationset"
+git commit -m "add appofapps workload applicationset"
 git push
 ```
 
@@ -153,7 +180,7 @@ git push
 ::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
-echo -n "Click here to open -> http://" ; kubectl get svc ui-nlb -n ui  --context hub --output jsonpath='{.status.loadBalancer.ingress[0].hostname}'; echo ""
+echo "Click here to open -> http://$(kubectl get svc ui-nlb -n ui --context hub --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
 ```
 
 Access  webstore in the browser.
