@@ -3,7 +3,7 @@ title: 'Setup Git Repository'
 weight: 35
 ---
 
-In this workshop we create two codecommit repositories:
+In this workshop you are going to create two codecommit repositories:
 
 ![CodeCommit Repository](/static/images/codecommit_repos.png)
 
