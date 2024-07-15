@@ -89,6 +89,7 @@ locals {
   gitops_workload_revision = data.terraform_remote_state.git.outputs.gitops_workload_revision
 
   aws_addons = {
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd, false)    
     enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
     enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
     enable_aws_fsx_csi_driver                    = try(var.addons.enable_aws_fsx_csi_driver, false)
