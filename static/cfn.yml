@@ -518,7 +518,7 @@ Resources:
                 echo "alias kctx=ktx" | tee -a /home/ec2-user/.bashrc
 
                 echo '=== Installing c9 ==='
-                su -l -c 'npm i -g c9' || trueq
+                su -l -c 'npm i -g c9' || true
 
                 echo '=== Exporting ENV Vars ==='
                 su -l -c 'echo "export AWS_ACCOUNT_ID=${AWS::AccountId}" >> ~/.bashrc' ec2-user
