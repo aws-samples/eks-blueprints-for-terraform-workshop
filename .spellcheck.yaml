@@ -4,13 +4,32 @@ matrix:
     lang: en
   dictionary:
     encoding: utf-8
+    wordlists:
+    - .github/config/containers-dictionary.txt
+    output: .github/config/containers-dictionary.dic
   pipeline:
-  - pyspelling.filters.markdown:
-  - pyspelling.filters.html:
-      comments: false
-      ignores:
-      - code
-      - pre
+  - pyspelling.filters.context:
+      context_visible_first: true
+      escapes: '\\[\\`~]'
+      delimiters:
+      # Ignore multiline content between fences (fences can have 3 or more back ticks)
+      # ```bash
+      # content
+      # ```
+      - open: '(?s)^(?P<open> *`{3,}.*)$'
+        close: '^(?P=open)$'
+      # Ignore text between inline back ticks
+      - open: '(?P<open>`+)'
+        close: '(?P=open)'
+      # Ignore alert/info/button
+      # ::alert
+      # :button
+      #- open: '(?s)^(?P<open> *:{2,}.*)$'
+      #  close: '(?P=open)'
+      - open: '(?s)^(?P<open> *:{1,}.*)$'
+        close: '(?P=open)'
   sources:
-  - '**/*.md'
+  #- 'content/**/*.md'
+  - 'content/020_setup/cloud9/index.en.md'
+  - 'content/020_setup/index.en.md'
   default_encoding: utf-8
