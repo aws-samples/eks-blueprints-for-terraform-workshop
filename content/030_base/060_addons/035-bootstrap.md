@@ -9,7 +9,7 @@ To automatically generate ArgoCD applications, you will implement the "App of Ap
 
 ### App of Apps pattern
 
-Normally an ArgoCD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the git repo https://aws.github.io/eks-charts.
+Normally an ArgoCD Application points to a git repo which contains manifests. The loadbalancer controller you provisioned previously points to the git repo https://aws.github.io/eks-charts.
 
  
  ![applicationset](/static/images/lb-helmchart-folder.png)

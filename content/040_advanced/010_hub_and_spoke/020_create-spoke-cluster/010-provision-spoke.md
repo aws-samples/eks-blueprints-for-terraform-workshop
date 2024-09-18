@@ -339,7 +339,7 @@ EOF
 
 ### 5. Copy variable values file to the cluster
 
-We copy and reeset the addons, so that we enable when required
+We copy and reset the addons, so that we enable when required
 
 ```bash
 cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars

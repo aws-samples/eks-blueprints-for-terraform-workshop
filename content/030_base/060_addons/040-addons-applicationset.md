@@ -62,7 +62,7 @@ git push
 
 ### 3. Validate addons ApplicationSet
 
-::alert[The default configuration for ArgoCD is to check for updates in a git repository every 3 minutes. It might take upto 3 minutes to recognize the new file in the git repo. Click on REFRESH APPS on the ArgoCD Dashboard to refresh rightaway.]{header="cluster-addons Application"}
+::alert[The default configuration for ArgoCD is to check for updates in a git repository every 3 minutes. It might take up to 3 minutes to recognize the new file in the git repo. Click on REFRESH APPS on the ArgoCD Dashboard to refresh right away.]{header="cluster-addons Application"}
 
 Navigate to the ArgoCD dashboard in the UI and verify that the "cluster-addons" Application was created successfully.
 

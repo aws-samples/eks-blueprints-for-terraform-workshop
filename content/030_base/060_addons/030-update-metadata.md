@@ -131,7 +131,7 @@ addons = {
 
 Define some local variables, that include:
 - *'addons'* local, which represents the Labels that will be sent to the Cluster Secret
-- *'addons_metadata'* local, which represents the annotations that will be sent to the Cluster Secfret
+- *'addons_metadata'* local, which represents the annotations that will be sent to the Cluster Secret
 
 Some values are commented and will be used later in the workshop.
 
