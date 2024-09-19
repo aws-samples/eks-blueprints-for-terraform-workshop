@@ -197,7 +197,7 @@ Goto to the **Settings > Clusters > hub-cluster**  in the Argo CD dashboard. Exa
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 
 
-ArgoCD pulls lables and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret. 
+Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret.
 
 You can check  the Labels and annotations on the cluster secret: 
 

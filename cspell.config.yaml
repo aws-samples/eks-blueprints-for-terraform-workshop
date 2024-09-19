@@ -4,7 +4,7 @@ patterns:
   - name: markdown_code_snippet
     pattern: "/`(.*)`/g"
   - name: code_block
-    pattern: "/.*:code.*/gm"
+    pattern: "/^:::code[\\s\\S]*?^\\s*:::/gm"
   - name: mardown_comment
     pattern: "/<!--.*/g"
 languageSettings:
