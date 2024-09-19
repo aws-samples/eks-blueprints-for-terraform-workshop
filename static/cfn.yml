@@ -451,7 +451,7 @@ Resources:
                 export HOME=/home/ec2-user
                 echo '=== INSTALL Some Tools ==='
                 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-                sudo yum -y -q install jq gettext bash-completion moreutils terraform
+                sudo yum -y -q install jq gettext bash-completion moreutils terraform tree
 
                 echo '=== Configure workshop code ==='
                 su -l -c 'aws ecr get-login-password --region ${AWS::Region} | docker login --username AWS --password-stdin ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com' ec2-user
@@ -482,7 +482,7 @@ Resources:
                 sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
                 rm argocd-linux-amd64
                 curl -sS https://webinstall.dev/k9s | bash
-                sudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.2.1/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_
+                sudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_
 
                 sudo chown -R ec2-user:ec2-user /home/ec2-user/.*
                 su -l -c 'helm repo add eks https://aws.github.io/eks-charts' ec2-user
@@ -503,7 +503,7 @@ Resources:
 
                 su -l -c 'echo "export TERM=xterm-color" >> /home/ec2-user/.bashrc' ec2-user
 
-                git clone --depth 1 https://github.com/junegunn/fzf.git /home/ec2-user/.fzf
+                git clone --depth 1 https://github.com/junegunn/fzf.git /home/ec2-user/.fzf || true
                 /home/ec2-user/.fzf/install --all
                 sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/kns -o /usr/local/bin/kns && sudo chmod +x $_
                 sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/ktx -o /usr/local/bin/ktx && sudo chmod +x $_
@@ -518,7 +518,7 @@ Resources:
                 echo "alias kctx=ktx" | tee -a /home/ec2-user/.bashrc
 
                 echo '=== Installing c9 ==='
-                su -l -c '$NVM_BIN/npm  i -g c9' ec2-user            
+                su -l -c 'npm i -g c9' || trueq
 
                 echo '=== Exporting ENV Vars ==='
                 su -l -c 'echo "export AWS_ACCOUNT_ID=${AWS::AccountId}" >> ~/.bashrc' ec2-user

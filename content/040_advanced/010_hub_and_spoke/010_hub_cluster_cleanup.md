@@ -1,9 +1,10 @@
 ---
-title: '[Optional] ArgoCD Hub Cluster Cleanup'
+title: '[Optional] Argo CD Hub Cluster Cleanup'
 weight: 10
+hidden: true
 ---
 
-In ArgoCD hub-spoke deployment architecture, hub is dedicated to only ArgoCD. In the previous chapter you have deployed webstore namespace and workload in the hub cluster.
+In Argo CD hub-spoke deployment architecture, hub is dedicated to only Argo CD. In the previous chapter you have deployed webstore namespace and workload in the hub cluster.
 In this chapter you can undeploy webstore namespace and workload, from the hub cluster, we will redeploy them later in the spoke cluster.
 
 ### 1. Set label workload_webstore = false and workloads = false
@@ -38,7 +39,7 @@ terraform apply -auto-approve
 ```
 ### 3. Validate workload and namespace deletion
 
-In the ArgoCD UI, you should see that the Application resources for the webstore namespace and workload no longer show any deployments to the hub-cluster. This verifies that ArgoCD has detected the label change and undeployed those components from that cluster as expected.
+In the Argo CD UI, you should see that the Application resources for the webstore namespace and workload no longer show any deployments to the hub-cluster. This verifies that Argo CD has detected the label change and undeployed those components from that cluster as expected.
 
 ![hub-workload-before-after](/static/images/hub-cluster-workload-before-after.png)
 

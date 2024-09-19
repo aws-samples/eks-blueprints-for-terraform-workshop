@@ -9,14 +9,14 @@ An addon is software that provides supporting operational capabilities to Kubern
 
 
 
-GitOps Bridge maintains ArgoCD [ApplicationSets](https://github.com/gitops-bridge-dev/gitops-bridge-argocd-control-plane-template/tree/main/bootstrap/control-plane/addons/aws) for various add-ons under the addons folder in its repository. As Kubernetes and EKS evolve, these ApplicationSets get updated by the GitOps Bridge project. Instead of writing our own ApplicationSet for each individual add-on, we will leverage the ones provided by GitOps Bridge. This avoids reinventing the wheel and allows us to benefit from the add-on ApplicationSets curated by the GitOps Bridge community.
+GitOps Bridge maintains Argo CD [ApplicationSets](https://github.com/gitops-bridge-dev/gitops-bridge-argocd-control-plane-template/tree/main/bootstrap/control-plane/addons/aws) for various add-ons under the addons folder in its repository. As Kubernetes and EKS evolve, these ApplicationSets get updated by the GitOps Bridge project. Instead of writing our own ApplicationSet for each individual add-on, we will leverage the ones provided by GitOps Bridge. This avoids reinventing the wheel and allows us to benefit from the add-on ApplicationSets curated by the GitOps Bridge community.
 
 This workshop utilizes a cloned copy of the GitOps Bridge ApplicationSets repository. **Organizations should consider cloning the ApplicationSets and then using them as-is or customizing them to meet their specific enterprise needs.**
 
-::::expand{header="Why manage addons with ArgoCD?"}
+::::expand{header="Why manage addons with Argo CD?"}
 - GitOps based - Manifests are stored in Git, enabling version control, collaboration, and review.
 
-- Automated sync - ArgoCD auto-syncs the cluster state to match the Git repo. Provides continuous delivery.
+- Automated sync - Argo CD auto-syncs the cluster state to match the Git repo. Provides continuous delivery.
 
 - Rollback and auditability - Changes are tracked and can be easily rolled back. Improves reliability.
 
@@ -24,7 +24,7 @@ This workshop utilizes a cloned copy of the GitOps Bridge ApplicationSets reposi
 
 - Multi-cluster capable - Can manage addons across multiple clusters in a consistent way.
 
-- Health monitoring - ArgoCD provides health status and alerts for addon deployments.
+- Health monitoring - Argo CD provides health status and alerts for addon deployments.
 ::::
 
 ::::expand{header="How is GitOps Bridge ApplicationSet configured?"}

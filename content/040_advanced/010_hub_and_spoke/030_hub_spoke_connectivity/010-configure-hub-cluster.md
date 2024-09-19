@@ -3,19 +3,25 @@ title: 'Configure Hub Cluster'
 weight: 10
 ---
 
-In this chapter, you will create a role that is assumed by the Hub Cluster's ArgoCD.
+In this chapter, you will create a role that is assumed by the Hub Cluster's Argo CD.
 
 ![Hub Role](/static/images/hub-spoke-hub-role.png)
 
 ### 1. Create Role 
 
-Create a role that can assume any role in the account and that can be assumed by the ArgoCD service accounts.
+Create a role named hub-cluster-argocd-hub that can be assumed by the Argo CD service accounts running on the EKS cluster. This IAM role is authorized to assume other IAM roles associated with remote EKS spoke clusters within the same AWS account, allowing the central Argo CD cluster to deploy applications and manage resources across multiple EKS clusters.
 
-```bash
+The IAM policy aws_assume_policy attached to the hub-cluster-argocd-hub role includes conditions that restrict the role assumption to the current AWS account and the specific EKS cluster where Argo CD is running. This ensures secure and controlled access to the assumed roles, adhering to the principle of least privilege.
+
+By creating this role and policy, you establish a centralized identity management approach, enabling Argo CD to seamlessly deploy applications and manage resources across multiple EKS clusters within the same AWS account while maintaining proper access controls and security best practices.
+
+
+<!--:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='29,35,50,56'}-->
+```json
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 ################################################################################
-# ArgoCD Pod identity EKS Access
+# Argo CD Pod identity EKS Access
 ################################################################################
 data "aws_iam_policy_document" "eks_assume" {
   statement {
@@ -53,7 +59,7 @@ data "aws_iam_policy_document" "aws_assume_policy" {
 
 resource "aws_iam_policy" "aws_assume_policy" {
   name        = "${module.eks.cluster_name}-argocd-aws-assume"
-  description = "IAM Policy for ArgoCD Hub"
+  description = "IAM Policy for Argo CD Hub"
   policy      = data.aws_iam_policy_document.aws_assume_policy.json
   tags        = local.tags
 }
@@ -76,6 +82,9 @@ resource "aws_eks_pod_identity_association" "argocd_api_server" {
 
 EOF
 ```
+<!--:::-->
+
+We also configure EKS Pod Identity, with a Pod association, allowing our Argo CD application server and controller, to assume that role.
 
 ### 2. Add outputs
 
@@ -84,34 +93,12 @@ Output the role ARN as it is needed by the spoke cluster to create the trust rel
 ```bash
 cat <<'EOF' >> ~/environment/hub/outputs.tf
 output "argocd_iam_role_arn" {
-  description = "IAM Role for ArgoCD Cluster Hub, use to connect to spoke clusters"
+  description = "IAM Role for Argo CD Cluster Hub, use to connect to spoke clusters"
   value       = aws_iam_role.argocd_hub.arn
 }
 
 EOF
 ```
-
-<!--### 3. Annotate ArgoCD role -- Satish Is this required?-->
-
-<!--The role created for ArgoCD needs to be set on the ArgoCD service accounts. This is accomplished by setting the role in the hub cluster's annotation. The ApplicationSet will pick up this annotation and set the role on the ArgoCD service accounts.-->
-
-<!--```bash-->
-<!--sed -i "s/#enableirsarole //g" ~/environment/hub/main.tf-->
-<!--```-->
-<!--The code snippet above adds a role annotation. The changes are highlighted as follows:-->
-
-<!--:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='5-5'}-->
-<!--addons_metadata = merge(-->
-<!--  .-->
-<!--  .-->
-<!--  {-->
-<!--    argocd_iam_role_arn = aws_iam_role.argocd_hub.arn-->
-<!--    argocd_namespace    = local.argocd_namespace-->
-<!--  }-->
-<!--  .-->
-<!--  .-->
-<!--:::-->
-
 
 ### 3. Apply Terraform
 
@@ -120,11 +107,27 @@ cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
 ```
-### 4. ArgoCD Pods to use new service account token
 
-When ArgoCD was originally installed, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the ArgoCD pods so they get setup for pod identity.
+### 4. Argo CD Pods to use new service account token
+
+When Argo CD was originally installed, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get setup for pod identity.
 
 ```bash
 kubectl rollout restart -n argocd deployment argo-cd-argocd-server --context hub
 kubectl rollout restart -n argocd statefulset argo-cd-argocd-application-controller --context hub
+```
+
+You can verify that EKS Pod Identity is correctly applied by looking at the injected environment variables:
+
+```bash
+kubectl --context hub exec -it deployment/argo-cd-argocd-server -n argocd -- env | grep AWS
+```
+
+should be like: 
+```
+AWS_CONTAINER_CREDENTIALS_FULL_URI=http://169.254.170.23/v1/credentials
+AWS_STS_REGIONAL_ENDPOINTS=regional
+AWS_DEFAULT_REGION=us-east-2
+AWS_REGION=us-east-2
+AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
 ```
