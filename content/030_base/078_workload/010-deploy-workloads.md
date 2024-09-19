@@ -2,7 +2,7 @@
 title: 'Deploy Workloads'
 weight: 10
 ---
-In this chapter you will deploy webstore workload. Similiar to namespace in the previous chater , we will setup ArgoCD so that deploying a new workload  is as simple as creating a new  a folder with manifests.
+In this chapter you will deploy webstore workload. Similar to namespace in the previous chapter , we will setup ArgoCD so that deploying a new workload  is as simple as creating a new  a folder with manifests.
 
 ### 1. Create AppofApps workload applicationset
 
@@ -157,7 +157,7 @@ EOF
 :::
 
 Line 17: The webstore workload is only deployed on clusters that have the label workload_webstore = true. The hub cluster has workload_webstore = true label.  
-Line 22: metadata.annotations.workload_repo_url i.e workload_repo_url annotation on the hub cluster has the value of the gitops-worload repository.  
+Line 22: metadata.annotations.workload_repo_url i.e workload_repo_url annotation on the hub cluster has the value of the gitops-workload repository.  
 Line 25: It maps to webstore/* ( microservices under webstore folder). 
 Line 39: Path gets the value each microservice directory. The label environment on the hub cluster is "hub". Kustomization deploys "hub" environment of each microservice.  
 Line 42: path.basename maps to the microservice directory name, which maps to the target namespace for deployment. So each microservice deploys into its own matching namespace. This makes asset microservice deploy to asset namespace, carts to carts and so on.  

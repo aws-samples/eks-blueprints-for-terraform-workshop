@@ -26,7 +26,7 @@ generators:
 
 ### 1. Set load balancer label in terraform variables
 
-We will set enable_aws_argocd to true in upcoming capter.
+We will set `enable_aws_argocd` to true in upcoming chapter.
 
 ```json
 cat <<EOF >> ~/environment/terraform.tfvars

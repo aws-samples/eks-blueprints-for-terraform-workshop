@@ -49,3 +49,4 @@ tfvars
 undeployed
 velero
 webstore
+kustomization
