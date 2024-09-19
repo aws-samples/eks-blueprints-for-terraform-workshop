@@ -3,12 +3,8 @@ patterns:
     pattern: "/^```[\\s\\S]*?^\\s*```/gm"
   - name: markdown_code_snippet
     pattern: "/`(.*)`/g"
-  - name: browser_block
-    pattern: "/<browser.*>[\\s\\S]*?^\\s*<\\/browser>/gm"
-  - name: yaml_block
-    pattern: "/::yaml.*/g"
   - name: code_block
-    pattern: "/:::code.*:::/gm"
+    pattern: "/.*:code.*/gm"
   - name: mardown_comment
     pattern: "/<!--.*/g"
 languageSettings:
@@ -16,9 +12,7 @@ languageSettings:
     ignoreRegExpList:
       - markdown_code_block
       - markdown_code_snippet
-      - browser_block
-      - yaml_block
-      - code_block
+      - code_block # FIXME: don't match
       - mardown_comment
 dictionaries:
   - custom-words
