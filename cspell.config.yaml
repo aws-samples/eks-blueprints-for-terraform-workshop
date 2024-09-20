@@ -12,7 +12,7 @@ languageSettings:
     ignoreRegExpList:
       - markdown_code_block
       - markdown_code_snippet
-      - code_block # FIXME: don't match
+      - code_block
       - mardown_comment
 dictionaries:
   - custom-words
