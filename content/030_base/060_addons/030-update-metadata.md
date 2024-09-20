@@ -168,7 +168,7 @@ We need to update the labels and annotations on the hub-cluster Cluster object. 
 sed -i "s/#enablemetadata//g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments metdata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
+The code provided above uncomments metadata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
 
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7-8'}
 module "gitops_bridge_bootstrap" {
