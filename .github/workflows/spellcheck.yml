@@ -1,6 +1,6 @@
 name: Spell Check
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
 
@@ -14,5 +14,5 @@ jobs:
       with:
         node-version: 18
     - run: |
-        npm install
+        npm install --save-dev cspell@latest
         npx cspell lint "content/**/*.md"
