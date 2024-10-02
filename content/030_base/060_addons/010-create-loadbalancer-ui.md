@@ -51,11 +51,11 @@ After replacing the YAML content, click the "Save" button followed by the "Creat
 
 #### Create Manually
 
-If you prefere, you can create manually by providing the following specified values.
+If you prefer, you can create manually by providing the following specified values.
 
 ```
 General
-Name:  loabbalancer
+Name:  loadbalancer
 Project: default
 
 Source
@@ -82,11 +82,11 @@ IngressClass: elbv2.k8s.aws
 
 Click "SYNC" and click "SYNCHRONIZE". This will deploy the Load Balancer controller and related objects to the hub cluster. 
 
-![loabBalancer-sync](/static/images/lb-sync.png)
+![loadBalancer-sync](/static/images/lb-sync.png)
 
 ### 3. Validate loadBalancer controller
 
-You can validate the Argo CD loadblanncer addon created deployment object.
+You can validate the Argo CD loadbalancer addon created deployment object.
 
 ```bash
 kubectl get deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
@@ -99,11 +99,12 @@ For testing, let's delete the loadBalancer controller.
 ```bash
 kubectl delete deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
 ```
-Argo CD flags loabBalancer as "OutOfSync"
+
+Argo CD flags loadBalancer as "OutOfSync"
 
 ![delete-loadBalancer](/static/images/delete-lb.png)
 
-(Optional) If you "Sync" then Argo CD recreates loabBalancer deployment object, we can see the value of having Argo CD monitoring our deployed objects and fixing them if needed.
+(Optional) If you "Sync" then Argo CD recreates loadBalancer deployment object, we can see the value of having Argo CD monitoring our deployed objects and fixing them if needed.
 
 ### 5. Delete loadBalancer Application
 

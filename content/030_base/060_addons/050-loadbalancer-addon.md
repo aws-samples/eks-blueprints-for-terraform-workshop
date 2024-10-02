@@ -26,7 +26,7 @@ generators:
 
 ### 1. Set load balancer label in terraform variables
 
-We will set enable_aws_argocd to true in upcoming capter.
+We will set `enable_aws_argocd` to true in upcoming chapter.
 
 ```json
 cat <<EOF >> ~/environment/terraform.tfvars
@@ -40,7 +40,7 @@ EOF
 
 ### 2. Create IAM roles for addon
 
-Several addons use the AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies or other AWS ressources may need to be configured to grant the addons necessary permissions.
+Several addons use the AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies or other AWS resources may need to be configured to grant the addons necessary permissions.
 For example loadbalancer interact with EC2 AWS APIs to provision NLB/ALB and Karpenter interact with EC2 AWS APIs to provision compute (EC2/Fargate)
 
 ![addons-lb-role](/static/images/addon-lb-role.png)
@@ -95,9 +95,9 @@ EOF
 ### 3. Provide addon IAM role to Argo CD
 
 
-We use the Terraform EKS Blueprints addons module to create AWS ressources for EKS addons. These resources identifiers need to be provided to Argo CD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by Argo CD. 
+We use the Terraform EKS Blueprints addons module to create AWS resources for EKS addons. These resources identifiers need to be provided to Argo CD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by Argo CD. 
 
-The EKS addons module makes it easy to access the created AWS ressources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by Argo CD.
+The EKS addons module makes it easy to access the created AWS resources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by Argo CD.
 
 ```bash
 sed -i "s/#enableaddonmetadata//g" ~/environment/hub/main.tf

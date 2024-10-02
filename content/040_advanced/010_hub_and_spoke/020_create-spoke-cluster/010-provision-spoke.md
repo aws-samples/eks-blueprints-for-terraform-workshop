@@ -348,7 +348,7 @@ EOF
 ### 5. Copy variable values file to the cluster
 
 We copy and reset the addons, so that we enable when required.
-We copy the terraform configuration file to define the variable, but we deactivate ArgoCD, as we don't want to deploy it on spoke cluster.
+We copy the terraform configuration file to define the variable, but we deactivate Argo CD, as we don't want to deploy it on spoke cluster.
 
 ```bash
 cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars

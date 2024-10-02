@@ -85,7 +85,7 @@ echo export ARGOCD_SERVER=\"$ARGOCD_SERVER\" >> ~/.bashrc
 echo "https://$ARGOCD_SERVER"
 ```
 
-You can click on the outputed link and select **Open**, to access the Argo CD user interface.
+You can click on the output link and select **Open**, to access the Argo CD user interface.
 
 Get ArgoCD password: 
 

@@ -80,7 +80,7 @@ EOF
 :::
 
 Line 16: Projects are installed on the hub cluster and not on the spoke clusters.  
-Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from argoproject.  
+Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from `argoproject`.
 Line 25: Iterates through all the workload folders under config/workload folder  
 Line 44: project values for each workload.  
 Line 46,47: Replace sourceRepos value with the gitops-workload url(  Line 7 below in the project-values.yaml) 
@@ -171,8 +171,8 @@ projects:
 EOF
 :::
 
-Line 7(Restrict what may be deployed): List of premitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of argoproject-applicationset.yaml).  
-Line 12(Restrict where apps may be deployed to): Permitted destionation of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
+Line 7(Restrict what may be deployed): List of permitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of `argoproject-applicationset.yaml`).
+Line 12(Restrict where apps may be deployed to): Permitted destination of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
 Line 39: Restricted resource creation list. 
 Line 47: Allowed resource creation list. 
 

@@ -63,7 +63,6 @@ EOF
 
 Define  enable-* addons boolean variables. These provide a simple way to control whether addons are installed or removed. Define addons variable as a list of key/value pairs of addon(enable-*) values. Define addons_metadata variable as a list of key/value pairs of mainly codecommit values.
 
-
 Some values are commented and will be used later in the workshop.
 
 :::code{showCopyAction=true showLineNumbers=false language=json highlightLines='48,58'}
@@ -169,7 +168,7 @@ We need to update the labels and annotations on the hub-cluster Cluster object. 
 sed -i "s/#enablemetadata//g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments metdata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
+The code provided above uncomments metadata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
 
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7-8'}
 module "gitops_bridge_bootstrap" {
@@ -198,7 +197,7 @@ Goto to the **Settings > Clusters > hub-cluster**  in the Argo CD dashboard. Exa
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 
 
-ArgoCD pulls lables and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret. 
+Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret.
 
 You can check  the Labels and annotations on the cluster secret: 
 

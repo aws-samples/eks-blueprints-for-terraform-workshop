@@ -9,7 +9,7 @@ To automatically generate Argo CD applications, you will implement the "App of A
 
 ### App of Apps pattern
 
-Normally an Argo CD Application points to a git repo which contains mainifests. The loadbalancer controller you provisioned previously points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an ìndex.yaml` file that reference the chart package (tgz file).
+Normally an Argo CD Application points to a git repo which contains manifests. The loadbalancer controller you provisioned previously points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `ìndex.yaml` file that reference the chart package (tgz file).
 
  
  ![applicationset](/static/images/lb-helmchart-folder.png)
