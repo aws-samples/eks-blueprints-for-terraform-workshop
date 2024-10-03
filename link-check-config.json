@@ -1,0 +1,27 @@
+{
+  "replacementPatterns": [
+    {
+      "pattern": "^/static",
+      "replacement": "{{BASEURL}}/static"
+    },
+    {
+      "pattern": "^/.*/$",
+      "replacement": "{{BASEURL}}/content/index.en.md"
+    },
+    {
+      "pattern": "^/",
+      "replacement": "{{BASEURL}}/content/"
+    }
+  ],
+  "ignorePatterns": [
+    {
+      "pattern": "gitlab.aws.dev"
+    },
+    {
+      "pattern": "^file:///"
+    },
+    {
+      "pattern": "../"
+    }
+  ]
+}

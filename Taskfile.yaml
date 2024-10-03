@@ -1,43 +1,187 @@
-# https://taskfile.dev
-
-version: "3"
+version: "3.17"
 
 dotenv: [".env", "{{.ENV}}/.env.", "{{.HOME}}/.env"]
 
 tasks:
+
+  check_creds:
+    desc: check workshop studio credentials are SessionToken
+    cmds:
+      - |
+        if ! aws sts get-caller-identity | jq ".Arn" | grep -q WSDataPlaneContentCreatorRole; then
+          echo -e "\033[0;31mError - you need to retrieve credentials in Workshop Studio https://studio.us-east-1.prod.workshops.aws/workshops/25d0d383-8c35-4e03-b549-fd7cbf3ad9a2#builds\033[0m"
+          exit 1
+        fi
   pre:
     cmds:
       - pre-commit run --all-files
 
-  preview:
-    desc: preview local webwite
+  bootstrap:
+    desc: "bootstrap CDK, needs to be only run the first time"
     cmds:
-      - preview_build
+      - yarn bootstrap
 
-  assets-upload:
-    desc: upload assets to workshop studio s3 Bucket
-    deps: [check_creds, build]
+  install:
+    desc: "Install node dependencies"
     cmds:
-      - aws s3 sync ./assets s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc
+      - npm install aws-cdk
+      - yarn install
 
-  assets-list:
-    desc: list assets in Bucket
-    deps: [check_creds]    
+  deploy:
+    desc: "execute the cdk deploy"
+    deps: [install]
+    aliases:
+      - create
+      - apply
+    cmds:
+      - yarn deploy
+
+  lint:
+    desc: "lint the project"
+    cmds:
+      - yarn lint
+
+  lint-staged:
+    desc: "lint the project"
+    cmds:
+      - yarn lint:staged
+
+  destroy:
+    desc: "execute the cdk destroy"
+    aliases:
+      - delete
+      - rm
+    cmds:
+      - yarn destroy
+
+  cfn:
+    desc: "Generate the Cloudformation template for Workshop Studio"
+    deps:
+      - task: lint
+    aliases:
+      - cloudformation
+      - generate-cfn
+    cmds:
+      - yarn generate-cfn-self
+      - yarn generate-cfn-studio
+
+  cfn-custom:
+    desc: "Generate the Cloudformation template for Workshop Studio that uses custom Variables WORKSHOP_GIT_URL and WORKSHOP_GIT_BRANCH"
+    #deps: [lint]
+    aliases:
+      - cloudformation-custom
+      - generate-cfn-custom
+    cmds:
+      - yarn generate-cfn-custom
+
+  assets:
+    desc: "Sync Assets with Workshop Studio"
+    aliases:
+      - studio-assets
+    status: [success]      
+    cmds:
+      - task: cfn
+      - task: check_creds
+      - aws s3 sync ./assets s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc --delete
+
+  check-assets:
+    desc: "Check Assets with Workshop Studio"
     cmds:
       - aws s3 ls s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc
 
-  check_creds:
-    desc: check workshop studio credendials are SessionToken
+  get-tfstate-bucket-name:
+    desc: "retrieve the bucket name to use"
     cmds:
-      - aws sts get-caller-identity | jq ".Arn" | grep WSDataPlaneContentCreatorRole || (echo "Error - you need to retrieve credentials in Workshop Studio https://studio.us-east-1.prod.workshops.aws/workshops/25d0d383-8c35-4e03-b549-fd7cbf3ad9a2#builds" && false)
+      - |
+        echo "get TFSTATE BUcket"
+        project_name=$(aws codebuild list-projects | jq ".projects[]" -r | grep "EKSGITIAMStackDeploy" | head -n 1)
+        if [ -n "$project_name" ]; then
+          aws codebuild batch-get-projects --names $project_name --query 'projects[0].environment.environmentVariables[?name==`TFSTATE_BUCKET_NAME`].value' --output text
+        else
+          echo "No CodeBuild project found with 'FleetStackDeploy' in the name"
+          exit 1
+        fi
+        #get from ssm
+        aws ssm get-parameter --name "tf-backend-bucket" | jq ".Parameter.Value" -r
 
-  pre_commit_1:
-    desc: scheck cloud9-template.yaml is up to date with static/event/cloud9-template.yaml
+  codebuild-configure:
+    desc: "prere-quisite for codebuild"
     cmds:
-      - sdiff -s assets/cloud9-template.yaml static/event
+      - |
+        mkdir -p terraform && cd terraform && rm -rf *
+        yq ".phases.build.commands[0]" < ../cdk/resources/buildspec-common.yaml > build-common.sh
+        chmod 755 build-common.sh
+        yq ".phases.build.commands[0]" < ../cdk/resources/buildspec-hub.yaml > build-hub.sh
+        chmod 755 build-hub.sh
+        yq ".phases.build.commands[0]" < ../cdk/resources/buildspec-spoke.yaml > build-spoke.sh
+        chmod 755 build-spoke.sh
 
-  pre_commit:
-    desc: some check that needs to be run before commit
+  codebuild-configure-check:
+    desc: "check prere-quisite for codebuild"
     cmds:
-      - task: pre_commit_1
-      - task: assets-upload
+      - |
+        if [ ! -d "terraform" ]; then
+          echo "terraform directory does not exist. You need to run 'task codebuild-configure' first."
+          exit 1
+        fi
+
+        if [ ! -f "terraform/build-common.sh" ] || [ ! -f "terraform/build-hub.sh" ] || [ ! -f "terraform/build-spoke.sh" ]; then
+          echo "One or more build scripts are missing. You need to run 'task codebuild-configure' first."
+          exit 1
+        fi
+
+        echo "Terraform directory and build scripts exist."
+
+  codebuild-create:
+    desc: "Simulate locally the CodeBuild Create (uses the tfstate bucket from the codebuild)"
+    deps: [codebuild-configure-check]
+    cmds:
+      - |
+        echo "retrieve TFSTATE Bucket.."
+        project_name=$(aws codebuild list-projects | jq ".projects[]" -r | grep "EKSGITIAMStackDeploy" | head -n 1)
+        if [ -n "$project_name" ]; then
+          bucket=$(aws codebuild batch-get-projects --names $project_name --query 'projects[0].environment.environmentVariables[?name==`TFSTATE_BUCKET_NAME`].value' --output text)
+          echo BUCKET=$bucket
+          role=$(aws codebuild batch-get-projects --names $project_name --query 'projects[0].environment.environmentVariables[?name==`PARTICIPANT_ROLE_ARN`].value' --output text)
+          echo ROLE=$role
+        else
+          echo "No CodeBuild project found with 'FleetStackDeploy' in the name"
+          exit 1
+        fi
+
+        BUCKET=$bucket
+        PARTICIPANT_ROLE_ARN=$role
+        REQUESTED_ACTION=Create AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-common.sh
+        REQUESTED_ACTION=Create AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-hub.sh
+        SPOKE=staging REQUESTED_ACTION=Create AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-spoke.sh
+        SPOKE=prod REQUESTED_ACTION=Create AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-spoke.sh
+
+  codebuild-delete:
+    desc: "Simulate locally the CodeBuild Delete (uses the tfstate bucket from the codebuild)"
+    deps: [codebuild-configure-check]
+    cmds:
+      - |
+        echo "retrieve TFSTATE Bucket.."
+        project_name=$(aws codebuild list-projects | jq ".projects[]" -r | grep "EKSGITIAMStackDeploy" | head -n 1)
+        if [ -n "$project_name" ]; then
+          bucket=$(aws codebuild batch-get-projects --names $project_name --query 'projects[0].environment.environmentVariables[?name==`TFSTATE_BUCKET_NAME`].value' --output text)
+          echo BUCKET=$bucket
+          role=$(aws codebuild batch-get-projects --names $project_name --query 'projects[0].environment.environmentVariables[?name==`PARTICIPANT_ROLE_ARN`].value' --output text)
+          echo ROLE=$role
+        else
+          echo "No CodeBuild project found with 'FleetStackDeploy' in the name"
+          exit 1
+        fi
+        cd terraform
+        set -x
+        BUCKET=$bucket
+        PARTICIPANT_ROLE_ARN=$role
+        SPOKE=staging REQUESTED_ACTION=Delete AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-spoke.sh
+        SPOKE=prod REQUESTED_ACTION=Delete AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-spoke.sh
+        REQUESTED_ACTION=Delete AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-hub.sh
+        REQUESTED_ACTION=Delete AWS_REGION=$AWS_REGION CODEBUILD_SRC_DIR=pwd TFSTATE_BUCKET_NAME=$BUCKET bash ./build-common.sh
+  
+  preview:
+    desc: Generate a local preview copy of Workshop Studio content
+    cmds:
+      - preview_build

@@ -25,5 +25,5 @@ Follow the installation instructions in this section to prepare your environment
 
 :button[On YOUR OWN]{href="self-paced"}
 
-::alert[If you are running this workshop on your own AWS account, remember to delete all resources by following the [cleanup instructions](/090-cleanup) to avoid unnecessary charges.]{header=Note}
+::alert[If you are running this workshop on your own AWS account, remember to delete all resources by following the [cleanup instructions](/090-cleanup/) to avoid unnecessary charges.]{header=Note}
 

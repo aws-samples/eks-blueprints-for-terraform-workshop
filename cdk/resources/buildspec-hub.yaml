@@ -1,0 +1,64 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - |
+        yum install -y gettext
+        # Helm installation
+        curl --silent --location "https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz" | tar xz -C /tmp
+        mv /tmp/linux-amd64/helm /usr/local/bin
+        chmod +x /usr/local/bin/helm
+        # Terraform installation
+        sudo yum install -y yum-utils
+        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+        sudo yum -y install terraform
+
+  build:
+    commands:
+      - |
+        set -x
+        set -e
+
+        aws configure set cli_pager ""
+
+        ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+        BUCKET_NAME=${TFSTATE_BUCKET_NAME}
+        BASE_DIR=${CODEBUILD_SRC_DIR}
+        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop}
+        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}
+
+        env | sort
+
+        # clone and create CodeCommit repo
+        git clone $WORKSHOP_GIT_URL $BASE_DIR || true
+        cd $BASE_DIR
+        git checkout $WORKSHOP_GIT_BRANCH
+        cd -
+
+        aws ssm put-parameter --name "tf-backend-bucket" --type "String" --value "$BUCKET_NAME" --overwrite
+
+        # Hub backend config
+        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
+        terraform {
+          backend "s3" {
+            bucket         = "$BUCKET_NAME"
+            key            = "hub/terraform.tfstate"
+            region         = "$AWS_REGION"
+          }
+        }
+        EOT
+
+        mkdir -p ~/.ssh
+
+        if [[ $REQUESTED_ACTION == 'Delete' ]]; then
+          # Cleanup scripts
+          DEBUG=1 $BASE_DIR/terraform/hub/destroy.sh
+
+        else
+          # Project Creation
+          DEBUG=1 $BASE_DIR/terraform/hub/deploy.sh
+        fi
+  post_build:
+    commands:
+      # CODEBUILD_BUILD_SUCCEEDING = 1 Set to 0 if the build is failing, or 1 if the build is succeeding.
+      - echo ">>> build status $CODEBUILD_BUILD_SUCCEEDING "
