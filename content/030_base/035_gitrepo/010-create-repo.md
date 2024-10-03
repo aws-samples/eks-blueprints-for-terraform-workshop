@@ -184,11 +184,16 @@ resource "local_file" "ssh_private_key" {
 }
 
 resource "local_file" "ssh_config" {
-  count           = local.ssh_key_basepath == "/home/ec2-user/.ssh" ? 1 : 0
+  count           = pathexpand(local.ssh_key_basepath) == "/home/ec2-user/.ssh" ? 1 : 0
   content         = local.ssh_config
   filename        = pathexpand(local.git_private_ssh_key_config)
   file_permission = "0600"
   
+  # Ensure correct file permissions after creation
+  provisioner "local-exec" {
+    command = "chmod 600 ${pathexpand(local.git_private_ssh_key_config)}"
+  }
+
   # Ensure that the local_file resource is created/updated after the local-exec provisioner
   depends_on = [null_resource.append_string_block]  
 }
@@ -209,7 +214,7 @@ resource "null_resource" "append_string_block" {
       file="${self.triggers.file}"
 
       if ! grep -q "$start_marker" "$file"; then
-        echo "$block" >> "$file"
+        echo -e "$block" >> "$file"
       fi
     EOL
   }
