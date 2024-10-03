@@ -9,9 +9,12 @@ Applicationset
 Appof
 Bluerint
 Bootcamps
+contentspec
 Fargate
 Gitops
+Gitea
 gitops
+direnv
 Karpenter
 Kubecost
 Observabiilty
@@ -49,3 +52,4 @@ undeployed
 velero
 webstore
 kustomization
+Taskfile
