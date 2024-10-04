@@ -32,11 +32,19 @@ function deploy_prod (){
   git -C $GITOPS_DIR/apps push
 }
 
+function app_url_hub (){
+  wait-for-lb $(kubectl --context hub-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+}
+
 function app_url_staging (){
-  wait-for-lb $(kubectl --context fleet-staging-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  wait-for-lb $(kubectl --context spoke-staging get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+}
+
+function app_url_default (){
+  wait-for-lb $(kubectl --context spoke-default get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 function app_url_prod (){
-  wait-for-lb $(kubectl --context fleet-prod-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  wait-for-lb $(kubectl --context spoke-prod get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }
 
 function apps_fix_kyverno_insights(){
