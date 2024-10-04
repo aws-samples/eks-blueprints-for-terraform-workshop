@@ -5,7 +5,7 @@ weight: 40
 
 Kubernetes is a powerful and extensible container orchestration technology that allows you to deploy and manage containerized applications at scale. While its extensible nature enables the use of a wide range of popular open-source tools in Kubernetes clusters, configuring an EKS cluster that meets your organization's specific needs can be time-consuming due to the array of tooling and design choices available.
 
-In the following chapters, we will cover how to deploy and integrate with ArgoCD for managing Kubernetes, and how to use the gitops-bridge and eks-blueprints-addons modules to manage additional add-ons that may require AWS resources like IAM roles and permissions to function.
+In the following chapters, we will cover how to deploy and integrate with Argo CD for managing Kubernetes, and how to use the gitops-bridge and eks-blueprints-addons modules to manage additional add-ons that may require AWS resources like IAM roles and permissions to function.
 
 For now, in this chapter, we use the Terraform EKS module to build the EKS cluster, including managed node groups and some EKS-managed add-ons. Using this module offers several advantages:
 

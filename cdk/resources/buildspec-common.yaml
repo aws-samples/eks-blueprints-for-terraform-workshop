@@ -37,7 +37,7 @@ phases:
         git checkout $WORKSHOP_GIT_BRANCH
         cd -
 
-        aws ssm put-parameter --name "tf-backend-bucket" --type "String" --value "$BUCKET_NAME" --overwrite
+        aws ssm put-parameter --name "eks-blueprints-workshop-tf-backend-bucket" --type "String" --value "$BUCKET_NAME" --overwrite
 
         # This gives access to the EKS cluster in terraform
 
@@ -52,7 +52,7 @@ phases:
         }
         EOT
 
-        mkdir -p ~/.ssh
+        #mkdir -p ~/.ssh
 
         if [[ $REQUESTED_ACTION == 'Delete' ]]; then
           # Cleanup scripts
@@ -61,29 +61,29 @@ phases:
         else
           # Project Creation
 
-          if [[ $IS_WS == "true" ]]; then
-            #Enable Security Hub
-            aws securityhub enable-security-hub || true
+          # if [[ $IS_WS == "true" ]]; then
+          #   #Enable Security Hub
+          #   aws securityhub enable-security-hub || true
             
-            #Enable QuickSight subscription- required for EKS Fleet Dashboards
-            QUICKSIGHT_ACCOUNT_NAME="eks-fleet-workshop"
-            QS_NOTIFICATION_EMAIL="eks-fleet-workshop@amazon.com"
-            FULL_QS_ACCOUNT_NAME="${QUICKSIGHT_ACCOUNT_NAME}-${ACCOUNT_ID}"
+          #   #Enable QuickSight subscription- required for EKS Fleet Dashboards
+          #   QUICKSIGHT_ACCOUNT_NAME="eks-fleet-workshop"
+          #   QS_NOTIFICATION_EMAIL="eks-fleet-workshop@amazon.com"
+          #   FULL_QS_ACCOUNT_NAME="${QUICKSIGHT_ACCOUNT_NAME}-${ACCOUNT_ID}"
             
-            aws quicksight create-account-subscription \
-              --aws-account-id "$ACCOUNT_ID" \
-              --edition ENTERPRISE \
-              --authentication-method 'IAM_AND_QUICKSIGHT' \
-              --account-name "$FULL_QS_ACCOUNT_NAME" \
-              --notification-email "$QS_NOTIFICATION_EMAIL" || true
-          fi
+          #   aws quicksight create-account-subscription \
+          #     --aws-account-id "$ACCOUNT_ID" \
+          #     --edition ENTERPRISE \
+          #     --authentication-method 'IAM_AND_QUICKSIGHT' \
+          #     --account-name "$FULL_QS_ACCOUNT_NAME" \
+          #     --notification-email "$QS_NOTIFICATION_EMAIL" || true
+          # fi
 
-          GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "GiteaExternalUrl" --query "Parameter.Value" --output text || true)
+          GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
           for i in $(seq 1 60);
           do
             if [[ -z $GITEA_EXTERNAL_URL ]]; then
               sleep 10
-              GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "GiteaExternalUrl" --query "Parameter.Value" --output text || true)
+              GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
               echo $GITEA_EXTERNAL_URL
             else
               break

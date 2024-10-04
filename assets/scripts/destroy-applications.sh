@@ -18,5 +18,9 @@ kubectl  --context hub-cluster delete applicationset -n argocd argoprojects --ca
 kubectl  --context hub-cluster delete applicationset -n argocd cluster-addons --cascade=foreground
 
 #Clean app of apps
+<<<<<<< Updated upstream
 kubectl  --context hub-cluster delete applicationset -n argocd appofapps --cascade=foreground
+=======
+kubectl  --context hub-cluster delete applicationset -n argocd bootstrap --cascade=foreground
+>>>>>>> Stashed changes
 

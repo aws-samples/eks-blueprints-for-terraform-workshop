@@ -1,0 +1,58 @@
+{
+ "Description": "Creates the lab environment for the workshop",
+ "Mappings": {
+  "WorkshopAssetsBucketAssetsStaticBucketMapping": {
+   "eu-north-1": {
+    "bucketName": "ws-assets-prod-iad-r-arn-580aeca3990cef5a"
+   },
+   "ap-south-1": {
+    "bucketName": "ws-assets-prod-iad-r-bom-431207042d319a2d"
+   },
+   "eu-west-3": {
+    "bucketName": "ws-assets-prod-iad-r-cdg-9e76383c31ad6229"
+   },
+   "us-east-2": {
+    "bucketName": "ws-assets-prod-iad-r-cmh-8d6e9c21a4dec77d"
+   },
+   "eu-west-1": {
+    "bucketName": "ws-assets-prod-iad-r-dub-85e3be25bd827406"
+   },
+   "eu-central-1": {
+    "bucketName": "ws-assets-prod-iad-r-fra-b129423e91500967"
+   },
+   "sa-east-1": {
+    "bucketName": "ws-assets-prod-iad-r-gru-527b8c19222c1182"
+   },
+   "us-east-1": {
+    "bucketName": "ws-assets-prod-iad-r-iad-ed304a55c2ca1aee"
+   },
+   "ap-northeast-2": {
+    "bucketName": "ws-assets-prod-iad-r-icn-ced060f0d38bc0b0"
+   },
+   "ap-northeast-3": {
+    "bucketName": "ws-assets-prod-iad-r-kix-c2a28ad4e55ea53a"
+   },
+   "eu-west-2": {
+    "bucketName": "ws-assets-prod-iad-r-lhr-cc4472a651221311"
+   },
+   "ap-northeast-1": {
+    "bucketName": "ws-assets-prod-iad-r-nrt-2cb4b4649d0e0f94"
+   },
+   "us-west-2": {
+    "bucketName": "ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0"
+   },
+   "us-west-1": {
+    "bucketName": "ws-assets-prod-iad-r-sfo-f61fc67057535f1b"
+   },
+   "ap-southeast-1": {
+    "bucketName": "ws-assets-prod-iad-r-sin-694a125e41645312"
+   },
+   "ap-southeast-2": {
+    "bucketName": "ws-assets-prod-iad-r-syd-b04c62a5f16f7b2e"
+   },
+   "ca-central-1": {
+    "bucketName": "ws-assets-prod-iad-r-yul-5c2977cd61bca1f3"
+   }
+  }
+ }
+}

@@ -5,7 +5,7 @@ weight: 20
 
 In the previous chapter, an IAM role was created for the Hub Cluster's Argo CD. In this chapter, another IAM role (spoke) will be created that can be assumed by the Hub Cluster's IAM role.
 
-![Hub Role](/static/images/hub-spoke-spoke-role.png)
+![Hub Role](/static/images/hub-spoke-spoke-role.jpg)
 
 ### 1. Create Argo CD spoke-staging cluster with  hub-cluster
 
@@ -99,28 +99,26 @@ EOF
 The spoke IAM role should have admin access on the spoke Kubernetes cluster. This spoke IAM role will be assumed by the Hub Argo CD. It needs admin access in order to create addons, namespaces, and deploy workloads on the spoke cluster. For that, we add an additional rule in our EKS access entries:
 
 ```bash
-sed -i "s/#enablespokearn //g" ~/environment/spoke/main.tf
-```
-The code snippet above uncomments code to grant admin access to the spoke IAM role. The changes made are highlighted as follows:
-
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4-15'}
-  access_entries = {
-    .
-    .
-    gitops_role = {
-      principal_arn     = aws_iam_role.spoke.arn
-      policy_associations = {
-        argocd = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type       = "cluster"
-          }
-        }
-      }
+sed -i '
+/access_entries = {/,/^  }/ {
+  s/workshop_attendee/eks_admin/
+  /^  }/i\
+\
+    gitops_role = {\
+      principal_arn     = aws_iam_role.spoke.arn\
+      policy_associations = {\
+        argocd = {\
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"\
+          access_scope = {\
+            type       = "cluster"\
+          }\
+        }\
+      }\
     }    
-  } 
-
-:::
+}
+' ~/environment/spoke/main.tf
+```
+The code snippet above update the access_entries section of eks module to grant admin access to the spoke IAM role.
 
 ### 4. Allow Hub Nodes to access to Spoke cluster
 
@@ -136,7 +134,7 @@ cat <<'EOF' >> ~/environment/spoke/main.tf
 
 resource "aws_vpc_security_group_ingress_rule" "hub_to_spoke" {
   security_group_id = module.eks.cluster_primary_security_group_id
-  referenced_security_group_id = data.terraform_remote_state.hub.outputs.hub_node_security_group_id
+  referenced_security_group_id = data.terraform_remote_state.hub.outputs.cluster_node_security_group_id
   ip_protocol = "tcp"
   from_port = "443"
   to_port = "443"
@@ -152,7 +150,16 @@ terraform init
 terraform apply --auto-approve
 ```
 
-The Argo CD Dashboard should have the spoke-staging cluster
+### 5. Check Hub Cluster Configuration
+
+The Hub Argo CD Dashboard should have the spoke-staging cluster in it's cluster list.
+
+Connect again to the Hub Cluster Argo CD UI:
+```bash
+argocd_hub_credentials
+```
+
+And check the Settings / Clusters section:
 
 ![Stagging Cluster](/static/images/spoke-staging-cluster.png)
 

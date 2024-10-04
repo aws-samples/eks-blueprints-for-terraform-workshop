@@ -10,7 +10,7 @@ cd ~/environment/vpc/
 
 cleanup_vpc_resources() {
 
-    VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=eks-blueprint" --query "Vpcs[*].VpcId" --output text)
+    VPCID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=eks-blueprints-workshop" --query "Vpcs[*].VpcId" --output text)
     echo $VPCID
     for endpoint in $(aws ec2 describe-vpc-endpoints --filters "Name=vpc-id,Values=$VPCID" --query "VpcEndpoints[*].VpcEndpointId" --output text); do
         aws ec2 delete-vpc-endpoints --vpc-endpoint-ids $endpoint

@@ -57,78 +57,31 @@ You can add additional labels to meet your criteria.
 You can view how gitops-bridge populate the cluster secret that creates Argo CD cluster entries, and define the label and annotations that can be used by the ApplicationSets: 
 
 ```bash
-kubectl --context hub get secrets -n argocd hub-cluster -o yaml
+kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
 :::expand{header="Example of output"}
 ```
 apiVersion: v1
 data:
-  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7AiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
+  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7CiAgICAiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
   name: aHViLWNsdXN0ZXI=
-  server: aHR0cHM6Ly9rdWJlcm5VzLmRlZmF1bHQuc3Zj
+  server: aHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3Zj
 kind: Secret
 metadata:
   annotations:
-    argocd_namespace: argocd
-    aws_account_id: "12345678910"
-    aws_cluster_name: hub-cluster
-    aws_region: us-east-2
-    aws_vpc_id: vpc-09924bd9e1637d9a1
     cluster_name: hub-cluster
     environment: hub
-  creationTimestamp: "2024-06-04T08:52:40Z"
+  creationTimestamp: "2024-10-03T18:51:28Z"
   labels:
     argocd.argoproj.io/secret-type: cluster
-    aws_cluster_name: hub-cluster
     cluster_name: hub-cluster
-    enable_ack_apigatewayv2: "false"
-    enable_ack_dynamodb: "false"
-    enable_ack_emrcontainers: "false"
-    enable_ack_eventbridge: "false"
-    enable_ack_prometheusservice: "false"
-    enable_ack_rds: "false"
-    enable_ack_s3: "false"
-    enable_ack_sfn: "false"
-    enable_argo_events: "false"
-    enable_argo_rollouts: "false"
-    enable_argo_workflows: "false"
-    enable_argocd: "false"
-    enable_aws_cloudwatch_metrics: "false"
-    enable_aws_ebs_csi_resources: "false"
-    enable_aws_efs_csi_driver: "false"
-    enable_aws_for_fluentbit: "false"
-    enable_aws_fsx_csi_driver: "false"
-    enable_aws_gateway_api_controller: "false"
-    enable_aws_load_balancer_controller: "false"
-    enable_aws_node_termination_handler: "false"
-    enable_aws_privateca_issuer: "false"
-    enable_aws_secrets_store_csi_driver_provider: "false"
-    enable_cert_manager: "false"
-    enable_cluster_autoscaler: "false"
-    enable_cluster_proportional_autoscaler: "false"
-    enable_external_dns: "false"
-    enable_external_secrets: "false"
-    enable_fargate_fluentbit: "false"
-    enable_gatekeeper: "false"
-    enable_gpu_operator: "false"
-    enable_ingress_nginx: "false"
-    enable_karpenter: "false"
-    enable_kube_prometheus_stack: "false"
-    enable_kyverno: "false"
-    enable_metrics_server: "false"
-    enable_prometheus_adapter: "false"
-    enable_secrets_store_csi_driver: "false"
-    enable_velero: "false"
-    enable_vpa: "false"
+    enable_argocd: "true"
     environment: hub
-    kubernetes_version: "1.28"
-    workload_webstore: "false"
-    workloads: "false"
   name: hub-cluster
   namespace: argocd
-  resourceVersion: "309742"
-  uid: 1156e385-97af-4732-83ae-55aafeb9ec62
+  resourceVersion: "6498"
+  uid: ad023c6c-1a97-45c7-92b6-33a3f17021b7
 type: Opaque
 ```
 :::

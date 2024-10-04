@@ -4,7 +4,7 @@ title: Credits
 ---
 
 ## Version 1.1 - Oscar Médina & Sébastien Allamand 
-* eks-blueprint step by step
+* eks-blueprints step by step
 * ski app integration
   
 ## Version 1.2 - Oscar Médina

@@ -1,41 +1,28 @@
 ---
-title: AWS Cloud9 Setup
+title: Accessing the IDE
 weight: 12
 ---
 
+### Access AWS Workshop IDE
 
-1. Open the Cloud9 service
+You can find the elements to get a quick-start link to your Cloud IDE and its associated password either in the personal dashboard page, where you can scroll down to the Event Outputs section, or from the CloudFormation stack output. Open this in a new browser tab.
 
-**Your account is pre-configured with a Cloud9 instance.** Go to the [Cloud9 service](https://console.aws.amazon.com/cloud9control/home) select All account environments and click Open to access your **eks-terraform-blueprint-workshop** environment.
+![Event Output](/static/images/event-output-ideurl.jpg)
 
-![](/static/images/cloud9-open.png)
+Enter the password provided in the previous step:
 
-::alert[If you do NOT see any environment, check if you have properly select **All account environments** and that you are using the same region recommended on the event page.]
+![IDE Password](/static/images/10-IDE-Password.jpg)
 
-During the initial setup, AWS Cloud9 creates an EC2 instance and connects the Cloud9 IDE to this newly created instance. 
-Now we are going to work with the cloud9 Terminal which is already configured with necessary tools, But we need to confirm that we are using the correct IAM role:
+Open the IDE Terminal by click the menu icon on the top left, then selecting **Terminal** -> **New Terminal** like the image below:
 
+![IDE](/static/images/10-IDE.jpg)
 
+The Terminal should be at the bottom, this will be the location to enter the terminal commands during the workshop:
 
-1. Run the GetCallerIdentity command to confirm that Cloud9 IDE is using the **eks-blueprints-for-terraform-workshop-admin** we set as the IAM role for the Cloud9 instance
-
-```bash
-aws sts get-caller-identity --query Arn | grep eks-blueprints-for-terraform-workshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
-```
-
-If you are not in an AWS event, the previous command may return `IAM role NOT valid`. If this is the case try the following command:
-
-  ```bash
-  aws cloud9 update-environment  --environment-id $C9_PID --managed-credentials-action DISABLE
-  sleep 10
-  aws sts get-caller-identity --query Arn | grep eks-blueprints-for-terraform-workshop-admin -q && echo "IAM role valid" || echo "IAM role NOT valid"
-  ```
-
-This time you should have "IAM role valid", so we are OK to continue.
+![IDE Terminal](/static/images/10-IDE-Terminal.jpg)
 
 
-
-::::expand{header="Click here to see the list of tools and utilities that are boostrapped to your Cloud9 environment and the Event Engine AWS Accounts:"}
+::::expand{header="Click here to see the list of tools and utilities that are boostrapped to your IDE environment:"}
 
 * kubectl =  The Kubernetes command-line tool, kubectl, allows you to run commands against Kubernetes clusters. You can use kubectl to deploy applications, inspect and manage cluster resources, and view logs. 
 * helm =  Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application. 

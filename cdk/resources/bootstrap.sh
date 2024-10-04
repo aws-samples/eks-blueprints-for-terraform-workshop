@@ -18,12 +18,13 @@ export ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub
 export BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub
 export WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub
 export WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub
-export BASE_DIR=/home/ec2-user/environment/fleet-management-on-amazon-eks-workshop
+export BASE_DIR=/home/ec2-user/eks-blueprints-for-terraform-workshop
 export GITOPS_DIR=/home/ec2-user/environment/gitops-repos
+export ENVIRONMENT_DIR=/home/ec2-user/environment
 export GOROOT=/usr/local/go
 
 # This is to go around problem with circular dependency
-aws ssm put-parameter --type String --name GiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite
+aws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite
 
 sudo bash -c "cat > /usr/local/bin/wait-for-lb" <<'EOT'
 #!/bin/bash
@@ -123,7 +124,7 @@ export | sort
 
 aws configure set cli_pager ""
 
-aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNTID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNTID.dkr.ecr.$AWS_REGION.amazonaws.com
 
 # start of cloud9-init script
 kubectl completion bash >>  ~/.bash_completion
@@ -203,16 +204,16 @@ ls -lt ~
 mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
 
-# # Common backend config
-# cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
-# terraform {
-#   backend "s3" {
-#     bucket         = "$BUCKET_NAME"
-#     key            = "common/terraform.tfstate"
-#     region         = "$AWS_REGION"
-#   }
-# }
-# EOT
+# Common backend config
+cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "common/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
 
 # # Hub backend config
@@ -264,6 +265,13 @@ if [[ ! -d "/home/ec2-user/.bashrc.d" ]]; then
     export AWS_ACCOUNT_ID=$ACCOUNTID
     export AWS_DEFAULT_REGION=$AWS_REGION
     export GOROOT=/usr/local/go
+    export ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME
+    export ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX
+    export BUCKET_NAME=$BUCKET_NAME
+    export WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL
+    export WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH
+    export BASE_DIR=$BASE_DIR
+    export GITOPS_DIR=$GITOPS_DIR
 EOT
 
     sudo -H -u ec2-user bash -c "cat <<'EOF' >> ~/.bashrc 

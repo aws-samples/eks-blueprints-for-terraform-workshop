@@ -7,11 +7,13 @@ In this chapter you will associate both namespace and workload application to we
 
 ### 1. Set Project
 
-```bash
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml 
-```
+:::
+
 Changes by the code snippet is highlighted below.
-:::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='0'}
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
+cd $GITOPS_DIR/platform
 git diff
 :::
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='8'}
@@ -29,12 +31,13 @@ git diff
 :::
 
 ### 2. Git commit
-```bash
+
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/platform
 git add . 
 git commit -m "set namespace and webstore applicationset project to webstore"
 git push
-```
+:::
 
 
 ### 3. Enable workload_webstore labels on spoke cluster
@@ -55,7 +58,7 @@ terraform apply --auto-approve
 ::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
-echo "Click here to open -> http://$(kubectl get svc ui-nlb -n ui --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+app_url_staging
 ```
 
 Access  webstore in the browser.

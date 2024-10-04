@@ -2,18 +2,18 @@
 title: 'Deploy Workloads'
 weight: 10
 ---
-In this chapter you will deploy webstore workload. Similar to namespace in the previous chapter , we will setup ArgoCD so that deploying a new workload  is as simple as creating a new  a folder with manifests.
+In this chapter you will deploy webstore workload. Similar to namespace in the previous chapter, we will setup Argo CD so that deploying a new workload is as simple as creating a new folder with manifests.
 
-### 1. Create AppofApps workload applicationset
+### 1. Create bootstrap workload applicationset
 
 This ApplicationSet initiates the deployment of all the workloads.
 
-![workload-appofapps](/static/images/workload-appofapps.png)
+![workload-appofapps](/static/images/workload-appofapps.jpg)
 
 
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='22,33'}
 
-cat > $GITOPS_DIR/platform/appofapps/workload-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/bootstrap/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -61,7 +61,7 @@ EOF
 
 :::
 
-Line 22: Git generator iterates through folders under "config/workload" in gitops-platform repository  
+Line 22: Git generator iterates through folders under "config/workload" in platform git repository  
 Line 33: {path} maps to each workload folder under config/workload. For webstore {path} maps to config/workload/webstore. Since there is no folder "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
@@ -69,35 +69,29 @@ Line 33: {path} maps to each workload folder under config/workload. For webstore
 ```bash
 cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add appofapps workload applicationset"
+git commit -m "add bootstrap workload applicationset"
 git push
 ```
 
-As the appofapps folder is monitored, when a new file like workload-applicationset.yaml is added, it gets processed. 
+As the bootstrap folder is monitored, when a new file like workload-applicationset.yaml is added, it gets processed. 
 
-![workload-appofapps-monitor](/static/images/workload-appofapps-monitor.png)
+![workload-appofapps-monitor](/static/images/workload-appofapps-monitor.jpg)
 
-The newly added workload-applicationset.yaml file iterates through the config/workload folders and processes any workload config files found under config/workload/\<<workload-name\>>/workload. Since the folder config/workload/webstore/workload does not exist it has nothing to process.
+The newly added workload-applicationset.yaml file iterates through the config/workload folders and processes any workload config files found under `config/workload/\<<workload-name\>>/workload`
 
-![workload-appofapps-monitor](/static/images/workload-appofapps-iteration.png)
+![workload-appofapps-monitor](/static/images/workload-appofapps-iteration.jpg)
 
-
-On the Argo CD dashboard click on appofapps Application to see newly created workload applicationset.
-
-
-![appofapps-workload-applicationset](/static/images/appofapps-workload-applicationset.png)
+:::alert{header="Important" type="warning"}
+Since the folder `config/workload/webstore/workload` does not exist yet it has nothing to process.
+:::
 
 ### 3. Deploy webstore workload 
 
-The webstore workload configuration files are in the **gitops-workload** repository, not in the **gitops-platform** repository.
+The webstore workload configuration files are in the **workload** git repository, not in the **platform** git repository. This is to show the difference of ownership and responsabilities between platform team and application team.
 
-The webstore workload supports multiple environments like hub, staging and prod. Environment-specific configurations are applied using kustomization.
+Let's have platform team add webstore applicationset to allow the webstore application team to deploy from the workload git repository.
 
-![workload-webstore-folders](/static/images/workload-webstore-folders.png)
-
-Lets add webstore applicationset to deploy the webstore workload in the gitops-workload repository.
-
-![workload-webstore](/static/images/workload-webstore.png)
+![workload-webstore](/static/images/workload-webstore.jpg)
 
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/workload
@@ -157,8 +151,8 @@ EOF
 :::
 
 Line 17: The webstore workload is only deployed on clusters that have the label workload_webstore = true. The hub cluster has workload_webstore = true label.  
-Line 22: metadata.annotations.workload_repo_url i.e workload_repo_url annotation on the hub cluster has the value of the gitops-workload repository.  
-Line 25: It maps to webstore/* ( microservices under webstore folder). 
+Line 22: metadata.annotations.workload_repo_url i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository.  
+Line 25: It maps to **webstore/*** ( microservices under webstore folder). 
 Line 39: Path gets the value each microservice directory. The label environment on the hub cluster is "hub". Kustomization deploys "hub" environment of each microservice.  
 Line 42: path.basename maps to the microservice directory name, which maps to the target namespace for deployment. So each microservice deploys into its own matching namespace. This makes asset microservice deploy to asset namespace, carts to carts and so on.  
 
@@ -171,7 +165,7 @@ Line 42: path.basename maps to the microservice directory name, which maps to th
 ```bash
 cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add appofapps workload applicationset"
+git commit -m "add bootstrap workload applicationset"
 git push
 ```
 
@@ -180,7 +174,7 @@ git push
 ::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
-echo "Click here to open -> http://$(kubectl get svc ui-nlb -n ui --context hub --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+app_url_hub
 ```
 
 Access  webstore in the browser.

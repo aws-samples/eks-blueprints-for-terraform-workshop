@@ -1,5 +1,5 @@
 ---
-title: '...On Your Own'
+title: 'In your AWS account'
 chapter: false
 weight: 11
 ---

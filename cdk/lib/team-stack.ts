@@ -126,45 +126,45 @@ export class TeamStack extends WorkshopStudioTeamStack {
     // making ide dependent on commonRunner to ensure that git repos are setup by the time ide is ready
     //ide.node.addDependency(commonRunner.customResource); // Since we are using cluster alias in the bootstrap
 
-    const hubRunner = new CodeBuildCustomResource(this, "EKSHub", {
-      buildspec: buildspecHub,
-      codeBuildTimeout: cdk.Duration.minutes(60),
-      computeType: codebuild.ComputeType.SMALL,
-      environmentVariables: {
-        TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
-        WORKSHOP_GIT_URL: {
-          value:
-            process.env.WORKSHOP_GIT_URL ||
-            "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-        },
-        WORKSHOP_GIT_BRANCH: {
-          value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
-        },
-        FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
-      },
-      buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
-      role: sharedRole,
-      //removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
-    hubRunner.customResource.node.addDependency(commonRunner.customResource);
+    // const hubRunner = new CodeBuildCustomResource(this, "EKSHub", {
+    //   buildspec: buildspecHub,
+    //   codeBuildTimeout: cdk.Duration.minutes(60),
+    //   computeType: codebuild.ComputeType.SMALL,
+    //   environmentVariables: {
+    //     TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+    //     WORKSHOP_GIT_URL: {
+    //       value:
+    //         process.env.WORKSHOP_GIT_URL ||
+    //         "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+    //     },
+    //     WORKSHOP_GIT_BRANCH: {
+    //       value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+    //     },
+    //     FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
+    //   },
+    //   buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
+    //   role: sharedRole,
+    //   //removalPolicy: cdk.RemovalPolicy.RETAIN,
+    // });
+    // hubRunner.customResource.node.addDependency(commonRunner.customResource);
 
-    const participantAccessEntryHub = new eks.AccessEntry(
-      this,
-      "participantAccessEntry-EksClusterHub",
-      {
-        accessPolicies: [
-          eks.AccessPolicy.fromAccessPolicyName(
-            eks.AccessPolicyArn.AMAZON_EKS_CLUSTER_ADMIN_POLICY.policyName,
-            { accessScopeType: eks.AccessScopeType.CLUSTER },
-          ),
-        ],
-        cluster: eks.Cluster.fromClusterAttributes(this, "EksClusterHub", {
-          clusterName: "fleet-hub-cluster",
-        }),
-        principal: ParticipantAssumedRoleArn,
-      },
-    );
-    participantAccessEntryHub.node.addDependency(hubRunner.customResource);
+    // const participantAccessEntryHub = new eks.AccessEntry(
+    //   this,
+    //   "participantAccessEntry-EksClusterHub",
+    //   {
+    //     accessPolicies: [
+    //       eks.AccessPolicy.fromAccessPolicyName(
+    //         eks.AccessPolicyArn.AMAZON_EKS_CLUSTER_ADMIN_POLICY.policyName,
+    //         { accessScopeType: eks.AccessScopeType.CLUSTER },
+    //       ),
+    //     ],
+    //     cluster: eks.Cluster.fromClusterAttributes(this, "EksClusterHub", {
+    //       clusterName: "fleet-hub-cluster",
+    //     }),
+    //     principal: ParticipantAssumedRoleArn,
+    //   },
+    // );
+    // participantAccessEntryHub.node.addDependency(hubRunner.customResource);
 
     // const spokes = ["staging", "prod"];
 
