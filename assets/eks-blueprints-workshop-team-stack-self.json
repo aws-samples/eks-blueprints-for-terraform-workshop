@@ -1,0 +1,1012 @@
+{
+ "Description": "Creates the lab environment for the workshop",
+ "Mappings": {
+  "WorkshopAssetsBucketAssetsStaticBucketMapping": {
+   "eu-north-1": {
+    "bucketName": "ws-assets-prod-iad-r-arn-580aeca3990cef5a"
+   },
+   "ap-south-1": {
+    "bucketName": "ws-assets-prod-iad-r-bom-431207042d319a2d"
+   },
+   "eu-west-3": {
+    "bucketName": "ws-assets-prod-iad-r-cdg-9e76383c31ad6229"
+   },
+   "us-east-2": {
+    "bucketName": "ws-assets-prod-iad-r-cmh-8d6e9c21a4dec77d"
+   },
+   "eu-west-1": {
+    "bucketName": "ws-assets-prod-iad-r-dub-85e3be25bd827406"
+   },
+   "eu-central-1": {
+    "bucketName": "ws-assets-prod-iad-r-fra-b129423e91500967"
+   },
+   "sa-east-1": {
+    "bucketName": "ws-assets-prod-iad-r-gru-527b8c19222c1182"
+   },
+   "us-east-1": {
+    "bucketName": "ws-assets-prod-iad-r-iad-ed304a55c2ca1aee"
+   },
+   "ap-northeast-2": {
+    "bucketName": "ws-assets-prod-iad-r-icn-ced060f0d38bc0b0"
+   },
+   "ap-northeast-3": {
+    "bucketName": "ws-assets-prod-iad-r-kix-c2a28ad4e55ea53a"
+   },
+   "eu-west-2": {
+    "bucketName": "ws-assets-prod-iad-r-lhr-cc4472a651221311"
+   },
+   "ap-northeast-1": {
+    "bucketName": "ws-assets-prod-iad-r-nrt-2cb4b4649d0e0f94"
+   },
+   "us-west-2": {
+    "bucketName": "ws-assets-prod-iad-r-pdx-f3b3f9f1a7d6a3d0"
+   },
+   "us-west-1": {
+    "bucketName": "ws-assets-prod-iad-r-sfo-f61fc67057535f1b"
+   },
+   "ap-southeast-1": {
+    "bucketName": "ws-assets-prod-iad-r-sin-694a125e41645312"
+   },
+   "ap-southeast-2": {
+    "bucketName": "ws-assets-prod-iad-r-syd-b04c62a5f16f7b2e"
+   },
+   "ca-central-1": {
+    "bucketName": "ws-assets-prod-iad-r-yul-5c2977cd61bca1f3"
+   }
+  }
+ },
+ "Resources": {
+  "TFStateBackendBucketF0FC9A9D": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "SharedRoleD1D02F7E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": [
+         "codebuild.amazonaws.com",
+         "ec2.amazonaws.com",
+         "glue.amazonaws.com"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AdministratorAccess"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "SharedRoleDefaultPolicyA7803C87": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "IDEFleetIdeLogGroup63888DED",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SharedRoleDefaultPolicyA7803C87",
+    "Roles": [
+     {
+      "Ref": "SharedRoleD1D02F7E"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdeVPCA4D0815F": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "192.168.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "CidrBlock": "192.168.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "IDEFleetIdeVPCA4D0815F"
+    }
+   }
+  },
+  "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "IDEFleetIdeVPCA4D0815F"
+    }
+   }
+  },
+  "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3"
+    },
+    "SubnetId": {
+     "Ref": "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4"
+    }
+   }
+  },
+  "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "IDEFleetIdeVPCIGWDA3B7804"
+    },
+    "RouteTableId": {
+     "Ref": "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3"
+    }
+   },
+   "DependsOn": [
+    "IDEFleetIdeVPCVPCGW0D377588"
+   ]
+  },
+  "IDEFleetIdeVPCIGWDA3B7804": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdeVPCVPCGW0D377588": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "IDEFleetIdeVPCIGWDA3B7804"
+    },
+    "VpcId": {
+     "Ref": "IDEFleetIdeVPCA4D0815F"
+    }
+   }
+  },
+  "IDEFleetIdePrefixListFunctionServiceRoleDC99231D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "ec2:DescribeManagedPrefixLists",
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99",
+    "Roles": [
+     {
+      "Ref": "IDEFleetIdePrefixListFunctionServiceRoleDC99231D"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdePrefixListFunction66D13E34": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "from __future__ import print_function\nimport boto3\nimport traceback\nimport cfnresponse\n\ndef lambda_handler(event, context):\n    print('Event: {}'.format(event))\n    print('context: {}'.format(context))\n    responseData = {}\n\n    status = cfnresponse.SUCCESS\n\n    if event['RequestType'] == 'Delete':\n        responseData = {'Success': 'Custom Resource removed'}\n        cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')\n    else:\n        try:\n            # Open AWS clients\n            ec2 = boto3.client('ec2')\n\n            res = ec2.describe_managed_prefix_lists(\n               Filters=[{\n                  'Name': 'prefix-list-name',\n                  'Values': ['com.amazonaws.global.cloudfront.origin-facing']\n               }]\n            )\n\n            responseData = {'PrefixListId': str(res['PrefixLists'][0]['PrefixListId'])}\n        except Exception as e:\n            status = cfnresponse.FAILED\n            tb_err = traceback.format_exc()\n            print(tb_err)\n            responseData = {'Error': tb_err}\n        finally:\n            cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')"
+    },
+    "Handler": "index.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IDEFleetIdePrefixListFunctionServiceRoleDC99231D",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 180
+   },
+   "DependsOn": [
+    "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99",
+    "IDEFleetIdePrefixListFunctionServiceRoleDC99231D"
+   ]
+  },
+  "IDEFleetIdePrefixListResourceF67673AB": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "IDEFleetIdePrefixListFunction66D13E34",
+      "Arn"
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "IDEFleetIdeSecurityGroup7FF3E772": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "IDE security group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "IDEFleetIdeVPCA4D0815F",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Gitea API from VPC",
+      "FromPort": 9999,
+      "IpProtocol": "tcp",
+      "ToPort": 9999
+     },
+     {
+      "CidrIp": {
+       "Fn::GetAtt": [
+        "IDEFleetIdeVPCA4D0815F",
+        "CidrBlock"
+       ]
+      },
+      "Description": "Gitea SSH from VPC",
+      "FromPort": 2222,
+      "IpProtocol": "tcp",
+      "ToPort": 2222
+     }
+    ],
+    "VpcId": {
+     "Ref": "IDEFleetIdeVPCA4D0815F"
+    }
+   }
+  },
+  "IDEFleetIdeSecurityGroupfromIndirectPeer80DF0487D7": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "HTTP from CloudFront only",
+    "FromPort": 80,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "IDEFleetIdeSecurityGroup7FF3E772",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourcePrefixListId": {
+     "Fn::GetAtt": [
+      "IDEFleetIdePrefixListResourceF67673AB",
+      "PrefixListId"
+     ]
+    },
+    "ToPort": 80
+   }
+  },
+  "IDEFleetInstanceProfile1BF87146": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "SharedRoleD1D02F7E"
+     }
+    ]
+   },
+   "DependsOn": [
+    "IDEFleetIdeVPCIGWDA3B7804",
+    "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9",
+    "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3",
+    "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD",
+    "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4",
+    "IDEFleetIdeVPCA4D0815F",
+    "IDEFleetIdeVPCVPCGW0D377588"
+   ]
+  },
+  "IDEFleet0EC23AB4641a0cee2d30d2eb": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": {
+     "Fn::Select": [
+      0,
+      {
+       "Fn::GetAZs": ""
+      }
+     ]
+    },
+    "BlockDeviceMappings": [
+     {
+      "DeviceName": "/dev/xvda",
+      "Ebs": {
+       "DeleteOnTermination": true,
+       "Encrypted": true,
+       "VolumeSize": 30,
+       "VolumeType": "gp3"
+      }
+     }
+    ],
+    "IamInstanceProfile": {
+     "Ref": "IDEFleetInstanceProfile1BF87146"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61x8664C96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "t3.medium",
+    "NetworkInterfaces": [
+     {
+      "AssociatePublicIpAddress": true,
+      "DeviceIndex": "0",
+      "GroupSet": [
+       {
+        "Fn::GetAtt": [
+         "IDEFleetIdeSecurityGroup7FF3E772",
+         "GroupId"
+        ]
+       }
+      ],
+      "SubnetId": {
+       "Ref": "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4"
+      }
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IDE-Fleet/IDE-Fleet"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": "#!/bin/bash"
+    }
+   },
+   "DependsOn": [
+    "IDEFleetIdeVPCIGWDA3B7804",
+    "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9",
+    "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3",
+    "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD",
+    "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4",
+    "IDEFleetIdeVPCA4D0815F",
+    "IDEFleetIdeVPCVPCGW0D377588",
+    "SharedRoleDefaultPolicyA7803C87",
+    "SharedRoleD1D02F7E"
+   ]
+  },
+  "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "iam:PassRole",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "SharedRoleD1D02F7E",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ec2:DescribeInstances",
+        "iam:ListInstanceProfiles",
+        "ssm:DescribeInstanceInformation",
+        "ssm:GetCommandInvocation",
+        "ssm:SendCommand"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA",
+    "Roles": [
+     {
+      "Ref": "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdeBootstrapFunctionC79D571D": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "from __future__ import print_function\nimport boto3\nimport json\nimport os\nimport time\nimport traceback\nimport cfnresponse\nfrom botocore.exceptions import WaiterError\n\ndef lambda_handler(event, context):\n    print('Event: {}'.format(event))\n    print('context: {}'.format(context))\n    responseData = {}\n\n    status = cfnresponse.SUCCESS\n\n    if event['RequestType'] == 'Delete':\n        responseData = {'Success': 'Custom Resource removed'}\n        cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')\n    else:\n        try:\n            # Open AWS clients\n            ec2 = boto3.client('ec2')\n            ssm = boto3.client('ssm')\n\n            instance_id = event['ResourceProperties']['InstanceId']\n\n            print('Waiting for the instance to be ready...')\n            # Wait for Instance to become ready\n            instance_state = 'unknown'\n            print('Instance is currently in state'.format(instance_state))\n            while instance_state != 'running':\n                time.sleep(5)\n                di = ec2.describe_instances(InstanceIds=[instance_id])\n                instance_state = di['Reservations'][0]['Instances'][0]['State']['Name']\n                print('Waiting for instance in state: {}'.format(instance_state))\n\n            print('Instance is ready')\n\n            print('Waiting for instance to come online in SSM...')\n            for i in range(1, 60):\n              response = ssm.describe_instance_information(Filters=[{'Key': 'InstanceIds', 'Values': [instance_id]}])\n              if len(response[\"InstanceInformationList\"]) == 0:\n                print('No instances in SSM')\n              elif len(response[\"InstanceInformationList\"]) > 0 and \\\n                    response[\"InstanceInformationList\"][0][\"PingStatus\"] == \"Online\" and \\\n                    response[\"InstanceInformationList\"][0][\"InstanceId\"] == instance_id:\n                print('Instance is online in SSM')\n                break\n              time.sleep(10)\n\n            ssm_document = event['ResourceProperties']['SsmDocument']\n\n            ssm.send_command(\n                InstanceIds=[instance_id],\n                DocumentName=ssm_document,\n                CloudWatchOutputConfig={\n                    'CloudWatchLogGroupName': event['ResourceProperties']['LogGroupName'],\n                    'CloudWatchOutputEnabled': True\n                })\n\n            responseData = {'Success': 'Started bootstrapping for instance: '+instance_id}\n        except Exception as e:\n            status = cfnresponse.FAILED\n            tb_err = traceback.format_exc()\n            print(tb_err)\n            responseData = {'Error': tb_err}\n        finally:\n            cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')"
+    },
+    "Handler": "index.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA",
+    "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF"
+   ]
+  },
+  "IDEFleetIdeLogGroup63888DED": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 7
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain"
+  },
+  "IDEFleetIdePasswordSecret4C89AB01": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "GenerateSecretString": {
+     "ExcludeCharacters": "\"@/\\",
+     "ExcludePunctuation": true,
+     "GenerateStringKey": "password",
+     "IncludeSpace": false,
+     "PasswordLength": 32,
+     "SecretStringTemplate": "{\"password\":\"\"}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "IDEFleetIdeDistribution631906CF": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "DefaultCacheBehavior": {
+      "AllowedMethods": [
+       "GET",
+       "HEAD",
+       "OPTIONS",
+       "PUT",
+       "PATCH",
+       "POST",
+       "DELETE"
+      ],
+      "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+      "Compress": true,
+      "OriginRequestPolicyId": "216adef6-5c7f-47e4-b989-5492eafa07d3",
+      "TargetOriginId": "eksblueprintsworkshopIDEFleetIdeDistributionOrigin14C5BF6EF",
+      "ViewerProtocolPolicy": "allow-all"
+     },
+     "Enabled": true,
+     "HttpVersion": "http2",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "CustomOriginConfig": {
+        "HTTPPort": 80,
+        "OriginProtocolPolicy": "http-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": {
+        "Fn::GetAtt": [
+         "IDEFleet0EC23AB4641a0cee2d30d2eb",
+         "PublicDnsName"
+        ]
+       },
+       "Id": "eksblueprintsworkshopIDEFleetIdeDistributionOrigin14C5BF6EF"
+      }
+     ]
+    }
+   }
+  },
+  "IDEFleetIdeBootstrapWaitConditionHandle6F73F067": {
+   "Type": "AWS::CloudFormation::WaitConditionHandle"
+  },
+  "IDEFleetIdeBootstrapWaitConditionBAEC1144": {
+   "Type": "AWS::CloudFormation::WaitCondition",
+   "Properties": {
+    "Count": 1,
+    "Handle": {
+     "Ref": "IDEFleetIdeBootstrapWaitConditionHandle6F73F067"
+    },
+    "Timeout": "1800"
+   },
+   "DependsOn": [
+    "IDEFleetInstanceProfile1BF87146",
+    "IDEFleet0EC23AB4641a0cee2d30d2eb",
+    "IDEFleetIdeBootstrapDocument88102810"
+   ]
+  },
+  "IDEFleetIdeBootstrapDocument88102810": {
+   "Type": "AWS::SSM::Document",
+   "Properties": {
+    "Content": {
+     "schemaVersion": "2.2",
+     "description": "Bootstrap IDE",
+     "parameters": {
+      "BootstrapScript": {
+       "type": "String",
+       "description": "(Optional) Custom bootstrap script to run.",
+       "default": ""
+      }
+     },
+     "mainSteps": [
+      {
+       "action": "aws:runShellScript",
+       "name": "IdeBootstrapFunction",
+       "inputs": {
+        "runCommand": [
+         {
+          "Fn::Sub": [
+           "bash << 'HEREDOC'\nset -e\n\necho \"Retrieving IDE password...\"\n\nPASSWORD_SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id \"${passwordName}\" --query 'SecretString' --output text)\n\nexport IDE_PASSWORD=$(echo \"$PASSWORD_SECRET_VALUE\" | jq -r '.password')\n\necho \"Setting profile variables...\"\n\n# Set some useful variables\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport EC2_PRIVATE_IP=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/meta-data/local-ipv4)\n\ntee /etc/profile.d/workshop.sh <<EOF\nexport INSTANCE_IAM_ROLE_NAME=\"${instanceIamRoleName}\"\nexport INSTANCE_IAM_ROLE_ARN=\"${instanceIamRoleArn}\"\n\nexport AWS_REGION=\"$AWS_REGION\"\nexport EC2_PRIVATE_IP=\"$EC2_PRIVATE_IP\"\n\nexport IDE_DOMAIN=\"${domain}\"\nexport IDE_URL=\"https://${domain}\"\nexport IDE_PASSWORD=\"$IDE_PASSWORD\"\n\nalias code=\"code-server\"\nEOF\n\nsource /etc/profile.d/workshop.sh\n\necho \"Setting PS1...\"\n\n# Set PS1\ntee /etc/profile.d/custom_prompt.sh <<EOF\n#!/bin/sh\n\nexport PROMPT_COMMAND='export PS1=\"\\u:\\w:$ \"'\nEOF\n\necho \"Generating SSH key...\"\n\n# Generate an SSH key for ec2-user\nsudo -u ec2-user bash -c \"ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa -m pem <<< y\"\n\necho \"Installing AWS CLI...\"\n\n# Install AWS CLI\ncurl -LSsf -o /tmp/aws-cli.zip https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip\nunzip -q -d /tmp /tmp/aws-cli.zip\n/tmp/aws/install --update\nrm -rf /tmp/aws\n\necho \"Installing Docker...\"\n\n# Install docker and base package\ndnf install -y -q docker git\nservice docker start\nusermod -aG docker ec2-user\n\necho \"Installing code-server...\"\n\n# Install code-server\ncodeServer=$(dnf list installed code-server | wc -l)\nif [ \"$codeServer\" -eq \"0\" ]; then\n  sudo -u ec2-user \"codeServerVersion=${codeServerVersion}\" bash -c 'curl -fsSL https://code-server.dev/install.sh | sh -s -- --version ${codeServerVersion}'\n  systemctl enable --now code-server@ec2-user\nfi\n\nsudo -u ec2-user bash -c 'mkdir -p ~/.config/code-server'\nsudo -u ec2-user bash -c 'touch ~/.config/code-server/config.yaml'\ntee /home/ec2-user/.config/code-server/config.yaml <<EOF\ncert: false\nauth: password\npassword: \"$IDE_PASSWORD\"\nbind-addr: 127.0.0.1:8889\nEOF\n\n# Create default directory for workspace\nsudo -u ec2-user bash -c 'mkdir -p ~/environment'\n\nENVIRONMENT_CONTENTS_ZIP=${environmentContentsZip}\n\nif [ ! -z \"$ENVIRONMENT_CONTENTS_ZIP\" ]; then\n  echo \"Adding environments archive...\"\n\n  if [[ $ENVIRONMENT_CONTENTS_ZIP == s3:* ]]; then\n    aws s3 cp $ENVIRONMENT_CONTENTS_ZIP /tmp/environment.zip\n  else\n    curl -LSsf -o /tmp/environment.zip $ENVIRONMENT_CONTENTS_ZIP\n  fi\n\n  sudo -u ec2-user bash -c 'unzip -q /tmp/environment.zip -d ~/environment'\n\n  rm -rf /tmp/environment.zip\nfi\n\nSTARTUP_EDITOR='none'\n\nTERMINAL_ON_STARTUP=\"${terminalOnStartup}\"\nREADME_URL=\"${readmeUrl}\"\n\nif [ ! -z \"$README_URL\" ]; then\n  echo \"Adding README...\"\n  if [[ $README_URL == s3:* ]]; then\n    aws s3 cp $README_URL /home/ec2-user/environment/README.md\n  else\n    curl -LSsf -o /home/ec2-user/environment/README.md $README_URL\n  fi\nfi\n\nif [ \"$TERMINAL_ON_STARTUP\" = \"true\" ]; then\n  STARTUP_EDITOR='terminal'\nelif [ -f /home/ec2-user/environment/README.md ]; then\n  STARTUP_EDITOR='readme'\nfi\n\necho \"Configuring code-server...\"\n\nsudo -u ec2-user bash -c 'mkdir -p ~/.local/share/code-server/User'\nsudo -u ec2-user bash -c 'touch ~/.local/share/code-server/User/settings.json'\ntee /home/ec2-user/.local/share/code-server/User/settings.json <<EOF\n{\n  \"extensions.autoUpdate\": false,\n  \"extensions.autoCheckUpdates\": false,\n  \"security.workspace.trust.enabled\": false,\n  \"workbench.startupEditor\": \"$STARTUP_EDITOR\",\n  \"task.allowAutomaticTasks\": \"on\",\n  \"telemetry.telemetryLevel\": \"off\"\n}\nEOF\n\nsudo -u ec2-user bash -c 'touch ~/.local/share/code-server/User/keybindings.json'\ntee /home/ec2-user/.local/share/code-server/User/keybindings.json << 'EOF'\n[\n  {\n    \"key\": \"shift+cmd+/\",\n    \"command\": \"remote.tunnel.forwardCommandPalette\"\n  }\n]\nEOF\n\nif [ ! -z \"${splashUrl}\" ]; then\necho \"Configuring splash URL...\"\n\nsudo -u ec2-user bash -c 'touch ~/.local/share/code-server/User/tasks.json'\ntee /home/ec2-user/.local/share/code-server/User/tasks.json << 'EOF'\n{\n  \"version\": \"2.0.0\",\n  \"tasks\": [\n    {\n      \"label\": \"Open Splash\",\n      \"command\": \"${!input:openSimpleBrowser}\",\n      \"presentation\": {\n        \"reveal\": \"always\",\n        \"panel\": \"new\"\n      },\n      \"runOptions\": {\n        \"runOn\": \"folderOpen\"\n      }\n    }\n  ],\n  \"inputs\": [\n    {\n      \"id\": \"openSimpleBrowser\",\n      \"type\": \"command\",\n      \"command\": \"simpleBrowser.show\",\n      \"args\": [\n        \"${splashUrl}\"\n      ]\n    }\n  ]\n}\nEOF\nfi\n\necho \"Installing code-server extensions...\"\n\nEXTENSIONS=\"${extensions}\"\n\nIFS=',' read -ra array <<< \"$EXTENSIONS\"\n\n# Iterate over each entry in the array\nfor extension in \"${!array[@]}\"; do\n  # Use retries as extension installation seems unreliable\n  sudo -u ec2-user bash -c \"set -e; (r=5;while ! code-server --install-extension $extension --force ; do ((--r))||exit;sleep 5;done)\"\ndone\n\nif [ ! -f \"/home/ec2-user/.local/share/code-server/coder.json\" ]; then\n  sudo -u ec2-user bash -c 'touch ~/.local/share/code-server/coder.json'\n  echo '{ \"query\": { \"folder\": \"/home/ec2-user/environment\" } }' > /home/ec2-user/.local/share/code-server/coder.json\nfi\n\necho \"Restarting code-server...\"\n\nsystemctl restart code-server@ec2-user\n\necho \"Installing Caddy...\"\n\n# Install caddy\ndnf copr enable -y -q @caddy/caddy epel-9-x86_64\ndnf install -y -q caddy\nsystemctl enable --now caddy\n\ntee /etc/caddy/Caddyfile <<EOF\nhttp://${domain} {\n  handle /* {\n    reverse_proxy 127.0.0.1:8889\n  }\n  #GITEA\n}\nEOF\n\necho \"Restarting caddy...\"\n\nsystemctl restart caddy\n\nif [ ! -f \"/home/ec2-user/.local/share/code-server/coder.json\" ]; then\n  sudo -u ec2-user bash -c 'touch ~/.local/share/code-server/coder.json'\n  echo '{ \"query\": { \"folder\": \"/home/ec2-user/environment\" } }' > /home/ec2-user/.local/share/code-server/coder.json\nfi\n\n${installGitea}\n\necho \"Running custom bootstrap script...\"\n\n${customBootstrapScript}\nHEREDOC\n\nexit_code=$?\n\n/opt/aws/bin/cfn-signal -e $exit_code '${waitConditionHandleUrl}'\n\nexit $exit_code",
+           {
+            "instanceIamRoleName": {
+             "Ref": "SharedRoleD1D02F7E"
+            },
+            "instanceIamRoleArn": {
+             "Fn::GetAtt": [
+              "SharedRoleD1D02F7E",
+              "Arn"
+             ]
+            },
+            "passwordName": {
+             "Fn::Join": [
+              "-",
+              [
+               {
+                "Fn::Select": [
+                 0,
+                 {
+                  "Fn::Split": [
+                   "-",
+                   {
+                    "Fn::Select": [
+                     6,
+                     {
+                      "Fn::Split": [
+                       ":",
+                       {
+                        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                       }
+                      ]
+                     }
+                    ]
+                   }
+                  ]
+                 }
+                ]
+               },
+               {
+                "Fn::Select": [
+                 1,
+                 {
+                  "Fn::Split": [
+                   "-",
+                   {
+                    "Fn::Select": [
+                     6,
+                     {
+                      "Fn::Split": [
+                       ":",
+                       {
+                        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                       }
+                      ]
+                     }
+                    ]
+                   }
+                  ]
+                 }
+                ]
+               }
+              ]
+             ]
+            },
+            "domain": {
+             "Fn::GetAtt": [
+              "IDEFleetIdeDistribution631906CF",
+              "DomainName"
+             ]
+            },
+            "codeServerVersion": "4.93.1",
+            "waitConditionHandleUrl": {
+             "Ref": "IDEFleetIdeBootstrapWaitConditionHandle6F73F067"
+            },
+            "customBootstrapScript": {
+             "Fn::Sub": [
+              "#!/bin/bash\nset -x\nsudo sh -c \"echo LANG=en_US.utf-8 >> /etc/environment\"\nsudo sh -c \"echo LC_ALL=en_US.UTF-8 >> /etc/environment\"\n# . /home/ec2-user/.bashrc\nsudo yum -y install sqlite telnet jq strace tree gcc glibc-static python3 python3-pip gettext bash-completion npm zsh util-linux-user locate\necho '=== INSTALL and CONFIGURE default software components ==='\n\naws configure set cli_pager \"\"\n\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport ACCOUNTID=$(aws sts get-caller-identity | jq -r .Account)\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport ASSETS_BUCKET_NAME=${AssetsBucketName} # Coming from Fn.Sub\nexport ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub\nexport BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub\nexport WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub\nexport WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub\nexport BASE_DIR=/home/ec2-user/environment/fleet-management-on-amazon-eks-workshop\nexport GITOPS_DIR=/home/ec2-user/environment/gitops-repos\nexport GOROOT=/usr/local/go\n\n# This is to go around problem with circular dependency\naws ssm put-parameter --type String --name GiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite\n\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -o /dev/null -L -w ''%{http_code}'' http://$host/home)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb-argocd\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -k -o /dev/null -L -w ''%{http_code}'' http://$host/)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb-argocd\n\nsudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl\nsudo chmod +x /usr/bin/kubectl\n\nsudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64\nsudo chmod +x /usr/bin/argocd\n\nsudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64\nsudo chmod +x /usr/local/bin/kubectl-argo-rollouts\n\ncurl --silent --location \"https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz\" | tar xz -C /tmp\nsudo mv -f /tmp/linux-amd64/helm /usr/bin\nsudo chmod +x /usr/bin/helm\n\nsudo curl --silent --location -o /tmp/terraform.zip \"https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip\"\ncd /tmp && unzip -o /tmp/terraform.zip && cd -\nchmod +x /tmp/terraform\nsudo mv -f /tmp/terraform /usr/bin\n\nsudo curl --silent --location \"https://go.dev/dl/go1.23.1.linux-amd64.tar.gz\" | sudo tar xz -C /usr/local\n\ncurl --silent --location \"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksctl\nsudo mv /tmp/eksctl /usr/local/bin\ncurl -sSL \"https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksdemo\nmv /tmp/eksdemo /usr/local/bin  \n\n\n\nsudo su - ec2-user <<EOF\nset -x\nexport | sort\n\naws configure set cli_pager \"\"\n\naws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNTID}.dkr.ecr.${AWS_REGION}.amazonaws.com\n\n# start of cloud9-init script\nkubectl completion bash >>  ~/.bash_completion\necho \"complete -F __start_kubectl k\" >> ~/.bash_completion\nargocd completion bash >>  ~/.bash_completion\nhelm completion bash >>  ~/.bash_completion\necho \"alias k=kubectl\" >> ~/.bashrc\necho \"alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'\" | tee -a ~/.bashrc\necho \"alias ll='ls -la'\" >> ~/.bashrc\n\necho \"alias ktx=kubectx\" >> ~/.bashrc\necho \"alias kctx=kubectx\" >> ~/.bashrc\necho \"alias kns=kubens\" >> ~/.bashrc\necho \"export TERM=xterm-color\" >> ~/.bashrc\n\necho \"alias code=/usr/lib/code-server/bin/code-server\" >> ~/.bashrc\necho \"complete -F __start_kubectl k\" >> ~/.bashrc\ncurl -sS https://webinstall.dev/k9s | bash\n\nhelm repo add eks https://aws.github.io/eks-charts\nhelm repo update\n\n#Install Krew and stern\n(\n  cd \\$(mktemp -d) && pwd &&\n  OS=\\$(uname | tr '[:upper:]' '[:lower:]') &&\n  ARCH=\\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' -e 's/aarch64$/arm64/') &&\n  KREW=krew-\\${!OS}_\\${!ARCH} && echo \\$KREW\n  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\\${!KREW}.tar.gz &&\n  tar zxvf \\${!KREW}.tar.gz &&\n  ./\\${!KREW} install krew\n)\necho \"export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\" | tee -a ~/.bashrc\nexport PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\nkubectl krew install stern\nkubectl krew install np-viewer \n\ngo install github.com/kyverno/chainsaw@latest\npip install pytest\npip install pytest_bdd boto3 kubernetes\n\ncurl -sfL https://direnv.net/install.sh | bash\n\n#Install some VsCode plugins\n/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform\n/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders\n\n\n#Install fuzzy search\ngit clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\n~/.fzf/install --all  \n\n#Install zsh\nsudo -k chsh -s /bin/zsh ec2-user\njq '. + {\"terminal.integrated.defaultProfile.linux\": \"zsh\"}' /home/ec2-user/.local/share/code-server/User/settings.json > temp.json && mv temp.json /home/ec2-user/.local/share/code-server/User/settings.json\nrm -rf ~/.oh-my-zsh\n\nwget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh\nCHSH=no RUNZSH=no sh install.sh\n\ngit clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k\ngit clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting\ngit clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions\ngit clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search\n\n\n#Install workshop\nmkdir -p $BASE_DIR\ngit clone $WORKSHOP_GIT_URL $BASE_DIR\ncd $BASE_DIR\ngit checkout $WORKSHOP_GIT_BRANCH\n\ncp hack/.zshrc hack/.p10k.zsh ~/\n\n# Setup bashrc\nls -lt ~\nmkdir -p ~/.bashrc.d\ncp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/\n\n# # Common backend config\n# cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"common/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Hub backend config\n# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"hub/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Spokes backend config\n# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"spokes/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#     workspace_key_prefix = \"spokes\"\n#   }\n# }\n# EOT\n\n\nEOF\n\n#install kubectx & kubens\nsudo rm -rf /opt/kubectx\nsudo git clone https://github.com/ahmetb/kubectx /opt/kubectx\nsudo ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx\nsudo ln -sf /opt/kubectx/kubens /usr/local/bin/kubens\n\n\nsudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_\n\nsource ~/.bashrc\n\n# end of cloud9-init script\n\necho '=== Configure .bashrc.d ==='\nif [[ ! -d \"/home/ec2-user/.bashrc.d\" ]]; then\n    sudo -H -u ec2-user bash -c \"mkdir -p ~/.bashrc.d\"\n    cat << EOT > /home/ec2-user/.bashrc.d/env.bash\n    export ACCOUNTID=$ACCOUNTID\n    export ACCOUNT_ID=$ACCOUNTID\n    export AWS_ACCOUNT_ID=$ACCOUNTID\n    export AWS_DEFAULT_REGION=$AWS_REGION\n    export GOROOT=/usr/local/go\nEOT\n\n    sudo -H -u ec2-user bash -c \"cat <<'EOF' >> ~/.bashrc \nfor file in ~/.bashrc.d/*.bash; do\n  source \"\\$file\" || true\ndone\nEOF\n\"\n\nfi\n\n# # change permissions for /root/.ssh for the codecommit TF step to be able to change the file location from /root to /home/ec2-user\n# chown -R ec2-user:ec2-user /root/.ssh\n# chown -R ec2-user:ec2-user /root\n# chmod 700 /root/.ssh\n# chmod 700 /root\n\necho '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='\necho \"complete -C '/usr/local/bin/aws_completer' aws\" >> /home/ec2-user/.bashrc.d/aws.bash\necho '=== Run init script ==='\n# aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}cloud9-init.sh /tmp && bash /tmp/cloud9-init.sh\necho '=== CLEANING /home/ec2-user ==='\n# for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists\nchown -R ec2-user:ec2-user /home/ec2-user/\n#Don't reboot in ssm document, that break the execution\necho \"Bootstrap completed with return code $?\"",
+              {
+               "BUCKET_NAME": {
+                "Ref": "TFStateBackendBucketF0FC9A9D"
+               },
+               "AssetsBucketName": {
+                "Fn::FindInMap": [
+                 "WorkshopAssetsBucketAssetsStaticBucketMapping",
+                 {
+                  "Ref": "AWS::Region"
+                 },
+                 "bucketName"
+                ]
+               },
+               "AssetsBucketPrefix": "28c283c1-1d60-43fa-a604-4e983e0e8038/",
+               "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+               "WORKSHOP_GIT_BRANCH": "vscode"
+              }
+             ]
+            },
+            "installGitea": "dnf install -y nerdctl cni-plugins\nmkdir -p /gitea/config /gitea/data\n\necho '\nversion: \"2\"\n\nservices:\n  gitea:\n    image: gitea/gitea:1.22-rootless\n    restart: always\n    volumes:\n      - /gitea/data:/var/lib/gitea\n      - /gitea/config:/etc/gitea\n      - /etc/timezone:/etc/timezone:ro\n      - /etc/localtime:/etc/localtime:ro\n    ports:\n      - \"9999:3000\"\n      - \"2222:2222\"\n' > gitea.yaml\n\necho \"\nAPP_NAME = Gitea: Git with a cup of tea\nRUN_MODE = prod\nRUN_USER = git\nWORK_PATH = /var/lib/gitea\n\n[repository]\nROOT = /var/lib/gitea/git/repositories\nENABLE_PUSH_CREATE_USER = true\nDISABLE_HTTP_GIT = false\n\n[repository.local]\nLOCAL_COPY_PATH = /var/lib/gitea/tmp/local-repo\n\n[repository.upload]\nTEMP_PATH = /var/lib/gitea/uploads\n\n[server]\nAPP_DATA_PATH = /var/lib/gitea\nDOMAIN = $EC2_PRIVATE_IP\nSSH_DOMAIN = $EC2_PRIVATE_IP\nSSH_CREATE_AUTHORIZED_KEYS_FILE=false\nHTTP_PORT = 3000\nROOT_URL = http://$EC2_PRIVATE_IP:9000/gitea\nDISABLE_SSH = false\nSSH_PORT = 2222\nSSH_LISTEN_PORT = 2222\nSTART_SSH_SERVER = true\nLFS_START_SERVER = true\nOFFLINE_MODE = true\n\n[database]\nPATH = /var/lib/gitea/gitea.db\nDB_TYPE = sqlite3\nHOST = localhost:3306\nNAME = gitea\nUSER = root\nPASSWD = \nLOG_SQL = false\nSCHEMA = \nSSL_MODE = disable\n\n[indexer]\nISSUE_INDEXER_PATH = /var/lib/gitea/indexers/issues.bleve\n\n[session]\nPROVIDER_CONFIG = /var/lib/gitea/sessions\nPROVIDER = file\n\n[picture]\nAVATAR_UPLOAD_PATH = /var/lib/gitea/avatars\nREPOSITORY_AVATAR_UPLOAD_PATH = /var/lib/gitea/repo-avatars\n\n[attachment]\nPATH = /var/lib/gitea/attachments\n\n[log]\nMODE = console\nLEVEL = info\nROOT_PATH = /var/lib/gitea/log\n\n[security]\nINSTALL_LOCK = true\nSECRET_KEY = \nREVERSE_PROXY_LIMIT = 1\nREVERSE_PROXY_TRUSTED_PROXIES = *\nPASSWORD_HASH_ALGO = pbkdf2\n\n[service]\nDISABLE_REGISTRATION = true\nREQUIRE_SIGNIN_VIEW = true\nREGISTER_EMAIL_CONFIRM = false\nENABLE_NOTIFY_MAIL = false\nALLOW_ONLY_EXTERNAL_REGISTRATION = false\nENABLE_CAPTCHA = false\nDEFAULT_KEEP_EMAIL_PRIVATE = false\nDEFAULT_ALLOW_CREATE_ORGANIZATION = true\nDEFAULT_ENABLE_TIMETRACKING = true\nNO_REPLY_ADDRESS = noreply.localhost\n\n[lfs]\nPATH = /var/lib/gitea/git/lfs\n\n[mailer]\nENABLED = false\n\n[cron.update_checker]\nENABLED = false\n\n[repository.pull-request]\nDEFAULT_MERGE_STYLE = merge\n\n[repository.signing]\nDEFAULT_TRUST_MODEL = committer\n\n\" > /gitea/config/app.ini\nchown -R 1000:1000 /gitea\nsudo nerdctl compose -f gitea.yaml up -d --quiet-pull\n\n# We need to be idempotent and check for locked database\nwhile true; do\n    CONTAINER=$(sudo nerdctl compose -f gitea.yaml ps --format json | jq .[].Name) # Name is <folder>-<compose-name>-1\n\n    if [ ! -z \"$CONTAINER\" ]; then\n      STATUS=$(sudo nerdctl exec $CONTAINER -- sh -c \"gitea admin user create --username workshop-user --email workshop-user@example.com --password $IDE_PASSWORD 2>&1 || exit 0\")\n      [[ \"$STATUS\" =~ .*locked|no\\ such\\ table.* ]] || break\n    fi\n    sleep 5;\ndone\n\ntee -a /etc/caddy/Caddyfile <<EOF\nhttp://$IDE_DOMAIN:9000, http://localhost:9000 {\n  handle_path /proxy/9000/* {\n    reverse_proxy 127.0.0.1:9999\n  }\n\n  handle /* {\n    reverse_proxy 127.0.0.1:9999\n  }\n}\nEOF\n\n# We add the handle_path in the cloudfront site\nsed -i 's~#GITEA~handle_path /gitea/* { \\\n    reverse_proxy 127.0.0.1:9999 \\\n  }~' /etc/caddy/Caddyfile\n\nsystemctl restart caddy\n\nsleep 5\n\nsudo -u ec2-user bash -c 'git config --global user.email \"workshop-user@example.com\"'\nsudo -u ec2-user bash -c 'git config --global user.name \"Workshop User\"'\n\nsudo -u ec2-user bash -c 'touch ~/.ssh/config'\ntee /home/ec2-user/.ssh/config <<EOF\nHost $EC2_PRIVATE_IP\n  User git\n  Port 2222\n  IdentityFile /home/ec2-user/.ssh/id_rsa\n  IdentitiesOnly yes\nEOF\n\nsudo -u ec2-user bash -c 'chmod 600 ~/.ssh/*'\n\nPUB_KEY=$(sudo cat /home/ec2-user/.ssh/id_rsa.pub)\nTITLE=\"$(hostname)$(date +%s)\"\n\ncurl -X 'POST' \\\n  \"http://workshop-user:$IDE_PASSWORD@localhost:9000/api/v1/user/keys\" \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d \"{\n  \\\"key\\\": \\\"$PUB_KEY\\\",\n  \\\"read_only\\\": true,\n  \\\"title\\\": \\\"$TITLE\\\"\n}\"\n\ntee /etc/profile.d/gitea.sh <<EOF\nexport GIT_SSH_ENDPOINT=\"$EC2_PRIVATE_IP:2222\"\nexport GITEA_API_ENDPOINT=\"http://$EC2_PRIVATE_IP:9000\"\nexport GITEA_EXTERNAL_URL=\"https://$IDE_DOMAIN/gitea\"\nexport GITEA_PASSWORD=\"$IDE_PASSWORD\"\nEOF\n\nsource /etc/profile.d/gitea.sh\n",
+            "splashUrl": "",
+            "readmeUrl": "",
+            "environmentContentsZip": "",
+            "extensions": "",
+            "terminalOnStartup": "false"
+           }
+          ]
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "DocumentFormat": "YAML",
+    "DocumentType": "Command",
+    "UpdateMethod": "NewVersion"
+   }
+  },
+  "IDEFleetIdeBootstrapResource98864E55": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "IDEFleetIdeBootstrapFunctionC79D571D",
+      "Arn"
+     ]
+    },
+    "InstanceId": {
+     "Ref": "IDEFleet0EC23AB4641a0cee2d30d2eb"
+    },
+    "SsmDocument": {
+     "Ref": "IDEFleetIdeBootstrapDocument88102810"
+    },
+    "LogGroupName": {
+     "Ref": "IDEFleetIdeLogGroup63888DED"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2",
+    "Roles": [
+     {
+      "Ref": "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3"
+     }
+    ]
+   }
+  },
+  "IDEFleetIdePasswordExporterFunction732E769D": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "import traceback\nimport cfnresponse\nimport boto3\nimport json\n\ndef lambda_handler(event, context):\n    print('Event: {}'.format(event))\n    print('context: {}'.format(context))\n    responseData = {}\n\n    status = cfnresponse.SUCCESS\n\n    if event['RequestType'] == 'Delete':\n        cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')\n    else:\n        try:\n            passwordName = event['ResourceProperties']['PasswordName']\n\n            secretsmanager = boto3.client('secretsmanager')\n\n            response = secretsmanager.get_secret_value(\n                SecretId=passwordName,\n            )\n            \n            responseData = json.loads(response['SecretString'])\n        except Exception as e:\n            status = cfnresponse.FAILED\n            tb_err = traceback.format_exc()\n            print(tb_err)\n            responseData = {'Error': tb_err}\n        finally:\n            cfnresponse.send(event, context, status, responseData, 'CustomResourcePhysicalID')"
+    },
+    "Handler": "index.lambda_handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 180
+   },
+   "DependsOn": [
+    "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2",
+    "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3"
+   ]
+  },
+  "IDEFleetIdePasswordExporterF99DE17D": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "IDEFleetIdePasswordExporterFunction732E769D",
+      "Arn"
+     ]
+    },
+    "PasswordName": {
+     "Fn::Join": [
+      "-",
+      [
+       {
+        "Fn::Select": [
+         0,
+         {
+          "Fn::Split": [
+           "-",
+           {
+            "Fn::Select": [
+             6,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "-",
+           {
+            "Fn::Select": [
+             6,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  }
+ },
+ "Parameters": {
+  "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61x8664C96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
+  },
+  "ParticipantAssumedRoleArn": {
+   "Type": "String"
+  }
+ },
+ "Outputs": {
+  "IdeUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Fn::GetAtt": [
+        "IDEFleetIdeDistribution631906CF",
+        "DomainName"
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  "IdePassword": {
+   "Value": {
+    "Fn::GetAtt": [
+     "IDEFleetIdePasswordExporterF99DE17D",
+     "password"
+    ]
+   }
+  }
+ }
+}

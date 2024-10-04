@@ -5,7 +5,7 @@ weight: 10
 
 In this chapter, you will create a role that is assumed by the Hub Cluster's Argo CD.
 
-![Hub Role](/static/images/hub-spoke-hub-role.png)
+![Hub Role](/static/images/hub-spoke-hub-role.jpg)
 
 ### 1. Create Role 
 
@@ -113,14 +113,14 @@ terraform apply --auto-approve
 When Argo CD was originally installed, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get setup for pod identity.
 
 ```bash
-kubectl rollout restart -n argocd deployment argo-cd-argocd-server --context hub
-kubectl rollout restart -n argocd statefulset argo-cd-argocd-application-controller --context hub
+kubectl rollout restart -n argocd deployment argo-cd-argocd-server --context hub-cluster
+kubectl rollout restart -n argocd statefulset argo-cd-argocd-application-controller --context hub-cluster
 ```
 
 You can verify that EKS Pod Identity is correctly applied by looking at the injected environment variables:
 
 ```bash
-kubectl --context hub exec -it deployment/argo-cd-argocd-server -n argocd -- env | grep AWS
+kubectl --context hub-cluster exec -it deployment/argo-cd-argocd-server -n argocd -- env | grep AWS
 ```
 
 should be like: 

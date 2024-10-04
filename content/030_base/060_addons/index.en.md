@@ -3,7 +3,7 @@ title: 'Kubernetes Addons'
 weight: 60
 ---
 
-![Kubernetes Addons](/static/images/kubernetes-addons.png)
+![Kubernetes Addons](/static/images/kubernetes-addons.jpg)
 
 An addon is software that provides supporting operational capabilities to Kubernetes applications. Addon software is typically built and maintained by the Kubernetes community, cloud providers like AWS, or third-party vendors. Amazon EKS automatically installs self-managed add-ons such as the Amazon VPC CNI plugin for Kubernetes, kube-proxy, and CoreDNS for every cluster. You have to install and manage all other addons.
 

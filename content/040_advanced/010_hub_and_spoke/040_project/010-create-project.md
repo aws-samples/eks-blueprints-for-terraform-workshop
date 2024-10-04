@@ -12,12 +12,12 @@ In this chapter we will create a project for the webstore workload. In upcoming 
 
 Create an applicationset that creates Argo CD project for each workload.
 
-![Project AppofApps](/static/images/project-applicationset.png)
+![Project AppofApps](/static/images/project-applicationset.jpg)
 
 
 
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,20,25,44,46,47'}
-cat > $GITOPS_DIR/platform/appofapps/argoproject-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/bootstrap/argoproject-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -79,20 +79,18 @@ EOF
 
 :::
 
-Line 16: Projects are installed on the hub cluster and not on the spoke clusters.  
-Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from `argoproject`.
-Line 25: Iterates through all the workload folders under config/workload folder  
-Line 44: project values for each workload.  
-Line 46,47: Replace sourceRepos value with the gitops-workload url(  Line 7 below in the project-values.yaml) 
+- Line 16: Projects are installed on the hub cluster and not on the spoke clusters.
+- Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from `argoproject`.
+- Line 25: Iterates through all the workload folders under config/workload folder
+- Line 44: project values for each workload.
+- Line 46,47: Replace sourceRepos value with the git workload url (See Line 7 below in the project-values.yaml)
 
 
 ### 2. Create Project Values
 
 Lets create webstore project values. 
 
-![project-values](/static/images/project-values.png)
-
-
+![project-values](/static/images/project-values.jpg)
 
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Few values are commented for the upcoming chapters.
 
@@ -171,17 +169,17 @@ projects:
 EOF
 :::
 
-Line 7(Restrict what may be deployed): List of permitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of `argoproject-applicationset.yaml`).
-Line 12(Restrict where apps may be deployed to): Permitted destination of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
-Line 39: Restricted resource creation list. 
-Line 47: Allowed resource creation list. 
+- Line 7: (Restrict what may be deployed): List of permitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of `argoproject-applicationset.yaml`).
+- Line 12: (Restrict where apps may be deployed to): Permitted destination of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
+- Line 39: Restricted resource creation list. 
+- Line 47: Allowed resource creation list. 
 
 ### 3. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add appofapps project applicationset and webstore project values"
+git commit -m "add bootstrap project applicationset and webstore project values"
 git push
 ```
 

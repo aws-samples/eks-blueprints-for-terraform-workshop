@@ -136,12 +136,12 @@ locals {
 
 resource "aws_codecommit_repository" "workloads" {
   repository_name = local.gitops_workload_repo_name
-  description     = "CodeCommit repository for ArgoCD workloads"
+  description     = "CodeCommit repository for Argo CD workloads"
 }
 
 resource "aws_codecommit_repository" "platform" {
   repository_name = local.gitops_platform_repo_name
-  description     = "CodeCommit repository for ArgoCD platform"
+  description     = "CodeCommit repository for Argo CD platform"
 }
 
 

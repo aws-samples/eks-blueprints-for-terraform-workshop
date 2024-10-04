@@ -3,23 +3,25 @@ title: 'Create Namespace'
 weight: 10
 ---
 
-In this chapter you will create webstore workload namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup ArgoCD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
+In this chapter you will create webstore workload namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup Argo CD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
+
+TODO: virer cette image
 
 ![appofapps-applicationset-watch](/static/images/namespace-design.png)
 
-### 1. Create AppofApps namespace applicationset 
+### 1. Create Bootstrap namespace applicationset 
 
-In the "Kubernetes Addons" chapter, we added a file called "appofapps-applicationset.yaml" that watches the "appofapps" folder and processes any changes.
+In the "Kubernetes Addons" chapter, we added a file called "bootstrap-applicationset.yaml" that watches the "bootstrap" folder and processes any changes.
 
-![namespace-begin](/static/images/namespace-begin.png)
+![namespace-begin](/static/images/namespace-begin.jpg)
 
-Lets Add namespace applicationset into the appofapps folder.
+Lets Add namespace applicationset into the bootstrap folder.
 
-![namespace-add-namespace-applicationset](/static/images/namespace-namespace-applicationset.png)
+![namespace-add-namespace-applicationset](/static/images/namespace-namespace-applicationset.jpg)
 
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='22,34'}
 
-cat > $GITOPS_DIR/platform/appofapps/namespace-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/bootstrap/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -69,29 +71,29 @@ EOF
 
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
-Git generator(line 22) iterates through folders under "config/workload" in gitops-workload repository. For each folder( line 34), ApplicationSet process files under "namespace" folder. Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
+Git generator (line 22) iterates through folders under "config/workload" in gitops-workload repository. For each folder (line 34), ApplicationSet process files under "namespace" folder. Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform
 git add . 
-git commit -m "add appofapps namespace applicationset"
+git commit -m "add bootstrap namespace applicationset"
 git push
 ```
 
-On the Argo CD dashboard click on appofapps Application to see newly created namespace applicationset.
+On the Argo CD dashboard click on bootstrap Application to see newly created namespace applicationset.
 
 ::alert[If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.]{header="Sync Application"}
 
-![namespace-helm](/static/images/appofapps-namespace-applicationset.png)
+![namespace-helm](/static/images/bootstrap-namespace-applicationset.jpg)
 
 
 ### 3. Create webstore namespace 
 
 Let's create an ApplicationSet that is responsible for the namespaces associated with the webstore workload.
 
-![namespace-helm](/static/images/namespace-webstore-applicationset.png)
+![namespace-helm](/static/images/namespace-webstore-applicationset.jpg)
 
 
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='15,29,35,36'}
@@ -145,9 +147,9 @@ spec:
 EOF
 :::
 
-Line 17: Only clusters that have label workload_webstore: 'true' are selected  
-Line 29: Install the helm chart in the folder charts/namespace  
-![namespace-helm](/static/images/namespace-helm.png)
+Line 15: Only clusters that have label workload_webstore: 'true' are selected  
+Line 29: Deploy the helm chart present in the folder charts/namespace  
+![namespace-helm](/static/images/namespace-helm.jpg)
 
 ::alert[In this workshop helm chart is in the GitHub repository to make it easy to understand. Use a Helm chart repository to store and serve charts - This is the preferred way to share charts. ]{header="Important" type="warning"}
 
@@ -156,241 +158,18 @@ Line 36: (optional) Override values for the namespace helm chart. For example yo
 
 ### 4. Create webstore namespace values 
 
-![namespace-helm](/static/images/namespace-webstore-defalut-values.png)
+![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
 
 ```json
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace/values
-cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml << 'EOF'
-name: webstore
-labels:
-  environment: hub
-namespaces:
-  carts:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  catalog:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  checkout:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  orders:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  rabbitmq:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  assets:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]
-  ui:
-    labels:
-      additionalLabels:
-        app.kubernetes.io/created-by: eks-workshop
-    limitRanges:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      limits:
-        - default: # this section defines default limits
-            cpu: 500m
-          defaultRequest: # this section defines default requests
-            cpu: 500m
-          max: # max and min define the limit range
-            cpu: "2"
-          min:
-            cpu: 100m
-          type: Container
-    resourceQuotas:
-    - name: default
-      labels:
-        app.kubernetes.io/created-by: eks-workshop
-      spec:
-        hard:
-          cpu: "5000"
-          memory: 200Gi
-          pods: "20"
-        scopeSelector:
-          matchExpressions:
-          - operator : In
-            scopeName: PriorityClass
-            values: ["high"]            
-EOF
+cp $WORKSHOP_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/default-values.yaml $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml
 ```
+
+:::expand{header="Check the file content:"}
+```bash
+code $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml
+```
+:::
 
 
 ```bash
@@ -399,7 +178,7 @@ tree $GITOPS_DIR/platform/charts/namespace
 
 Output:
 ```
-/home/ec2-user/environment/wgit/assets/platform/charts/namespace
+/home/ec2-user/environment/gitops-repo/platform/charts/namespace
 ├── Chart.yaml
 ├── README.md
 ├── templates
@@ -428,7 +207,7 @@ Output:
 
 ### 5. Enable hub cluster for webstore workload
 
-The webstore Namespace applicationset( step 5) only creates webstore namespaces on clusters labeled with workload_webstore: 'true'. Let's add this label to the hub cluster.
+The webstore Namespace applicationset only creates webstore namespaces on clusters labeled with workload_webstore: 'true'. Let's add this label to the hub cluster.
 
 ```bash
 sed -i "s/#enablewebstore//g" ~/environment/hub/main.tf
@@ -462,19 +241,24 @@ git add .
 git commit -m "add webstore namespace applicationset and namespace values"
 git push
 ```
-The namespace-applicationset.yaml file iterates through the folders under config/workload/\<\<workload>>/namespace. 
+The namespace-applicationset.yaml file makes Argo CD iterates through the folders under config/workload/\<\<workload>>/namespace. 
 With the recent commit, it now processes the files located under config/workload/webstore/namespace. 
 
 ![namespace-helm](/static/images/namespace-process-webstore-applicationset.png)
 
-The namespace-webstore-applicationset.yaml file installs the namespace Helm chart using the default values.  
-![namespace-helm](/static/images/namespace-create-webstore-namespace.png)
+So it creates a new **namespace-webstore** application:
+
+![namespace-workload](/static/images/namespace_webstore.jpg)
+
+The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.  
+
+![namespace-helm](/static/images/namespace-create-webstore-namespace.jpg)
 
 
 ### 8. Validate namespaces 
 
 ```bash
-kubectl get ns --context hub
+kubectl get ns --context hub-cluster
 ```
 
 :::expand{header="Output"}
@@ -497,7 +281,7 @@ ui                Active   6h
 To view the LimitRange set for the ui namespace in the spoke-staging cluster.
 
 ```bash
-kubectl get limitrange  -n ui --context hub -o yaml
+kubectl get limitrange  -n ui --context hub-cluster -o yaml
 ```
 
 :::expand{header="Output"}

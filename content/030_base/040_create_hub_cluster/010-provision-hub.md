@@ -5,7 +5,7 @@ weight: 10
 
 Here, we create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.
 
-![EKS Cluster](/static/images/argocd-bootstrap-eks.png)
+![EKS Cluster](/static/images/argocd-bootstrap-eks.jpg)
 
 
 ### 1. Create Remote State 
@@ -55,7 +55,7 @@ cat > ~/environment/hub/variables.tf << 'EOF'
 variable "kubernetes_version" {
   description = "EKS version"
   type        = string
-  default     = "1.28"
+  default     = "1.30"
 }
 
 variable "eks_admin_role_name" {
@@ -78,6 +78,26 @@ variable "authentication_mode" {
   type        = string
   default     = "API_AND_CONFIG_MAP"
 }
+
+variable "secret_name_git_data_addons" {
+  description = "Secret name for Git data addons"
+  type        = string
+  default     = "eks-blueprints-workshop-workshop-gitops-addons"
+}
+
+variable "secret_name_git_data_platform" {
+  description = "Secret name for Git data platform"
+  type        = string
+  default     = "eks-blueprints-workshop-workshop-gitops-platform"
+}
+
+variable "secret_name_git_data_workloads" {
+  description = "Secret name for Git data workloads"
+  type        = string
+  default     = "eks-blueprints-workshop-workshop-gitops-workloads"
+}
+
+
 
 EOF
 ```
@@ -215,28 +235,28 @@ cat > ~/environment/hub/outputs.tf << 'EOF'
 output "configure_kubectl" {
   description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
   value       = <<-EOT
-    aws eks --region ${local.region} update-kubeconfig --name ${module.eks.cluster_name} --alias hub
+    aws eks --region ${local.region} update-kubeconfig --name ${module.eks.cluster_name} --alias ${module.eks.cluster_name}
   EOT
 }
 
 output "cluster_name" {
-  description = "Cluster Hub name"
+  description = "Cluster name"
   value       = module.eks.cluster_name
 }
 output "cluster_endpoint" {
-  description = "Cluster Hub endpoint"
+  description = "Cluster endpoint"
   value       = module.eks.cluster_endpoint
 }
 output "cluster_certificate_authority_data" {
-  description = "Cluster Hub certificate_authority_data"
+  description = "Cluster certificate_authority_data"
   value       = module.eks.cluster_certificate_authority_data
 }
 output "cluster_region" {
-  description = "Cluster Hub region"
+  description = "Cluster region"
   value       = local.region
 }
-output "hub_node_security_group_id" {
-  description = "Cluster Hub region"
+output "cluster_node_security_group_id" {
+  description = "Cluster node security group"
   value       = module.eks.node_security_group_id
 }
 
@@ -253,17 +273,18 @@ eks_admin_role_name          = "WSParticipantRole"
 
 EOF
 ```
-::alert[If you are NOT at an AWS event workshop, you may need to update this parameter with your console Role Name.]{header="Important" type="warning"}
 
-"WSParticipantRole" is the given role name when participating in the AWS run workshop. When working through the workshop independently, you should update it to reflect your own AWS role.
-
-You can get your role on the console, choose your user role on the navigation bar in the upper right. Your role is after Account Id. Your role name is anything before "/" if it exists. In the Cloud9 IDE, open the terraform.tfvars file, modify the role as needed, then ***save your changes***.
-
-You can use the following command to edit the file in Cloud9 IDE.
+:::alert{header="Important" type="warning"}
+If you are NOT at an AWS event workshop, you may need to update this parameter with your console Role Name.
 
 ```bash
-c9 open ~/environment/terraform.tfvars
+code ~/environment/terraform.tfvars
 ```
+:::
+
+"WSParticipantRole" is the given role name when participating in an AWS event workshop. When working through the workshop independently, you should update it to reflect your own AWS role.
+
+You can get your role on the console, choose your user role on the navigation bar in the upper right. Your role is after Account Id. Your role name is anything before "/" if it exists. In the Cloud9 IDE, open the terraform.tfvars file, modify the role as needed, then ***save your changes***.
 
 ![AWS Console Role](/static/images/aws-console-role.png)
 
@@ -297,4 +318,12 @@ To verify that kubectl is correctly configured, run the command below to see the
 
 ```bash
 kubectl get nodes --context hub
+```
+
+Expected output:
+```
+NAME                                        STATUS   ROLES    AGE   VERSION
+ip-10-0-43-5.eu-west-1.compute.internal     Ready    <none>   21m   v1.28.13-eks-a737599
+ip-10-0-45-193.eu-west-1.compute.internal   Ready    <none>   21m   v1.28.13-eks-a737599
+ip-10-0-51-9.eu-west-1.compute.internal     Ready    <none>   21m   v1.28.13-eks-a737599
 ```

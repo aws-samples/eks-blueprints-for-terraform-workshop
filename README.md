@@ -15,7 +15,7 @@ We will also walk through different architecture patterns like standalone
 
 or hub and spoke
 
-![](/static/images/argocd-hub-spoke.png)
+![](/static/images/argocd-hub-spoke.jpg)
 
 
 ## CDK Bootstrap for environments

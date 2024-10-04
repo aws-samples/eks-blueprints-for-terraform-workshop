@@ -8,7 +8,7 @@ The goal of this chapter is to demonstrate how easy it can be to install an addo
 In the previous chapter, we created ApplicationSets for various add-ons, but they did not generate any Applications yet because the conditions were not met. For example, looking at the `addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml` file in your "gitops-platform" repo, the loadbalancer ApplicationSet requires clusters to have the label `enable_aws_load_balancer_controller=true`. Currently, your only cluster is hub-cluster and it does not have that label.
 
 ```bash
-c9 open $GITOPS_DIR/platform/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
+code $GITOPS_DIR/addons/applicationset/aws/addons-aws-load-balancer-controller-appset.yaml
 ```
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='7-10'}
@@ -131,9 +131,9 @@ The Argo CD dashboard should have a load balancer application.
 ### 5. Verify the load balancer deployment
 
 ```bash
-kubectl get deployment -n kube-system aws-load-balancer-controller --context hub
+kubectl get deployment -n kube-system aws-load-balancer-controller --context hub-cluster
 ```
-::::expand{header="Where is the IAM load balancer role, created by the EKS Blueprint addon module, provided to Argo CD?"}
+:::::expand{header="Where is the IAM load balancer role, created by the EKS Blueprint addon module, provided to Argo CD?"}
 You can find it in the hub cluster's 'aws_load_balancer_controller_iam_role_arn' annotation on the Argo CD dashboard.
 
 ![hubcluster-lb-arn](/static/images/lb-arn.png)
@@ -142,11 +142,11 @@ You can check that the Labels and annotations are correctly propagated to the cl
 
 
 ```bash
-kubectl --context hub get secrets -n argocd hub-cluster -o yaml
+kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
-:::expand{header="Example of output"}
-```
+::::expand{header="Example of output"}
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='16'}
 apiVersion: v1
 data:
   config: ewogICJ0bHNDbGllbnRDb25maWciOiB7AiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
@@ -230,8 +230,8 @@ metadata:
   resourceVersion: "309742"
   uid: 1156e385-97af-4732-83ae-55aafeb9ec62
 type: Opaque
-```
-::: 
+:::
+:::: 
 
 
-::::
+:::::

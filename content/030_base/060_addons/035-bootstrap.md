@@ -20,7 +20,7 @@ In the App of Apps pattern, a top-level Argo CD Application resource points to a
 ![applicationset](/static/images/app-of-apps.png)
 
 
-In this chapter, you will create a appofapps Argo CD application that points to the `platform/appofapps` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
+In this chapter, you will create a bootstrap Argo CD application that points to the `platform/bootstrap` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
 
 
 ![applicationset](/static/images/bootstrap-appofapps.png)
@@ -28,17 +28,17 @@ In this chapter, you will create a appofapps Argo CD application that points to 
 
 
 
-### 1. Create appofapps applicationset 
+### 1. Create bootstrap applicationset 
 
-The ApplicationSet creates a new Argo CD Application named "appofapps" that points to the platform/appofapps directory in your Git repository.
+The ApplicationSet creates a new Argo CD Application named "bootstrap" that points to the platform/bootstrap directory in your Git repository.
 
 ```bash
-mkdir ~/environment/hub/appofapps
-cat > ~/environment/hub/appofapps/appofapps-applicationset.yaml << 'EOF'
+mkdir -p ~/environment/hub/bootstrap
+cat > ~/environment/hub/bootstrap/bootstrap-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: appofapps
+  name: bootstrap
   namespace: argocd
 spec:
   syncPolicy:
@@ -50,12 +50,12 @@ spec:
           environment: hub
   template:
     metadata:
-      name: 'appofapps'
+      name: 'bootstrap'
     spec:
       project: default
       source:
         repoURL: '{{metadata.annotations.platform_repo_url}}'
-        path: '{{metadata.annotations.platform_repo_basepath}}appofapps'
+        path: '{{metadata.annotations.platform_repo_basepath}}{{metadata.annotations.platform_repo_path}}'
         targetRevision: '{{metadata.annotations.platform_repo_revision}}'
         directory:
           recurse: true
@@ -66,32 +66,42 @@ spec:
         automated:
           allowEmpty: true
 EOF
+
+
 ```
 
 Note, that it uses the annotations from the secret like `{{metadata.annotations.platform_repo_url}}`, which means that it will retrieve the value from the secret, like we can do manually with:
 
 ```bash
-kubectl --context hub get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url"
+kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url" -r
+kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_path" -r
+kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_revision" -r
+```
+the Output should be similar to:
+```
+https://d1nkjb4pxwlir8.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-workshop-gitops-platform
+bootstrap
+HEAD
 ```
 
-### 2. Local variable to read appofapps applicationset
+### 2. Local variable to read bootstrap applicationset
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/main.tf
 locals{
   argocd_apps = {
-    appofapps   = file("${path.module}/appofapps/appofapps-applicationset.yaml")
+    bootstrap   = file("${path.module}/bootstrap/bootstrap-applicationset.yaml")
   }
 }
 EOF
 ```
 
-### 3. GitOps Bridge to create appofapps root application
+### 3. GitOps Bridge to create bootstrap root application
 
 ```bash
 sed -i "s/#enableapps//g" ~/environment/hub/main.tf
 ```
-The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates appofapps Application.
+The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates bootstrap Application.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
 module "gitops_bridge_bootstrap" {
@@ -115,8 +125,8 @@ cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### 5. Validate appofapps Application
+### 5. Validate bootstrap Application
 
-Navigate to the Argo CD dashboard in the UI and validate that the appofapps Application was created successfully. The appofapps Argo CD Application is currently configured to point to the `assets/platform/appofapps` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/appofapps directory.
+Navigate to the Argo CD dashboard in the UI and click on **Applications** to validate that the **bootstrap** Application was created successfully. The bootstrap Argo CD Application is currently configured to point to the `assets/platform/bootstrap` folder in your Git repository. This folder is still empty. In the upcoming chapters, you will add applicationset files for add-ons, namespaces, projects, and workloads to this platform/bootstrap directory.
 
-![bootstrap-application](/static/images/bootstrap-application.png)
+![bootstrap-application](/static/images/bootstrap-application.jpg)

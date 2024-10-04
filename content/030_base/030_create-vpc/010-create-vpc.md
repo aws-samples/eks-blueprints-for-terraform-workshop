@@ -37,7 +37,7 @@ cat > ~/environment/vpc/variables.tf << 'EOF'
 variable "environment_name" {
   description = "The name of environment Infrastructure stack, feel free to rename it. Used for cluster and VPC names."
   type        = string
-  default     = "eks-blueprint"
+  default     = "eks-blueprints-workshop"
 }
 
 variable "vpc_cidr" {
@@ -158,6 +158,27 @@ terraform apply -auto-approve
 ::alert[The process of creating a Virtual Private Cloud (VPC) may require up to 5 minutes to complete.]{header="Wait for resources to create"}
 
 
-Once completed, you can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprint)
+Once completed, you can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprints-workshop)
 
 ::alert[This workshop uses local Terraform state. To learn about a proper setup, take a look at https://www.terraform.io/language/state]{header="Terraform State Management"}
+
+
+After some simes you should see output similar to:
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='2'}
+...
+module.vpc.aws_route.private_nat_gateway[0]: Creation complete after 0s [id=r-rtb-0a42c62f0538aede11080289494]
+
+Apply complete! Resources: 23 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+private_subnets = [
+  "subnet-02f11317d12ebc4c0",
+  "subnet-0be1b9e9832fb1e3d",
+  "subnet-05da55f463254176f",
+]
+vpc_id = "vpc-056a18d25ca30e155"
+:::
+<!-- prettier-ignore-end -->
