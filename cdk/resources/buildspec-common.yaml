@@ -95,4 +95,4 @@ phases:
   post_build:
     commands:
       # CODEBUILD_BUILD_SUCCEEDING = 1 Set to 0 if the build is failing, or 1 if the build is succeeding.
-      - echo ">>> build status $CODEBUILD_BUILD_SUCCEEDING "
+      - echo ">>> build status $CODEBUILD_BUILD_SUCCEEDING"

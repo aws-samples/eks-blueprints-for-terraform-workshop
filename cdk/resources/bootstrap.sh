@@ -163,6 +163,8 @@ kubectl krew install stern
 kubectl krew install np-viewer 
 
 go install github.com/kyverno/chainsaw@latest
+go install github.com/isovalent/aws-delete-vpc@latest
+
 pip install pytest
 pip install pytest_bdd boto3 kubernetes
 
