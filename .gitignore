@@ -10,7 +10,6 @@ preview_build
 node_modules
 .envrc
 .vscode
-terraform
 venv
 tmp
 us-west-2
