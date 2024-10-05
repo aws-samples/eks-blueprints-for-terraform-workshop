@@ -12,8 +12,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Default values
-ASK_DELETE=false
-ACCEPT_DELETE=false
+ASK_DELETE=true
+ACCEPT_DELETE=true
 
 VPC_NAMES=("eks-blueprints-workshop")
 
