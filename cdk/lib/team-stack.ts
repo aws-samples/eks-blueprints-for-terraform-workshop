@@ -76,7 +76,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       WORKSHOP_GIT_BRANCH: process.env.WORKSHOP_GIT_BRANCH || "vscode",
     });
 
-    const ide = new VSCodeIde(this, "IDE-Fleet", {
+    const ide = new VSCodeIde(this, "IDE-BLUE", {
       bootstrapScript: bootstrapScript,
       role: sharedRole,
       terminalOnStartup: false,
@@ -93,7 +93,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       ).valueAsString;
     }
 
-    const commonRunner = new CodeBuildCustomResource(this, "EKSGITIAM", {
+    const commonRunner = new CodeBuildCustomResource(this, "EKSWSCOMMON", {
       buildspec: buildspecCommon,
       codeBuildTimeout: cdk.Duration.minutes(60),
       computeType: codebuild.ComputeType.SMALL,
