@@ -224,48 +224,45 @@ export class TeamStack extends WorkshopStudioTeamStack {
     //   );
     // }
 
-    // Calling the SSM document to make sure all repo where pushed
-    // const ssmDocument = new ssm.CfnDocument(this, "SetupGit", {
-    //   documentType: "Command",
-    //   documentFormat: "YAML",
-    //   updateMethod: "NewVersion",
-    //   targetType: "/AWS::EC2::Instance",
-    //   content: {
-    //     schemaVersion: "2.2",
-    //     description: "Setup Git",
-    //     parameters: {},
-    //     mainSteps: [
-    //       {
-    //         action: "aws:runShellScript",
-    //         name: "SetupGit",
-    //         inputs: {
-    //           runCommand: [
-    //             "sudo su - ec2-user -c 'GITOPS_DIR=/home/ec2-user/environment/gitops-repos ~/environment/eks-blueprints-for-terraform-workshop/setup-git.sh'",
-    //           ],
-    //         },
-    //       },
-    //     ],
-    //   },
-    // });
+    Calling the SSM document to make sure all repo where pushed
+    const ssmDocument = new ssm.CfnDocument(this, "SetupGit", {
+      documentType: "Command",
+      documentFormat: "YAML",
+      updateMethod: "NewVersion",
+      targetType: "/AWS::EC2::Instance",
+      content: {
+        schemaVersion: "2.2",
+        description: "Setup Git",
+        parameters: {},
+        mainSteps: [
+          {
+            action: "aws:runShellScript",
+            name: "SetupGit",
+            inputs: {
+              runCommand: [
+                "sudo su - ec2-user -c 'GITOPS_DIR=/home/ec2-user/environment/gitops-repos /home/ec2-user/eks-blueprints-for-terraform-workshop/setup-git.sh '",
+              ],
+            },
+          },
+        ],
+      },
+    });
 
-    // ssmDocument.node.addDependency(hubRunner.customResource);
-    // const association = new cdk.aws_ssm.CfnAssociation(
-    //   this,
-    //   "SetupGitAssociation",
-    //   {
-    //     associationName: "SetupGitAssociation",
-    //     name: ssmDocument.ref,
-    //     targets: [
-    //       {
-    //         key: "tag:aws:cloudformation:stack-name",
-    //         values:
-    //           this.stackName !== "eks-blueprints-workshop"
-    //             ? [this.stackName, "eks-blueprints-workshop"]
-    //             : [this.stackName],
-    //       },
-    //     ],
-    //   },
-    // );
+    ssmDocument.node.addDependency(hubRunner.customResource);
+    const association = new cdk.aws_ssm.CfnAssociation(
+      this,
+      "SetupGitAssociation",
+      {
+        associationName: "SetupGitAssociation",
+        name: ssmDocument.ref,
+        targets: [
+          {
+            key: "tag:aws:cloudformation:stack-name",
+            values: [this.stackName, "eks-blueprints-workshopteam-stack"]
+          },
+        ],
+      },
+    );
 
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });

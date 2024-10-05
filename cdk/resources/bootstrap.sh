@@ -261,22 +261,24 @@ source ~/.bashrc
 echo '=== Configure .bashrc.d ==='
 if [[ ! -d "/home/ec2-user/.bashrc.d" ]]; then
     sudo -H -u ec2-user bash -c "mkdir -p ~/.bashrc.d"
-    cat << EOT > /home/ec2-user/.bashrc.d/env.bash
-    export ACCOUNTID=$ACCOUNTID
-    export ACCOUNT_ID=$ACCOUNTID
-    export AWS_ACCOUNT_ID=$ACCOUNTID
-    export AWS_DEFAULT_REGION=$AWS_REGION
-    export GOROOT=/usr/local/go
-    export ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME
-    export ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX
-    export BUCKET_NAME=$BUCKET_NAME
-    export WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL
-    export WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH
-    export BASE_DIR=$BASE_DIR
-    export GITOPS_DIR=$GITOPS_DIR
+fi
+cat << EOT > /home/ec2-user/.bashrc.d/env.bash
+export ACCOUNTID=$ACCOUNTID
+export ACCOUNT_ID=$ACCOUNTID
+export AWS_ACCOUNT_ID=$ACCOUNTID
+export AWS_DEFAULT_REGION=$AWS_REGION
+export GOROOT=/usr/local/go
+export ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME
+export ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX
+export BUCKET_NAME=$BUCKET_NAME
+export WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL
+export WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH
+export BASE_DIR=$BASE_DIR
+export WORKSHOP_DIR=$BASE_DIR
+export GITOPS_DIR=$GITOPS_DIR
 EOT
 
-    sudo -H -u ec2-user bash -c "cat <<'EOF' >> ~/.bashrc 
+sudo -H -u ec2-user bash -c "cat <<'EOF' >> ~/.bashrc 
 for file in ~/.bashrc.d/*.bash; do
   source "\$file" || true
 done
@@ -285,11 +287,6 @@ EOF
 
 fi
 
-# # change permissions for /root/.ssh for the codecommit TF step to be able to change the file location from /root to /home/ec2-user
-# chown -R ec2-user:ec2-user /root/.ssh
-# chown -R ec2-user:ec2-user /root
-# chmod 700 /root/.ssh
-# chmod 700 /root
 
 echo '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='
 echo "complete -C '/usr/local/bin/aws_completer' aws" >> /home/ec2-user/.bashrc.d/aws.bash
