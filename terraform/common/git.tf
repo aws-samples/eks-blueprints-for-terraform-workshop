@@ -2,12 +2,6 @@
 
 locals {
   gitops_repos = {
-    fleet = {
-      name     = var.gitops_fleet_repo_name
-      basepath = var.gitops_fleet_basepath
-      path     = var.gitops_fleet_path
-      revision = var.gitops_fleet_revision
-    }
     addons = {
       name     = var.gitops_addons_repo_name
       basepath = var.gitops_addons_basepath
@@ -32,8 +26,6 @@ locals {
   gitea_password = var.gitea_password
 
   git_secrets_version_locals = {
-    # private_key = tls_private_key.gitops.private_key_pem
-    #org         = "ssh://${aws_iam_user_ssh_key.gitops.id}@git-codecommit.${data.aws_region.current.id}.amazonaws.com"
     org         = "${var.gitea_external_url}"
     repo_prefix = var.gitea_repo_prefix
   }
@@ -53,7 +45,6 @@ resource "aws_secretsmanager_secret_version" "git_secrets_version" {
   for_each  = aws_secretsmanager_secret.git_secrets
   secret_id = each.value.id
   secret_string = jsonencode({
-    #private_key = local.git_secrets_version_locals.private_key
     username    = local.gitea_user
     password    = local.gitea_password
     url         = local.git_secrets_urls[each.key]
