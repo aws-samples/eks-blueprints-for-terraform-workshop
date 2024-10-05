@@ -32,8 +32,8 @@ set -e
 export host=$1
 
 if [ -z "$host" ]; then
-echo "the service is not found: $host"
-exit
+  echo "the service is not found: $host"
+  exit
 fi
 
 echo $host
@@ -284,9 +284,6 @@ for file in ~/.bashrc.d/*.bash; do
 done
 EOF
 "
-
-fi
-
 
 echo '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='
 echo "complete -C '/usr/local/bin/aws_completer' aws" >> /home/ec2-user/.bashrc.d/aws.bash

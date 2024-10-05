@@ -224,7 +224,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
     //   );
     // }
 
-    Calling the SSM document to make sure all repo where pushed
+    //Calling the SSM document to make sure all repo where pushed
     const ssmDocument = new ssm.CfnDocument(this, "SetupGit", {
       documentType: "Command",
       documentFormat: "YAML",
@@ -248,7 +248,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       },
     });
 
-    ssmDocument.node.addDependency(hubRunner.customResource);
+    ssmDocument.node.addDependency(commonRunner.customResource);
     const association = new cdk.aws_ssm.CfnAssociation(
       this,
       "SetupGitAssociation",
