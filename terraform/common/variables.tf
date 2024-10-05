@@ -1,19 +1,19 @@
 variable "project_context_prefix" {
   description = "Prefix for project"
   type        = string
-  default     = "eks-fleet-workshop-gitops"
+  default     = "eks-blueprints-workshop-gitops"
 }
 
 variable "secret_name_ssh_secrets" {
   description = "Secret name for SSH secrets"
   type        = string
-  default     = "git-ssh-secrets-fleet-workshop"
+  default     = "git-ssh-secrets-blueprints-workshop"
 }
 
 
 variable "gitops_addons_repo_name" {
   description = "Git repository name for addons"
-  default     = "eks-fleet-workshop-gitops-addons"
+  default     = "eks-blueprints-workshop-gitops-addons"
 }
 variable "gitops_addons_basepath" {
   description = "Git repository base path for addons"
@@ -30,7 +30,7 @@ variable "gitops_addons_revision" {
 
 variable "gitops_platform_repo_name" {
   description = "Git repository name for platform"
-  default     = "eks-fleet-workshop-gitops-platform"
+  default     = "eks-blueprints-workshop-gitops-platform"
 }
 variable "gitops_platform_basepath" {
   description = "Git repository base path for platform"
@@ -48,7 +48,7 @@ variable "gitops_platform_revision" {
 
 variable "gitops_workload_repo_name" {
   description = "Git repository name for workload"
-  default     = "eks-fleet-workshop-gitops-apps"
+  default     = "eks-blueprints-workshop-gitops-apps"
 }
 variable "gitops_workload_basepath" {
   description = "Git repository base path for workload"
@@ -79,12 +79,10 @@ variable "gitea_password" {
   description = "Password to login on the Gitea instance"
   type = string
   sensitive = true
-  default = ""
 }
 variable "gitea_external_url" {
   description = "External url to access gitea"
   type = string
-  default = ""
 }
 
 variable "gitea_repo_prefix" {

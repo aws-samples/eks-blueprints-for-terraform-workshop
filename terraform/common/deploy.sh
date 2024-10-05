@@ -12,8 +12,8 @@ terraform -chdir=$SCRIPTDIR init --upgrade
 
 echo "Applying git resources"
 
-terraform -chdir=$SCRIPTDIR apply -auto-approve
-
+echo TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD terraform -chdir=$SCRIPTDIR apply -auto-approve
+TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD terraform -chdir=$SCRIPTDIR apply -auto-approve
 
 if [[ ${PIPESTATUS[0]} -eq 0 ]]; then
   # wait for ssh access allowed

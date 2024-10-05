@@ -14,11 +14,3 @@ output "gitops_user_name" {
   description = "Name of the IAM user created for GitOps access"
 }
 
-output "aws_ssm_parameter_name" {
-  value       = aws_ssm_parameter.argocd_hub_role.name
-  description = "Name of the SSM parameter for the ArgoCD EKS role"
-}
-output "iam_argocd_role_arn" {
-  value       = aws_iam_role.argocd_central.arn
-  description = "ARN of the IAM role for ArgoCD EKS access"
-}
