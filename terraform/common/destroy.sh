@@ -8,8 +8,9 @@ ROOTDIR="$(cd ${SCRIPTDIR}/..; pwd )"
 
 echo "Destroying AWS git and iam resources"
 terraform -chdir=$SCRIPTDIR init --upgrade
-terraform -chdir=$SCRIPTDIR destroy -auto-approve
-destroy_output=$(terraform -chdir=$SCRIPTDIR  destroy -auto-approve 2>&1)
+TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD terraform -chdir=$SCRIPTDIR destroy -auto-approve
+echo TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD terraform -chdir=$SCRIPTDIR destroy -auto-approve
 
 # Delete parameter created in the bootstrap
-aws ssm delete-parameter --name GiteaExternalUrl || true
+aws ssm delete-parameter --name EksBlueprintGiteaExternalUrl || true
+
