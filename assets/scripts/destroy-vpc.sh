@@ -16,7 +16,8 @@ ASK_DELETE=false
 ACCEPT_DELETE=false
 
 VPC_NAMES=("eks-blueprints-workshop")
-#cd ~/environment/vpc/
+
+cd ~/environment/vpc/
 
 aws_debug() {
     set -x
