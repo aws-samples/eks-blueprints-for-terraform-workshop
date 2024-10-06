@@ -240,7 +240,8 @@ export class TeamStack extends WorkshopStudioTeamStack {
             name: "SetupGit",
             inputs: {
               runCommand: [
-                "sudo su - ec2-user -c 'GITOPS_DIR=/home/ec2-user/environment/gitops-repos /home/ec2-user/eks-blueprints-for-terraform-workshop/setup-git.sh '",
+                "sudo su - ec2-user -c 'ls -la /home/ec2-user/eks-blueprints-for-terraform-workshop/'",
+                "sudo su - ec2-user -c 'GITOPS_DIR=/home/ec2-user/environment/gitops-repos /home/ec2-user/eks-blueprints-for-terraform-workshop/setup-git.sh'",
               ],
             },
           },
