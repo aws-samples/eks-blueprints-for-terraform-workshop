@@ -13,7 +13,7 @@ Previously, you created an "App of Apps" Application that referenced the "bootst
 
  ~/environment/gitops-repos/addons
 ```bash
-cp $WORKSHOP_DIR/solution/gitops/platform/bootstrap/addons-applicationset.yaml $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml
+cp $BASE_DIR/solution/gitops/platform/bootstrap/addons-applicationset.yaml $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml
 ```
 
 ```bash

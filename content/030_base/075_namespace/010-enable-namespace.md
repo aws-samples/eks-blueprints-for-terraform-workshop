@@ -162,7 +162,7 @@ Line 36: (optional) Override values for the namespace helm chart. For example yo
 
 ```json
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace/values
-cp $WORKSHOP_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/default-values.yaml $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml
+cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/default-values.yaml $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml
 ```
 
 :::expand{header="Check the file content:"}
