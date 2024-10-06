@@ -40,7 +40,7 @@ fi
 rm -rf ${GITOPS_DIR}
 mkdir -p ${GITOPS_DIR}
 
-#git clone ${gitops_workload_url} ${GITOPS_DIR}/apps
+# populate workload repository
 git init ${GITOPS_DIR}/workload
 git -C ${GITOPS_DIR}/workload remote add origin ${gitops_workload_url}
 cp -r ${ROOTDIR}/assets/workload/*  ${GITOPS_DIR}/workload
@@ -50,26 +50,19 @@ git -C ${GITOPS_DIR}/workload commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/workload push -u origin main -f  || true
 
 # populate platform repository
-#git clone ${gitops_platform_url} ${GITOPS_DIR}/platform
 git init ${GITOPS_DIR}/platform
 git -C ${GITOPS_DIR}/platform remote add origin ${gitops_platform_url}
-mkdir -p ${GITOPS_DIR}/platform/charts
-#cp -r ${ROOTDIR}/gitops/platform/charts/*  ${GITOPS_DIR}/platform/charts/
-mkdir -p ${GITOPS_DIR}/platform/bootstrap
-#cp -r ${ROOTDIR}/gitops/platform/bootstrap/*  ${GITOPS_DIR}/platform/bootstrap/
-
-# Deploy the namespaces for this workshop
-# TODO: review with the team
-mkdir -p ${GITOPS_DIR}/platform/teams
 cp -r ${ROOTDIR}/assets/platform/*  ${GITOPS_DIR}/platform/
 
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push -u origin main -f || true
 
+# populate addons repository
 git init ${GITOPS_DIR}/addons
 git -C ${GITOPS_DIR}/addons remote add origin ${gitops_addons_url}
-cp -r ${ROOTDIR}/assets/platform/addons/* ${GITOPS_DIR}/addons/
+cp -r ${ROOTDIR}/assets/addons/* ${GITOPS_DIR}/addons/
+
 git -C ${GITOPS_DIR}/addons add . || true
 git -C ${GITOPS_DIR}/addons commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/addons push -u origin main -f  || true
