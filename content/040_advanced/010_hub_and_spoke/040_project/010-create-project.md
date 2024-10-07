@@ -13,61 +13,69 @@ Create an applicationset that creates Argo CD project for each workload.
 
 ![Project AppofApps](/static/images/project-applicationset.jpg)
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,20,25,44,46,47'}
 cat > $GITOPS_DIR/platform/bootstrap/argoproject-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-name: argoprojects
-namespace: argocd
+  name: argoprojects
+  namespace: argocd
 spec:
-syncPolicy:
-preserveResourcesOnDeletion: true
-generators:
-
-- matrix:
-  generators: - clusters:
-  selector:
-  matchLabels:
-  environment: hub
-  values:
-  addonChart: argocd-apps
-  addonChartVersion: '1.4.1'
-  addonChartRepository: https://argoproj.github.io/argo-helm - git:
-  repoURL: '{{metadata.annotations.platform_repo_url}}'
-  revision: '{{metadata.annotations.platform_repo_revision}}'
-  directories: - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/\*'
-  template:
-  metadata:
-  name: 'argoprojects-{{path.basename}}'
-  labels:
-  environment: '{{metadata.labels.environment}}'
-  team: '{{path.basename}}'
-  spec:
-  project: default
-  sources: - repoURL: '{{metadata.annotations.platform_repo_url}}'
-  targetRevision: '{{metadata.annotations.platform_repo_revision}}'
-  ref: values - chart: '{{values.addonChart}}'
-  repoURL: '{{values.addonChartRepository}}'
-  targetRevision: '{{values.addonChartVersion}}'
-  helm:
-  releaseName: 'argoprojects-{{path.basename}}'
-  valueFiles: - '$values/{{metadata.annotations.platform_repo_basepath}}config/workload/{{path.basename}}/project/project-values.yaml'
-  parameters: - name: "projects[0].sourceRepos[0]"
-  value: '{{metadata.annotations.workload_repo_url}}'
-  destination:
-  name: '{{name}}'
   syncPolicy:
-  automated:
-  allowEmpty: true
-  retry:
-  backoff:
-  duration: 1m
-  limit: 100
-  syncOptions: - CreateNamespace=true
-  EOF
-
+    preserveResourcesOnDeletion: true
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchLabels:
+                  environment: hub
+              values:
+                addonChart: argocd-apps
+                addonChartVersion: '1.4.1'
+                addonChartRepository: https://argoproj.github.io/argo-helm
+          - git:
+              repoURL: '{{metadata.annotations.platform_repo_url}}'
+              revision: '{{metadata.annotations.platform_repo_revision}}'
+              directories:
+                - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/*'
+  template:
+    metadata:
+      name: 'argoprojects-{{path.basename}}'
+      labels:
+        environment: '{{metadata.labels.environment}}'
+        team: '{{path.basename}}'
+    spec:
+      project: default
+      sources:
+        - repoURL: '{{metadata.annotations.platform_repo_url}}'
+          targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+          ref: values
+        - chart: '{{values.addonChart}}'
+          repoURL: '{{values.addonChartRepository}}'
+          targetRevision: '{{values.addonChartVersion}}'
+      helm:
+        releaseName: 'argoprojects-{{path.basename}}'
+        valueFiles:
+          - '$values/{{metadata.annotations.platform_repo_basepath}}config/workload/{{path.basename}}/project/project-values.yaml'
+        parameters:
+          - name: "projects[0].sourceRepos[0]"
+            value: '{{metadata.annotations.workload_repo_url}}'
+      destination:
+        name: '{{name}}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+        retry:
+          backoff:
+            duration: 1m
+            limit: 100
+        syncOptions:
+          - CreateNamespace=true
+EOF
 :::
+<!-- prettier-ignore-end -->
 
 - Line 16: Projects are installed on the hub cluster and not on the spoke clusters.
 - Line 20: Argo CD projects are created with a helm chart. Installs the project helm chart from `argoproject`.

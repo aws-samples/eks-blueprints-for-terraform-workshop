@@ -51,16 +51,21 @@ cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-Navigate to the Argo CD dashboard, then go to the Settings page, and select Repositories to view gitops-platform and gitops-workload repositories
+Navigate to the Argo CD dashboard, then go to the **Settings** page, and select **Repositories** to view gitops-platform and gitops-workload repositories
 
-TODO: update the image with tht 3 repos
+![Argo CD Repositories](/static/images/argocd-repositories.jpg)
 
-![Argo CD Repositories](/static/images/argocd-repositories.png)
-
-The Git repository connection data for Argo CD is stored in a Kubernetes Secret. You can verify that Terraform has created the Secret object that contains the configuration, including the SSH private keys, to access Git repositories.
+The Git repository connection data for Argo CD is stored in a Kubernetes Secret. You can verify that Terraform has created the Secret object that contains the configurations to access Git repositories.
 
 ```json
-kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repository --context hub
+kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repository --context hub-cluster
 ```
 
-![Argo CD Repository Secret](/static/images/argocd_k8s_repos.png)
+expected output:
+```
+NAME            TYPE     DATA   AGE
+git-addons      Opaque   4      4m36s
+git-platform    Opaque   4      4m36s
+git-workloads   Opaque   4      4m36s
+```
+

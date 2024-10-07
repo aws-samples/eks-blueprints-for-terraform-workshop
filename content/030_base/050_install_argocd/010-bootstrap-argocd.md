@@ -41,31 +41,52 @@ resource "kubernetes_namespace" "argocd" {
 # GitOps Bridge: Bootstrap
 ################################################################################
 module "gitops_bridge_bootstrap" {
-  source  = "gitops-bridge-dev/gitops-bridge/helm"
-  version = "0.0.1"
+  source = "gitops-bridge-dev/gitops-bridge/helm"
+  version = "0.1.0"
   cluster = {
     cluster_name = module.eks.cluster_name
     environment  = local.environment
     #enablemetadata metadata     = local.addons_metadata
     #enablemetadata addons       = local.addons
   }
+
   #enableapps apps = local.argocd_apps
   argocd = {
+    name = "argocd"
     namespace        = local.argocd_namespace
-    chart_version    = "6.7.12"
+    chart_version    = "7.5.2"
+    values = [file("${path.module}/argocd-initial-values.yaml")]
     timeout          = 600
     create_namespace = false
-    set = [
-      {
-        name  = "server.service.type"
-        value = "LoadBalancer"
-      }
-    ]
   }
-
 }
 EOF
 
+```
+
+### 2. Create value file for ArgoCD
+
+```bash
+cat <<'EOF' >> ~/environment/hub/argocd-initial-values.yaml
+global:
+  tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+controller:
+  env:
+    - name: ARGOCD_SYNC_WAVE_DELAY
+      value: '30'
+server:
+  service:
+    type: LoadBalancer
+
+configs:
+  cm:
+    ui.bannercontent: "Management Environment"
+  params:
+    server.insecure: true
+    server.basehref: /proxy/8081/
+EOF
 ```
 
 ### 2. Apply Terraform
@@ -99,4 +120,10 @@ You can also validate that the gitops-bridge as correctly created the secrets fo
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd hub-cluster
+```
+
+Expected output:
+```
+NAME          TYPE     DATA   AGE
+hub-cluster   Opaque   3      4m41s
 ```
