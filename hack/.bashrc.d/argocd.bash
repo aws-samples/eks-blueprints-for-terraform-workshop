@@ -22,13 +22,13 @@ function gitea_credentials (){
 }
 
 function argocd_hub_credentials (){
-	argocd_credentials fleet-hub-cluster 8081
+	argocd_credentials hub-cluster 8081
 }
 function argocd_staging_credentials (){
-	argocd_credentials fleet-staging-cluster 8082
+	argocd_credentials staging-cluster 8082
 }
 function argocd_prod_credentials (){
-	argocd_credentials fleet-prod-cluster 8083
+	argocd_credentials prod-cluster 8083
 }
 
 
