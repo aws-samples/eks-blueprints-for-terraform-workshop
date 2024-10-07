@@ -1,6 +1,6 @@
 name: webstore
 labels:
-  environment: hub
+  environment: control-plane
 namespaces:
   carts:
     labels:

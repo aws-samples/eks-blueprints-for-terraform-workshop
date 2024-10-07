@@ -15,53 +15,56 @@ Lets Add namespace applicationset into the bootstrap folder.
 
 ![namespace-add-namespace-applicationset](/static/images/namespace-namespace-applicationset.jpg)
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='22,34'}
-
 cat > $GITOPS_DIR/platform/bootstrap/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-name: namespace
-namespace: argocd
+  name: namespace
+  namespace: argocd
 spec:
-syncPolicy:
-preserveResourcesOnDeletion: false
-generators:
-
-- matrix:
-  generators: - clusters:
-  selector:
-  matchLabels:
-  environment: hub
-  - git:
-    repoURL: '{{metadata.annotations.platform_repo_url}}'
-    revision: '{{metadata.annotations.platform_repo_revision}}'
-    directories: - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/\*'
-    template:
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchLabels:
+                  environment: control-plane
+          - git:
+              repoURL: '{{metadata.annotations.platform_repo_url}}'
+              revision: '{{metadata.annotations.platform_repo_revision}}'
+              directories:
+                - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/*'
+  template:
     metadata:
-    name: 'namespace-{{path.basename}}'
-    labels:
-    environment: '{{metadata.labels.environment}}'
-    tenant: '{{path.basename}}'
-    workloads: 'true'
+      name: 'namespace-{{path.basename}}'
+      labels:
+        environment: '{{metadata.labels.environment}}'
+        tenant: '{{path.basename}}'
+        workloads: 'true'
     spec:
-    project: default
-    source:
-    repoURL: '{{metadata.annotations.platform_repo_url}}'
-    path: '{{path}}/namespace'
-    targetRevision: '{{metadata.annotations.platform_repo_revision}}'
-    destination:
-    name: '{{name}}'
-    syncPolicy:
-    automated:
-    allowEmpty: true
-    retry:
-    backoff:
-    duration: 1m
-    limit: 100
-    syncOptions: - CreateNamespace=true
-    EOF
-    :::
+      project: default
+      source:
+        repoURL: '{{metadata.annotations.platform_repo_url}}'
+        path: '{{path}}/namespace'
+        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+      destination:
+        name: '{{name}}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+        retry:
+          backoff:
+            duration: 1m
+            limit: 100
+        syncOptions:
+          - CreateNamespace=true
+EOF
+:::
+<!-- prettier-ignore-end -->
 
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
@@ -300,7 +303,7 @@ items:
       app.kubernetes.io/instance: webstore
       app.kubernetes.io/managed-by: Helm
       app.kubernetes.io/name: webstore
-      environment: hub
+      environment: control-plane
       helm.sh/chart: team-1.0.0
     name: default
     namespace: ui

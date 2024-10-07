@@ -72,13 +72,13 @@ kind: Secret
 metadata:
   annotations:
     cluster_name: hub-cluster
-    environment: hub
+    environment: control-plane
   creationTimestamp: "2024-10-03T18:51:28Z"
   labels:
     argocd.argoproj.io/secret-type: cluster
     cluster_name: hub-cluster
     enable_argocd: "true"
-    environment: hub
+    environment: control-plane
   name: hub-cluster
   namespace: argocd
   resourceVersion: "6498"

@@ -77,99 +77,138 @@ Define enable-_ addons boolean variables. These provide a simple way to control 
 
 Some values are commented and will be used later in the workshop.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json highlightLines='48,58'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
-aws_addons = {
-enable_aws_argocd = try(var.addons.enable_aws_argocd, false)  
- enable_cert_manager = try(var.addons.enable_cert_manager, false)
-enable_aws_efs_csi_driver = try(var.addons.enable_aws_efs_csi_driver, false)
-enable_aws_fsx_csi_driver = try(var.addons.enable_aws_fsx_csi_driver, false)
-enable_aws_cloudwatch_metrics = try(var.addons.enable_aws_cloudwatch_metrics, false)
-enable_aws_privateca_issuer = try(var.addons.enable_aws_privateca_issuer, false)
-enable_cluster_autoscaler = try(var.addons.enable_cluster_autoscaler, false)
-enable_external_dns = try(var.addons.enable_external_dns, false)
-enable_external_secrets = try(var.addons.enable_external_secrets, false)
-enable_aws_load_balancer_controller = try(var.addons.enable_aws_load_balancer_controller, false)
-enable_fargate_fluentbit = try(var.addons.enable_fargate_fluentbit, false)
-enable_aws_for_fluentbit = try(var.addons.enable_aws_for_fluentbit, false)
-enable_aws_node_termination_handler = try(var.addons.enable_aws_node_termination_handler, false)
-enable_karpenter = try(var.addons.enable_karpenter, false)
-enable_velero = try(var.addons.enable_velero, false)
-enable_aws_gateway_api_controller = try(var.addons.enable_aws_gateway_api_controller, false)
-enable_aws_ebs_csi_resources = try(var.addons.enable_aws_ebs_csi_resources, false)
-enable_aws_secrets_store_csi_driver_provider = try(var.addons.enable_aws_secrets_store_csi_driver_provider, false)
-enable_ack_apigatewayv2 = try(var.addons.enable_ack_apigatewayv2, false)
-enable_ack_dynamodb = try(var.addons.enable_ack_dynamodb, false)
-enable_ack_s3 = try(var.addons.enable_ack_s3, false)
-enable_ack_rds = try(var.addons.enable_ack_rds, false)
-enable_ack_prometheusservice = try(var.addons.enable_ack_prometheusservice, false)
-enable_ack_emrcontainers = try(var.addons.enable_ack_emrcontainers, false)
-enable_ack_sfn = try(var.addons.enable_ack_sfn, false)
-enable_ack_eventbridge = try(var.addons.enable_ack_eventbridge, false)
-}
-oss_addons = {
-enable_argocd = try(var.addons.enable_argocd, false)
-enable_argo_rollouts = try(var.addons.enable_argo_rollouts, false)
-enable_argo_events = try(var.addons.enable_argo_events, false)
-enable_argo_workflows = try(var.addons.enable_argo_workflows, false)
-enable_cluster_proportional_autoscaler = try(var.addons.enable_cluster_proportional_autoscaler, false)
-enable_gatekeeper = try(var.addons.enable_gatekeeper, false)
-enable_gpu_operator = try(var.addons.enable_gpu_operator, false)
-enable_ingress_nginx = try(var.addons.enable_ingress_nginx, false)
-enable_kyverno = try(var.addons.enable_kyverno, false)
-enable_kube_prometheus_stack = try(var.addons.enable_kube_prometheus_stack, false)
-enable_metrics_server = try(var.addons.enable_metrics_server, false)
-enable_prometheus_adapter = try(var.addons.enable_prometheus_adapter, false)
-enable_secrets_store_csi_driver = try(var.addons.enable_secrets_store_csi_driver, false)
-enable_vpa = try(var.addons.enable_vpa, false)
-}
-addons = merge(
-local.aws_addons,
-local.oss_addons,
-{ kubernetes_version = local.cluster_version },
-{ aws_cluster_name = module.eks.cluster_name },
-{ workloads = true }
-#enablewebstore,{ workload_webstore = true }  
- )
 
-addons_metadata = merge(
-#enableaddonmetadata module.eks_blueprints_addons.gitops_metadata,
-{
-aws_cluster_name = module.eks.cluster_name
-aws_region = local.region
-aws_account_id = data.aws_caller_identity.current.account_id
-aws_vpc_id = local.vpc_id
-},
-{
-#enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
-argocd_namespace = local.argocd_namespace
-},
-{
-addons_repo_url = local.gitops_addons_url
-addons_repo_basepath = local.gitops_addons_basepath
-addons_repo_path = local.gitops_addons_path
-addons_repo_revision = local.gitops_addons_revision
-},
-{
-platform_repo_url = local.gitops_platform_url
-platform_repo_basepath = local.gitops_platform_basepath
-platform_repo_path = local.gitops_platform_path
-platform_repo_revision = local.gitops_platform_revision
-},
-{
-workload_repo_url = local.gitops_workload_url
-workload_repo_basepath = local.gitops_workload_basepath
-workload_repo_path = local.gitops_workload_path
-workload_repo_revision = local.gitops_workload_revision
-}
+  external_secrets = {
+    namespace       = "external-secrets"
+    service_account = "external-secrets-sa"
+  }
+  aws_load_balancer_controller = {
+    namespace       = "kube-system"
+    service_account = "aws-load-balancer-controller-sa"
+  }
+  karpenter = {
+    namespace       = "kube-system"
+    service_account = "karpenter"
+  }
 
-)
+  aws_addons = {
+    enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
+    enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
+    enable_aws_fsx_csi_driver                    = try(var.addons.enable_aws_fsx_csi_driver, false)
+    enable_aws_cloudwatch_metrics                = try(var.addons.enable_aws_cloudwatch_metrics, false)
+    enable_aws_privateca_issuer                  = try(var.addons.enable_aws_privateca_issuer, false)
+    enable_cluster_autoscaler                    = try(var.addons.enable_cluster_autoscaler, false)
+    enable_external_dns                          = try(var.addons.enable_external_dns, false)
+    enable_external_secrets                      = try(var.addons.enable_external_secrets, false)
+    enable_aws_load_balancer_controller          = try(var.addons.enable_aws_load_balancer_controller, false)
+    enable_fargate_fluentbit                     = try(var.addons.enable_fargate_fluentbit, false)
+    enable_aws_for_fluentbit                     = try(var.addons.enable_aws_for_fluentbit, false)
+    enable_aws_node_termination_handler          = try(var.addons.enable_aws_node_termination_handler, false)
+    enable_karpenter                             = try(var.addons.enable_karpenter, false)
+    enable_velero                                = try(var.addons.enable_velero, false)
+    enable_aws_gateway_api_controller            = try(var.addons.enable_aws_gateway_api_controller, false)
+    enable_aws_ebs_csi_resources                 = try(var.addons.enable_aws_ebs_csi_resources, false)
+    enable_aws_secrets_store_csi_driver_provider = try(var.addons.enable_aws_secrets_store_csi_driver_provider, false)
+    enable_ack_apigatewayv2                      = try(var.addons.enable_ack_apigatewayv2, false)
+    enable_ack_dynamodb                          = try(var.addons.enable_ack_dynamodb, false)
+    enable_ack_s3                                = try(var.addons.enable_ack_s3, false)
+    enable_ack_rds                               = try(var.addons.enable_ack_rds, false)
+    enable_ack_prometheusservice                 = try(var.addons.enable_ack_prometheusservice, false)
+    enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
+    enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
+    enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
+    enable_aws_argocd                            = try(var.addons.enable_aws_argocd , false)
+    enable_cw_prometheus                         = try(var.addons.enable_cw_prometheus, false)
+    enable_cni_metrics_helper                    = try(var.addons.enable_cni_metrics_helper, false)
+  }
+  oss_addons = {
+    enable_argocd                          = try(var.addons.enable_argocd, false)
+    enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
+    enable_argo_events                     = try(var.addons.enable_argo_events, false)
+    enable_argo_workflows                  = try(var.addons.enable_argo_workflows, false)
+    enable_cluster_proportional_autoscaler = try(var.addons.enable_cluster_proportional_autoscaler, false)
+    enable_gatekeeper                      = try(var.addons.enable_gatekeeper, false)
+    enable_gpu_operator                    = try(var.addons.enable_gpu_operator, false)
+    enable_ingress_nginx                   = try(var.addons.enable_ingress_nginx, false)
+    enable_keda                            = try(var.addons.enable_keda, false)
+    enable_kyverno                         = try(var.addons.enable_kyverno, false)
+    enable_kyverno_policy_reporter         = try(var.addons.enable_kyverno_policy_reporter, false)
+    enable_kyverno_policies                = try(var.addons.enable_kyverno_policies, false)
+    enable_kube_prometheus_stack           = try(var.addons.enable_kube_prometheus_stack, false)
+    enable_metrics_server                  = try(var.addons.enable_metrics_server, false)
+    enable_prometheus_adapter              = try(var.addons.enable_prometheus_adapter, false)
+    enable_secrets_store_csi_driver        = try(var.addons.enable_secrets_store_csi_driver, false)
+    enable_vpa                             = try(var.addons.enable_vpa, false)
+  }
+  addons = merge(
+    local.aws_addons,
+    local.oss_addons,
+    { kubernetes_version = local.cluster_version },
+    { fleet_member = local.fleet_member },
+    { tenant = local.tenant },  
+    { aws_cluster_name = module.eks.cluster_name },
+    { workloads = true }
+    #enablewebstore,{ workload_webstore = true }  
+  )
+
+  addons_metadata = merge(
+    #enableaddonmetadata module.eks_blueprints_addons.gitops_metadata,
+    {
+      aws_cluster_name = module.eks.cluster_name
+      aws_region = local.region
+      aws_account_id = data.aws_caller_identity.current.account_id
+      aws_vpc_id = local.vpc_id
+    },
+    {
+      #enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
+      argocd_namespace = local.argocd_namespace
+    },
+    {
+      addons_repo_url = local.gitops_addons_url
+      addons_repo_basepath = local.gitops_addons_basepath
+      addons_repo_path = local.gitops_addons_path
+      addons_repo_revision = local.gitops_addons_revision
+    },
+    {
+      platform_repo_url = local.gitops_platform_url
+      platform_repo_basepath = local.gitops_platform_basepath
+      platform_repo_path = local.gitops_platform_path
+      platform_repo_revision = local.gitops_platform_revision
+    },
+    {
+      workload_repo_url = local.gitops_workload_url
+      workload_repo_basepath = local.gitops_workload_basepath
+      workload_repo_path = local.gitops_workload_path
+      workload_repo_revision = local.gitops_workload_revision
+    },
+    {
+      #enablekarpenter karpenter_namespace = local.karpenter.namespace
+      #enablekarpenter karpenter_service_account = local.karpenter.service_account
+      #enablekarpenter karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      #enablekarpenter karpenter_sqs_queue_name = module.karpenter.queue_name
+    },
+    {
+      external_secrets_namespace = local.external_secrets.namespace
+      external_secrets_service_account = local.external_secrets.service_account
+    },
+    {
+      aws_load_balancer_controller_namespace = local.aws_load_balancer_controller.namespace
+      aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
+    },
+    {
+      amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
+    }    
+  )
 }
 
 EOF
 :::
+<!-- prettier-ignore-end -->
 
 ### 4. Update Labels and Annotations
 
@@ -181,17 +220,19 @@ sed -i "s/#enablemetadata//g" ~/environment/hub/main.tf
 
 The code provided above uncomments metadata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
 
+<!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7-8'}
 module "gitops_bridge_bootstrap" {
-source = "gitops-bridge-dev/gitops-bridge/helm"
-version = "0.0.1"
-cluster = {
-cluster_name = module.eks.cluster_name
-environment = local.environment
-metadata = local.addons_metadata
-addons = local.addons
+  source = "gitops-bridge-dev/gitops-bridge/helm"
+  version = "0.0.1"
+  cluster = {
+    cluster_name = module.eks.cluster_name
+    environment = local.environment
+    metadata = local.addons_metadata
+    addons = local.addons
 }
 :::
+<!-- prettier-ignore-end -->
 
 ### 5. Terraform apply
 
@@ -215,7 +256,7 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
 :::expand{header="Example of output"}
-
+TODO: update the output
 ```
 apiVersion: v1
 data:
@@ -238,7 +279,7 @@ metadata:
     aws_region: us-east-2
     aws_vpc_id: vpc-09924bd9e1637d9a1
     cluster_name: hub-cluster
-    environment: hub
+    environment: control-plane
     platform_repo_basepath: assets/platform/
     platform_repo_path: bootstrap
     platform_repo_revision: HEAD
@@ -291,7 +332,7 @@ metadata:
     enable_secrets_store_csi_driver: "false"
     enable_velero: "false"
     enable_vpa: "false"
-    environment: hub
+    environment: control-plane
     kubernetes_version: "1.28"
     workload_webstore: "false"
     workloads: "false"

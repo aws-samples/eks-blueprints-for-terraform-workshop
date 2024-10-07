@@ -71,6 +71,12 @@ variable "addons" {
   }
 }
 
+variable "project_context_prefix" {
+  description = "Prefix for project"
+  type        = string
+  default     = "eks-blueprints-workshop"
+}
+
 variable "authentication_mode" {
   description = "The authentication mode for the cluster. Valid values are CONFIG_MAP, API or API_AND_CONFIG_MAP"
   type        = string
@@ -80,19 +86,19 @@ variable "authentication_mode" {
 variable "secret_name_git_data_addons" {
   description = "Secret name for Git data addons"
   type        = string
-  default     = "eks-blueprints-workshop-workshop-gitops-addons"
+  default     = "eks-blueprints-workshop-gitops-addons"
 }
 
 variable "secret_name_git_data_platform" {
   description = "Secret name for Git data platform"
   type        = string
-  default     = "eks-blueprints-workshop-workshop-gitops-platform"
+  default     = "eks-blueprints-workshop-gitops-platform"
 }
 
 variable "secret_name_git_data_workloads" {
   description = "Secret name for Git data workloads"
   type        = string
-  default     = "eks-blueprints-workshop-workshop-gitops-workloads"
+  default     = "eks-blueprints-workshop-gitops-workloads"
 }
 
 
@@ -129,9 +135,12 @@ provider "kubernetes" {
 }
 
 locals{
+  context_prefix   = var.project_context_prefix
   name            = "hub-cluster"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
+  tenant          = "tenant1"
+  fleet_member     = "control-plane"
 
   vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
