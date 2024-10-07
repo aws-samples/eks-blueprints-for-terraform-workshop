@@ -42,7 +42,7 @@ phases:
         # This gives access to the EKS cluster in terraform
 
         # Common backend config
-        
+
         ls -la $BASE_DIR/terraform/common
 
         cat << EOT > $BASE_DIR/terraform/common/backend_override.tf

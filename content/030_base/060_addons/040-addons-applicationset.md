@@ -1,5 +1,5 @@
 ---
-title: 'Addons ApplicationSet'
+title: "Addons ApplicationSet"
 weight: 40
 ---
 
@@ -11,7 +11,8 @@ Previously, you created an "App of Apps" Application that referenced the "bootst
 
 ![cluster-addons](/static/images/cluster-addons.png)
 
- ~/environment/gitops-repos/addons
+~/environment/gitops-repos/addons
+
 ```bash
 cp $BASE_DIR/solution/gitops/platform/bootstrap/addons-applicationset.yaml $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml
 ```
@@ -38,9 +39,6 @@ In the Argo CD UI, click on the "Applications" on the left navigation bar. Click
 
 ![addons-rootapp](/static/images/cluster-addons-applicationset.jpg)
 
-
 :::alert{header="Important" type="info"}
-The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronised from `~/environment/gitops-repos/addons` directory.
+The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
 :::
-
-

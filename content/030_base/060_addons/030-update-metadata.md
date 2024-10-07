@@ -1,5 +1,5 @@
 ---
-title: 'Update Labels and Annotations'
+title: "Update Labels and Annotations"
 weight: 30
 ---
 
@@ -13,11 +13,10 @@ In the Argo CD user interface, go to the hub cluster. The hub-cluster currently 
 
 > Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information.
 
-
 ### 1. Reference the secrets to retrieve Git repository details
 
 ```json
-cat <<'EOF' >> ~/environment/hub/git_data.tf 
+cat <<'EOF' >> ~/environment/hub/git_data.tf
 # retrive from secret manager the git data for the platform and workload repositories
 
 
@@ -66,7 +65,7 @@ locals {
 
   gitops_workload_repo_secret_key = var.secret_name_git_data_workloads
   gitops_workload_repo_username = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_workload.secret_string).username
-  gitops_workload_repo_password = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_workload.secret_string).password  
+  gitops_workload_repo_password = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_workload.secret_string).password
 }
 
 EOF
@@ -74,7 +73,7 @@ EOF
 
 ### 2. Define addons variables
 
-Define  enable-* addons boolean variables. These provide a simple way to control whether addons are installed or removed. Define addons variable as a list of key/value pairs of addon(enable-*) values. Define addons_metadata variable as a list of key/value pairs of mainly codecommit values.
+Define enable-_ addons boolean variables. These provide a simple way to control whether addons are installed or removed. Define addons variable as a list of key/value pairs of addon(enable-_) values. Define addons_metadata variable as a list of key/value pairs of mainly codecommit values.
 
 Some values are commented and will be used later in the workshop.
 
@@ -82,92 +81,91 @@ Some values are commented and will be used later in the workshop.
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
-  aws_addons = {
-    enable_aws_argocd                            = try(var.addons.enable_aws_argocd, false)    
-    enable_cert_manager                          = try(var.addons.enable_cert_manager, false)
-    enable_aws_efs_csi_driver                    = try(var.addons.enable_aws_efs_csi_driver, false)
-    enable_aws_fsx_csi_driver                    = try(var.addons.enable_aws_fsx_csi_driver, false)
-    enable_aws_cloudwatch_metrics                = try(var.addons.enable_aws_cloudwatch_metrics, false)
-    enable_aws_privateca_issuer                  = try(var.addons.enable_aws_privateca_issuer, false)
-    enable_cluster_autoscaler                    = try(var.addons.enable_cluster_autoscaler, false)
-    enable_external_dns                          = try(var.addons.enable_external_dns, false)
-    enable_external_secrets                      = try(var.addons.enable_external_secrets, false)
-    enable_aws_load_balancer_controller          = try(var.addons.enable_aws_load_balancer_controller, false)
-    enable_fargate_fluentbit                     = try(var.addons.enable_fargate_fluentbit, false)
-    enable_aws_for_fluentbit                     = try(var.addons.enable_aws_for_fluentbit, false)
-    enable_aws_node_termination_handler          = try(var.addons.enable_aws_node_termination_handler, false)
-    enable_karpenter                             = try(var.addons.enable_karpenter, false)
-    enable_velero                                = try(var.addons.enable_velero, false)
-    enable_aws_gateway_api_controller            = try(var.addons.enable_aws_gateway_api_controller, false)
-    enable_aws_ebs_csi_resources                 = try(var.addons.enable_aws_ebs_csi_resources, false)
-    enable_aws_secrets_store_csi_driver_provider = try(var.addons.enable_aws_secrets_store_csi_driver_provider, false)
-    enable_ack_apigatewayv2                      = try(var.addons.enable_ack_apigatewayv2, false)
-    enable_ack_dynamodb                          = try(var.addons.enable_ack_dynamodb, false)
-    enable_ack_s3                                = try(var.addons.enable_ack_s3, false)
-    enable_ack_rds                               = try(var.addons.enable_ack_rds, false)
-    enable_ack_prometheusservice                 = try(var.addons.enable_ack_prometheusservice, false)
-    enable_ack_emrcontainers                     = try(var.addons.enable_ack_emrcontainers, false)
-    enable_ack_sfn                               = try(var.addons.enable_ack_sfn, false)
-    enable_ack_eventbridge                       = try(var.addons.enable_ack_eventbridge, false)
-  }
-  oss_addons = {
-    enable_argocd                          = try(var.addons.enable_argocd, false)
-    enable_argo_rollouts                   = try(var.addons.enable_argo_rollouts, false)
-    enable_argo_events                     = try(var.addons.enable_argo_events, false)
-    enable_argo_workflows                  = try(var.addons.enable_argo_workflows, false)
-    enable_cluster_proportional_autoscaler = try(var.addons.enable_cluster_proportional_autoscaler, false)
-    enable_gatekeeper                      = try(var.addons.enable_gatekeeper, false)
-    enable_gpu_operator                    = try(var.addons.enable_gpu_operator, false)
-    enable_ingress_nginx                   = try(var.addons.enable_ingress_nginx, false)
-    enable_kyverno                         = try(var.addons.enable_kyverno, false)
-    enable_kube_prometheus_stack           = try(var.addons.enable_kube_prometheus_stack, false)
-    enable_metrics_server                  = try(var.addons.enable_metrics_server, false)
-    enable_prometheus_adapter              = try(var.addons.enable_prometheus_adapter, false)
-    enable_secrets_store_csi_driver        = try(var.addons.enable_secrets_store_csi_driver, false)
-    enable_vpa                             = try(var.addons.enable_vpa, false)
-  }
-  addons = merge(
-    local.aws_addons,
-    local.oss_addons,
-    { kubernetes_version = local.cluster_version },
-    { aws_cluster_name = module.eks.cluster_name },
-    { workloads = true }
-    #enablewebstore,{ workload_webstore = true }      
-  )
+aws_addons = {
+enable_aws_argocd = try(var.addons.enable_aws_argocd, false)  
+ enable_cert_manager = try(var.addons.enable_cert_manager, false)
+enable_aws_efs_csi_driver = try(var.addons.enable_aws_efs_csi_driver, false)
+enable_aws_fsx_csi_driver = try(var.addons.enable_aws_fsx_csi_driver, false)
+enable_aws_cloudwatch_metrics = try(var.addons.enable_aws_cloudwatch_metrics, false)
+enable_aws_privateca_issuer = try(var.addons.enable_aws_privateca_issuer, false)
+enable_cluster_autoscaler = try(var.addons.enable_cluster_autoscaler, false)
+enable_external_dns = try(var.addons.enable_external_dns, false)
+enable_external_secrets = try(var.addons.enable_external_secrets, false)
+enable_aws_load_balancer_controller = try(var.addons.enable_aws_load_balancer_controller, false)
+enable_fargate_fluentbit = try(var.addons.enable_fargate_fluentbit, false)
+enable_aws_for_fluentbit = try(var.addons.enable_aws_for_fluentbit, false)
+enable_aws_node_termination_handler = try(var.addons.enable_aws_node_termination_handler, false)
+enable_karpenter = try(var.addons.enable_karpenter, false)
+enable_velero = try(var.addons.enable_velero, false)
+enable_aws_gateway_api_controller = try(var.addons.enable_aws_gateway_api_controller, false)
+enable_aws_ebs_csi_resources = try(var.addons.enable_aws_ebs_csi_resources, false)
+enable_aws_secrets_store_csi_driver_provider = try(var.addons.enable_aws_secrets_store_csi_driver_provider, false)
+enable_ack_apigatewayv2 = try(var.addons.enable_ack_apigatewayv2, false)
+enable_ack_dynamodb = try(var.addons.enable_ack_dynamodb, false)
+enable_ack_s3 = try(var.addons.enable_ack_s3, false)
+enable_ack_rds = try(var.addons.enable_ack_rds, false)
+enable_ack_prometheusservice = try(var.addons.enable_ack_prometheusservice, false)
+enable_ack_emrcontainers = try(var.addons.enable_ack_emrcontainers, false)
+enable_ack_sfn = try(var.addons.enable_ack_sfn, false)
+enable_ack_eventbridge = try(var.addons.enable_ack_eventbridge, false)
+}
+oss_addons = {
+enable_argocd = try(var.addons.enable_argocd, false)
+enable_argo_rollouts = try(var.addons.enable_argo_rollouts, false)
+enable_argo_events = try(var.addons.enable_argo_events, false)
+enable_argo_workflows = try(var.addons.enable_argo_workflows, false)
+enable_cluster_proportional_autoscaler = try(var.addons.enable_cluster_proportional_autoscaler, false)
+enable_gatekeeper = try(var.addons.enable_gatekeeper, false)
+enable_gpu_operator = try(var.addons.enable_gpu_operator, false)
+enable_ingress_nginx = try(var.addons.enable_ingress_nginx, false)
+enable_kyverno = try(var.addons.enable_kyverno, false)
+enable_kube_prometheus_stack = try(var.addons.enable_kube_prometheus_stack, false)
+enable_metrics_server = try(var.addons.enable_metrics_server, false)
+enable_prometheus_adapter = try(var.addons.enable_prometheus_adapter, false)
+enable_secrets_store_csi_driver = try(var.addons.enable_secrets_store_csi_driver, false)
+enable_vpa = try(var.addons.enable_vpa, false)
+}
+addons = merge(
+local.aws_addons,
+local.oss_addons,
+{ kubernetes_version = local.cluster_version },
+{ aws_cluster_name = module.eks.cluster_name },
+{ workloads = true }
+#enablewebstore,{ workload_webstore = true }  
+ )
 
+addons_metadata = merge(
+#enableaddonmetadata module.eks_blueprints_addons.gitops_metadata,
+{
+aws_cluster_name = module.eks.cluster_name
+aws_region = local.region
+aws_account_id = data.aws_caller_identity.current.account_id
+aws_vpc_id = local.vpc_id
+},
+{
+#enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
+argocd_namespace = local.argocd_namespace
+},
+{
+addons_repo_url = local.gitops_addons_url
+addons_repo_basepath = local.gitops_addons_basepath
+addons_repo_path = local.gitops_addons_path
+addons_repo_revision = local.gitops_addons_revision
+},
+{
+platform_repo_url = local.gitops_platform_url
+platform_repo_basepath = local.gitops_platform_basepath
+platform_repo_path = local.gitops_platform_path
+platform_repo_revision = local.gitops_platform_revision
+},
+{
+workload_repo_url = local.gitops_workload_url
+workload_repo_basepath = local.gitops_workload_basepath
+workload_repo_path = local.gitops_workload_path
+workload_repo_revision = local.gitops_workload_revision
+}
 
-  addons_metadata = merge(
-    #enableaddonmetadata module.eks_blueprints_addons.gitops_metadata,
-    {
-      aws_cluster_name = module.eks.cluster_name
-      aws_region       = local.region
-      aws_account_id   = data.aws_caller_identity.current.account_id
-      aws_vpc_id       = local.vpc_id
-    },
-    {
-      #enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
-      argocd_namespace    = local.argocd_namespace
-    },
-    {
-       addons_repo_url      = local.gitops_addons_url
-       addons_repo_basepath = local.gitops_addons_basepath
-       addons_repo_path     = local.gitops_addons_path
-       addons_repo_revision = local.gitops_addons_revision
-    },
-    {
-       platform_repo_url      = local.gitops_platform_url
-       platform_repo_basepath = local.gitops_platform_basepath
-       platform_repo_path     = local.gitops_platform_path
-       platform_repo_revision = local.gitops_platform_revision
-    },
-    {
-       workload_repo_url      = local.gitops_workload_url
-       workload_repo_basepath = local.gitops_workload_basepath
-       workload_repo_path     = local.gitops_workload_path
-       workload_repo_revision = local.gitops_workload_revision
-    }
-
-  )
+)
 }
 
 EOF
@@ -185,16 +183,15 @@ The code provided above uncomments metadata and addons variables as highlighted 
 
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7-8'}
 module "gitops_bridge_bootstrap" {
-  source  = "gitops-bridge-dev/gitops-bridge/helm"
-  version = "0.0.1"
-  cluster = {
-    cluster_name = module.eks.cluster_name
-    environment  = local.environment
-     metadata     = local.addons_metadata
-     addons       = local.addons
-  }
+source = "gitops-bridge-dev/gitops-bridge/helm"
+version = "0.0.1"
+cluster = {
+cluster_name = module.eks.cluster_name
+environment = local.environment
+metadata = local.addons_metadata
+addons = local.addons
+}
 :::
-
 
 ### 5. Terraform apply
 
@@ -202,23 +199,23 @@ module "gitops_bridge_bootstrap" {
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
+
 ### 6. Validate update to labels and addons
 
-
-Goto to the **Settings > Clusters > hub-cluster**  in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
+Goto to the **Settings > Clusters > hub-cluster** in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 
-
 Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret.
 
-You can check  the Labels and annotations on the cluster secret: 
+You can check the Labels and annotations on the cluster secret:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
 :::expand{header="Example of output"}
+
 ```
 apiVersion: v1
 data:
@@ -304,6 +301,7 @@ metadata:
   uid: 1156e385-97af-4732-83ae-55aafeb9ec62
 type: Opaque
 ```
+
 :::
 
 You can see now in the secret all the metadatas that has been configured by the **gitops_bridge_bootstrap** terraform module.

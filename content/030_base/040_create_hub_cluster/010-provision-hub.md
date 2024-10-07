@@ -1,5 +1,5 @@
 ---
-title: 'Create EKS Cluster'
+title: "Create EKS Cluster"
 weight: 10
 ---
 
@@ -7,8 +7,7 @@ Here, we create an EKS cluster (hub) within the previously provisioned VPC, util
 
 ![EKS Cluster](/static/images/argocd-bootstrap-eks.jpg)
 
-
-### 1. Create Remote State 
+### 1. Create Remote State
 
 ::::expand{header="Get vpc and private subnet values from the vpc module. Click to know more about Terraform remote state"}
 The use of remote state in Terraform allows you to share and reuse infrastructure resources across multiple configurations or teams. In the context of this code, the remote state is being read to retrieve the VPC and private subnet values from the previously created VPC module. This approach offers several benefits:
@@ -41,14 +40,13 @@ EOF
 In this section, we define the EKS version for the hub-cluster. From the console, you can manage EKS objects such as pods, deployments, namespaces, etc., for the hub-cluster using the EKS admin role. Most of these variables will be configured later using the terraform.tfvars file.
 
 :::expand{header="details Explanation of Variables Here, we define several variables that will be used to create the EKS cluster:"}
+
 - **kubernetes_version**: This variable specifies the version of Kubernetes to be installed or updated in the EKS cluster.
 - **eks_admin_role_name**: This variable represents the name of the IAM role that will be granted administrative privileges within the EKS cluster.
 - **addons**: This is a list of EKS add-ons that you want to enable in the cluster. Add-ons provide additional functionality and integrations for your EKS cluster.
 - **authentication_mode**: This variable determines the authentication mode used within the EKS cluster. The value "API_AND_CONFIG_MAP" allows authentication using either the EKS Access API or the Kubernetes aws-auth ConfigMap.
-:::
-By providing these variables, you can customize the EKS cluster deployment according to your specific requirements. The terraform.tfvars file will be used later to configure the values for these variables, allowing you to easily modify the settings without changing the Terraform code directly.
-
-
+  :::
+  By providing these variables, you can customize the EKS cluster deployment according to your specific requirements. The terraform.tfvars file will be used later to configure the values for these variables, allowing you to easily modify the settings without changing the Terraform code directly.
 
 ```bash
 cat > ~/environment/hub/variables.tf << 'EOF'
@@ -106,7 +104,6 @@ EOF
 
 The EKS cluster (hub) is configured in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if you are completing this workshop independently, you will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
 
-
 ```bash
 cat > ~/environment/hub/main.tf << 'EOF'
 data "aws_caller_identity" "current" {}
@@ -135,16 +132,16 @@ locals{
   name            = "hub-cluster"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
-  
+
   vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
-  private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets 
-  
+  private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
+
   authentication_mode = var.authentication_mode
-  
+
   tags = {
     Blueprint  = local.name
     GithubRepo = "github.com/aws-samples/eks-blueprints-for-terraform-workshop"
-  }  
+  }
 }
 
 data "aws_iam_role" "eks_admin_role_name" {
@@ -164,13 +161,13 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   authentication_mode = local.authentication_mode
-  
+
   # Combine root account, current user/role and additional roles to be able to access the cluster KMS key - required for terraform updates
   kms_key_administrators = distinct(concat([
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"],
     [data.aws_iam_session_context.current.issuer_arn]
   ))
-  
+
   enable_cluster_creator_admin_permissions = true
   access_entries = {
     # One access entry with a policy associated
@@ -185,8 +182,8 @@ module "eks" {
         }
       }
     }
-  } 
-  
+  }
+
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
@@ -218,7 +215,7 @@ module "eks" {
         }
       })
     }
-  }  
+  }
   tags = local.tags
 }
 
@@ -275,18 +272,22 @@ EOF
 ```
 
 :::alert{header="Important" type="warning"}
-If you are NOT at an AWS event workshop, you may need to update this parameter with your console Role Name.
+"**WSParticipantRole**" is the given role name when participating in an AWS event workshop. When working through the workshop **independently**, you should update it to reflect your own AWS role you are using in the AWS console
+
+![AWS Console Role](/static/images/aws-console-role.png)
 
 ```bash
 code ~/environment/terraform.tfvars
 ```
+
+Example:
+
+```
+eks_admin_role_name          = "Admin"
+```
+
 :::
 
-"WSParticipantRole" is the given role name when participating in an AWS event workshop. When working through the workshop independently, you should update it to reflect your own AWS role.
-
-You can get your role on the console, choose your user role on the navigation bar in the upper right. Your role is after Account Id. Your role name is anything before "/" if it exists. In the Cloud9 IDE, open the terraform.tfvars file, modify the role as needed, then ***save your changes***.
-
-![AWS Console Role](/static/images/aws-console-role.png)
 
 
 ### 6. Link the Terraform variable file to the cluster
@@ -305,7 +306,6 @@ terraform apply -auto-approve
 
 ::alert[The process of creating Amazon EKS cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
-
 ### 8. Access Hub Cluster
 
 To configure kubectl, execute the following command, which retrieves the connection details from the Terraform output to access the cluster:
@@ -317,10 +317,11 @@ eval $(terraform output -raw configure_kubectl)
 To verify that kubectl is correctly configured, run the command below to see the nodes in the EKS cluster.
 
 ```bash
-kubectl get nodes --context hub
+kubectl get nodes --context hub-cluster
 ```
 
 Expected output:
+
 ```
 NAME                                        STATUS   ROLES    AGE   VERSION
 ip-10-0-43-5.eu-west-1.compute.internal     Ready    <none>   21m   v1.28.13-eks-a737599

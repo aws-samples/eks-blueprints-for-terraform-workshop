@@ -1,9 +1,6 @@
 {
  "Description": "Creates the lab environment for the workshop",
  "Parameters": {
-  "ParticipantAssumedRoleArn": {
-   "Type": "String"
-  },
   "AssetsBucketName": {
    "Type": "String"
   },
@@ -86,7 +83,7 @@
        "Effect": "Allow",
        "Resource": {
         "Fn::GetAtt": [
-         "IDEFleetIdeLogGroup63888DED",
+         "IDEBLUEIdeLogGroupE81ABD81",
          "Arn"
         ]
        }
@@ -98,7 +95,98 @@
        ],
        "Effect": "Allow",
        "Resource": {
-        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+        "Ref": "IDEBLUEIdePasswordSecret54597E1D"
+       }
+      },
+      {
+       "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "codebuild:BatchPutCodeCoverages",
+        "codebuild:BatchPutTestCases",
+        "codebuild:CreateReport",
+        "codebuild:CreateReportGroup",
+        "codebuild:UpdateReport"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":codebuild:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":report-group/",
+          {
+           "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+          },
+          "-*"
+         ]
+        ]
        }
       }
      ],
@@ -112,7 +200,7 @@
     ]
    }
   },
-  "IDEFleetIdeVPCA4D0815F": {
+  "IDEBLUEIdeVPCBE756D0B": {
    "Type": "AWS::EC2::VPC",
    "Properties": {
     "CidrBlock": "192.168.0.0/16",
@@ -122,12 +210,12 @@
     "Tags": [
      {
       "Key": "Name",
-      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC"
+      "Value": "eks-blueprints-workshop/IDE-BLUE/IdeVPC"
      }
     ]
    }
   },
-  "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4": {
+  "IDEBLUEIdeVPCPublicSubnet1Subnet59B2F642": {
    "Type": "AWS::EC2::Subnet",
    "Properties": {
     "AvailabilityZone": {
@@ -151,77 +239,77 @@
      },
      {
       "Key": "Name",
-      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC/PublicSubnet1"
+      "Value": "eks-blueprints-workshop/IDE-BLUE/IdeVPC/PublicSubnet1"
      }
     ],
     "VpcId": {
-     "Ref": "IDEFleetIdeVPCA4D0815F"
+     "Ref": "IDEBLUEIdeVPCBE756D0B"
     }
    }
   },
-  "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3": {
+  "IDEBLUEIdeVPCPublicSubnet1RouteTable1850005F": {
    "Type": "AWS::EC2::RouteTable",
    "Properties": {
     "Tags": [
      {
       "Key": "Name",
-      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC/PublicSubnet1"
+      "Value": "eks-blueprints-workshop/IDE-BLUE/IdeVPC/PublicSubnet1"
      }
     ],
     "VpcId": {
-     "Ref": "IDEFleetIdeVPCA4D0815F"
+     "Ref": "IDEBLUEIdeVPCBE756D0B"
     }
    }
   },
-  "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD": {
+  "IDEBLUEIdeVPCPublicSubnet1RouteTableAssociationA03BCB77": {
    "Type": "AWS::EC2::SubnetRouteTableAssociation",
    "Properties": {
     "RouteTableId": {
-     "Ref": "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3"
+     "Ref": "IDEBLUEIdeVPCPublicSubnet1RouteTable1850005F"
     },
     "SubnetId": {
-     "Ref": "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4"
+     "Ref": "IDEBLUEIdeVPCPublicSubnet1Subnet59B2F642"
     }
    }
   },
-  "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9": {
+  "IDEBLUEIdeVPCPublicSubnet1DefaultRoute83F77FA4": {
    "Type": "AWS::EC2::Route",
    "Properties": {
     "DestinationCidrBlock": "0.0.0.0/0",
     "GatewayId": {
-     "Ref": "IDEFleetIdeVPCIGWDA3B7804"
+     "Ref": "IDEBLUEIdeVPCIGW7F99CFFA"
     },
     "RouteTableId": {
-     "Ref": "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3"
+     "Ref": "IDEBLUEIdeVPCPublicSubnet1RouteTable1850005F"
     }
    },
    "DependsOn": [
-    "IDEFleetIdeVPCVPCGW0D377588"
+    "IDEBLUEIdeVPCVPCGW07DE3C5E"
    ]
   },
-  "IDEFleetIdeVPCIGWDA3B7804": {
+  "IDEBLUEIdeVPCIGW7F99CFFA": {
    "Type": "AWS::EC2::InternetGateway",
    "Properties": {
     "Tags": [
      {
       "Key": "Name",
-      "Value": "eks-blueprints-workshop/IDE-Fleet/IdeVPC"
+      "Value": "eks-blueprints-workshop/IDE-BLUE/IdeVPC"
      }
     ]
    }
   },
-  "IDEFleetIdeVPCVPCGW0D377588": {
+  "IDEBLUEIdeVPCVPCGW07DE3C5E": {
    "Type": "AWS::EC2::VPCGatewayAttachment",
    "Properties": {
     "InternetGatewayId": {
-     "Ref": "IDEFleetIdeVPCIGWDA3B7804"
+     "Ref": "IDEBLUEIdeVPCIGW7F99CFFA"
     },
     "VpcId": {
-     "Ref": "IDEFleetIdeVPCA4D0815F"
+     "Ref": "IDEBLUEIdeVPCBE756D0B"
     }
    }
   },
-  "IDEFleetIdePrefixListFunctionServiceRoleDC99231D": {
+  "IDEBLUEIdePrefixListFunctionServiceRoleD0B9C394": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -252,7 +340,7 @@
     ]
    }
   },
-  "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99": {
+  "IDEBLUEIdePrefixListFunctionServiceRoleDefaultPolicy1D97B124": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -265,15 +353,15 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99",
+    "PolicyName": "IDEBLUEIdePrefixListFunctionServiceRoleDefaultPolicy1D97B124",
     "Roles": [
      {
-      "Ref": "IDEFleetIdePrefixListFunctionServiceRoleDC99231D"
+      "Ref": "IDEBLUEIdePrefixListFunctionServiceRoleD0B9C394"
      }
     ]
    }
   },
-  "IDEFleetIdePrefixListFunction66D13E34": {
+  "IDEBLUEIdePrefixListFunctionF8488629": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
@@ -282,7 +370,7 @@
     "Handler": "index.lambda_handler",
     "Role": {
      "Fn::GetAtt": [
-      "IDEFleetIdePrefixListFunctionServiceRoleDC99231D",
+      "IDEBLUEIdePrefixListFunctionServiceRoleD0B9C394",
       "Arn"
      ]
     },
@@ -290,16 +378,16 @@
     "Timeout": 180
    },
    "DependsOn": [
-    "IDEFleetIdePrefixListFunctionServiceRoleDefaultPolicyCCB0FA99",
-    "IDEFleetIdePrefixListFunctionServiceRoleDC99231D"
+    "IDEBLUEIdePrefixListFunctionServiceRoleDefaultPolicy1D97B124",
+    "IDEBLUEIdePrefixListFunctionServiceRoleD0B9C394"
    ]
   },
-  "IDEFleetIdePrefixListResourceF67673AB": {
+  "IDEBLUEIdePrefixListResource6DC22253": {
    "Type": "AWS::CloudFormation::CustomResource",
    "Properties": {
     "ServiceToken": {
      "Fn::GetAtt": [
-      "IDEFleetIdePrefixListFunction66D13E34",
+      "IDEBLUEIdePrefixListFunctionF8488629",
       "Arn"
      ]
     }
@@ -307,7 +395,7 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "IDEFleetIdeSecurityGroup7FF3E772": {
+  "IDEBLUEIdeSecurityGroup2C1CD50C": {
    "Type": "AWS::EC2::SecurityGroup",
    "Properties": {
     "GroupDescription": "IDE security group",
@@ -322,7 +410,7 @@
      {
       "CidrIp": {
        "Fn::GetAtt": [
-        "IDEFleetIdeVPCA4D0815F",
+        "IDEBLUEIdeVPCBE756D0B",
         "CidrBlock"
        ]
       },
@@ -334,7 +422,7 @@
      {
       "CidrIp": {
        "Fn::GetAtt": [
-        "IDEFleetIdeVPCA4D0815F",
+        "IDEBLUEIdeVPCBE756D0B",
         "CidrBlock"
        ]
       },
@@ -345,32 +433,32 @@
      }
     ],
     "VpcId": {
-     "Ref": "IDEFleetIdeVPCA4D0815F"
+     "Ref": "IDEBLUEIdeVPCBE756D0B"
     }
    }
   },
-  "IDEFleetIdeSecurityGroupfromIndirectPeer80DF0487D7": {
+  "IDEBLUEIdeSecurityGroupfromIndirectPeer80169B32A1": {
    "Type": "AWS::EC2::SecurityGroupIngress",
    "Properties": {
     "Description": "HTTP from CloudFront only",
     "FromPort": 80,
     "GroupId": {
      "Fn::GetAtt": [
-      "IDEFleetIdeSecurityGroup7FF3E772",
+      "IDEBLUEIdeSecurityGroup2C1CD50C",
       "GroupId"
      ]
     },
     "IpProtocol": "tcp",
     "SourcePrefixListId": {
      "Fn::GetAtt": [
-      "IDEFleetIdePrefixListResourceF67673AB",
+      "IDEBLUEIdePrefixListResource6DC22253",
       "PrefixListId"
      ]
     },
     "ToPort": 80
    }
   },
-  "IDEFleetInstanceProfile1BF87146": {
+  "IDEBLUEInstanceProfile010D982D": {
    "Type": "AWS::IAM::InstanceProfile",
    "Properties": {
     "Roles": [
@@ -380,16 +468,16 @@
     ]
    },
    "DependsOn": [
-    "IDEFleetIdeVPCIGWDA3B7804",
-    "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9",
-    "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3",
-    "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD",
-    "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4",
-    "IDEFleetIdeVPCA4D0815F",
-    "IDEFleetIdeVPCVPCGW0D377588"
+    "IDEBLUEIdeVPCIGW7F99CFFA",
+    "IDEBLUEIdeVPCPublicSubnet1DefaultRoute83F77FA4",
+    "IDEBLUEIdeVPCPublicSubnet1RouteTable1850005F",
+    "IDEBLUEIdeVPCPublicSubnet1RouteTableAssociationA03BCB77",
+    "IDEBLUEIdeVPCPublicSubnet1Subnet59B2F642",
+    "IDEBLUEIdeVPCBE756D0B",
+    "IDEBLUEIdeVPCVPCGW07DE3C5E"
    ]
   },
-  "IDEFleet0EC23AB4641a0cee2d30d2eb": {
+  "IDEBLUECB1957F8641a0cee2d30d2eb": {
    "Type": "AWS::EC2::Instance",
    "Properties": {
     "AvailabilityZone": {
@@ -412,7 +500,7 @@
      }
     ],
     "IamInstanceProfile": {
-     "Ref": "IDEFleetInstanceProfile1BF87146"
+     "Ref": "IDEBLUEInstanceProfile010D982D"
     },
     "ImageId": {
      "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61x8664C96584B6F00A464EAD1953AFF4B05118Parameter"
@@ -425,20 +513,20 @@
       "GroupSet": [
        {
         "Fn::GetAtt": [
-         "IDEFleetIdeSecurityGroup7FF3E772",
+         "IDEBLUEIdeSecurityGroup2C1CD50C",
          "GroupId"
         ]
        }
       ],
       "SubnetId": {
-       "Ref": "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4"
+       "Ref": "IDEBLUEIdeVPCPublicSubnet1Subnet59B2F642"
       }
      }
     ],
     "Tags": [
      {
       "Key": "Name",
-      "Value": "eks-blueprints-workshop/IDE-Fleet/IDE-Fleet"
+      "Value": "eks-blueprints-workshop/IDE-BLUE/IDE-BLUE"
      }
     ],
     "UserData": {
@@ -446,18 +534,18 @@
     }
    },
    "DependsOn": [
-    "IDEFleetIdeVPCIGWDA3B7804",
-    "IDEFleetIdeVPCPublicSubnet1DefaultRoute2D8CADD9",
-    "IDEFleetIdeVPCPublicSubnet1RouteTableDE9DC9F3",
-    "IDEFleetIdeVPCPublicSubnet1RouteTableAssociation949950FD",
-    "IDEFleetIdeVPCPublicSubnet1Subnet9C1901A4",
-    "IDEFleetIdeVPCA4D0815F",
-    "IDEFleetIdeVPCVPCGW0D377588",
+    "IDEBLUEIdeVPCIGW7F99CFFA",
+    "IDEBLUEIdeVPCPublicSubnet1DefaultRoute83F77FA4",
+    "IDEBLUEIdeVPCPublicSubnet1RouteTable1850005F",
+    "IDEBLUEIdeVPCPublicSubnet1RouteTableAssociationA03BCB77",
+    "IDEBLUEIdeVPCPublicSubnet1Subnet59B2F642",
+    "IDEBLUEIdeVPCBE756D0B",
+    "IDEBLUEIdeVPCVPCGW07DE3C5E",
     "SharedRoleDefaultPolicyA7803C87",
     "SharedRoleD1D02F7E"
    ]
   },
-  "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF": {
+  "IDEBLUEIdeBootstrapFunctionServiceRole1075BCE9": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -488,7 +576,7 @@
     ]
    }
   },
-  "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA": {
+  "IDEBLUEIdeBootstrapFunctionServiceRoleDefaultPolicyB1361A9C": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -517,15 +605,15 @@
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA",
+    "PolicyName": "IDEBLUEIdeBootstrapFunctionServiceRoleDefaultPolicyB1361A9C",
     "Roles": [
      {
-      "Ref": "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF"
+      "Ref": "IDEBLUEIdeBootstrapFunctionServiceRole1075BCE9"
      }
     ]
    }
   },
-  "IDEFleetIdeBootstrapFunctionC79D571D": {
+  "IDEBLUEIdeBootstrapFunctionEE94052F": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
@@ -534,7 +622,7 @@
     "Handler": "index.lambda_handler",
     "Role": {
      "Fn::GetAtt": [
-      "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF",
+      "IDEBLUEIdeBootstrapFunctionServiceRole1075BCE9",
       "Arn"
      ]
     },
@@ -542,11 +630,11 @@
     "Timeout": 900
    },
    "DependsOn": [
-    "IDEFleetIdeBootstrapFunctionServiceRoleDefaultPolicy297016DA",
-    "IDEFleetIdeBootstrapFunctionServiceRoleF314F5FF"
+    "IDEBLUEIdeBootstrapFunctionServiceRoleDefaultPolicyB1361A9C",
+    "IDEBLUEIdeBootstrapFunctionServiceRole1075BCE9"
    ]
   },
-  "IDEFleetIdeLogGroup63888DED": {
+  "IDEBLUEIdeLogGroupE81ABD81": {
    "Type": "AWS::Logs::LogGroup",
    "Properties": {
     "RetentionInDays": 7
@@ -554,7 +642,7 @@
    "UpdateReplacePolicy": "Retain",
    "DeletionPolicy": "Retain"
   },
-  "IDEFleetIdePasswordSecret4C89AB01": {
+  "IDEBLUEIdePasswordSecret54597E1D": {
    "Type": "AWS::SecretsManager::Secret",
    "Properties": {
     "GenerateSecretString": {
@@ -569,7 +657,7 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "IDEFleetIdeDistribution631906CF": {
+  "IDEBLUEIdeDistributionEC146FA6": {
    "Type": "AWS::CloudFront::Distribution",
    "Properties": {
     "DistributionConfig": {
@@ -586,7 +674,7 @@
       "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
       "Compress": true,
       "OriginRequestPolicyId": "216adef6-5c7f-47e4-b989-5492eafa07d3",
-      "TargetOriginId": "eksblueprintsworkshopIDEFleetIdeDistributionOrigin14C5BF6EF",
+      "TargetOriginId": "eksblueprintsworkshopIDEBLUEIdeDistributionOrigin1056696A4",
       "ViewerProtocolPolicy": "allow-all"
      },
      "Enabled": true,
@@ -603,35 +691,35 @@
        },
        "DomainName": {
         "Fn::GetAtt": [
-         "IDEFleet0EC23AB4641a0cee2d30d2eb",
+         "IDEBLUECB1957F8641a0cee2d30d2eb",
          "PublicDnsName"
         ]
        },
-       "Id": "eksblueprintsworkshopIDEFleetIdeDistributionOrigin14C5BF6EF"
+       "Id": "eksblueprintsworkshopIDEBLUEIdeDistributionOrigin1056696A4"
       }
      ]
     }
    }
   },
-  "IDEFleetIdeBootstrapWaitConditionHandle6F73F067": {
+  "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44": {
    "Type": "AWS::CloudFormation::WaitConditionHandle"
   },
-  "IDEFleetIdeBootstrapWaitConditionBAEC1144": {
+  "IDEBLUEIdeBootstrapWaitCondition66F6A276": {
    "Type": "AWS::CloudFormation::WaitCondition",
    "Properties": {
     "Count": 1,
     "Handle": {
-     "Ref": "IDEFleetIdeBootstrapWaitConditionHandle6F73F067"
+     "Ref": "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44"
     },
     "Timeout": "1800"
    },
    "DependsOn": [
-    "IDEFleetInstanceProfile1BF87146",
-    "IDEFleet0EC23AB4641a0cee2d30d2eb",
-    "IDEFleetIdeBootstrapDocument88102810"
+    "IDEBLUEInstanceProfile010D982D",
+    "IDEBLUECB1957F8641a0cee2d30d2eb",
+    "IDEBLUEIdeBootstrapDocumentFE471605"
    ]
   },
-  "IDEFleetIdeBootstrapDocument88102810": {
+  "IDEBLUEIdeBootstrapDocumentFE471605": {
    "Type": "AWS::SSM::Document",
    "Properties": {
     "Content": {
@@ -680,7 +768,7 @@
                       "Fn::Split": [
                        ":",
                        {
-                        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                        "Ref": "IDEBLUEIdePasswordSecret54597E1D"
                        }
                       ]
                      }
@@ -703,7 +791,7 @@
                       "Fn::Split": [
                        ":",
                        {
-                        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                        "Ref": "IDEBLUEIdePasswordSecret54597E1D"
                        }
                       ]
                      }
@@ -718,17 +806,17 @@
             },
             "domain": {
              "Fn::GetAtt": [
-              "IDEFleetIdeDistribution631906CF",
+              "IDEBLUEIdeDistributionEC146FA6",
               "DomainName"
              ]
             },
             "codeServerVersion": "4.93.1",
             "waitConditionHandleUrl": {
-             "Ref": "IDEFleetIdeBootstrapWaitConditionHandle6F73F067"
+             "Ref": "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44"
             },
             "customBootstrapScript": {
              "Fn::Sub": [
-              "#!/bin/bash\nset -x\nsudo sh -c \"echo LANG=en_US.utf-8 >> /etc/environment\"\nsudo sh -c \"echo LC_ALL=en_US.UTF-8 >> /etc/environment\"\n# . /home/ec2-user/.bashrc\nsudo yum -y install sqlite telnet jq strace tree gcc glibc-static python3 python3-pip gettext bash-completion npm zsh util-linux-user locate\necho '=== INSTALL and CONFIGURE default software components ==='\n\naws configure set cli_pager \"\"\n\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport ACCOUNTID=$(aws sts get-caller-identity | jq -r .Account)\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport ASSETS_BUCKET_NAME=${AssetsBucketName} # Coming from Fn.Sub\nexport ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub\nexport BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub\nexport WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub\nexport WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub\nexport BASE_DIR=/home/ec2-user/environment/fleet-management-on-amazon-eks-workshop\nexport GITOPS_DIR=/home/ec2-user/environment/gitops-repos\nexport GOROOT=/usr/local/go\n\n# This is to go around problem with circular dependency\naws ssm put-parameter --type String --name GiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite\n\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -o /dev/null -L -w ''%{http_code}'' http://$host/home)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb-argocd\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -k -o /dev/null -L -w ''%{http_code}'' http://$host/)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb-argocd\n\nsudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl\nsudo chmod +x /usr/bin/kubectl\n\nsudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64\nsudo chmod +x /usr/bin/argocd\n\nsudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64\nsudo chmod +x /usr/local/bin/kubectl-argo-rollouts\n\ncurl --silent --location \"https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz\" | tar xz -C /tmp\nsudo mv -f /tmp/linux-amd64/helm /usr/bin\nsudo chmod +x /usr/bin/helm\n\nsudo curl --silent --location -o /tmp/terraform.zip \"https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip\"\ncd /tmp && unzip -o /tmp/terraform.zip && cd -\nchmod +x /tmp/terraform\nsudo mv -f /tmp/terraform /usr/bin\n\nsudo curl --silent --location \"https://go.dev/dl/go1.23.1.linux-amd64.tar.gz\" | sudo tar xz -C /usr/local\n\ncurl --silent --location \"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksctl\nsudo mv /tmp/eksctl /usr/local/bin\ncurl -sSL \"https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksdemo\nmv /tmp/eksdemo /usr/local/bin  \n\n\n\nsudo su - ec2-user <<EOF\nset -x\nexport | sort\n\naws configure set cli_pager \"\"\n\naws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNTID}.dkr.ecr.${AWS_REGION}.amazonaws.com\n\n# start of cloud9-init script\nkubectl completion bash >>  ~/.bash_completion\necho \"complete -F __start_kubectl k\" >> ~/.bash_completion\nargocd completion bash >>  ~/.bash_completion\nhelm completion bash >>  ~/.bash_completion\necho \"alias k=kubectl\" >> ~/.bashrc\necho \"alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'\" | tee -a ~/.bashrc\necho \"alias ll='ls -la'\" >> ~/.bashrc\n\necho \"alias ktx=kubectx\" >> ~/.bashrc\necho \"alias kctx=kubectx\" >> ~/.bashrc\necho \"alias kns=kubens\" >> ~/.bashrc\necho \"export TERM=xterm-color\" >> ~/.bashrc\n\necho \"alias code=/usr/lib/code-server/bin/code-server\" >> ~/.bashrc\necho \"complete -F __start_kubectl k\" >> ~/.bashrc\ncurl -sS https://webinstall.dev/k9s | bash\n\nhelm repo add eks https://aws.github.io/eks-charts\nhelm repo update\n\n#Install Krew and stern\n(\n  cd \\$(mktemp -d) && pwd &&\n  OS=\\$(uname | tr '[:upper:]' '[:lower:]') &&\n  ARCH=\\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' -e 's/aarch64$/arm64/') &&\n  KREW=krew-\\${!OS}_\\${!ARCH} && echo \\$KREW\n  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\\${!KREW}.tar.gz &&\n  tar zxvf \\${!KREW}.tar.gz &&\n  ./\\${!KREW} install krew\n)\necho \"export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\" | tee -a ~/.bashrc\nexport PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\nkubectl krew install stern\nkubectl krew install np-viewer \n\ngo install github.com/kyverno/chainsaw@latest\npip install pytest\npip install pytest_bdd boto3 kubernetes\n\ncurl -sfL https://direnv.net/install.sh | bash\n\n#Install some VsCode plugins\n/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform\n/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders\n\n\n#Install fuzzy search\ngit clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\n~/.fzf/install --all  \n\n#Install zsh\nsudo -k chsh -s /bin/zsh ec2-user\njq '. + {\"terminal.integrated.defaultProfile.linux\": \"zsh\"}' /home/ec2-user/.local/share/code-server/User/settings.json > temp.json && mv temp.json /home/ec2-user/.local/share/code-server/User/settings.json\nrm -rf ~/.oh-my-zsh\n\nwget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh\nCHSH=no RUNZSH=no sh install.sh\n\ngit clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k\ngit clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting\ngit clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions\ngit clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search\n\n\n#Install workshop\nmkdir -p $BASE_DIR\ngit clone $WORKSHOP_GIT_URL $BASE_DIR\ncd $BASE_DIR\ngit checkout $WORKSHOP_GIT_BRANCH\n\ncp hack/.zshrc hack/.p10k.zsh ~/\n\n# Setup bashrc\nls -lt ~\nmkdir -p ~/.bashrc.d\ncp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/\n\n# # Common backend config\n# cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"common/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Hub backend config\n# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"hub/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Spokes backend config\n# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"spokes/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#     workspace_key_prefix = \"spokes\"\n#   }\n# }\n# EOT\n\n\nEOF\n\n#install kubectx & kubens\nsudo rm -rf /opt/kubectx\nsudo git clone https://github.com/ahmetb/kubectx /opt/kubectx\nsudo ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx\nsudo ln -sf /opt/kubectx/kubens /usr/local/bin/kubens\n\n\nsudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_\n\nsource ~/.bashrc\n\n# end of cloud9-init script\n\necho '=== Configure .bashrc.d ==='\nif [[ ! -d \"/home/ec2-user/.bashrc.d\" ]]; then\n    sudo -H -u ec2-user bash -c \"mkdir -p ~/.bashrc.d\"\n    cat << EOT > /home/ec2-user/.bashrc.d/env.bash\n    export ACCOUNTID=$ACCOUNTID\n    export ACCOUNT_ID=$ACCOUNTID\n    export AWS_ACCOUNT_ID=$ACCOUNTID\n    export AWS_DEFAULT_REGION=$AWS_REGION\n    export GOROOT=/usr/local/go\nEOT\n\n    sudo -H -u ec2-user bash -c \"cat <<'EOF' >> ~/.bashrc \nfor file in ~/.bashrc.d/*.bash; do\n  source \"\\$file\" || true\ndone\nEOF\n\"\n\nfi\n\n# # change permissions for /root/.ssh for the codecommit TF step to be able to change the file location from /root to /home/ec2-user\n# chown -R ec2-user:ec2-user /root/.ssh\n# chown -R ec2-user:ec2-user /root\n# chmod 700 /root/.ssh\n# chmod 700 /root\n\necho '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='\necho \"complete -C '/usr/local/bin/aws_completer' aws\" >> /home/ec2-user/.bashrc.d/aws.bash\necho '=== Run init script ==='\n# aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}cloud9-init.sh /tmp && bash /tmp/cloud9-init.sh\necho '=== CLEANING /home/ec2-user ==='\n# for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists\nchown -R ec2-user:ec2-user /home/ec2-user/\n#Don't reboot in ssm document, that break the execution\necho \"Bootstrap completed with return code $?\"",
+              "#!/bin/bash\nset -x\nsudo sh -c \"echo LANG=en_US.utf-8 >> /etc/environment\"\nsudo sh -c \"echo LC_ALL=en_US.UTF-8 >> /etc/environment\"\n# . /home/ec2-user/.bashrc\nsudo yum -y install sqlite telnet jq strace tree gcc glibc-static python3 python3-pip gettext bash-completion npm zsh util-linux-user locate\necho '=== INSTALL and CONFIGURE default software components ==='\n\naws configure set cli_pager \"\"\n\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport ACCOUNTID=$(aws sts get-caller-identity | jq -r .Account)\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport ASSETS_BUCKET_NAME=${AssetsBucketName} # Coming from Fn.Sub\nexport ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub\nexport BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub\nexport WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub\nexport WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub\nexport BASE_DIR=/home/ec2-user/eks-blueprints-for-terraform-workshop\nexport GITOPS_DIR=/home/ec2-user/environment/gitops-repos\nexport ENVIRONMENT_DIR=/home/ec2-user/environment\nexport GOROOT=/usr/local/go\n\n# This is to go around problem with circular dependency\naws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite\n\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\n  echo \"the service is not found: $host\"\n  exit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -o /dev/null -L -w ''%{http_code}'' http://$host/home)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb-argocd\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -k -o /dev/null -L -w ''%{http_code}'' http://$host/)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb-argocd\n\nsudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl\nsudo chmod +x /usr/bin/kubectl\n\nsudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64\nsudo chmod +x /usr/bin/argocd\n\nsudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64\nsudo chmod +x /usr/local/bin/kubectl-argo-rollouts\n\ncurl --silent --location \"https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz\" | tar xz -C /tmp\nsudo mv -f /tmp/linux-amd64/helm /usr/bin\nsudo chmod +x /usr/bin/helm\n\nsudo curl --silent --location -o /tmp/terraform.zip \"https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip\"\ncd /tmp && unzip -o /tmp/terraform.zip && cd -\nchmod +x /tmp/terraform\nsudo mv -f /tmp/terraform /usr/bin\n\nsudo curl --silent --location \"https://go.dev/dl/go1.23.1.linux-amd64.tar.gz\" | sudo tar xz -C /usr/local\n\ncurl --silent --location \"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksctl\nsudo mv /tmp/eksctl /usr/local/bin\ncurl -sSL \"https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksdemo\nmv /tmp/eksdemo /usr/local/bin  \n\n\n\nsudo su - ec2-user <<EOF\nset -x\nexport | sort\n\naws configure set cli_pager \"\"\n\naws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNTID.dkr.ecr.$AWS_REGION.amazonaws.com\n\n# start of cloud9-init script\nkubectl completion bash >>  ~/.bash_completion\necho \"complete -F __start_kubectl k\" >> ~/.bash_completion\nargocd completion bash >>  ~/.bash_completion\nhelm completion bash >>  ~/.bash_completion\necho \"alias k=kubectl\" >> ~/.bashrc\necho \"alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'\" | tee -a ~/.bashrc\necho \"alias ll='ls -la'\" >> ~/.bashrc\n\necho \"alias ktx=kubectx\" >> ~/.bashrc\necho \"alias kctx=kubectx\" >> ~/.bashrc\necho \"alias kns=kubens\" >> ~/.bashrc\necho \"export TERM=xterm-color\" >> ~/.bashrc\n\necho \"alias code=/usr/lib/code-server/bin/code-server\" >> ~/.bashrc\necho \"complete -F __start_kubectl k\" >> ~/.bashrc\ncurl -sS https://webinstall.dev/k9s | bash\n\nhelm repo add eks https://aws.github.io/eks-charts\nhelm repo update\n\n#Install Krew and stern\n(\n  cd \\$(mktemp -d) && pwd &&\n  OS=\\$(uname | tr '[:upper:]' '[:lower:]') &&\n  ARCH=\\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' -e 's/aarch64$/arm64/') &&\n  KREW=krew-\\${!OS}_\\${!ARCH} && echo \\$KREW\n  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\\${!KREW}.tar.gz &&\n  tar zxvf \\${!KREW}.tar.gz &&\n  ./\\${!KREW} install krew\n)\necho \"export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\" | tee -a ~/.bashrc\nexport PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\nkubectl krew install stern\nkubectl krew install np-viewer \n\ngo install github.com/kyverno/chainsaw@latest\ngo install github.com/isovalent/aws-delete-vpc@latest\n\npip install pytest\npip install pytest_bdd boto3 kubernetes\n\ncurl -sfL https://direnv.net/install.sh | bash\n\n#Install some VsCode plugins\n/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform\n/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders\n\n\n#Install fuzzy search\ngit clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\n~/.fzf/install --all  \n\n#Install zsh\nsudo -k chsh -s /bin/zsh ec2-user\njq '. + {\"terminal.integrated.defaultProfile.linux\": \"zsh\"}' /home/ec2-user/.local/share/code-server/User/settings.json > temp.json && mv temp.json /home/ec2-user/.local/share/code-server/User/settings.json\nrm -rf ~/.oh-my-zsh\n\nwget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh\nCHSH=no RUNZSH=no sh install.sh\n\ngit clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k\ngit clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting\ngit clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions\ngit clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search\n\n\n#Install workshop\nmkdir -p $BASE_DIR\ngit clone $WORKSHOP_GIT_URL $BASE_DIR\ncd $BASE_DIR\ngit checkout $WORKSHOP_GIT_BRANCH\n\ncp hack/.zshrc hack/.p10k.zsh ~/\n\n# Setup bashrc\nls -lt ~\nmkdir -p ~/.bashrc.d\ncp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/\n\n# Common backend config\ncat << EOT > $BASE_DIR/terraform/common/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"common/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n\n# # Hub backend config\n# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"hub/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Spokes backend config\n# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"spokes/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#     workspace_key_prefix = \"spokes\"\n#   }\n# }\n# EOT\n\n\nEOF\n\n#install kubectx & kubens\nsudo rm -rf /opt/kubectx\nsudo git clone https://github.com/ahmetb/kubectx /opt/kubectx\nsudo ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx\nsudo ln -sf /opt/kubectx/kubens /usr/local/bin/kubens\n\n\nsudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_\n\nsource ~/.bashrc\n\n# end of cloud9-init script\n\necho '=== Configure .bashrc.d ==='\nif [[ ! -d \"/home/ec2-user/.bashrc.d\" ]]; then\n    sudo -H -u ec2-user bash -c \"mkdir -p ~/.bashrc.d\"\nfi\ncat << EOT > /home/ec2-user/.bashrc.d/env.bash\nexport ACCOUNTID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport AWS_DEFAULT_REGION=$AWS_REGION\nexport GOROOT=/usr/local/go\nexport ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME\nexport ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX\nexport BUCKET_NAME=$BUCKET_NAME\nexport WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL\nexport WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH\nexport BASE_DIR=$BASE_DIR\nexport GITOPS_DIR=$GITOPS_DIR\nEOT\n\nsudo -H -u ec2-user bash -c \"cat <<'EOF' >> ~/.bashrc \nfor file in ~/.bashrc.d/*.bash; do\n  source \"\\$file\" || true\ndone\nEOF\n\"\n\necho '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='\necho \"complete -C '/usr/local/bin/aws_completer' aws\" >> /home/ec2-user/.bashrc.d/aws.bash\necho '=== Run init script ==='\n# aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}cloud9-init.sh /tmp && bash /tmp/cloud9-init.sh\necho '=== CLEANING /home/ec2-user ==='\n# for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists\nchown -R ec2-user:ec2-user /home/ec2-user/\n#Don't reboot in ssm document, that break the execution\necho \"Bootstrap completed with return code $?\"",
               {
                "BUCKET_NAME": {
                 "Ref": "TFStateBackendBucketF0FC9A9D"
@@ -763,29 +851,29 @@
     "UpdateMethod": "NewVersion"
    }
   },
-  "IDEFleetIdeBootstrapResource98864E55": {
+  "IDEBLUEIdeBootstrapResourceAE261901": {
    "Type": "AWS::CloudFormation::CustomResource",
    "Properties": {
     "ServiceToken": {
      "Fn::GetAtt": [
-      "IDEFleetIdeBootstrapFunctionC79D571D",
+      "IDEBLUEIdeBootstrapFunctionEE94052F",
       "Arn"
      ]
     },
     "InstanceId": {
-     "Ref": "IDEFleet0EC23AB4641a0cee2d30d2eb"
+     "Ref": "IDEBLUECB1957F8641a0cee2d30d2eb"
     },
     "SsmDocument": {
-     "Ref": "IDEFleetIdeBootstrapDocument88102810"
+     "Ref": "IDEBLUEIdeBootstrapDocumentFE471605"
     },
     "LogGroupName": {
-     "Ref": "IDEFleetIdeLogGroup63888DED"
+     "Ref": "IDEBLUEIdeLogGroupE81ABD81"
     }
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
   },
-  "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3": {
+  "IDEBLUEIdePasswordExporterFunctionServiceRoleF2A4B603": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -816,7 +904,7 @@
     ]
    }
   },
-  "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2": {
+  "IDEBLUEIdePasswordExporterFunctionServiceRoleDefaultPolicyD3C3E682": {
    "Type": "AWS::IAM::Policy",
    "Properties": {
     "PolicyDocument": {
@@ -828,21 +916,21 @@
        ],
        "Effect": "Allow",
        "Resource": {
-        "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+        "Ref": "IDEBLUEIdePasswordSecret54597E1D"
        }
       }
      ],
      "Version": "2012-10-17"
     },
-    "PolicyName": "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2",
+    "PolicyName": "IDEBLUEIdePasswordExporterFunctionServiceRoleDefaultPolicyD3C3E682",
     "Roles": [
      {
-      "Ref": "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3"
+      "Ref": "IDEBLUEIdePasswordExporterFunctionServiceRoleF2A4B603"
      }
     ]
    }
   },
-  "IDEFleetIdePasswordExporterFunction732E769D": {
+  "IDEBLUEIdePasswordExporterFunction21DBABFE": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
@@ -851,7 +939,7 @@
     "Handler": "index.lambda_handler",
     "Role": {
      "Fn::GetAtt": [
-      "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3",
+      "IDEBLUEIdePasswordExporterFunctionServiceRoleF2A4B603",
       "Arn"
      ]
     },
@@ -859,16 +947,16 @@
     "Timeout": 180
    },
    "DependsOn": [
-    "IDEFleetIdePasswordExporterFunctionServiceRoleDefaultPolicy936E9BE2",
-    "IDEFleetIdePasswordExporterFunctionServiceRoleCC2D9ED3"
+    "IDEBLUEIdePasswordExporterFunctionServiceRoleDefaultPolicyD3C3E682",
+    "IDEBLUEIdePasswordExporterFunctionServiceRoleF2A4B603"
    ]
   },
-  "IDEFleetIdePasswordExporterF99DE17D": {
+  "IDEBLUEIdePasswordExporterA384D1E9": {
    "Type": "AWS::CloudFormation::CustomResource",
    "Properties": {
     "ServiceToken": {
      "Fn::GetAtt": [
-      "IDEFleetIdePasswordExporterFunction732E769D",
+      "IDEBLUEIdePasswordExporterFunction21DBABFE",
       "Arn"
      ]
     },
@@ -889,7 +977,7 @@
               "Fn::Split": [
                ":",
                {
-                "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                "Ref": "IDEBLUEIdePasswordSecret54597E1D"
                }
               ]
              }
@@ -912,7 +1000,7 @@
               "Fn::Split": [
                ":",
                {
-                "Ref": "IDEFleetIdePasswordSecret4C89AB01"
+                "Ref": "IDEBLUEIdePasswordSecret54597E1D"
                }
               ]
              }
@@ -928,6 +1016,393 @@
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
+  },
+  "EKSWSCOMMONStackDeployProject74D43BC6": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "TFSTATE_BUCKET_NAME",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Ref": "TFStateBackendBucketF0FC9A9D"
+       }
+      },
+      {
+       "Name": "WORKSHOP_GIT_URL",
+       "Type": "PLAINTEXT",
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+      },
+      {
+       "Name": "WORKSHOP_GIT_BRANCH",
+       "Type": "PLAINTEXT",
+       "Value": "vscode"
+      },
+      {
+       "Name": "FORCE_DELETE_VPC",
+       "Type": "PLAINTEXT",
+       "Value": "false"
+      },
+      {
+       "Name": "GITEA_PASSWORD",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::GetAtt": [
+         "IDEBLUEIdePasswordExporterA384D1E9",
+         "password"
+        ]
+       }
+      },
+      {
+       "Name": "IS_WS",
+       "Type": "PLAINTEXT",
+       "Value": "true"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}\n        IS_WS=${IS_WS:-false}\n        GITEA_PASSWORD=${GITEA_PASSWORD}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"eks-blueprints-workshop-tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # This gives access to the EKS cluster in terraform\n\n        # Common backend config\n\n        ls -la $BASE_DIR/terraform/common\n\n        cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"common/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n        for i in $(seq 1 60);\n        do\n          if [[ -z $GITEA_EXTERNAL_URL ]]; then\n            sleep 10\n            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n            echo $GITEA_EXTERNAL_URL\n          else\n            break\n          fi\n        done\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n\n          # Cleanup scripts\n          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/destroy.sh\n\n        else\n\n          # Project Creation\n          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING\"\n",
+     "Type": "NO_SOURCE"
+    },
+    "TimeoutInMinutes": 60
+   }
+  },
+  "EKSWSCOMMONStartBuildFunctionServiceRoleD09BC908": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSCOMMONStartBuildFunctionServiceRoleDefaultPolicyE2D36A9C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codebuild:StartBuild",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSCOMMONStackDeployProject74D43BC6",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSCOMMONStartBuildFunctionServiceRoleDefaultPolicyE2D36A9C",
+    "Roles": [
+     {
+      "Ref": "EKSWSCOMMONStartBuildFunctionServiceRoleD09BC908"
+     }
+    ]
+   }
+  },
+  "EKSWSCOMMONStartBuildFunction5134CEEA": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n  try {\n    const projectName = event.ResourceProperties.ProjectName;\n    const codeBuildIamRoleArn = event.ResourceProperties.CodeBuildIamRoleArn\n\n    const codebuild = new AWS.CodeBuild();\n\n    console.log(`Starting new build of project ${projectName}`);\n\n    const { build } = await codebuild.startBuild({\n      projectName,\n      // Pass CFN related parameters through the build for extraction by the\n      // completion handler.\n      environmentVariablesOverride: [\n        {\n          name: 'CFN_RESPONSE_URL',\n          value: event.ResponseURL\n        },\n        {\n          name: 'CFN_STACK_ID',\n          value: event.StackId\n        },\n        {\n          name: 'CFN_REQUEST_ID',\n          value: event.RequestId\n        },\n        {\n          name: 'CFN_LOGICAL_RESOURCE_ID',\n          value: event.LogicalResourceId\n        },\n        {\n          name: 'REQUESTED_ACTION',\n          value: event.RequestType\n        },\n        {\n          name: 'RESOURCE_CODEBUILD_ROLE_ARN',\n          value: codeBuildIamRoleArn\n        }\n      ]\n    }).promise();\n    console.log(`Build id ${build.id} started - resource completion handled by EventBridge`);\n  } catch(error) {\n    console.error(error);\n    await respond(event, context, 'FAILED', { Error: error });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSCOMMONStartBuildFunctionServiceRoleD09BC908",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSCOMMONStartBuildFunctionServiceRoleDefaultPolicyE2D36A9C",
+    "EKSWSCOMMONStartBuildFunctionServiceRoleD09BC908"
+   ]
+  },
+  "EKSWSCOMMONReportBuildFunctionServiceRole082E2C3E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSCOMMONReportBuildFunctionServiceRoleDefaultPolicy5D0050F7": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:ListBuildsForProject"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSCOMMONStackDeployProject74D43BC6",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSCOMMONReportBuildFunctionServiceRoleDefaultPolicy5D0050F7",
+    "Roles": [
+     {
+      "Ref": "EKSWSCOMMONReportBuildFunctionServiceRole082E2C3E"
+     }
+    ]
+   }
+  },
+  "EKSWSCOMMONReportBuildFunction1452C9C9": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n\n  const projectName = event['detail']['project-name'];\n\n  const codebuild = new AWS.CodeBuild();\n\n  const buildId = event['detail']['build-id'];\n  const { builds } = await codebuild.batchGetBuilds({\n    ids: [ buildId ]\n  }).promise();\n\n  console.log(JSON.stringify(builds, null, 4));\n\n  const build = builds[0];\n  // Fetch the CFN resource and response parameters from the build environment.\n  const environment = {};\n  build.environment.environmentVariables.forEach(e => environment[e.name] = e.value);\n\n  const response = {\n    ResponseURL: environment.CFN_RESPONSE_URL,\n    StackId: environment.CFN_STACK_ID,\n    LogicalResourceId: environment.CFN_LOGICAL_RESOURCE_ID,\n    RequestId: environment.CFN_REQUEST_ID\n  };\n\n  if (event['detail']['build-status'] === 'SUCCEEDED') {\n    await respond(response, context, 'SUCCESS', {}, 'build');\n  } else {\n    await respond(response, context, 'FAILED', { Error: 'Build failed' });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSCOMMONReportBuildFunctionServiceRole082E2C3E",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSCOMMONReportBuildFunctionServiceRoleDefaultPolicy5D0050F7",
+    "EKSWSCOMMONReportBuildFunctionServiceRole082E2C3E"
+   ]
+  },
+  "EKSWSCOMMONBuildCompleteRule5CD555D0": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Build complete",
+    "EventPattern": {
+     "source": [
+      "aws.codebuild"
+     ],
+     "detail-type": [
+      "CodeBuild Build State Change"
+     ],
+     "detail": {
+      "build-status": [
+       "SUCCEEDED",
+       "FAILED",
+       "STOPPED"
+      ],
+      "project-name": [
+       {
+        "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+       }
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "EKSWSCOMMONReportBuildFunction1452C9C9",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "EKSWSCOMMONBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSCOMMONReportBuildFunction7684FC5473A8AD22": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "EKSWSCOMMONReportBuildFunction1452C9C9",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EKSWSCOMMONBuildCompleteRule5CD555D0",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EKSWSCOMMONClusterStackE20A043D": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "EKSWSCOMMONStartBuildFunction5134CEEA",
+      "Arn"
+     ]
+    },
+    "ProjectName": {
+     "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+    },
+    "CodeBuildIamRoleArn": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "ContentHash": "788370a3fbe0acf73f5d156f7a5a01ee"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSCOMMONReportBuildFunction7684FC5473A8AD22",
+    "EKSWSCOMMONBuildCompleteRule5CD555D0",
+    "EKSWSCOMMONReportBuildFunction1452C9C9",
+    "EKSWSCOMMONReportBuildFunctionServiceRoleDefaultPolicy5D0050F7",
+    "EKSWSCOMMONReportBuildFunctionServiceRole082E2C3E",
+    "IDEBLUEIdeBootstrapResourceAE261901"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "SetupGit": {
+   "Type": "AWS::SSM::Document",
+   "Properties": {
+    "Content": {
+     "schemaVersion": "2.2",
+     "description": "Setup Git",
+     "parameters": {},
+     "mainSteps": [
+      {
+       "action": "aws:runShellScript",
+       "name": "WaitForDirectoryAndSetupGit",
+       "inputs": {
+        "runCommand": [
+         "#!/bin/bash",
+         "MAX_ATTEMPTS=60",
+         "WAIT_SECONDS=120",
+         "DIRECTORY='/home/ec2-user/eks-blueprints-for-terraform-workshop'",
+         "",
+         "for ((i=1; i<=MAX_ATTEMPTS; i++)); do",
+         "  if [ -d \"$DIRECTORY\" ]; then",
+         "    echo \"Directory $DIRECTORY exists. Proceeding with Git setup.\"",
+         "    sudo su - ec2-user -c \"ls -la '$DIRECTORY'\"",
+         "    if [ -f \"$DIRECTORY/setup-git.sh\" ]; then",
+         "      echo \"Found setup-git.sh. Executing...\"",
+         "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+         "      exit 0",
+         "    else",
+         "      echo \"Error: setup-git.sh not found in $DIRECTORY\"",
+         "      ls -la \"$DIRECTORY\"",
+         "      exit 1",
+         "    fi",
+         "  else",
+         "    echo \"Attempt $i: Directory $DIRECTORY does not exist yet. Waiting...\"",
+         "    sleep $WAIT_SECONDS",
+         "  fi",
+         "done",
+         "",
+         "echo \"Directory $DIRECTORY did not appear after $MAX_ATTEMPTS attempts. Exiting.\"",
+         "exit 1"
+        ]
+       }
+      }
+     ]
+    },
+    "DocumentFormat": "YAML",
+    "DocumentType": "Command",
+    "TargetType": "/AWS::EC2::Instance",
+    "UpdateMethod": "NewVersion"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONClusterStackE20A043D"
+   ]
+  },
+  "SetupGitAssociation": {
+   "Type": "AWS::SSM::Association",
+   "Properties": {
+    "AssociationName": "SetupGitAssociation",
+    "Name": {
+     "Ref": "SetupGit"
+    },
+    "Targets": [
+     {
+      "Key": "tag:aws:cloudformation:stack-name",
+      "Values": [
+       "eks-blueprints-workshop",
+       "eks-blueprints-workshopteam-stack"
+      ]
+     }
+    ]
+   }
   }
  },
  "Outputs": {
@@ -939,7 +1414,7 @@
       "https://",
       {
        "Fn::GetAtt": [
-        "IDEFleetIdeDistribution631906CF",
+        "IDEBLUEIdeDistributionEC146FA6",
         "DomainName"
        ]
       }
@@ -950,7 +1425,7 @@
   "IdePassword": {
    "Value": {
     "Fn::GetAtt": [
-     "IDEFleetIdePasswordExporterF99DE17D",
+     "IDEBLUEIdePasswordExporterA384D1E9",
      "password"
     ]
    }

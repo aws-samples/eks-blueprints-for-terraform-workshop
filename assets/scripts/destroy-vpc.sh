@@ -23,12 +23,6 @@ VPC_NAMES=("eks-blueprints-workshop")
 
 cd ~/environment/vpc/
 
-
-
-
-
-
-
 #cleanup_vpc_resources
 delete_vpc_endpoints
 

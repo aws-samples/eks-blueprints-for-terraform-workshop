@@ -1,5 +1,5 @@
 ---
-title: 'Amazon VPC Architecture'
+title: "Amazon VPC Architecture"
 weight: 30
 ---
 

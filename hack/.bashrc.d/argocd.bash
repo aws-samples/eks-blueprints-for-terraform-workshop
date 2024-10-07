@@ -15,6 +15,12 @@ function argocd_credentials (){
 	echo "ArgoCD URL: $IDE_URL/proxy/$2"
 }
 
+function gitea_credentials (){
+	echo "Gitea Username: workshop-user"
+	echo "Gitea Password: $GITEA_PASSWORD"
+	echo $GITEA_EXTERNAL_URL/workshop-user/	
+}
+
 function argocd_hub_credentials (){
 	argocd_credentials fleet-hub-cluster 8081
 }

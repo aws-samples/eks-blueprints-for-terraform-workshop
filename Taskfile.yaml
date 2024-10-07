@@ -87,7 +87,7 @@ tasks:
   check-assets:
     desc: "Check Assets with Workshop Studio"
     cmds:
-      - aws s3 ls s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc
+      - aws s3 ls s3://ws-assets-us-east-1/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc/
 
   get-tfstate-bucket-name:
     desc: "retrieve the bucket name to use"

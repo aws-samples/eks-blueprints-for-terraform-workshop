@@ -1,9 +1,10 @@
 ---
-title: 'Create Spoke Staging Cluster'
+title: "Create Spoke Staging Cluster"
 weight: 10
 ---
 
 ### 1. Remote state
+
 The spoke-staging cluster references outputs from the vpc and hub modules.
 
 ```bash
@@ -27,6 +28,7 @@ data "terraform_remote_state" "hub" {
 
 EOF
 ```
+
 ### 2. Configure EKS Spoke cluster
 
 It configures the EKS cluster, sets up label and annotation values, and uses the Terraform blueprint addons module to create IAM roles.
@@ -42,9 +44,11 @@ sed -i 's/^    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicat
 ```
 
 ### 3. Define variables
+
 ```bash
 cp ~/environment/hub/variables.tf ~/environment/spoke
 ```
+
 ### 4. Define outputs
 
 ```bash
@@ -95,6 +99,7 @@ kubectl get nodes --context spoke-staging
 ```
 
 Expected output:
+
 ```
 NAME                                        STATUS   ROLES    AGE   VERSION
 ip-10-0-40-218.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks-a737599

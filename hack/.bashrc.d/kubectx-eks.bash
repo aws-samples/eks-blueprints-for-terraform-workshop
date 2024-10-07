@@ -30,4 +30,4 @@ update_kubeconfig_if_needed_with_role() {
     fi
 }
 
-update_kubeconfig_if_needed "hub-cluster" "hub-cluster"
+#update_kubeconfig_if_needed "hub-cluster" "hub-cluster"

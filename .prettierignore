@@ -1,2 +1,8 @@
-# Ignore all Markdown files
-*.md
+**/cdk.out
+cdk/bin/*.d.ts
+cdk/bin/*.js
+cdk/lib/*.d.ts
+cdk/lib/*.js
+cdk/test/*.js
+static/*.json
+assets/*.json
