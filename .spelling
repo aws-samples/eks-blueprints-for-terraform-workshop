@@ -40,6 +40,7 @@ kubectx
 kyverno
 limitrange
 loadbalancer
+metadatas
 networkpolicy
 privateca
 rabbitmq

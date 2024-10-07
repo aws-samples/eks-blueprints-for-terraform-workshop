@@ -1,5 +1,5 @@
 ---
-title: 'Install Argo CD with GitOps Bridge'
+title: "Install Argo CD with GitOps Bridge"
 weight: 10
 ---
 
@@ -28,7 +28,7 @@ provider "helm" {
 }
 
 locals{
-  argocd_namespace = "argocd" 
+  argocd_namespace = "argocd"
   environment     = "hub"
 }
 
@@ -62,11 +62,12 @@ module "gitops_bridge_bootstrap" {
       }
     ]
   }
-  
+
 }
 EOF
 
 ```
+
 ### 2. Apply Terraform
 
 ```bash
@@ -89,11 +90,10 @@ You can click on the output link and select **Open**, to access the Argo CD user
 
 > As we are in a lab workshop, we don't have custom domain, so we uses default one. You can ignore the warning about self signed certificate when you access the dashboard, this is fine for this workshop.
 
-After GitOps Bridge installs Argo CD, you can access the Argo CD dashboard using the default admin user and the auto-generated password. 
-In the Argo CD UI, you will find the hub cluster already registered under **Settings > Clusters**. This means Argo CD has capability to administer the hub-cluster.  
+After GitOps Bridge installs Argo CD, you can access the Argo CD dashboard using the default admin user and the auto-generated password.
+In the Argo CD UI, you will find the hub cluster already registered under **Settings > Clusters**. This means Argo CD has capability to administer the hub-cluster.
 
 ![EKS Cluster](/static/images/argocd-cluster-object.png)
-
 
 You can also validate that the gitops-bridge as correctly created the secrets for this EKS cluster in the argocd namespace:
 

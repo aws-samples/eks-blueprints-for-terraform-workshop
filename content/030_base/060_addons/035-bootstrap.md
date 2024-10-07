@@ -1,5 +1,5 @@
 ---
-title: 'Bootstrap'
+title: "Bootstrap"
 weight: 35
 ---
 
@@ -11,24 +11,17 @@ To automatically generate Argo CD applications, you will implement the "App of A
 
 Normally an Argo CD Application points to a git repo which contains manifests. The loadbalancer controller you provisioned previously points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `ìndex.yaml` file that reference the chart package (tgz file).
 
- 
- ![applicationset](/static/images/lb-helmchart-folder.png)
+![applicationset](/static/images/lb-helmchart-folder.png)
 
-
-In the App of Apps pattern, a top-level Argo CD Application resource points to a Git repository folder that contains ApplicationSet files. The ApplicationSet files define how to generate the child Applications. 
+In the App of Apps pattern, a top-level Argo CD Application resource points to a Git repository folder that contains ApplicationSet files. The ApplicationSet files define how to generate the child Applications.
 
 ![applicationset](/static/images/app-of-apps.png)
 
-
 In this chapter, you will create a bootstrap Argo CD application that points to the `platform/bootstrap` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
-
 
 ![applicationset](/static/images/bootstrap-appofapps.png)
 
-
-
-
-### 1. Create bootstrap applicationset 
+### 1. Create bootstrap applicationset
 
 The ApplicationSet creates a new Argo CD Application named "bootstrap" that points to the platform/bootstrap directory in your Git repository.
 
@@ -77,7 +70,9 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".m
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_path" -r
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_revision" -r
 ```
+
 the Output should be similar to:
+
 ```
 https://d1nkjb4pxwlir8.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-workshop-gitops-platform
 bootstrap
@@ -101,21 +96,22 @@ EOF
 ```bash
 sed -i "s/#enableapps//g" ~/environment/hub/main.tf
 ```
+
 The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates bootstrap Application.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
 module "gitops_bridge_bootstrap" {
-  source  = "gitops-bridge-dev/gitops-bridge/helm"
-  version = "0.0.1"
-  cluster = {
-    cluster_name = module.eks.cluster_name
-    environment  = local.environment
-     metadata     = local.addons_metadata
-     addons       = local.addons
-  }
-  apps = local.argocd_apps
-  argocd = {
-    namespace        = local.argocd_namespace
+source = "gitops-bridge-dev/gitops-bridge/helm"
+version = "0.0.1"
+cluster = {
+cluster_name = module.eks.cluster_name
+environment = local.environment
+metadata = local.addons_metadata
+addons = local.addons
+}
+apps = local.argocd_apps
+argocd = {
+namespace = local.argocd_namespace
 :::
 
 ### 4. Apply Terraform

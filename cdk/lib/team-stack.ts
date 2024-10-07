@@ -26,24 +26,12 @@ const buildspecCommon = fs.readFileSync(
     encoding: "utf-8",
   },
 );
-// const buildspecHub = fs.readFileSync(
-//   path.join(__dirname, "../resources/buildspec-hub.yaml"),
-//   {
-//     encoding: "utf-8",
-//   },
-// );
-// const buildspecSpoke = fs.readFileSync(
-//   path.join(__dirname, "../resources/buildspec-spoke.yaml"),
-//   {
-//     encoding: "utf-8",
-//   },
-// );
 
 export class TeamStack extends WorkshopStudioTeamStack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    let ParticipantAssumedRoleArn = this.getParticipantAssumedRoleArn();
+    //let ParticipantAssumedRoleArn = this.getParticipantAssumedRoleArn();
 
     const { bucketPrefix, deployedBucket } = this.getAssetsBucket("../assets");
 
@@ -85,13 +73,13 @@ export class TeamStack extends WorkshopStudioTeamStack {
       codeServerVersion: "4.93.1",
     });
 
-    if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {
-      ParticipantAssumedRoleArn = new cdk.CfnParameter(
-        this,
-        "ParticipantAssumedRoleArn",
-        { type: "String" },
-      ).valueAsString;
-    }
+    // if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {
+    //   ParticipantAssumedRoleArn = new cdk.CfnParameter(
+    //     this,
+    //     "ParticipantAssumedRoleArn",
+    //     { type: "String" },
+    //   ).valueAsString;
+    // }
 
     const commonRunner = new CodeBuildCustomResource(this, "EKSWSCOMMON", {
       buildspec: buildspecCommon,
@@ -124,105 +112,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
     // making common depend on ide, so the ide is the last thing to get deleted
     commonRunner.customResource.node.addDependency(ide.bootstrapped);
     // making ide dependent on commonRunner to ensure that git repos are setup by the time ide is ready
-    //ide.node.addDependency(commonRunner.customResource); // Since we are using cluster alias in the bootstrap
-
-    // const hubRunner = new CodeBuildCustomResource(this, "EKSHub", {
-    //   buildspec: buildspecHub,
-    //   codeBuildTimeout: cdk.Duration.minutes(60),
-    //   computeType: codebuild.ComputeType.SMALL,
-    //   environmentVariables: {
-    //     TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
-    //     WORKSHOP_GIT_URL: {
-    //       value:
-    //         process.env.WORKSHOP_GIT_URL ||
-    //         "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-    //     },
-    //     WORKSHOP_GIT_BRANCH: {
-    //       value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
-    //     },
-    //     FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
-    //   },
-    //   buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
-    //   role: sharedRole,
-    //   //removalPolicy: cdk.RemovalPolicy.RETAIN,
-    // });
-    // hubRunner.customResource.node.addDependency(commonRunner.customResource);
-
-    // const participantAccessEntryHub = new eks.AccessEntry(
-    //   this,
-    //   "participantAccessEntry-EksClusterHub",
-    //   {
-    //     accessPolicies: [
-    //       eks.AccessPolicy.fromAccessPolicyName(
-    //         eks.AccessPolicyArn.AMAZON_EKS_CLUSTER_ADMIN_POLICY.policyName,
-    //         { accessScopeType: eks.AccessScopeType.CLUSTER },
-    //       ),
-    //     ],
-    //     cluster: eks.Cluster.fromClusterAttributes(this, "EksClusterHub", {
-    //       clusterName: "fleet-hub-cluster",
-    //     }),
-    //     principal: ParticipantAssumedRoleArn,
-    //   },
-    // );
-    // participantAccessEntryHub.node.addDependency(hubRunner.customResource);
-
-    // const spokes = ["staging", "prod"];
-
-    // for (const spoke of spokes) {
-    //   const spokeRunner = new CodeBuildCustomResource(
-    //     this,
-    //     `EKSSpoke-${spoke}`,
-    //     {
-    //       buildspec: buildspecSpoke,
-    //       codeBuildTimeout: cdk.Duration.minutes(60),
-    //       computeType: codebuild.ComputeType.SMALL,
-    //       environmentVariables: {
-    //         TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
-    //         WORKSHOP_GIT_URL: {
-    //           value:
-    //             process.env.WORKSHOP_GIT_URL ||
-    //             "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-    //         },
-    //         WORKSHOP_GIT_BRANCH: {
-    //           value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
-    //         },
-    //         FORCE_DELETE_VPC: {
-    //           value: process.env.FORCE_DELETE_VPC || "false",
-    //         },
-    //         SPOKE: { value: spoke },
-    //       },
-    //       buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
-    //       role: sharedRole,
-    //     },
-    //   );
-    //   spokeRunner.customResource.node.addDependency(
-    //     commonRunner.customResource,
-    //   );
-
-    //   const participantAccessEntrySpoke = new eks.AccessEntry(
-    //     this,
-    //     `participantAccessEntry-${spoke}`,
-    //     {
-    //       accessPolicies: [
-    //         eks.AccessPolicy.fromAccessPolicyName(
-    //           eks.AccessPolicyArn.AMAZON_EKS_CLUSTER_ADMIN_POLICY.policyName,
-    //           { accessScopeType: eks.AccessScopeType.CLUSTER },
-    //         ),
-    //       ],
-    //       cluster: eks.Cluster.fromClusterAttributes(
-    //         this,
-    //         `EKSCluster-${spoke}`,
-    //         {
-    //           clusterName: `fleet-spoke-${spoke}`,
-    //         },
-    //       ),
-    //       principal: ParticipantAssumedRoleArn,
-    //     },
-    //   );
-    //   participantAccessEntrySpoke.node.addDependency(
-    //     spokeRunner.customResource,
-    //   );
-    // }
+    //cannot do it cause circular dependency ide.node.addDependency(commonRunner.customResource); // Since we are using cluster alias in the bootstrap
 
     //Calling the SSM document to make sure all repo where pushed
     const ssmDocument = new ssm.CfnDocument(this, "SetupGit", {
@@ -237,11 +127,35 @@ export class TeamStack extends WorkshopStudioTeamStack {
         mainSteps: [
           {
             action: "aws:runShellScript",
-            name: "SetupGit",
+            name: "WaitForDirectoryAndSetupGit",
             inputs: {
               runCommand: [
-                "sudo su - ec2-user -c 'ls -la /home/ec2-user/eks-blueprints-for-terraform-workshop/'",
-                "sudo su - ec2-user -c 'GITOPS_DIR=/home/ec2-user/environment/gitops-repos /home/ec2-user/eks-blueprints-for-terraform-workshop/setup-git.sh'",
+                "#!/bin/bash",
+                "MAX_ATTEMPTS=60",
+                "WAIT_SECONDS=120",
+                "DIRECTORY='/home/ec2-user/eks-blueprints-for-terraform-workshop'",
+                "",
+                "for ((i=1; i<=MAX_ATTEMPTS; i++)); do",
+                '  if [ -d "$DIRECTORY" ]; then',
+                '    echo "Directory $DIRECTORY exists. Proceeding with Git setup."',
+                "    sudo su - ec2-user -c \"ls -la '$DIRECTORY'\"",
+                '    if [ -f "$DIRECTORY/setup-git.sh" ]; then',
+                '      echo "Found setup-git.sh. Executing..."',
+                "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+                "      exit 0",
+                "    else",
+                '      echo "Error: setup-git.sh not found in $DIRECTORY"',
+                '      ls -la "$DIRECTORY"',
+                "      exit 1",
+                "    fi",
+                "  else",
+                '    echo "Attempt $i: Directory $DIRECTORY does not exist yet. Waiting..."',
+                "    sleep $WAIT_SECONDS",
+                "  fi",
+                "done",
+                "",
+                'echo "Directory $DIRECTORY did not appear after $MAX_ATTEMPTS attempts. Exiting."',
+                "exit 1",
               ],
             },
           },
@@ -259,7 +173,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
         targets: [
           {
             key: "tag:aws:cloudformation:stack-name",
-            values: [this.stackName, "eks-blueprints-workshopteam-stack"]
+            values: [this.stackName, "eks-blueprints-workshopteam-stack"],
           },
         ],
       },

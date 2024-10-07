@@ -1,5 +1,5 @@
 ---
-title: 'At an AWS event'
+title: "At an AWS event"
 chapter: false
 weight: 10
 ---
@@ -33,4 +33,3 @@ To complete this workshop, you are provided with an AWS account via AWS Workshop
 ![Workshop Studio Signin Landing Page](/static/images/setup_ws_signin4.png)
 
 ::alert[Please stick to the region you see on the event page throughout your workshop.]{header="Important" type="info"}
-

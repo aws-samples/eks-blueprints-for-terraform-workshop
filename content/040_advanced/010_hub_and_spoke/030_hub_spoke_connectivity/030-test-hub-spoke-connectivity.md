@@ -1,8 +1,7 @@
 ---
-title: 'Test Hub Spoke Connectivity'
+title: "Test Hub Spoke Connectivity"
 weight: 30
 ---
-
 
 This chapter validates hub-spoke connectivity by checking for the AWS Load Balancer Controller installed on the spoke-staging cluster. In this workshop, Argo CD was configured to install addon by setting a label to true. The label enable_aws_load_balancer_controller=true installs the load balancer addon. This label was set during creation of the spoke cluster. Once hub-spoke connectivity between hub and spoke was established, Argo CD installed the load balancer on the spoke by detecting this label had been set.
 
@@ -12,12 +11,11 @@ cat ~/environment/spoke/terraform.tfvars
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4'}
 ...
 addons = {
-    enable_aws_load_balancer_controller = true
+enable_aws_load_balancer_controller = true
 }
 :::
 
-
-You can check the label on the spoke-staging cluster: 
+You can check the label on the spoke-staging cluster:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd spoke-staging -o json | jq ".metadata.labels" | grep load_balancer

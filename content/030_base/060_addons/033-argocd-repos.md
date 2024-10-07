@@ -1,5 +1,5 @@
 ---
-title: 'Create Argo CD Repositories'
+title: "Create Argo CD Repositories"
 weight: 33
 ---
 
@@ -57,11 +57,10 @@ TODO: update the image with tht 3 repos
 
 ![Argo CD Repositories](/static/images/argocd-repositories.png)
 
-The Git repository connection data for Argo CD is stored in a Kubernetes Secret. You can verify that Terraform has created the Secret object that contains the configuration, including the SSH private keys, to access  Git repositories. 
+The Git repository connection data for Argo CD is stored in a Kubernetes Secret. You can verify that Terraform has created the Secret object that contains the configuration, including the SSH private keys, to access Git repositories.
 
 ```json
 kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repository --context hub
 ```
 
 ![Argo CD Repository Secret](/static/images/argocd_k8s_repos.png)
-

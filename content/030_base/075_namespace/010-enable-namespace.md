@@ -1,15 +1,11 @@
 ---
-title: 'Create Namespace'
+title: "Create Namespace"
 weight: 10
 ---
 
 In this chapter you will create webstore workload namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup Argo CD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
 
-TODO: virer cette image
-
-![appofapps-applicationset-watch](/static/images/namespace-design.png)
-
-### 1. Create Bootstrap namespace applicationset 
+### 1. Create Bootstrap namespace applicationset
 
 In the "Kubernetes Addons" chapter, we added a file called "bootstrap-applicationset.yaml" that watches the "bootstrap" folder and processes any changes.
 
@@ -25,49 +21,47 @@ cat > $GITOPS_DIR/platform/bootstrap/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: namespace
-  namespace: argocd
+name: namespace
+namespace: argocd
 spec:
-  syncPolicy:
-    preserveResourcesOnDeletion: false
-  generators:
-  - matrix:
-      generators:
-      - clusters:
-          selector:
-            matchLabels:
-              environment: hub         
-      - git:
-          repoURL: '{{metadata.annotations.platform_repo_url}}'
-          revision: '{{metadata.annotations.platform_repo_revision}}'
-          directories:
-            - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/*'
-  template:
+syncPolicy:
+preserveResourcesOnDeletion: false
+generators:
+
+- matrix:
+  generators: - clusters:
+  selector:
+  matchLabels:
+  environment: hub
+  - git:
+    repoURL: '{{metadata.annotations.platform_repo_url}}'
+    revision: '{{metadata.annotations.platform_repo_revision}}'
+    directories: - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/\*'
+    template:
     metadata:
-      name: 'namespace-{{path.basename}}'
-      labels:
-        environment: '{{metadata.labels.environment}}'
-        tenant: '{{path.basename}}'
-        workloads: 'true'
+    name: 'namespace-{{path.basename}}'
+    labels:
+    environment: '{{metadata.labels.environment}}'
+    tenant: '{{path.basename}}'
+    workloads: 'true'
     spec:
-      project: default
-      source:
-        repoURL: '{{metadata.annotations.platform_repo_url}}'
-        path: '{{path}}/namespace'
-        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
-      destination:
-        name: '{{name}}'
-      syncPolicy:
-        automated:
-          allowEmpty: true
-        retry:
-          backoff:
-            duration: 1m
-          limit: 100
-        syncOptions:
-          - CreateNamespace=true
-EOF
-:::
+    project: default
+    source:
+    repoURL: '{{metadata.annotations.platform_repo_url}}'
+    path: '{{path}}/namespace'
+    targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+    destination:
+    name: '{{name}}'
+    syncPolicy:
+    automated:
+    allowEmpty: true
+    retry:
+    backoff:
+    duration: 1m
+    limit: 100
+    syncOptions: - CreateNamespace=true
+    EOF
+    :::
 
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
@@ -77,7 +71,7 @@ Git generator (line 22) iterates through folders under "config/workload" in gito
 
 ```bash
 cd $GITOPS_DIR/platform
-git add . 
+git add .
 git commit -m "add bootstrap namespace applicationset"
 git push
 ```
@@ -88,13 +82,11 @@ On the Argo CD dashboard click on bootstrap Application to see newly created nam
 
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.jpg)
 
-
-### 3. Create webstore namespace 
+### 3. Create webstore namespace
 
 Let's create an ApplicationSet that is responsible for the namespaces associated with the webstore workload.
 
 ![namespace-helm](/static/images/namespace-webstore-applicationset.jpg)
-
 
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='15,29,35,36'}
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace
@@ -102,47 +94,47 @@ cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/namespace-webstore
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: namespace-webstore
-  namespace: argocd
+name: namespace-webstore
+namespace: argocd
 spec:
-  syncPolicy:
-    preserveResourcesOnDeletion: false
-  generators:
-  - clusters:
-      selector:
-        matchLabels:
-          workload_webstore: 'true'   
-      values:
-        workload: webstore
+syncPolicy:
+preserveResourcesOnDeletion: false
+generators:
+
+- clusters:
+  selector:
+  matchLabels:
+  workload_webstore: 'true'  
+   values:
+  workload: webstore
   template:
-    metadata:
-      name: 'namespace-{{metadata.labels.environment}}-webstore'
-      labels:
-        environment: '{{metadata.labels.environment}}'
-        tenant: 'webstore'
-        workloads: 'true'
-    spec:
-      project: default
-      source:
-        repoURL: '{{metadata.annotations.platform_repo_url}}'
-        path: '{{metadata.annotations.platform_repo_basepath}}charts/namespace'
-        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
-        helm:
-          releaseName: 'webstore'
-          ignoreMissingValueFiles: true
-          valueFiles:
-          - '../../config/workload/webstore/namespace/values/default-values.yaml'          
-          - '../../config/workload/webstore/namespace/values/{{metadata.labels.environment}}-values.yaml'          
-      destination:
-        name: '{{name}}'
-      syncPolicy:
-        automated:
-          allowEmpty: true
-          prune: true
-        retry:
-          backoff:
-            duration: 1m
-          limit: 100
+  metadata:
+  name: 'namespace-{{metadata.labels.environment}}-webstore'
+  labels:
+  environment: '{{metadata.labels.environment}}'
+  tenant: 'webstore'
+  workloads: 'true'
+  spec:
+  project: default
+  source:
+  repoURL: '{{metadata.annotations.platform_repo_url}}'
+  path: '{{metadata.annotations.platform_repo_basepath}}charts/namespace'
+  targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+  helm:
+  releaseName: 'webstore'
+  ignoreMissingValueFiles: true
+  valueFiles: - '../../config/workload/webstore/namespace/values/default-values.yaml'
+  - '../../config/workload/webstore/namespace/values/{{metadata.labels.environment}}-values.yaml'  
+     destination:
+    name: '{{name}}'
+    syncPolicy:
+    automated:
+    allowEmpty: true
+    prune: true
+    retry:
+    backoff:
+    duration: 1m
+    limit: 100
 
 EOF
 :::
@@ -153,10 +145,10 @@ Line 29: Deploy the helm chart present in the folder charts/namespace
 
 ::alert[In this workshop helm chart is in the GitHub repository to make it easy to understand. Use a Helm chart repository to store and serve charts - This is the preferred way to share charts. ]{header="Important" type="warning"}
 
-Line 35: Default values for the namespace helm chart   
-Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = hub with the file  hub-values.yaml 
+Line 35: Default values for the namespace helm chart  
+Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = hub with the file hub-values.yaml
 
-### 4. Create webstore namespace values 
+### 4. Create webstore namespace values
 
 ![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
 
@@ -166,17 +158,19 @@ cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/
 ```
 
 :::expand{header="Check the file content:"}
+
 ```bash
 code $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-values.yaml
 ```
-:::
 
+:::
 
 ```bash
 tree $GITOPS_DIR/platform/charts/namespace
 ```
 
 Output:
+
 ```
 /home/ec2-user/environment/gitops-repo/platform/charts/namespace
 ├── Chart.yaml
@@ -204,7 +198,6 @@ Output:
 └── values.yaml
 ```
 
-
 ### 5. Enable hub cluster for webstore workload
 
 The webstore Namespace applicationset only creates webstore namespaces on clusters labeled with workload_webstore: 'true'. Let's add this label to the hub cluster.
@@ -212,16 +205,17 @@ The webstore Namespace applicationset only creates webstore namespaces on cluste
 ```bash
 sed -i "s/#enablewebstore//g" ~/environment/hub/main.tf
 ```
+
 Changes by the code snippet is highlighted below.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='7-7'}
 locals{
-  .  
-  .
-  addons = merge(
-    .
-    .
-    { workload_webstore = true }
+.  
+ .
+addons = merge(
+.
+.
+{ workload_webstore = true }
 }
 :::
 
@@ -233,16 +227,18 @@ This will set the label workload_webstore: 'true' on the hub cluster.
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
+
 ### 7. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform
-git add . 
+git add .
 git commit -m "add webstore namespace applicationset and namespace values"
 git push
 ```
-The namespace-applicationset.yaml file makes Argo CD iterates through the folders under config/workload/\<\<workload>>/namespace. 
-With the recent commit, it now processes the files located under config/workload/webstore/namespace. 
+
+The namespace-applicationset.yaml file makes Argo CD iterates through the folders under config/workload/\<\<workload>>/namespace.
+With the recent commit, it now processes the files located under config/workload/webstore/namespace.
 
 ![namespace-helm](/static/images/namespace-process-webstore-applicationset.png)
 
@@ -250,18 +246,18 @@ So it creates a new **namespace-webstore** application:
 
 ![namespace-workload](/static/images/namespace_webstore.jpg)
 
-The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.  
+The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
 
 ![namespace-helm](/static/images/namespace-create-webstore-namespace.jpg)
 
-
-### 8. Validate namespaces 
+### 8. Validate namespaces
 
 ```bash
 kubectl get ns --context hub-cluster
 ```
 
 :::expand{header="Output"}
+
 ```
 NAME              STATUS   AGE
 assets            Active   6h
@@ -276,6 +272,7 @@ orders            Active   6h
 rabbitmq          Active   6h
 ui                Active   6h
 ```
+
 :::
 
 To view the LimitRange set for the ui namespace in the spoke-staging cluster.
@@ -285,6 +282,7 @@ kubectl get limitrange  -n ui --context hub-cluster -o yaml
 ```
 
 :::expand{header="Output"}
+
 ```
 apiVersion: v1
 items:
@@ -323,10 +321,9 @@ kind: List
 metadata:
   resourceVersion: ""
 ```
+
 :::
 
 You can also see the application namespace-hub-webstore on the Argo CD dashboard.
 
 ![namespace-hub-webstore](/static/images/namespace-hub-webstore.png)
-
-

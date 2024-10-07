@@ -1,5 +1,5 @@
 ---
-title: 'Module Standalone GitOps cluster'
+title: "Module Standalone GitOps cluster"
 weight: 30
 ---
 

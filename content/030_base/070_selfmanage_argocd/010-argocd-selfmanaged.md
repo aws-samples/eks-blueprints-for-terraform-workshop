@@ -1,5 +1,5 @@
 ---
-title: 'Argo CD self manage'
+title: "Argo CD self manage"
 weight: 10
 ---
 
@@ -8,6 +8,7 @@ weight: 10
 ```bash
 sed -i "s/enable_aws_argocd = false/enable_aws_argocd = true/g" ~/environment/terraform.tfvars
 ```
+
 The code snippet sets `enable_aws_argocd = true`. It causes the GitOps bootstrap module to add the label on the hub cluster, which enables Argo CD deployment.
 
 Changes by the code snippet is highlighted below.
@@ -15,8 +16,8 @@ Changes by the code snippet is highlighted below.
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='4'}
 ...
 addons = {
-    ...
-    enable_aws_argocd = true
+...
+enable_aws_argocd = true
 }
 
 :::
@@ -43,5 +44,5 @@ Argo CD dashboard should have Argo CD Application.
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
 <!--
-> If you can't access the dashboard then reopen the browser, try another browser, try http, clear browser history 
+> If you can't access the dashboard then reopen the browser, try another browser, try http, clear browser history
 -->
