@@ -76,10 +76,6 @@ controller:
   env:
     - name: ARGOCD_SYNC_WAVE_DELAY
       value: '30'
-server:
-  service:
-    type: LoadBalancer
-
 configs:
   cm:
     ui.bannercontent: "Management Environment"

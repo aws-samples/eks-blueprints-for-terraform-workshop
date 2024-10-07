@@ -12,10 +12,13 @@ sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/work
 :::
 
 Changes by the code snippet is highlighted below.
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/platform
 git diff
 :::
+<!-- prettier-ignore-end -->
+
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='8'}
 --- a/config/workload/webstore/workload/webstore-applicationset.yaml
 +++ b/config/workload/webstore/workload/webstore-applicationset.yaml
