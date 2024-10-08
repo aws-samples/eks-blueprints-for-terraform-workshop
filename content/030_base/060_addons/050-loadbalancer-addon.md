@@ -20,41 +20,51 @@ You can configure the Terraform module to create only the required AWS resources
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='15'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 ################################################################################
+
 # EKS Blueprints Addons
+
 ################################################################################
 module "eks_blueprints_addons" {
-  source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.16.3"
+source = "aws-ia/eks-blueprints-addons/aws"
+version = "~> 1.16.3"
 
-  cluster_name      = module.eks.cluster_name
-  cluster_endpoint  = module.eks.cluster_endpoint
-  cluster_version   = module.eks.cluster_version
-  oidc_provider_arn = module.eks.oidc_provider_arn
+cluster_name = module.eks.cluster_name
+cluster_endpoint = module.eks.cluster_endpoint
+cluster_version = module.eks.cluster_version
+oidc_provider_arn = module.eks.oidc_provider_arn
 
-  # Using GitOps Bridge
-  create_kubernetes_resources = false
+# Using GitOps Bridge
 
-  # EKS Blueprints Addons
-  enable_cert_manager                 = local.aws_addons.enable_cert_manager
-  enable_aws_efs_csi_driver           = local.aws_addons.enable_aws_efs_csi_driver
-  enable_aws_fsx_csi_driver           = local.aws_addons.enable_aws_fsx_csi_driver
-  enable_aws_cloudwatch_metrics       = local.aws_addons.enable_aws_cloudwatch_metrics
-  enable_aws_privateca_issuer         = local.aws_addons.enable_aws_privateca_issuer
-  enable_cluster_autoscaler           = local.aws_addons.enable_cluster_autoscaler
-  enable_external_dns                 = local.aws_addons.enable_external_dns
-  # using pod identity for external secrets we don't need this
-  #enable_external_secrets             = local.aws_addons.enable_external_secrets
-  # using pod identity for load balancer controller we don't need this
-  #enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
-  enable_fargate_fluentbit            = local.aws_addons.enable_fargate_fluentbit
-  enable_aws_for_fluentbit            = local.aws_addons.enable_aws_for_fluentbit
-  enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
-  # using pod identity for karpenter we don't need this
-  #enable_karpenter                    = local.aws_addons.enable_karpenter
-  enable_velero                       = local.aws_addons.enable_velero
-  enable_aws_gateway_api_controller   = local.aws_addons.enable_aws_gateway_api_controller
+create_kubernetes_resources = false
 
-  tags = local.tags
+# EKS Blueprints Addons
+
+enable_cert_manager = local.aws_addons.enable_cert_manager
+enable_aws_efs_csi_driver = local.aws_addons.enable_aws_efs_csi_driver
+enable_aws_fsx_csi_driver = local.aws_addons.enable_aws_fsx_csi_driver
+enable_aws_cloudwatch_metrics = local.aws_addons.enable_aws_cloudwatch_metrics
+enable_aws_privateca_issuer = local.aws_addons.enable_aws_privateca_issuer
+enable_cluster_autoscaler = local.aws_addons.enable_cluster_autoscaler
+enable_external_dns = local.aws_addons.enable_external_dns
+
+# using pod identity for external secrets we don't need this
+
+#enable_external_secrets = local.aws_addons.enable_external_secrets
+
+# using pod identity for load balancer controller we don't need this
+
+#enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
+enable_fargate_fluentbit = local.aws_addons.enable_fargate_fluentbit
+enable_aws_for_fluentbit = local.aws_addons.enable_aws_for_fluentbit
+enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
+
+# using pod identity for karpenter we don't need this
+
+#enable_karpenter = local.aws_addons.enable_karpenter
+enable_velero = local.aws_addons.enable_velero
+enable_aws_gateway_api_controller = local.aws_addons.enable_aws_gateway_api_controller
+
+tags = local.tags
 }
 EOF
 :::
@@ -65,7 +75,7 @@ For Some of the addons, we prefer to rely on EKS Pod Identity, instead of IRSA. 
 cp $BASE_DIR/solution/hub/pod-identity.tf /home/ec2-user/environment/hub
 ```
 
-This file defines several roles that will be used by some of the addons, here Load balancer controller will uses : 
+This file defines several roles that will be used by some of the addons, here Load balancer controller will uses :
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='0'}
@@ -92,9 +102,10 @@ module "aws_lb_controller_pod_identity" {
 :::
 <!-- prettier-ignore-end -->
 
-This Will call the EKS API to make the association between the IAM role taht will be created and the Kubernetes namespace and service_account
+This Will call the EKS API to make the association between the IAM role that will be created and the Kubernetes namespace and service_account
 
 The file also create roles for:
+
 - External Secret operator
 - CloudWatch Observability
 - Kyverno Policy Reporter
@@ -103,8 +114,7 @@ The file also create roles for:
 - Karpenter
 - CNI Metrics helper
 
-That mean that we could easilly activate thoses addons through GitOps Bridge afterwards.
-
+That mean that we could easily activate theses addons through GitOps Bridge afterwards.
 
 ### 2. Provide addon IAM role to Argo CD
 
@@ -184,7 +194,9 @@ If we remember how we created the addons-applicationset, we have a way to pass s
 ```bash
 cat $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml | grep value
 ```
+
 That should output
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='9'}
 
@@ -210,7 +222,7 @@ In this case, we are going to update the highlighted one, so, at **cluster** lev
 
 In order to activate this only for our cluster, we are going to activate this at the **cluster** values file level.
 
-let's create 
+let's create
 
 ```bash
 mkdir -p $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/
@@ -226,7 +238,6 @@ git -C ${GITOPS_DIR}/addons push || true
 ```
 
 You can refresh the application in Argo CD UI.
-
 
 ### 5. Apply Terraform
 

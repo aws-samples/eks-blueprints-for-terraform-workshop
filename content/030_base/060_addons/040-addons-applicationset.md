@@ -33,8 +33,6 @@ In the Argo CD dashboard, click on the "bootstrap" Application and examine the l
 
 For now there is no addons, as we didn't activate their deployment.
 
-
-
 :::alert{header="Important" type="info"}
 The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
 :::

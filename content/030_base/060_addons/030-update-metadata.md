@@ -256,6 +256,7 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
 :::expand{header="Example of output"}
+
 ```
 apiVersion: v1
 data:

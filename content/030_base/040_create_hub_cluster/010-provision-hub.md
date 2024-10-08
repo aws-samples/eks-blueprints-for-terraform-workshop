@@ -297,8 +297,6 @@ eks_admin_role_name          = "Admin"
 
 :::
 
-
-
 ### 6. Link the Terraform variable file to the cluster
 
 ```bash

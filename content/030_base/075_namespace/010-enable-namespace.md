@@ -68,8 +68,8 @@ EOF
 
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
-- Git generator (line 21) iterates through folders under "config/workload" in gitops-workload repository. 
-- For each folder (line 34), ApplicationSet process files under "namespace" folder. 
+- Git generator (line 21) iterates through folders under "config/workload" in gitops-workload repository.
+- For each folder (line 34), ApplicationSet process files under "namespace" folder.
 - Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
@@ -87,12 +87,14 @@ On the Argo CD dashboard click on bootstrap Application to see newly created nam
 If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
+
 ```bash
 argocd app sync argocd/bootstrap
-````
+```
+
 :::
 
-TODO: maybe change this image with the outofsync one
+TODO: maybe change this image with the out-of-sync one
 
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.jpg)
 
@@ -154,10 +156,10 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-- Line 15: Only clusters that have label workload_webstore: 'true' are selected  
+- Line 15: Only clusters that have label workload_webstore: 'true' are selected
 - Line 29: Deploy the helm chart present in the folder charts/namespace  
   ![namespace-helm](/static/images/namespace-helm.jpg)
-- Line 35: Default values for the namespace helm chart  
+- Line 35: Default values for the namespace helm chart
 - Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = prod with the file prod-values.yaml
 
 ### 4. Create webstore namespace default values
