@@ -13,6 +13,6 @@ In this workshop you are going to work with three git repositories using a [gite
 
 3. **eks-blueprints-workshop-gitops-addons** for developers to store Kubernetes manifests for webstore microservices workload
 
-The separation of the workload and platform repositories between developers and platform engineers illustrates a separation of roles and responsibilities. 
+The separation of the workload and platform repositories between developers and platform engineers illustrates a separation of roles and responsibilities.
 
 We are using Gitea for this workshop for convenience but you can uses any Git management system in replacement.

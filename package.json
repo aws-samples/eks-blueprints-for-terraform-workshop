@@ -10,11 +10,11 @@
   "scripts": {
     "synth-self": "CDK_SYNTH_MODE=SELF_SERVE_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH= FORCE_DELETE_VPC=true WORKSHOP_ID=28c283c1-1d60-43fa-a604-4e983e0e8038 yarn workspace cdk cdk synth",
     "synth-studio": "CDK_SYNTH_MODE=WS_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH= FORCE_DELETE_VPC= yarn workspace cdk cdk synth",
-    "synth-custom": "WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH= CDK_SYNTH_MODE=WS_SYNTH yarn workspace cdk cdk synth",
+    "synth-custom": "CDK_SYNTH_MODE=WS_SYNTH yarn workspace cdk cdk synth",
     "generate-cfn-self": "yarn synth-self && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./assets/eks-blueprints-workshop-team-stack-self.json && cp cdk/cdk.out/CentralAccountStack.template.json ./assets/eks-blueprints-workshop-central-stack-self.json",
     "static-generate-cfn-self": "yarn synth-self && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./static/eks-blueprints-workshop-team-stack-self.json && cp cdk/cdk.out/CentralAccountStack.template.json ./static/eks-blueprints-workshop-central-stack-self.json",
     "generate-cfn-studio": "yarn synth-studio && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./static/eks-blueprints-workshop-team-stack.json && cp cdk/cdk.out/CentralAccountStack.template.json ./static/eks-blueprints-workshop-central-stack.json",
-    "generate-cfn-custom": "yarn synth-publish && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./static/eks-blueprints-workshop-team-stack.json && cp cdk/cdk.out/CentralAccountStack.template.json ./static/eks-blueprints-workshop-central-stack.json",
+    "generate-cfn-custom": "yarn synth-custom && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./static/eks-blueprints-workshop-team-stack.json && cp cdk/cdk.out/CentralAccountStack.template.json ./static/eks-blueprints-workshop-central-stack.json",
     "deploy": "yarn workspace cdk cdk deploy eks-blueprints-workshop --no-rollback --parameters eks-blueprints-workshop:ParticipantAssumedRoleArn=$PARTICIPANT_ROLE_ARN --require-approval never --progress events",
     "destroy": "yarn workspace cdk cdk destroy eks-blueprints-workshop --require-approval never --progress events",
     "bootstrap": "yarn workspace cdk cdk bootstrap",

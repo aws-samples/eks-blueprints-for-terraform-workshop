@@ -15,12 +15,12 @@ The changes by the code snippet is highlighted below.
 
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='3'}
 ...
-  argocd:
-    enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
-  prometheus_node_exporter:
-    enabled: false
-  kube_state_metrics:
-    enabled: false
+argocd:
+enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
+prometheus_node_exporter:
+enabled: false
+kube_state_metrics:
+enabled: false
 ...
 :::
 
@@ -52,11 +52,11 @@ Argo CD dashboard should have Argo CD Application.
 
 ![argocd-values](/static/images/argocd-selfmanage.jpg)
 
-
 :::alert{header=Note type=warning}
-At some point, ArgoCD, will redeploy ArgoCD, in that case, you will lost the port-forward as the targed pod will be renewed, you'll need to re-execute the following command to retrieve back the access
+At some point, ArgoCD, will redeploy ArgoCD, in that case, you will lost the port-forward as the target pod will be renewed, you'll need to re-execute the following command to retrieve back the access
 
 ```bash
 argocd_hub_credentials
 ```
+
 :::

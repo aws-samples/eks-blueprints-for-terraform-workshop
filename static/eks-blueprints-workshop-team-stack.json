@@ -1050,7 +1050,7 @@
       {
        "Name": "FORCE_DELETE_VPC",
        "Type": "PLAINTEXT",
-       "Value": "false"
+       "Value": "true"
       },
       {
        "Name": "GITEA_PASSWORD",

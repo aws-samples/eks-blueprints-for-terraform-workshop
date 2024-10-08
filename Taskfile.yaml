@@ -63,7 +63,8 @@ tasks:
       - generate-cfn
     cmds:
       - yarn generate-cfn-self
-      - yarn generate-cfn-studio
+      #- yarn generate-cfn-studio
+      - yarn generate-cfn-custom
 
   cfn-custom:
     desc: "Generate the Cloudformation template for Workshop Studio that uses custom Variables WORKSHOP_GIT_URL and WORKSHOP_GIT_BRANCH"

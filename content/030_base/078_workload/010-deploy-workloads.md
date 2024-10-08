@@ -63,9 +63,9 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-- Line 22: Git generator iterates through folders under "**config/workload**" in platform git repository  
-- Line 32: `{path}` maps to each workload folder under **config/workload**. 
-  - For **webstore**, `{path}` maps to **config/workload/webstore**. 
+- Line 22: Git generator iterates through folders under "**config/workload**" in platform git repository
+- Line 32: `{path}` maps to each workload folder under **config/workload**.
+  - For **webstore**, `{path}` maps to **config/workload/webstore**.
   - Since there is no folder "**config/workload/webstore/workload**", there are no files to process at this point.
 
 ### 2. Git commit
@@ -155,14 +155,14 @@ EOF
 
 TODO: update line numbers
 
-- Line 17: The **webstore** workload is only deployed on clusters that have the label **workload_webstore = true**. 
-  - The hub cluster has workload_webstore = true label.  
-- Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository.  
+- Line 17: The **webstore** workload is only deployed on clusters that have the label **workload_webstore = true**.
+  - The hub cluster has workload_webstore = true label.
+- Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository.
 - Line 25: It maps to **webstore/** ( microservices under webstore folder).
-- Line 39: **Path** gets the value each microservice directory. 
+- Line 39: **Path** gets the value each microservice directory.
 - The label environment on the hub cluster is "**control-plane**", (taken from cluster secret)
-- **Kustomization** deploys each microservice in "control-plane" environment.  
-- Line 42: **path.basename** maps to the microservice directory name, which maps to the target namespace for deployment. 
+- **Kustomization** deploys each microservice in "control-plane" environment.
+- Line 42: **path.basename** maps to the microservice directory name, which maps to the target namespace for deployment.
   - So each microservice deploys into its own matching namespace. This makes asset microservice deploy to asset namespace, carts to carts and so on.
 
 ![workload-webstore-folders](/static/images/workload-webstore-deployment.png)

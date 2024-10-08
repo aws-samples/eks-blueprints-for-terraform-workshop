@@ -119,6 +119,7 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster
 ```
 
 Expected output:
+
 ```
 NAME          TYPE     DATA   AGE
 hub-cluster   Opaque   3      4m41s

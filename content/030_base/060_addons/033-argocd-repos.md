@@ -64,10 +64,10 @@ kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repositor
 ```
 
 expected output:
+
 ```
 NAME            TYPE     DATA   AGE
 git-addons      Opaque   4      4m36s
 git-platform    Opaque   4      4m36s
 git-workloads   Opaque   4      4m36s
 ```
-
