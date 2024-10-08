@@ -15,6 +15,9 @@ awsAccountConfig:
       - 'arn:aws:iam::aws:policy/IAMReadOnlyAccess'
       - 'arn:aws:iam::aws:policy/AmazonPrometheusFullAccess'
       - 'arn:aws:iam::aws:policy/AWSGrafanaAccountAdministrator'
+      - "arn:aws:iam::aws:policy/AWSCloudFormationReadOnlyAccess"
+      - "arn:aws:iam::aws:policy/AWSCloud9Administrator"
+      - "arn:aws:iam::aws:policy/AWSSecurityHubFullAccess"
     iamPolicies:
       - static/iam_policy.json
   regionConfiguration:
@@ -31,8 +34,16 @@ awsAccountConfig:
 
 infrastructure:
   cloudformationTemplates:
-    - templateLocation: static/cfn.yml
-      label: EKS Workshop Stack
+    - templateLocation: static/eks-blueprints-workshop-team-stack.json
+      label: Fleet Workshop Team Stack
       parameters:
-        - templateParameter: WorkshopSetup
-          defaultValue: 'aws-event'
+        - templateParameter: AssetsBucketName
+          defaultValue: "{{.AssetsBucketName}}"
+        - templateParameter: AssetsBucketPrefix
+          defaultValue: "{{.AssetsBucketPrefix}}"
+        - templateParameter: ParticipantAssumedRoleArn
+          defaultValue: "{{.ParticipantRoleArn}}"
+
+      participantVisibleStackOutputs:
+        - IdeUrl
+        - IdePassword
