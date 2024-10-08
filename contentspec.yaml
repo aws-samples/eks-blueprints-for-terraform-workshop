@@ -41,8 +41,6 @@ infrastructure:
           defaultValue: "{{.AssetsBucketName}}"
         - templateParameter: AssetsBucketPrefix
           defaultValue: "{{.AssetsBucketPrefix}}"
-        - templateParameter: ParticipantAssumedRoleArn
-          defaultValue: "{{.ParticipantRoleArn}}"
 
       participantVisibleStackOutputs:
         - IdeUrl
