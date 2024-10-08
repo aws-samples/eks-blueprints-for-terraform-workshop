@@ -59,7 +59,7 @@ spec:
         retry:
           backoff:
             duration: 1m
-            limit: 100
+            #limit: 100
         syncOptions:
           - CreateNamespace=true
 EOF
@@ -149,7 +149,7 @@ spec:
         retry:
           backoff:
             duration: 1m
-            limit: 100
+            #limit: 100
 EOF
 :::
 <!-- prettier-ignore-end -->
