@@ -61,7 +61,7 @@ git -C ${GITOPS_DIR}/platform push -u origin main -f || true
 # populate addons repository
 git init ${GITOPS_DIR}/addons
 git -C ${GITOPS_DIR}/addons remote add origin ${gitops_addons_url}
-cp -r ${ROOTDIR}/assets/addons/* ${GITOPS_DIR}/addons/
+cp -r ${ROOTDIR}/gitops/addons/* ${GITOPS_DIR}/addons/
 
 git -C ${GITOPS_DIR}/addons add . || true
 git -C ${GITOPS_DIR}/addons commit -m "initial commit" || true
