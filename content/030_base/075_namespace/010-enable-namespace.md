@@ -3,20 +3,20 @@ title: "Create Namespace"
 weight: 10
 ---
 
-In this chapter you will create webstore workload namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup Argo CD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
+In this chapter you will create **webstore workload** namespaces carts, catalog, checkout, orders, rabbitmq, assets, and ui. At the end of this chapter, we will setup Argo CD so that creating namespaces for a new workload for example "payment" is as simple as creating a new "payment" folder with manifests.
 
 ### 1. Create Bootstrap namespace applicationset
 
-In the "Kubernetes Addons" chapter, we added a file called "bootstrap-applicationset.yaml" that watches the "bootstrap" folder and processes any changes.
+In the "Kubernetes Addons" chapter, we added a file called "**$GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml**" that watches the "bootstrap" folder and processes any changes.
 
 ![namespace-begin](/static/images/namespace-begin.jpg)
 
-Lets Add namespace applicationset into the bootstrap folder.
+Lets Add namespace applicationset (**addons-applicationset.yaml**) into the bootstrap folder.
 
 ![namespace-add-namespace-applicationset](/static/images/namespace-namespace-applicationset.jpg)
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='22,34'}
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='21,33'}
 cat > $GITOPS_DIR/platform/bootstrap/namespace-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -68,7 +68,9 @@ EOF
 
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
-Git generator (line 22) iterates through folders under "config/workload" in gitops-workload repository. For each folder (line 34), ApplicationSet process files under "namespace" folder. Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
+- Git generator (line 21) iterates through folders under "config/workload" in gitops-workload repository. 
+- For each folder (line 34), ApplicationSet process files under "namespace" folder. 
+- Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit
 
@@ -81,77 +83,84 @@ git push
 
 On the Argo CD dashboard click on bootstrap Application to see newly created namespace applicationset.
 
-::alert[If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.]{header="Sync Application"}
+:::alert{header="Sync Application"}
+If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
+```bash
+argocd app sync argocd/bootstrap
+````
+:::
+
+TODO: maybe change this image with the outofsync one
 
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.jpg)
 
-### 3. Create webstore namespace
+### 3. Create webstore namespace configuration
 
 Let's create an ApplicationSet that is responsible for the namespaces associated with the webstore workload.
 
 ![namespace-helm](/static/images/namespace-webstore-applicationset.jpg)
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='15,29,35,36'}
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/namespace
 cat > $GITOPS_DIR/platform/config/workload/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-name: namespace-webstore
-namespace: argocd
+  name: namespace-webstore
+  namespace: argocd
 spec:
-syncPolicy:
-preserveResourcesOnDeletion: false
-generators:
-
-- clusters:
-  selector:
-  matchLabels:
-  workload_webstore: 'true'  
-   values:
-  workload: webstore
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            workload_webstore: 'true'
+        values:
+          workload: webstore
   template:
-  metadata:
-  name: 'namespace-{{metadata.labels.environment}}-webstore'
-  labels:
-  environment: '{{metadata.labels.environment}}'
-  tenant: 'webstore'
-  workloads: 'true'
-  spec:
-  project: default
-  source:
-  repoURL: '{{metadata.annotations.platform_repo_url}}'
-  path: '{{metadata.annotations.platform_repo_basepath}}charts/namespace'
-  targetRevision: '{{metadata.annotations.platform_repo_revision}}'
-  helm:
-  releaseName: 'webstore'
-  ignoreMissingValueFiles: true
-  valueFiles: - '../../config/workload/webstore/namespace/values/default-values.yaml'
-  - '../../config/workload/webstore/namespace/values/{{metadata.labels.environment}}-values.yaml'  
-     destination:
-    name: '{{name}}'
-    syncPolicy:
-    automated:
-    allowEmpty: true
-    prune: true
-    retry:
-    backoff:
-    duration: 1m
-    limit: 100
-
+    metadata:
+      name: 'namespace-{{metadata.labels.environment}}-webstore'
+      labels:
+        environment: '{{metadata.labels.environment}}'
+        tenant: 'webstore'
+        workloads: 'true'
+    spec:
+      project: default
+      source:
+        repoURL: '{{metadata.annotations.platform_repo_url}}'
+        path: '{{metadata.annotations.platform_repo_basepath}}charts/namespace'
+        targetRevision: '{{metadata.annotations.platform_repo_revision}}'
+        helm:
+          releaseName: 'webstore'
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - '../../config/workload/webstore/namespace/values/default-values.yaml'
+            - '../../config/workload/webstore/namespace/values/{{metadata.labels.environment}}-values.yaml'
+      destination:
+        name: '{{name}}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+        retry:
+          backoff:
+            duration: 1m
+            limit: 100
 EOF
 :::
+<!-- prettier-ignore-end -->
 
-Line 15: Only clusters that have label workload_webstore: 'true' are selected  
-Line 29: Deploy the helm chart present in the folder charts/namespace  
-![namespace-helm](/static/images/namespace-helm.jpg)
+- Line 15: Only clusters that have label workload_webstore: 'true' are selected  
+- Line 29: Deploy the helm chart present in the folder charts/namespace  
+  ![namespace-helm](/static/images/namespace-helm.jpg)
+- Line 35: Default values for the namespace helm chart  
+- Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = prod with the file prod-values.yaml
 
-::alert[In this workshop helm chart is in the GitHub repository to make it easy to understand. Use a Helm chart repository to store and serve charts - This is the preferred way to share charts. ]{header="Important" type="warning"}
-
-Line 35: Default values for the namespace helm chart  
-Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = hub with the file hub-values.yaml
-
-### 4. Create webstore namespace values
+### 4. Create webstore namespace default values
 
 ![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
 
