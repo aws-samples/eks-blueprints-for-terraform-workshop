@@ -29,7 +29,7 @@ provider "helm" {
 
 locals{
   argocd_namespace = "argocd"
-  environment     = "hub"
+  environment     = "control-plane"
 }
 
 resource "kubernetes_namespace" "argocd" {

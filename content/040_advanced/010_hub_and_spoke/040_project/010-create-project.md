@@ -30,7 +30,7 @@ spec:
           - clusters:
               selector:
                 matchLabels:
-                  environment: hub
+                  fleet_member: control-plane
               values:
                 addonChart: argocd-apps
                 addonChartVersion: '1.4.1'

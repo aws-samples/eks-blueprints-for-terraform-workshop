@@ -146,8 +146,8 @@ locals{
     enable_vpa                             = try(var.addons.enable_vpa, false)
   }
   addons = merge(
-    local.aws_addons,
-    local.oss_addons,
+    #local.aws_addons,
+    #local.oss_addons,
     { kubernetes_version = local.cluster_version },
     { fleet_member = local.fleet_member },
     { tenant = local.tenant },  
@@ -201,7 +201,7 @@ locals{
       aws_load_balancer_controller_service_account = local.aws_load_balancer_controller.service_account
     },
     {
-      amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
+      #amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
     }    
   )
 }
@@ -256,90 +256,53 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
 ```
 
 :::expand{header="Example of output"}
-TODO: update the output
 ```
 apiVersion: v1
 data:
-  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7AiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
+  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7CiAgICAiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
   name: aHViLWNsdXN0ZXI=
-  server: aHR0cHM6Ly9rdWJlcm5VzLmRlZmF1bHQuc3Zj
+  server: aHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3Zj
 kind: Secret
 metadata:
   annotations:
-    addons_repo_basepath: assets/platform/addons/
-    addons_repo_path: applicationset/
+    addons_repo_basepath: ""
+    addons_repo_path: bootstrap
     addons_repo_revision: HEAD
-    addons_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
+    addons_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-addons
     argocd_namespace: argocd
-    aws_account_id: "382076407153"
+    aws_account_id: "012345678910"
     aws_cluster_name: hub-cluster
-    aws_load_balancer_controller_iam_role_arn: arn:aws:iam::12345678910:role/alb-controller-20240604085058813100000015
     aws_load_balancer_controller_namespace: kube-system
     aws_load_balancer_controller_service_account: aws-load-balancer-controller-sa
-    aws_region: us-east-2
-    aws_vpc_id: vpc-09924bd9e1637d9a1
+    aws_region: us-west-2
+    aws_vpc_id: vpc-0281c90d8fb4ce6a2
     cluster_name: hub-cluster
     environment: control-plane
-    platform_repo_basepath: assets/platform/
+    external_secrets_namespace: external-secrets
+    external_secrets_service_account: external-secrets-sa
+    platform_repo_basepath: ""
     platform_repo_path: bootstrap
     platform_repo_revision: HEAD
-    platform_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
-    workload_repo_basepath: assets/developer/
-    workload_repo_path: gitops/apps
+    platform_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-platform
+    workload_repo_basepath: ""
+    workload_repo_path: ""
     workload_repo_revision: HEAD
-    workload_repo_url: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop.git
-  creationTimestamp: "2024-06-04T08:52:40Z"
+    workload_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-apps
+  creationTimestamp: "2024-10-07T21:40:44Z"
   labels:
     argocd.argoproj.io/secret-type: cluster
     aws_cluster_name: hub-cluster
     cluster_name: hub-cluster
-    enable_ack_apigatewayv2: "false"
-    enable_ack_dynamodb: "false"
-    enable_ack_emrcontainers: "false"
-    enable_ack_eventbridge: "false"
-    enable_ack_prometheusservice: "false"
-    enable_ack_rds: "false"
-    enable_ack_s3: "false"
-    enable_ack_sfn: "false"
-    enable_argo_events: "false"
-    enable_argo_rollouts: "false"
-    enable_argo_workflows: "false"
     enable_argocd: "true"
-    enable_aws_cloudwatch_metrics: "false"
-    enable_aws_ebs_csi_resources: "false"
-    enable_aws_efs_csi_driver: "false"
-    enable_aws_for_fluentbit: "false"
-    enable_aws_fsx_csi_driver: "false"
-    enable_aws_gateway_api_controller: "false"
-    enable_aws_load_balancer_controller: "true"
-    enable_aws_node_termination_handler: "false"
-    enable_aws_privateca_issuer: "false"
-    enable_aws_secrets_store_csi_driver_provider: "false"
-    enable_cert_manager: "false"
-    enable_cluster_autoscaler: "false"
-    enable_cluster_proportional_autoscaler: "false"
-    enable_external_dns: "false"
-    enable_external_secrets: "false"
-    enable_fargate_fluentbit: "false"
-    enable_gatekeeper: "false"
-    enable_gpu_operator: "false"
-    enable_ingress_nginx: "false"
-    enable_karpenter: "false"
-    enable_kube_prometheus_stack: "false"
-    enable_kyverno: "false"
-    enable_metrics_server: "false"
-    enable_prometheus_adapter: "false"
-    enable_secrets_store_csi_driver: "false"
-    enable_velero: "false"
-    enable_vpa: "false"
     environment: control-plane
-    kubernetes_version: "1.28"
-    workload_webstore: "false"
-    workloads: "false"
+    fleet_member: control-plane
+    kubernetes_version: "1.30"
+    tenant: tenant1
+    workloads: "true"
   name: hub-cluster
   namespace: argocd
-  resourceVersion: "309742"
-  uid: 1156e385-97af-4732-83ae-55aafeb9ec62
+  resourceVersion: "6865"
+  uid: af0dfcb9-a034-4f2d-be9b-167eb78c830a
 type: Opaque
 ```
 

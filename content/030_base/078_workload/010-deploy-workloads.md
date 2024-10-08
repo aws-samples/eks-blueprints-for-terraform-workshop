@@ -29,7 +29,7 @@ generators:
   - clusters:
     selector:
     matchLabels:
-    environment: 'hub'
+    environment: 'control-plane'
   - git:
     repoURL: '{{metadata.annotations.platform_repo_url}}'
     revision: '{{metadata.annotations.platform_repo_revision}}'
