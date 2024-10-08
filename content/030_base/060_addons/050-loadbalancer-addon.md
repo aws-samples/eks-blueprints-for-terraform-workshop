@@ -213,6 +213,7 @@ In order to activate this only for our cluster, we are going to activate this at
 let's create 
 
 ```bash
+mkdir -p $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/
 cp $BASE_DIR/solution/gitops/addons/clusters/hub-cluster/addons/gitops-bridge/values.yaml $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/values.yaml
 ```
 
@@ -235,11 +236,17 @@ terraform init
 terraform apply --auto-approve
 ```
 
+### 6. Verify the load balancer deployment
+
+You can accelerate the argocd reconciliation with manual sync:
+
+```bash
+argocd app sync argocd/cluster-addons
+```
+
 The Argo CD dashboard should have a load balancer application.
 
 ![hubcluster-lb-addon](/static/images/hubcluster-lb-addon.png)
-
-### 6. Verify the load balancer deployment
 
 ```bash
 kubectl get deployment -n kube-system aws-load-balancer-controller --context hub-cluster

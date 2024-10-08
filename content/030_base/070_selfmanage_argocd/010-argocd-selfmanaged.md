@@ -31,7 +31,7 @@ The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configu
 You can open the file in the IDE. Don't forget to commit if you make any changes.
 
 ```bash
-code $GITOPS_DIR/addons/environments/default/addons/argo-cd/values.yaml
+code $GITOPS_DIR/addons/environments/control-plane/addons/argocd/values.yaml
 ```
 
 ### 2. Apply Terraform
@@ -39,6 +39,13 @@ code $GITOPS_DIR/addons/environments/default/addons/argo-cd/values.yaml
 ```bash
 cd ~/environment/hub
 terraform apply --auto-approve
+```
+
+### 3. Argocd Sync
+
+```bash
+argocd app sync argocd/bootstrap
+argocd app sync argocd/cluster-addons
 ```
 
 Argo CD dashboard should have Argo CD Application.
