@@ -3,24 +3,25 @@ addons:
   aws_load_balancer_controller:
     enabled: true
   aws_ebs_csi_resources:
-    enabled: true
+    enabled: false
   metrics_server:
-    enabled: true
+    enabled: false
   karpenter:
-    enabled: true
+    enabled: false
   kyverno:
-    enabled: true
+    enabled: false
   external_secrets:
-    enabled: true
+    enabled: false
   cni_metrics_helper:
-    enabled: true
+    enabled: false
   cw_prometheus:
-    enabled: true
+    enabled: false
   grafana_operator:
-    enabled: true
+    enabled: false
   argocd:
     enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
   prometheus_node_exporter:
-    enabled: true
+    enabled: false
   kube_state_metrics:
-    enabled: true
+    enabled: false
+
