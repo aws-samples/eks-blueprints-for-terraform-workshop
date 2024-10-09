@@ -27,7 +27,7 @@ repoURLValuesRevision: HEAD
 repoURLValuesBasePath: ""
 project: default
 namespace: argocd
-useSelector: false
+useSelector: true
 useStack: false
 useStackChart: true
 syncPolicy:
