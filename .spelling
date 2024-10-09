@@ -47,6 +47,7 @@ rabbitmq
 rollouts
 rootapp
 stagging
+hookspath
 tfblueprint
 tfvars
 undeployed

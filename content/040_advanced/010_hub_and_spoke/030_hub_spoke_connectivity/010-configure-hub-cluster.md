@@ -34,7 +34,7 @@ cat <<'EOF' >> ~/environment/hub/pod-identity.tf
 ################################################################################
 resource "aws_iam_role" "argocd_hub" {
   name_prefix = "${local.context_prefix}-argocd-hub"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

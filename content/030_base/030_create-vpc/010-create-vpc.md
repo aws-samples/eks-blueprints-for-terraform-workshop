@@ -108,6 +108,8 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
+    # Tags subnets for Karpenter auto-discovery
+    "karpenter.sh/discovery" = local.name
   }
 
   tags = local.tags
@@ -131,6 +133,11 @@ output "vpc_id" {
 output "private_subnets" {
   description = "List of IDs of private subnets"
   value       = module.vpc.private_subnets
+}
+
+output "vpc_name" {
+  description = "The ID of the VPC"
+  value       = local.name
 }
 
 

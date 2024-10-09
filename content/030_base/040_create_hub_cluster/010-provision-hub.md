@@ -41,6 +41,7 @@ In this section, we define the EKS version for the hub-cluster. From the console
 
 :::expand{header="Detailed Explanation of Variables, Click to check the description"}
 Here, we define several variables that will be used to create the EKS cluster:
+
 - **kubernetes_version**: This variable specifies the version of Kubernetes to be installed or updated in the EKS cluster.
 - **eks_admin_role_name**: This variable represents the name of the IAM role that will be granted administrative privileges within the EKS cluster.
 - **addons**: This is a list of EKS add-ons that you want to enable in the cluster. Add-ons provide additional functionality and integrations for your EKS cluster.
@@ -68,6 +69,7 @@ variable "addons" {
   default = {
     enable_aws_load_balancer_controller = false
     enable_aws_argocd = false
+    enable_karpenter = true
   }
 }
 
@@ -203,6 +205,14 @@ module "eks" {
       min_size     = 3
       max_size     = 10
       desired_size = 3
+
+      taints = local.aws_addons.enable_karpenter ? {
+        dedicated = {
+          key    = "CriticalAddonsOnly"
+          operator   = "Exists"
+          effect    = "NO_SCHEDULE"
+        }
+      } : {}
     }
   }
 
@@ -225,6 +235,23 @@ module "eks" {
       })
     }
   }
+  node_security_group_additional_rules = {
+      # Allows Control Plane Nodes to talk to Worker nodes vpc cni metrics port
+      vpc_cni_metrics_traffic = {
+        description                   = "Cluster API to node 61678/tcp vpc cni metrics"
+        protocol                      = "tcp"
+        from_port                     = 61678
+        to_port                       = 61678
+        type                          = "ingress"
+        source_cluster_security_group = true
+      }
+    }
+  node_security_group_tags = merge(local.tags, {
+    # NOTE - if creating multiple security groups with this module, only tag the
+    # security group that Karpenter should utilize with the following tag
+    # (i.e. - at most, only one security group should have this tag in your account)
+    "karpenter.sh/discovery" = data.terraform_remote_state.vpc.outputs.vpc_name
+  })
   tags = local.tags
 }
 

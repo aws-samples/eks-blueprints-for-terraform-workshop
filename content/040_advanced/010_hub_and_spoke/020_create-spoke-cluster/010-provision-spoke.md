@@ -33,7 +33,7 @@ EOF
 
 It configures the EKS cluster, sets up label and annotation values, and uses the Terraform blueprint addons module to create IAM roles.
 
-We reuse the main.tf terraform file from the hub cluster, with some few adjustements:
+We reuse the main.tf Terraform file from the hub cluster, with a few adjustments:
 
 ```bash
 cp ~/environment/hub/git_data.tf ~/environment/spoke
@@ -42,6 +42,11 @@ cp ~/environment/hub/pod-identity.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
 sed -i 's/environment     = "control-plane"/environment     = terraform.workspace/' ~/environment/spoke/main.tf
 sed -i 's/fleet_member     = "control-plane"/fleet_member     = "spoke"/' ~/environment/spoke/main.tf
+
+sed -i '
+s/{ workloads = true },/{ workloads = false },/
+s/{ workload_webstore = true }/{ workload_webstore = false }/
+' ~/environment/spoke/main.tf
 
 # Clean some parts
 sed -i 's/^    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/#    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/' ~/environment/spoke/main.tf
