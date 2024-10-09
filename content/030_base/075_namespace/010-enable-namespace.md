@@ -69,7 +69,7 @@ EOF
 This ApplicationSet initiates the creation of namespaces for all the workloads.
 
 - Git generator (line 21) iterates through folders under "config/workload" in gitops-workload repository.
-- For each folder (line 34), ApplicationSet process files under "namespace" folder.
+- For each folder (line 33), ApplicationSet process files under "namespace" folder.
 - Since there are currently no workload folders under "config/workload/webstore/workload", there are no files to process at this point.
 
 ### 2. Git commit

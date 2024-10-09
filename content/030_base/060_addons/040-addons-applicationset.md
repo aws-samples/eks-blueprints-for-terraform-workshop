@@ -15,6 +15,8 @@ Let's add the cluster-addons ApplicationSet in this repo:
 cp $BASE_DIR/solution/gitops/platform/bootstrap/addons-applicationset.yaml $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml
 ```
 
+Let's commit and push the changes to the repo:
+
 ```bash
 git -C ${GITOPS_DIR}/platform add .  || true
 git -C ${GITOPS_DIR}/platform commit -m "add addon applicationset" || true

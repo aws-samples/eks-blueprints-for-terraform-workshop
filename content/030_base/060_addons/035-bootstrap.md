@@ -9,7 +9,7 @@ To automatically generate Argo CD applications, you will implement the "App of A
 
 ### App of Apps pattern
 
-Normally an Argo CD Application points to a git repo which contains manifests. The loadbalancer controller you provisioned previously points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `ìndex.yaml` file that reference the chart package (tgz file).
+Normally an Argo CD Application points to a git repo which contains manifests. In case of provisioning a load balancer controller, it points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `ìndex.yaml` file that reference the chart package (tgz file).
 
 ![applicationset](/static/images/lb-helmchart-folder.png)
 
@@ -17,7 +17,7 @@ In the App of Apps pattern, a top-level Argo CD Application resource points to a
 
 ![applicationset](/static/images/app-of-apps.png)
 
-In this chapter, you will create a bootstrap Argo CD application that points to the `platform/bootstrap` folder in your GitHub repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
+In this chapter, you will create a bootstrap Argo CD application that points to the `platform/bootstrap` folder in your Git repository. As you commit applicationset files in this chapter and upcoming chapters in the repository, Argo CD will automatically detect the changes and generate corresponding Applications.
 
 ![applicationset](/static/images/bootstrap-appofapps.png)
 
