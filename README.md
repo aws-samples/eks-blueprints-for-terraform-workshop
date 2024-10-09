@@ -38,9 +38,9 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   nvm use lts/hydrogen
   ```
 - Install direnv
-  - ```bash
-    brew install direnv
-    ```
+  ```bash
+  brew install direnv
+  ```
   - You need to enable the hook by adding `eval "$(direnv hook bash)"` to your .bashrc or equivalent
   - See below for `.envrc` file content and allow command
 - Install CDK
@@ -58,7 +58,12 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
 - Install pre-commit 
   - `brew install pre-commit`
   - configure it see : https://gitlab.aws.dev/aws-tfc-containers/containers-hands-on-content/workshop-quickstart-template#pre-commit
-
+    ```bash
+    git config --system --unset-all core.hookspath
+    pre-commit install
+    # If you use git defender make sure to re-enable it
+    git defender --install
+    ```
 
 Create an `.envrc` file:
 The `PARTICIPANT_ROLE_ARN` should have same permissions as specified in `contentspec.yaml` You can use your `Admin` role for testing
