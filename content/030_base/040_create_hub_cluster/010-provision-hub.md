@@ -39,8 +39,8 @@ EOF
 
 In this section, we define the EKS version for the hub-cluster. From the console, you can manage EKS objects such as pods, deployments, namespaces, etc., for the hub-cluster using the EKS admin role. Most of these variables will be configured later using the terraform.tfvars file.
 
-:::expand{header="details Explanation of Variables Here, we define several variables that will be used to create the EKS cluster:"}
-
+:::expand{header="Detailed Explanation of Variables, Click to check the description"}
+Here, we define several variables that will be used to create the EKS cluster:
 - **kubernetes_version**: This variable specifies the version of Kubernetes to be installed or updated in the EKS cluster.
 - **eks_admin_role_name**: This variable represents the name of the IAM role that will be granted administrative privileges within the EKS cluster.
 - **addons**: This is a list of EKS add-ons that you want to enable in the cluster. Add-ons provide additional functionality and integrations for your EKS cluster.

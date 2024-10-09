@@ -112,7 +112,7 @@ In the Argo CD UI, you will find the hub cluster already registered under **Sett
 
 ![EKS Cluster](/static/images/argocd-cluster-object.png)
 
-You can also validate that the gitops-bridge as correctly created the secrets for this EKS cluster in the argocd namespace:
+You can also validate that the gitops-bridge has correctly created the secrets for this EKS cluster in the argocd namespace:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd hub-cluster

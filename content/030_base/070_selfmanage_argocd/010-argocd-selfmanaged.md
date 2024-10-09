@@ -34,11 +34,12 @@ You can open the file in the IDE. Don't forget to commit if you make any changes
 code $GITOPS_DIR/addons/environments/control-plane/addons/argocd/values.yaml
 ```
 
-### 2. Apply Terraform
+### 2. Push Changes to Git:
 
 ```bash
-cd ~/environment/hub
-terraform apply --auto-approve
+git -C ${GITOPS_DIR}/addons add . || true
+git -C ${GITOPS_DIR}/addons commit -m "Activate Managed Argo CD" || true
+git -C ${GITOPS_DIR}/addons push || true
 ```
 
 ### 3. Argocd Sync

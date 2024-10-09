@@ -69,7 +69,7 @@ tags = local.tags
 EOF
 :::
 
-For Some of the addons, we prefer to rely on EKS Pod Identity, instead of IRSA. Has the EKS blueprints Addons, did not yet implement the Pod Identity, we deactivate it to use the EKS pod identity module instead:
+For Some of the addons, we prefer to rely on EKS Pod Identity, instead of IRSA. As the EKS blueprints Addons, have not yet implemented the Pod Identity, we deactivate it to use the EKS pod identity module instead:
 
 ```bash
 cp $BASE_DIR/solution/hub/pod-identity.tf /home/ec2-user/environment/hub
@@ -102,7 +102,7 @@ module "aws_lb_controller_pod_identity" {
 :::
 <!-- prettier-ignore-end -->
 
-This Will call the EKS API to make the association between the IAM role that will be created and the Kubernetes namespace and service_account
+This will call the EKS API to make the association between the IAM role that will be created and the Kubernetes namespace and service_account
 
 The file also create roles for:
 
