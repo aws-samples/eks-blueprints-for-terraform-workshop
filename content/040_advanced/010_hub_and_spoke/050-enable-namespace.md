@@ -1,5 +1,5 @@
 ---
-title: 'Namespace and Webstore workload'
+title: "Namespace and Webstore workload"
 weight: 50
 ---
 
@@ -7,35 +7,43 @@ In this chapter you will associate both namespace and workload application to we
 
 ### 1. Set Project
 
-```bash
-sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml 
-```
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
+sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml
+:::
+
 Changes by the code snippet is highlighted below.
-:::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='0'}
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
+cd $GITOPS_DIR/platform
 git diff
 :::
+<!-- prettier-ignore-end -->
+
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='8'}
 --- a/config/workload/webstore/workload/webstore-applicationset.yaml
 +++ b/config/workload/webstore/workload/webstore-applicationset.yaml
 @@ -31,7 +31,7 @@ spec:
-         component: '{{path.basename}}'
-         workloads: 'true'
-     spec:
+component: '{{path.basename}}'
+workloads: 'true'
+spec:
+
 -      project: default
-+      project: webstore
-       source:
-         repoURL: '{{metadata.annotations.workload_repo_url}}'
-         path: '{{path}}/{{metadata.labels.environment}}'
-:::
+
+*      project: webstore
+         source:
+           repoURL: '{{metadata.annotations.workload_repo_url}}'
+           path: '{{path}}/{{metadata.labels.environment}}'
+  :::
 
 ### 2. Git commit
-```bash
+
+:::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/platform
-git add . 
+git add .
 git commit -m "set namespace and webstore applicationset project to webstore"
 git push
-```
-
+:::
 
 ### 3. Enable workload_webstore labels on spoke cluster
 
@@ -50,15 +58,41 @@ cd ~/environment/spoke
 terraform apply --auto-approve
 ```
 
-### 5. Validate workload
-
-::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
+Once we activate this, the webstore microservice will be deployed.
+Because, we have configured our default Managed Node Group to only accept Critical Addons:
 
 ```bash
-echo "Click here to open -> http://$(kubectl get svc ui-nlb -n ui --context spoke-staging --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"
+cat ~/environment/spoke/main.tf | grep -A4 taints
 ```
 
-Access  webstore in the browser.
+```
+      taints = local.aws_addons.enable_karpenter ? {
+        dedicated = {
+          key    = "CriticalAddonsOnly"
+          operator   = "Exists"
+          effect    = "NO_SCHEDULE"
+```
+
+The webstore application is not able to be deployed on the managed node groups, and we are relying on Karpenter to create additional EC2 instances.
+
+```bash
+eks-node-viewer
+```
+
+![eks-node-viewer](/static/images/eks-node-viewer.jpg)
+
+### 5. Validate workload
+
+:::alert{header="Important" type="warning"}
+It takes few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
+It takes also few minutes for the loadbalancer to be provisioned correctly.
+:::
+
+```bash
+app_url_staging
+```
+
+Access webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)
 

@@ -1,0 +1,25 @@
+repos:
+  - repo: local
+    hooks:
+      - id: lint-staged
+        language: node
+        name: Run linting staged
+        entry: task lint-staged
+        stages: [commit]
+        verbose: true
+        pass_filenames: false
+      - id: lint
+        language: node
+        name: Run linting
+        entry: task lint
+        stages: [commit]
+        verbose: true
+        pass_filenames: false
+      - id: cfn
+        language: node
+        name: Generate Cfn
+        entry: task cfn
+        # uses current branch for WORKSHOP_GIT_BRANCH
+        stages: [commit]
+        verbose: true
+        pass_filenames: false

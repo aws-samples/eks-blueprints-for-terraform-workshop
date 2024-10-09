@@ -1,0 +1,11 @@
+{
+ "Description": "Creates the lab environment for the workshop",
+ "Parameters": {
+  "AssetsBucketName": {
+   "Type": "String"
+  },
+  "AssetsBucketPrefix": {
+   "Type": "String"
+  }
+ }
+}

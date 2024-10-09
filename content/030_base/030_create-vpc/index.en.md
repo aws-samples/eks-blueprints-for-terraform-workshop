@@ -1,5 +1,5 @@
 ---
-title: 'Amazon VPC Architecture'
+title: "Amazon VPC Architecture"
 weight: 30
 ---
 
@@ -9,4 +9,4 @@ The VPC will include an Internet Gateway for external access and a Network Addre
 
 All the Elastic Kubernetes Service (EKS) clusters created throughout this workshop will be deployed within this VPC.
 
-![Environment architecture diagram](/static/images/environment.png)
+![Environment architecture diagram](/static/images/environment.jpg)

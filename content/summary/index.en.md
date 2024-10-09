@@ -1,8 +1,7 @@
 ---
-title : "Summary"
-weight : 300
+title: "Summary"
+weight: 300
 ---
-
 
 ### Mastering Cluster Deployment and Workload Management with EKS Blueprints and GitOps
 

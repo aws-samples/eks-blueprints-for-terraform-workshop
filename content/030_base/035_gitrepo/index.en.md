@@ -1,19 +1,18 @@
 ---
-title: 'Setup Git Repository'
+title: "Workshop Git Repositories"
 weight: 35
 ---
 
-In this workshop you are going to create two codecommit repositories:
+In this workshop you are going to work with three git repositories using a [gitea](https://github.com/go-gitea/gitea) server already install in the IDE instance:
 
-![CodeCommit Repository](/static/images/codecommit_repos.png)
+![CodeCommit Repository](/static/images/gitea_repos.jpg)
 
-1. "gitops-workload" for developers to store Kubernetes manifests for webstore microservices workload
+1. **eks-blueprints-workshop-gitops-apps** for developers to store Kubernetes manifests for webstore microservices workload
 
-2. "gitops-platform" for platform engineers to store infrastructure artifacts like addons, application deployment, etc.
+2. **eks-blueprints-workshop-gitops-platform** for platform engineers to store infrastructure artifacts like namespaces configurations
 
-The separation of the workload and platform repositories between developers and platform engineers illustrates a separation of roles and responsibilities. Using CodeCommit provides a managed git service on AWS. Creating the IAM user allows controlled access to the repositories.
+3. **eks-blueprints-workshop-gitops-addons** for platform engineers to store Kubernetes addons manifests
 
-This workshop creates "terraform-workshop-gitops" IAM user  to [access](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-ssh-unixes.html#setting-up-ssh-unixes-keys) both repositories.
+The separation of the workload and platform repositories between developers and platform engineers illustrates a separation of roles and responsibilities.
 
-* Creates policy to access two repositories
-* Configures SSH access to the repositories with public and private key
+We are using Gitea for this workshop for convenience but you can use any Git management system in replacement.

@@ -1,8 +1,7 @@
 ---
-title: 'Clean up'
+title: "Clean up"
 weight: 90
 ---
-
 
 In this workshop, we created a VPC, then 2 or more clusters. The EKS clusters were created using Terraform, but the Applications were deployed using Argo CD.
 
@@ -17,11 +16,9 @@ If you have deployed additional resources, that may have created Cloud resources
 You can just execute the cleanup script. In this script, there can be somme errors, but that is normal and the script will repeat some of the actions until normally cleanup success.
 
 ```bash
-$SCRIPT_DIR/assets/scripts/destroy.sh 
+$BASE_DIR/hack/scripts/destroy.sh
 ```
 
-
-::alert[Removing resources in this specific order ensures dependencies are deleted entirely.  VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}
-
+::alert[Removing resources in this specific order ensures dependencies are deleted entirely. VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}
 
 > Congratulations! You should have removed everything installed by the workshop.

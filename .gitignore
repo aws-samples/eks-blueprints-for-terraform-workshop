@@ -6,3 +6,12 @@ terraform.tfstate
 .DS_Store
 **/.DS_Store
 preview_build
+.DS_Store
+node_modules
+.envrc
+.vscode
+venv
+tmp
+us-west-2
+eu-west-1
+
