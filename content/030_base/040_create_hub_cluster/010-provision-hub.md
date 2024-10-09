@@ -301,7 +301,7 @@ EOF
 We create the `terraform.tfvars` file to configure our Terraform parameters. The EKS admin role will be granted administrator rights inside Kubernetes, and enables access to view cluster resources through the AWS console.
 
 ```bash
-cat >  ~/environment/terraform.tfvars <<EOF
+cat >  ~/environment/hub/terraform.tfvars <<EOF
 eks_admin_role_name          = "WSParticipantRole"
 
 EOF
@@ -313,7 +313,7 @@ EOF
 ![AWS Console Role](/static/images/aws-console-role.png)
 
 ```bash
-code ~/environment/terraform.tfvars
+code ~/environment/hub/terraform.tfvars
 ```
 
 Example:
@@ -324,13 +324,7 @@ eks_admin_role_name          = "Admin"
 
 :::
 
-### 6. Link the Terraform variable file to the cluster
-
-```bash
-ln -s ~/environment/terraform.tfvars ~/environment/hub/terraform.tfvars
-```
-
-### 7. Create EKS cluster
+### 6. Create EKS cluster
 
 ```bash
 cd ~/environment/hub
@@ -340,7 +334,7 @@ terraform apply -auto-approve
 
 ::alert[The process of creating Amazon EKS cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
-### 8. Access Hub Cluster
+### 7. Access Hub Cluster
 
 To configure kubectl, execute the following command, which retrieves the connection details from the Terraform output to access the cluster:
 

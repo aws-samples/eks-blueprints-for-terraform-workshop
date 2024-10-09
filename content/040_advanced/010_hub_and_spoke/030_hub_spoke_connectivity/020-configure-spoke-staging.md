@@ -164,13 +164,36 @@ resource "aws_vpc_security_group_ingress_rule" "hub_to_spoke" {
 EOF
 ```
 
+### 5. Configure the addons to deploy
+
+let's enabled some addons in our terraform configuration:
+
+```bash
+sed '/addons = {/,/}/ c\
+addons = { \
+ enable_aws_load_balancer_controller = "true" \
+ enable_kube_state_metrics = "true" \
+ enable_cw_prometheus = "true" \
+ enable_cni_metrics_helper = "true" \
+ enable_kyverno = "true" \
+ enable_kyverno_policies = "true" \
+ enable_kyverno_policy_reporter = "true" \
+ enable_metrics_server = "true" \
+ enable_karpenter = "true" \
+ enable_aws_ebs_csi_resources = "true" \
+ enable_argocd = "false" # Disabled as we are working in hub-spoke only \
+}' ~/environment/spoke/terraform.tfvars
+```
+
+### 6. Apply the changes
+
 ```bash
 cd ~/environment/spoke
 terraform init
 terraform apply --auto-approve
 ```
 
-### 5. Check Hub Cluster Configuration
+### 7. Check Hub Cluster Configuration
 
 The Hub Argo CD Dashboard should have the spoke-staging cluster in it's cluster list.
 

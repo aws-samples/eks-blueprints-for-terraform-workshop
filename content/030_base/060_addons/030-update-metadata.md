@@ -146,8 +146,8 @@ locals{
     enable_vpa                             = try(var.addons.enable_vpa, false)
   }
   addons = merge(
-    #local.aws_addons,
-    #local.oss_addons,
+    local.aws_addons,
+    local.oss_addons,
     { kubernetes_version = local.cluster_version },
     { fleet_member = local.fleet_member },
     { tenant = local.tenant },  

@@ -142,17 +142,16 @@ locals{
   .
 }
 :::
-
-
+<!-- prettier-ignore-end -->
 
 ### 3. More about GitOps Bridge v2
 
 The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using Argo CD. The steps will show you how a simple change to the Git repository can trigger Argo CD to deploy and manage an addon in an automated way.
 
-With GitOps Bridge v2, we rely on a Helm Charts to create the addons ApplicationSets. This Generic Helm chart is configured with a value file, that you can find here: 
+With GitOps Bridge v2, we rely on a Helm Charts to create the addons ApplicationSets. This Generic Helm chart is configured with a value file, that you can find here:
 
 ```bash
-code $GITOPS_DIR/addons/charts/gitops-bridge/values.yaml 
+code $GITOPS_DIR/addons/charts/gitops-bridge/values.yaml
 ```
 
 This file, contain all the addons, with their version, and configurations that we may want to enable in the cluster.

@@ -70,7 +70,7 @@ spec:
         retry:
           backoff:
             duration: 1m
-            limit: 100
+            #limit: 100
         syncOptions:
           - CreateNamespace=true
 EOF
@@ -91,23 +91,21 @@ Lets create webstore project values.
 
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Few values are commented for the upcoming chapters.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='7,12,39,47'}
+```bash
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/project
 cat > $GITOPS_DIR/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
-
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
-
 projects:
-
 - name: webstore
   sourceRepos:
-
   - 'ApplicationSet will replace this with the workload url'
-    namespace: argocd
-    additionalLabels: {}
-    additionalAnnotations: {}
-    description: Team Project
-    destinations:
+  namespace: argocd
+  additionalLabels: {}
+  additionalAnnotations: {}
+  description: Team Project
+  destinations:
   - namespace: carts
     name: spoke-staging
   - namespace: catalog
@@ -121,33 +119,28 @@ projects:
   - namespace: ui
     name: spoke-staging
   - namespace: assets
-    name: spoke-staging  
-    #enablespokeprod - namespace: carts
-    #enablespokeprod name: spoke-prod
-    #enablespokeprod - namespace: catalog
-    #enablespokeprod name: spoke-prod
-    #enablespokeprod - namespace: checkout
-    #enablespokeprod name: spoke-prod
-    #enablespokeprod - namespace: orders
-    #enablespokeprod name: spoke-prod
-    #enablespokeprod - namespace: rabbitmq
-    #enablespokeprod name: spoke-prod
-
+    name: spoke-staging    
+  #enablespokeprod - namespace: carts
+  #enablespokeprod   name: spoke-prod
+  #enablespokeprod - namespace: catalog
+  #enablespokeprod   name: spoke-prod
+  #enablespokeprod - namespace: checkout
+  #enablespokeprod   name: spoke-prod
+  #enablespokeprod - namespace: orders
+  #enablespokeprod   name: spoke-prod
+  #enablespokeprod - namespace: rabbitmq
+  #enablespokeprod   name: spoke-prod
+    
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
-
   namespaceResourceBlacklist:
-
   - group: ''
     kind: ResourceQuota
   - group: ''
     kind: LimitRange
   - group: ''
     kind: NetworkPolicy
-
   # Deny all namespaced-scoped resources from being created, except for these
-
   namespaceResourceWhitelist:
-
   - group: ''
     kind: Pod
   - group: 'apps'
@@ -171,9 +164,11 @@ projects:
   - group: 'dynamodb.services.k8s.aws'
     kind: Table
   - group: 'autoscaling'
-    kind: HorizontalPodAutoscaler  
-    EOF
-    :::
+    kind: HorizontalPodAutoscaler      
+EOF
+```
+:::
+<!-- prettier-ignore-end -->
 
 - Line 7: (Restrict what may be deployed): List of permitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of `argoproject-applicationset.yaml`).
 - Line 12: (Restrict where apps may be deployed to): Permitted destination of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.

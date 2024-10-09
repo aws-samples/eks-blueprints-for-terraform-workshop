@@ -98,22 +98,22 @@ sed -i "s/#enableapps //g" ~/environment/hub/main.tf
 The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates bootstrap Application.
 
 <!-- prettier-ignore-start -->
-
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
 module "gitops_bridge_bootstrap" {
-source = "gitops-bridge-dev/gitops-bridge/helm"
-version = "0.0.1"
-cluster = {
-cluster_name = module.eks.cluster_name
-environment = local.environment
-metadata = local.addons_metadata
-addons = local.addons
-}
-apps = local.argocd_apps
-argocd = {
-namespace = local.argocd_namespace
-...
+  source = "gitops-bridge-dev/gitops-bridge/helm"
+  version = "0.0.1"
+  cluster = {
+    cluster_name = module.eks.cluster_name
+    environment = local.environment
+    metadata = local.addons_metadata
+    addons = local.addons
+  }
+  apps = local.argocd_apps
+  argocd = {
+    namespace = local.argocd_namespace
+  ...
 :::
+<!-- prettier-ignore-end -->
 
 ### 4. Apply Terraform
 
