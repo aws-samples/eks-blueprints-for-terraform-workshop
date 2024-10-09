@@ -6,3 +6,4 @@ cdk/lib/*.js
 cdk/test/*.js
 static/*.json
 assets/*.json
+gitops/*

@@ -120,7 +120,7 @@ spec:
 
   template:
     metadata:
-      name: addon-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.nameNormalized}}`}}{{ end }}
+      name: addon-{{`{{.name}}`}}-{{ $nameNormalize }}{{ if $useSelector }}-{{`{{.nameNormalized}}`}}{{ end }}
       annotations:
         argocd.argoproj.io/manifest-generate-paths: {{ with $valueFiles }}{{ range . }}{{ $repoURLValuesBasePath }}{{ if $useValuesFilePrefix }}{{ $valuesFilePrefix }}{{ end }}{{ . }}/{{ $nameNormalize }}/values.yaml;{{ end }}{{ end }}
         {{- include "gitops-bridge.annotations" $ | nindent 8 }}
