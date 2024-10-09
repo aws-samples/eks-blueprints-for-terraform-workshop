@@ -73,25 +73,44 @@ EOF
 Create an IAM role for the spoke cluster that can be assumed by the Hub's Argo CD.
 
 ```bash
+
+cat <<'EOF' >> ~/environment/spoke/variables.tf
+variable "ssm_parameter_name_argocd_role_suffix" {
+  description = "SSM parameter name for ArgoCD role"
+  type        = string
+  default     = "argocd-central-role"
+}
+EOF
+
+cat <<'EOF' >> ~/environment/spoke/main.tf
+# Reading parameter created by hub cluster to allow access of argocd to spoke clusters
+data "aws_ssm_parameter" "argocd_hub_role" {
+  name = "${local.context_prefix}-${var.ssm_parameter_name_argocd_role_suffix}"
+}
+EOF
+```
+
+Create Spoke Role, which allow assume role from Hub role:
+
+```bash
 cat <<'EOF' >> ~/environment/spoke/main.tf
 ################################################################################
-# Argo CD EKS Access
+# ArgoCD EKS Access
 ################################################################################
 resource "aws_iam_role" "spoke" {
-  name               = "${local.name}-argocd-spoke"
+  name_prefix =  "${local.name}-argocd-spoke"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
   statement {
-    actions = ["sts:AssumeRole","sts:TagSession"]
+    actions = ["sts:AssumeRole", "sts:TagSession"]
     principals {
       type        = "AWS"
-      identifiers = [data.terraform_remote_state.hub.outputs.argocd_iam_role_arn]
+      identifiers = [data.aws_ssm_parameter.argocd_hub_role.value]
     }
   }
 }
-
 EOF
 ```
 

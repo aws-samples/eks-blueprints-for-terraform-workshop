@@ -16,7 +16,7 @@ If you have deployed additional resources, that may have created Cloud resources
 You can just execute the cleanup script. In this script, there can be somme errors, but that is normal and the script will repeat some of the actions until normally cleanup success.
 
 ```bash
-$BASE_DIR/assets/scripts/destroy.sh
+$BASE_DIR/hack/scripts/destroy.sh
 ```
 
 ::alert[Removing resources in this specific order ensures dependencies are deleted entirely. VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}

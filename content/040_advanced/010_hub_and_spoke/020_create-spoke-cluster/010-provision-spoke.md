@@ -33,14 +33,19 @@ EOF
 
 It configures the EKS cluster, sets up label and annotation values, and uses the Terraform blueprint addons module to create IAM roles.
 
+We reuse the main.tf terraform file from the hub cluster, with some few adjustements:
+
 ```bash
 cp ~/environment/hub/git_data.tf ~/environment/spoke
 cp ~/environment/hub/main.tf ~/environment/spoke
+cp ~/environment/hub/pod-identity.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
-sed -i 's/environment     = "hub"/environment     = terraform.workspace/' ~/environment/spoke/main.tf
+sed -i 's/environment     = "control-plane"/environment     = terraform.workspace/' ~/environment/spoke/main.tf
+sed -i 's/fleet_member     = "control-plane"/fleet_member     = "spoke"/' ~/environment/spoke/main.tf
 
+# Clean some parts
 sed -i 's/^    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/#    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/' ~/environment/spoke/main.tf
-
+sed -i '/^module "gitops_bridge_bootstrap" {/,/^}/d' ~/environment/spoke/main.tf
 ```
 
 ### 3. Define variables
@@ -61,19 +66,12 @@ We copy and reset the addons, so that we enable when required.
 We copy the terraform configuration file to define the variable, but we deactivate Argo CD, as we don't want to deploy it on spoke cluster.
 
 ```bash
-cp ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
-sed -i 's/enable_aws_argocd = true/enable_aws_argocd = false/' ~/environment/spoke/terraform.tfvars
+ln -s ~/environment/terraform.tfvars ~/environment/spoke/terraform.tfvars
 ```
 
 ### 6. Create terraform workspace & Apply Terraform
 
 Create new staging workspace
-
-```bash
-cd ~/environment/spoke
-```
-
-### 7. Apply Terraform
 
 ```bash
 cd ~/environment/spoke

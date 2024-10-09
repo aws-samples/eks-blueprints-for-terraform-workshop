@@ -70,7 +70,7 @@ phases:
         if [[ $REQUESTED_ACTION == 'Delete' ]]; then
 
           # Cleanup scripts
-          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/destroy.sh
+          DEBUG=1 $BASE_DIR/hack/destroy.sh
 
         else
 

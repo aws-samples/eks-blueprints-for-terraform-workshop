@@ -173,7 +173,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
         targets: [
           {
             key: "tag:aws:cloudformation:stack-name",
-            values: [this.stackName, "eks-blueprints-workshopteam-stack"],
+            values: [this.stackName, "eks-blueprints-workshop-team-stack"],
           },
         ],
       },

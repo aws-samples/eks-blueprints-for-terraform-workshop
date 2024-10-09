@@ -5,7 +5,7 @@ weight: 10
 
 In this chapter, you will create another EKS cluster called spoke-staging
 
-![spoke-staging](/static/images/spoke-staging.png)
+![spoke-staging](/static/images/spoke-staging.jpg)
 
 ::::expand{header="What is Terraform workspaces?"}
 
