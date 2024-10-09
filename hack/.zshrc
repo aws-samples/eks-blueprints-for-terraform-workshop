@@ -63,7 +63,7 @@ alias tfi='terraform init'
 alias tfp='terraform plan'
 alias tfy='terraform apply --auto-approve'
 
-alias eks-node-viewer='eks-node-viewer -extra-labels=karpenter.sh/nodepool,beta.kubernetes.io/arch,topology.kubernetes.io/zone'
+alias eks-node-viewer='eks-node-viewer -extra-labels=eks.amazonaws.com/nodegroup,karpenter.sh/nodepool,beta.kubernetes.io/arch,topology.kubernetes.io/zone'
 alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm ghcr.io/laniksj/dfimage"
 
 fpath=($fpath ~/.zsh/completion)

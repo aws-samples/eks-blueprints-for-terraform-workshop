@@ -71,7 +71,8 @@ We copy and reset the addons, so that we enable when required.
 We copy the terraform configuration file to define the variable, but we deactivate Argo CD, as we don't want to deploy it on spoke cluster.
 
 ```bash
-cp ~/environment/hub/git terraform.tfvars ~/environment/spoke/terraform.tfvars
+cp ~/environment/hub/terraform.tfvars ~/environment/spoke/terraform.tfvars
+sed -i 's/enable_argocd = "true"/enable_argocd = "false"/' ~/environment/spoke/terraform.tfvars
 ```
 
 ### 6. Create terraform workspace & Apply Terraform

@@ -21,6 +21,21 @@ You can find your Gitea URL by executing:
 gitea_credentials
 :::
 
+:::alert{header="Important" type="info"}
+We are using several bash functions in the workshop. If you want to know more about them, you can execute `type <function_name>` to find the source file of the function
+
+```bash
+type gitea_credentials
+```
+
+example output
+
+```
+gitea_credentials is a shell function from /home/ec2-user/.bashrc.d/argocd.bash
+```
+
+:::
+
 Example output
 
 ```

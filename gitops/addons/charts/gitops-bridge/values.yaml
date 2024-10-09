@@ -174,7 +174,7 @@ addons:
               karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
           subnetSelectorTerms:
           - tags:
-              karpenter.sh/discovery: '{{.metadata.annotations.aws_cluster_name}}'
+              karpenter.sh/discovery: '{{.metadata.annotations.aws_vpc_name}}'
   volcano:
     enabled: false
     releaseName: volcano

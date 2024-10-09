@@ -94,8 +94,6 @@ argocd app sync argocd/bootstrap
 
 :::
 
-TODO: maybe change this image with the out-of-sync one
-
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.jpg)
 
 ### 3. Create webstore namespace configuration
@@ -259,6 +257,11 @@ With the recent commit, it now processes the files located under config/workload
 So it creates a new **namespace-webstore** application:
 
 ![namespace-workload](/static/images/namespace_webstore.jpg)
+
+:::alert{header=Note type=warning}
+Be patient, it can takes some times for the **namespace-webstore** to reflect in Argocd UI.
+Wait few minutes and refresh the UI
+:::
 
 The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
 

@@ -1,9 +1,9 @@
 ---
-title: "Install AWS Load Balancer Controller addon"
+title: "Install AWS Load Balancer Controller & Karpenter addons"
 weight: 50
 ---
 
-### 1. Create IAM roles for addon
+### 1. Create IAM roles for addons
 
 Many Kubernetes addons require authenticated communication with AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies must be configured to grant the addons the necessary permissions. For example, the AWS Load Balancer Controller addon interacts with EC2 APIs to provision Network Load Balancers (NLBs) and Application Load Balancers (ALBs). Similarly, the Karpenter autoscaler interacts with EC2 APIs to dynamically provision and terminate compute resources like EC2 instances based on cluster needs.
 
@@ -15,59 +15,56 @@ This module allows both installing the addons and creating their IAM roles. Howe
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 12 below.
+You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 15 below.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='15'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 ################################################################################
-
 # EKS Blueprints Addons
-
 ################################################################################
 module "eks_blueprints_addons" {
-source = "aws-ia/eks-blueprints-addons/aws"
-version = "~> 1.16.3"
+  source = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.16.3"
 
-cluster_name = module.eks.cluster_name
-cluster_endpoint = module.eks.cluster_endpoint
-cluster_version = module.eks.cluster_version
-oidc_provider_arn = module.eks.oidc_provider_arn
+  cluster_name = module.eks.cluster_name
+  cluster_endpoint = module.eks.cluster_endpoint
+  cluster_version = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
-# Using GitOps Bridge
+  # Using GitOps Bridge
 
-create_kubernetes_resources = false
+  create_kubernetes_resources = false
 
-# EKS Blueprints Addons
+  # EKS Blueprints Addons
 
-enable_cert_manager = local.aws_addons.enable_cert_manager
-enable_aws_efs_csi_driver = local.aws_addons.enable_aws_efs_csi_driver
-enable_aws_fsx_csi_driver = local.aws_addons.enable_aws_fsx_csi_driver
-enable_aws_cloudwatch_metrics = local.aws_addons.enable_aws_cloudwatch_metrics
-enable_aws_privateca_issuer = local.aws_addons.enable_aws_privateca_issuer
-enable_cluster_autoscaler = local.aws_addons.enable_cluster_autoscaler
-enable_external_dns = local.aws_addons.enable_external_dns
+  enable_cert_manager = local.aws_addons.enable_cert_manager
+  enable_aws_efs_csi_driver = local.aws_addons.enable_aws_efs_csi_driver
+  enable_aws_fsx_csi_driver = local.aws_addons.enable_aws_fsx_csi_driver
+  enable_aws_cloudwatch_metrics = local.aws_addons.enable_aws_cloudwatch_metrics
+  enable_aws_privateca_issuer = local.aws_addons.enable_aws_privateca_issuer
+  enable_cluster_autoscaler = local.aws_addons.enable_cluster_autoscaler
+  enable_external_dns = local.aws_addons.enable_external_dns
 
-# using pod identity for external secrets we don't need this
+  #using pod identity for external secrets we don't need this
+  #enable_external_secrets = local.aws_addons.enable_external_secrets
 
-#enable_external_secrets = local.aws_addons.enable_external_secrets
+  #using pod identity for load balancer controller we don't need this
+  #enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
+  enable_fargate_fluentbit = local.aws_addons.enable_fargate_fluentbit
+  enable_aws_for_fluentbit = local.aws_addons.enable_aws_for_fluentbit
+  enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
 
-# using pod identity for load balancer controller we don't need this
+  #using pod identity for karpenter we don't need this
+  #enable_karpenter = local.aws_addons.enable_karpenter
+  enable_velero = local.aws_addons.enable_velero
+  enable_aws_gateway_api_controller = local.aws_addons.enable_aws_gateway_api_controller
 
-#enable_aws_load_balancer_controller = local.aws_addons.enable_aws_load_balancer_controller
-enable_fargate_fluentbit = local.aws_addons.enable_fargate_fluentbit
-enable_aws_for_fluentbit = local.aws_addons.enable_aws_for_fluentbit
-enable_aws_node_termination_handler = local.aws_addons.enable_aws_node_termination_handler
-
-# using pod identity for karpenter we don't need this
-
-#enable_karpenter = local.aws_addons.enable_karpenter
-enable_velero = local.aws_addons.enable_velero
-enable_aws_gateway_api_controller = local.aws_addons.enable_aws_gateway_api_controller
-
-tags = local.tags
+  tags = local.tags
 }
 EOF
 :::
+<!-- prettier-ignore-end -->
 
 For Some of the addons, we prefer to rely on EKS Pod Identity, instead of IRSA. As the EKS blueprints Addons, have not yet implemented the Pod Identity, we deactivate it to use the EKS pod identity module instead:
 
@@ -159,7 +156,7 @@ This file, contain all the addons, with their version, and configurations that w
 For example, If we search for **load-balancer-controller** in this file we should get this output:
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='3'}
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='14,15,16'}
 
   aws_load_balancer_controller:
     enabled: false
@@ -181,12 +178,10 @@ For example, If we search for **load-balancer-controller** in this file we shoul
       clusterName: '{{.metadata.annotations.aws_cluster_name}}'
       serviceAccount:
         name: '{{.metadata.annotations.aws_load_balancer_controller_service_account}}'
-        annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.aws_load_balancer_controller_iam_role_arn}}'
 :::
 <!-- prettier-ignore-end -->
 
-We can see that this addons will be installed, if we update somehow the enable parameter which is false at the moment.
+We can see that this addons will be installed, if we provide the label **enable_aws_load_balancer_controller** with **true** value.
 
 If we remember how we created the addons-applicationset, we have a way to pass several valueFiles, that can be used to change the default value depending on the context:
 
@@ -217,6 +212,7 @@ That mean we can have custom values by **environment**, **clusters**, or by **te
 
 In this case, we are going to update the highlighted one, so, at **cluster** level.
 
+<!--
 ### 4. Enable load-balancer-controller for our cluster.
 
 In order to activate this only for our cluster, we are going to activate this at the **cluster** values file level.
@@ -235,6 +231,18 @@ git -C ${GITOPS_DIR}/addons add .  || true
 git -C ${GITOPS_DIR}/addons commit -m "Activate Load balancer controller" || true
 git -C ${GITOPS_DIR}/addons push || true
 ```
+-->
+
+### 4. Enable load-balancer-controller for our cluster.
+
+```bash
+cat <<'EOF' >> ~/environment/hub/terraform.tfvars
+addons = {
+    enable_aws_load_balancer_controller = "true"
+    enable_karpenter = "true"
+}
+EOF
+```
 
 You can refresh the application in Argo CD UI.
 
@@ -245,6 +253,10 @@ cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
 ```
+
+:::alert{header="Important" type="info"}
+This process will take some times, as we are creating with Terraform all the pre-requisites for out addons
+:::
 
 ### 6. Verify the load balancer deployment
 
@@ -261,3 +273,35 @@ The Argo CD dashboard should have a load balancer application.
 ```bash
 kubectl get deployment -n kube-system aws-load-balancer-controller --context hub-cluster
 ```
+
+Expected output:
+
+```
+NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+aws-load-balancer-controller   2/2     2            2           2m47s
+```
+
+### 6. Verify the Karpenter deployment
+
+You can accelerate the argocd reconciliation with manual sync:
+
+```bash
+kubectl get deployment -n kube-system karpenter --context hub-cluster
+```
+
+Expected output:
+
+```
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+karpenter   2/2     2            2           3m33s
+```
+
+### 7. Troubleshoot
+
+In case of issues, you can check the logs of different components. Generally the ApplicationSet controller is a good choice:
+
+```bash
+kubectl stern -n argocd applicationset --tail=10
+```
+
+This command will show you the logs of the controller. you can use `Crtl-C` to qui the tail of the logs.

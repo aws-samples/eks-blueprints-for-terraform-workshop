@@ -132,3 +132,12 @@ AWS_DEFAULT_REGION=us-east-2
 AWS_REGION=us-east-2
 AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
 ```
+
+:::alert{header=Note type=warning}
+After the rollout restart, the argocd Pods are replaced, that means that the port-forward has also been broken. you may need to execute again the command to retrieve access to Argo CD UI.
+
+```bash
+argocd_hub_credentials
+```
+
+:::

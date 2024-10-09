@@ -52,16 +52,16 @@ spec:
         - repoURL: '{{metadata.annotations.platform_repo_url}}'
           targetRevision: '{{metadata.annotations.platform_repo_revision}}'
           ref: values
-        - chart: '{{values.addonChart}}'
-          repoURL: '{{values.addonChartRepository}}'
+        - repoURL: '{{values.addonChartRepository}}'
+          chart: '{{values.addonChart}}'
           targetRevision: '{{values.addonChartVersion}}'
-      helm:
-        releaseName: 'argoprojects-{{path.basename}}'
-        valueFiles:
-          - '$values/{{metadata.annotations.platform_repo_basepath}}config/workload/{{path.basename}}/project/project-values.yaml'
-        parameters:
-          - name: "projects[0].sourceRepos[0]"
-            value: '{{metadata.annotations.workload_repo_url}}'
+          helm:
+            releaseName: 'argoprojects-{{path.basename}}'
+            valueFiles:
+              - '$values/{{metadata.annotations.platform_repo_basepath}}config/workload/{{path.basename}}/project/project-values.yaml'
+            parameters:
+              - name: "projects[0].sourceRepos[0]"
+                value: '{{metadata.annotations.workload_repo_url}}'
       destination:
         name: '{{name}}'
       syncPolicy:
@@ -73,6 +73,7 @@ spec:
             #limit: 100
         syncOptions:
           - CreateNamespace=true
+
 EOF
 :::
 <!-- prettier-ignore-end -->
@@ -91,8 +92,6 @@ Lets create webstore project values.
 
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Few values are commented for the upcoming chapters.
 
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='7,12,39,47'}
 ```bash
 mkdir -p $GITOPS_DIR/platform/config/workload/webstore/project
 cat > $GITOPS_DIR/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
@@ -119,7 +118,7 @@ projects:
   - namespace: ui
     name: spoke-staging
   - namespace: assets
-    name: spoke-staging    
+    name: spoke-staging
   #enablespokeprod - namespace: carts
   #enablespokeprod   name: spoke-prod
   #enablespokeprod - namespace: catalog
@@ -130,7 +129,7 @@ projects:
   #enablespokeprod   name: spoke-prod
   #enablespokeprod - namespace: rabbitmq
   #enablespokeprod   name: spoke-prod
-    
+
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
   - group: ''
@@ -164,11 +163,9 @@ projects:
   - group: 'dynamodb.services.k8s.aws'
     kind: Table
   - group: 'autoscaling'
-    kind: HorizontalPodAutoscaler      
+    kind: HorizontalPodAutoscaler
 EOF
 ```
-:::
-<!-- prettier-ignore-end -->
 
 - Line 7: (Restrict what may be deployed): List of permitted git repositories that are allowed to deploy. The value gets replaced with gitops-workload url( Line 46,47 of `argoproject-applicationset.yaml`).
 - Line 12: (Restrict where apps may be deployed to): Permitted destination of clusters and namespaces. For example carts namespace is restricted to spoke-staging cluster.
@@ -183,6 +180,11 @@ git add .
 git commit -m "add bootstrap project applicationset and webstore project values"
 git push
 ```
+
+:::alert{header=Note type=warning}
+It may takes some times for the Argo project webstore to synchronize on the cluster.
+Wait some times and try refresh the UI
+:::
 
 ### 4. Validate Project
 

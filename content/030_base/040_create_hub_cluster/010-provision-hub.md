@@ -206,7 +206,7 @@ module "eks" {
       max_size     = 10
       desired_size = 3
 
-      taints = local.aws_addons.enable_karpenter ? {
+      taints = var.addons.enable_karpenter ? {
         dedicated = {
           key    = "CriticalAddonsOnly"
           operator   = "Exists"
@@ -250,7 +250,7 @@ module "eks" {
     # NOTE - if creating multiple security groups with this module, only tag the
     # security group that Karpenter should utilize with the following tag
     # (i.e. - at most, only one security group should have this tag in your account)
-    "karpenter.sh/discovery" = data.terraform_remote_state.vpc.outputs.vpc_name
+    "karpenter.sh/discovery" = local.name
   })
   tags = local.tags
 }

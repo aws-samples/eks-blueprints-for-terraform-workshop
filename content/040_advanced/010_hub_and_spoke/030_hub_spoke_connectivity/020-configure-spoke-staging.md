@@ -169,7 +169,7 @@ EOF
 let's enabled some addons in our terraform configuration:
 
 ```bash
-sed '/addons = {/,/}/ c\
+sed -i '/addons = {/,/}/ c\
 addons = { \
  enable_aws_load_balancer_controller = "true" \
  enable_kube_state_metrics = "true" \

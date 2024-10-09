@@ -73,7 +73,9 @@ EOF
 
 ### 2. Define addons variables
 
-Define enable-_ addons boolean variables. These provide a simple way to control whether addons are installed or removed. Define addons variable as a list of key/value pairs of addon(enable-_) values. Define addons_metadata variable as a list of key/value pairs of mainly codecommit values.
+Define **enable_XXX_addons** boolean variables. These provide a simple way to control whether addons are installed or removed, that will be stored as labels.
+
+Define addons_metadata variable as a list of key/value pairs that will be mapped to the secret annotations, and contain any important data that Argo CD can uses to configure the Applications.
 
 Some values are commented and will be used later in the workshop.
 
@@ -152,7 +154,7 @@ locals{
     { fleet_member = local.fleet_member },
     { tenant = local.tenant },  
     { aws_cluster_name = module.eks.cluster_name },
-    { workloads = true }
+    #{ workloads = true }
     #enablewebstore,{ workload_webstore = true }  
   )
 
@@ -163,6 +165,7 @@ locals{
       aws_region = local.region
       aws_account_id = data.aws_caller_identity.current.account_id
       aws_vpc_id = local.vpc_id
+      aws_vpc_name = data.terraform_remote_state.vpc.outputs.vpc_name
     },
     {
       #enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
@@ -187,10 +190,10 @@ locals{
       workload_repo_revision = local.gitops_workload_revision
     },
     {
-      #enablekarpenter karpenter_namespace = local.karpenter.namespace
-      #enablekarpenter karpenter_service_account = local.karpenter.service_account
-      #enablekarpenter karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
-      #enablekarpenter karpenter_sqs_queue_name = module.karpenter.queue_name
+      karpenter_namespace = local.karpenter.namespace
+      karpenter_service_account = local.karpenter.service_account
+      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      karpenter_sqs_queue_name = module.karpenter.queue_name
     },
     {
       external_secrets_namespace = local.external_secrets.namespace

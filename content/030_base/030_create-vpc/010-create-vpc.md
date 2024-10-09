@@ -192,5 +192,6 @@ private_subnets = [
   "subnet-05da55f463254176f",
 ]
 vpc_id = "vpc-056a18d25ca30e155"
+vpc_name = "eks-blueprints-workshop"
 :::
 <!-- prettier-ignore-end -->

@@ -29,12 +29,31 @@ Navigate to the Argo CD dashboard in the UI and verify that the "cluster-addons"
 
 ![addons-rootapp](/static/images/addons-rootapp.jpg)
 
+:::alert{header="Important" type="warning"}
+We are using port-forward to access Argo CD UI in this workshop.
+While this setup is convenient, the websocket sync mechanism or the UI is not working properly, you may need to totally refresh the page (Ctrl+R) to see updates in the UI.
+
+Also, if during the workshop, the UI became not responsive, that may be because the port-forward has stopped. you can re-enable it at any time by executing again
+
+```bash
+argocd_hub_credentials
+```
+
+:::
+
 In the Argo CD dashboard, click on the "bootstrap" Application and examine the list of Applications that were generated from it.
 
 ![addons-rootapp](/static/images/cluster-addon-creation-flow.jpg)
 
-For now there is no addons, as we didn't activate their deployment.
+The Application **cluster-addons** will create an ApplicationSet for all the addons that can be deployed with out GitOps addons repository
+
+![cluster-addons](/static/images/cluster-addons-applicationsets.jpg)
+
+For now there is no addons, as we didn't activate their deployment, so there is no Application object created by theses ApplicationSets
 
 :::alert{header="Important" type="info"}
-The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
-:::
+
+1. The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
+
+2. The Addons to be deployed, must be enabled in the cluster secret, which is not the case at the moment.
+   :::

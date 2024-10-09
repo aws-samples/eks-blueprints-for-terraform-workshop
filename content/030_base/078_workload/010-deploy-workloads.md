@@ -153,8 +153,6 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-TODO: update line numbers
-
 - Line 17: The **webstore** workload is only deployed on clusters that have the label **workload_webstore = true**.
   - The hub cluster has workload_webstore = true label.
 - Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository.
@@ -180,7 +178,6 @@ git push
 
 ```bash
 argocd app sync argocd/workload-webstore
-argocd app sync argocd/webstore
 ```
 
 ![workload-webstore](/static/images/workload_webstore.jpg)
