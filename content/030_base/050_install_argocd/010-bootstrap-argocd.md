@@ -3,13 +3,13 @@ title: "Install Argo CD with GitOps Bridge"
 weight: 10
 ---
 
-In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge. It also creates a Kubernetes secret to store metadata like labels and annotations about the cluster.
+In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge. GitOps Bridge also creates a Kubernetes secret to store metadata like labels and annotations about the cluster.
 
 ![EKS Cluster](/static/images/argocd-bootstrap-install.jpg)
 
 ### 1. Configure GitOps Bridge
 
-GitOps Bridge handles the initial configuration so you can get Argo CD up and running with minimal setup on your part. It configures loadBalancer to access the dashboard.
+GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup. It configures a loadBalancer to provide access to the dashboard.
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -64,7 +64,7 @@ EOF
 
 ```
 
-### 2. Create value file for ArgoCD
+### 2. Create value file for Argo CD
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/argocd-initial-values.yaml
@@ -95,24 +95,24 @@ terraform apply -auto-approve
 
 ### 3. Validate Argo CD install
 
-Get Argo CD dashboard URL:
+Get the Argo CD dashboard URL:
 
 ```bash
 argocd_hub_credentials
 ```
 
-Copy the Argo CD password from the above command and use `admin` username to login to Argo CD UI.
+Copy the Argo CD password from the above command and use `admin` as the username to log in to the Argo CD UI.
 
-You can click on the output link and select **Open**, to access the Argo CD user interface.
+We can click on the output link and select **Open** to access the Argo CD user interface.
 
-> As we are in a lab workshop, we don't have custom domain, so we uses default one. You can ignore the warning about self signed certificate when you access the dashboard, this is fine for this workshop.
+::alert[As this is a lab workshop environment, we do not have a custom domain, so we use the default one. We can ignore the warning about the self-signed certificate when accessing the dashboard.]{header="Note"}
 
-After GitOps Bridge installs Argo CD, you can access the Argo CD dashboard using the default admin user and the auto-generated password.
-In the Argo CD UI, you will find the hub cluster already registered under **Settings > Clusters**. This means Argo CD has capability to administer the hub-cluster.
+After GitOps Bridge installs Argo CD, we can access the Argo CD dashboard using the default admin user and the auto-generated password.
+In the Argo CD UI, we will find the hub cluster already registered under **Settings > Clusters**. This means Argo CD has the capability to administer the hub-cluster.
 
 ![EKS Cluster](/static/images/argocd-cluster-object.png)
 
-You can also validate that the gitops-bridge has correctly created the secrets for this EKS cluster in the argocd namespace:
+We can also validate that gitops-bridge has correctly created the secrets for this EKS cluster in the argocd namespace:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd hub-cluster

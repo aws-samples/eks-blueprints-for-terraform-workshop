@@ -3,17 +3,17 @@ title: "Clean up"
 weight: 90
 ---
 
-In this workshop, we created a VPC, then 2 or more clusters. The EKS clusters were created using Terraform, but the Applications were deployed using Argo CD.
+In this workshop, we have created a VPC and multiple EKS clusters. While the clusters were created using Terraform, the Applications were deployed using Argo CD.
 
-As Terraform does not know what Argo CD Applications are installed on each EKS cluster, we need to clean those applications before destroying the clusters with Terraform.
+Since Terraform is not aware of the Argo CD Applications installed on each EKS cluster, we need to clean up those applications before destroying the clusters with Terraform.
 
-To ease this, we prepared a `destroy.sh` script, that will clean properly the installed resources in appropriate order.
+To simplify this process, we have prepared a `destroy.sh` script that will properly clean up the installed resources in the appropriate order.
 
-If you have deployed additional resources, that may have created Cloud resources, you also need to clean them prior to destroy the clusters, otherwise those resources may be not cleaned properly.
+If we have deployed additional resources that may have created Cloud resources, we also need to clean those up prior to destroying the clusters. Otherwise, those resources may not be cleaned up properly.
 
-### Use the cleanup script
+### Using the cleanup script
 
-You can just execute the cleanup script. In this script, there can be somme errors, but that is normal and the script will repeat some of the actions until normally cleanup success.
+We can execute the cleanup script to remove all resources. The script may show some errors during execution, which is normal as it repeats certain actions until cleanup succeeds.
 
 ```bash
 $BASE_DIR/hack/scripts/destroy.sh
@@ -21,4 +21,4 @@ $BASE_DIR/hack/scripts/destroy.sh
 
 ::alert[Removing resources in this specific order ensures dependencies are deleted entirely. VPCs, subnets, and IP addresses attached to ENIs are all deleted last.]{header="Important"}
 
-> Congratulations! You should have removed everything installed by the workshop.
+> Congratulations! We should have now removed everything installed by the workshop.

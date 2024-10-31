@@ -4,7 +4,7 @@ weight: 10
 hidden: true
 ---
 
-In this chapter, you will install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. It will be automated in the upcoming chapters. The Load Balancer addon provides Kubernetes resources access to AWS Elastic Load Balancers.
+In this chapter, we will install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. We will automate this process in upcoming chapters. The Load Balancer addon enables Kubernetes resources to access AWS Elastic Load Balancers.
 
 ### 1. Create Application
 
@@ -14,7 +14,7 @@ In this chapter, you will install the [AWS Load Balancer Controller](https://kub
 
 3. On the "Create Application" page:
 
-You have **two options** for creating the Application - either provide the manifest file directly, or enter the values manually.
+We have **two options** for creating the Application - either provide the manifest file directly, or enter the values manually.
 
 #### Create with Manifest
 
@@ -50,7 +50,7 @@ After replacing the YAML content, click the "Save" button followed by the "Creat
 
 #### Create Manually
 
-If you prefer, you can create manually by providing the following specified values.
+If we prefer, we can create manually by providing the following specified values.
 
 ```
 General
@@ -85,7 +85,7 @@ Click "SYNC" and click "SYNCHRONIZE". This will deploy the Load Balancer control
 
 ### 3. Validate loadBalancer controller
 
-You can validate the Argo CD loadbalancer addon created deployment object.
+We can validate that the Argo CD loadbalancer addon created the deployment object.
 
 ```bash
 kubectl get deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
@@ -93,7 +93,7 @@ kubectl get deployment -n kube-system loadbalancer-aws-load-balancer-controller 
 
 ### 4. Delete loadBalancer controller
 
-For testing, let's delete the loadBalancer controller.
+For testing purposes, let's delete the loadBalancer controller.
 
 ```bash
 kubectl delete deployment -n kube-system loadbalancer-aws-load-balancer-controller --context hub
@@ -103,11 +103,11 @@ Argo CD flags loadBalancer as "OutOfSync"
 
 ![delete-loadBalancer](/static/images/delete-lb.png)
 
-(Optional) If you "Sync" then Argo CD recreates loadBalancer deployment object, we can see the value of having Argo CD monitoring our deployed objects and fixing them if needed.
+(Optional) If we "Sync" then Argo CD recreates the loadBalancer deployment object. This demonstrates the value of having Argo CD monitor our deployed objects and fix them when needed.
 
 ### 5. Delete loadBalancer Application
 
-We prefer not to install things manually and instead want to rely on syncing with a Git repository to properly bootstrap our cluster add-ons. Therefore, let's remove the current add-on for now and reinstall it from Git.
+We prefer not to install components manually and instead want to rely on syncing with a Git repository to properly bootstrap our cluster add-ons. Therefore, let's remove the current add-on for now and reinstall it from Git.
 
 From Argo CD UI, select loadbalancer application and select Delete.
 

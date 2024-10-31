@@ -5,7 +5,7 @@ weight: 10
 
 ### 1. Remote state
 
-The spoke-staging cluster references outputs from the vpc and hub modules.
+We need to reference outputs from the vpc and hub modules for our spoke-staging cluster.
 
 ```bash
 mkdir -p ~/environment/spoke
@@ -31,9 +31,7 @@ EOF
 
 ### 2. Configure EKS Spoke cluster
 
-It configures the EKS cluster, sets up label and annotation values, and uses the Terraform blueprint addons module to create IAM roles.
-
-We reuse the main.tf Terraform file from the hub cluster, with a few adjustments:
+Let's reuse the Terraform configuration from the hub cluster with some modifications for our spoke cluster:
 
 ```bash
 cp ~/environment/hub/git_data.tf ~/environment/spoke
@@ -65,10 +63,9 @@ cp ~/environment/hub/variables.tf ~/environment/spoke
 cp ~/environment/hub/outputs.tf ~/environment/spoke
 ```
 
-### 5. Copy variable values file to the cluster
+### 5. Configure addons
 
-We copy and reset the addons, so that we enable when required.
-We copy the terraform configuration file to define the variable, but we deactivate Argo CD, as we don't want to deploy it on spoke cluster.
+We will copy the terraform configuration but disable Argo CD since we do not want to deploy it on the spoke cluster:
 
 ```bash
 cp ~/environment/hub/terraform.tfvars ~/environment/spoke/terraform.tfvars
@@ -77,7 +74,7 @@ sed -i 's/enable_argocd = "true"/enable_argocd = "false"/' ~/environment/spoke/t
 
 ### 6. Create terraform workspace & Apply Terraform
 
-Create new staging workspace
+Let's create a new staging workspace and initialize our configuration:
 
 ```bash
 cd ~/environment/spoke
@@ -88,15 +85,15 @@ terraform apply --auto-approve
 
 ::alert[The process of creating the cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
-### 8. Access Spoke Staging Cluster
+### 7. Access Spoke Staging Cluster
 
-To configure kubectl, execute the following:
+To configure kubectl, we will execute:
 
 ```bash
 eval $(terraform output -raw configure_kubectl)
 ```
 
-Run the command below to see the nodes in the hub cluster.
+Let's verify we can see the nodes in our spoke cluster:
 
 ```bash
 kubectl get nodes --context spoke-staging
@@ -111,4 +108,4 @@ ip-10-0-44-149.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks
 ip-10-0-49-157.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks-a737599
 ```
 
-Navigate to the AWS Console, go to EKS, then select Clusters to see the spoke-staging cluster.
+We can now see our spoke-staging cluster in the AWS Console under EKS > Clusters.

@@ -3,7 +3,6 @@ title: "Advanced - Argo CD Hub-Spoke deployment"
 weight: 79
 ---
 
-There are many Argo CD deployment architectures. In this workshop you will deploy hub-spoke architecture.
-In a hub-spoke architecture, the central Argo CD server is responsible for managing the deployment of applications to multiple Kubernetes clusters.
+In this module, we will explore one of several possible Argo CD deployment architectures - the hub-spoke model. In this architecture, a central Argo CD server (the hub) manages deployments across multiple Kubernetes clusters (the spokes).
 
 ![](/static/images/argocd-hub-spoke.jpg)

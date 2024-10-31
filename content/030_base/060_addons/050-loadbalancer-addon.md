@@ -5,17 +5,17 @@ weight: 50
 
 ### 1. Create IAM roles for addons
 
-Many Kubernetes addons require authenticated communication with AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. Proper IAM roles and policies must be configured to grant the addons the necessary permissions. For example, the AWS Load Balancer Controller addon interacts with EC2 APIs to provision Network Load Balancers (NLBs) and Application Load Balancers (ALBs). Similarly, the Karpenter autoscaler interacts with EC2 APIs to dynamically provision and terminate compute resources like EC2 instances based on cluster needs.
+Many Kubernetes addons require authenticated communication with AWS APIs to seamlessly integrate Kubernetes with AWS infrastructure and services. We need to configure proper IAM roles and policies to grant the addons the necessary permissions. For example, the AWS Load Balancer Controller addon interacts with EC2 APIs to provision Network Load Balancers (NLBs) and Application Load Balancers (ALBs). Similarly, the Karpenter autoscaler interacts with EC2 APIs to dynamically provision and terminate compute resources like EC2 instances based on cluster needs.
 
 ![addons-lb-role](/static/images/addon-lb-role.png)
 
-Instead of manually creating these IAM roles, the Terraform EKS Blueprints addons module [eks_blueprints_addons](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest) can automatically provision least privilege roles for each addon.
+Instead of manually creating these IAM roles, we can use the Terraform EKS Blueprints addons module [eks_blueprints_addons](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest) to automatically provision least privilege roles for each addon.
 
-This module allows both installing the addons and creating their IAM roles. However, we only want it to create the IAM roles, not deploy the addons themselves. The installation of the addons onto the EKS cluster is done by Argo CD
+This module allows both installing the addons and creating their IAM roles. However, we only want it to create the IAM roles, not deploy the addons themselves. The installation of the addons onto the EKS cluster is done by Argo CD.
 
 Using EKS Blueprint Addons module improves security and reduces complexity.
 
-You can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 15 below.
+We can configure the Terraform module to create only the required AWS resources but not the kubernetes resources (as we prefer as a best practice to let Argo CD talk to Kubernetes) by setting **create_kubernetes_resources = false** as set in line 15 below.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml highlightLines='15'}
@@ -66,13 +66,13 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-For Some of the addons, we prefer to rely on EKS Pod Identity, instead of IRSA. As the EKS blueprints Addons, have not yet implemented the Pod Identity, we deactivate it to use the EKS pod identity module instead:
+For some of the addons, we prefer to rely on EKS Pod Identity rather than IRSA. As the EKS blueprints Addons have not yet implemented Pod Identity, we deactivate it to use the EKS pod identity module instead:
 
 ```bash
 cp $BASE_DIR/solution/hub/pod-identity.tf /home/ec2-user/environment/hub
 ```
 
-This file defines several roles that will be used by some of the addons, here Load balancer controller will uses :
+This file defines several roles that will be used by some of the addons. Here, the Load balancer controller will use:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='0'}
@@ -99,9 +99,9 @@ module "aws_lb_controller_pod_identity" {
 :::
 <!-- prettier-ignore-end -->
 
-This will call the EKS API to make the association between the IAM role that will be created and the Kubernetes namespace and service_account
+This will call the EKS API to make the association between the IAM role that will be created and the Kubernetes namespace and service_account.
 
-The file also create roles for:
+The file also creates roles for:
 
 - External Secret operator
 - CloudWatch Observability
@@ -111,13 +111,13 @@ The file also create roles for:
 - Karpenter
 - CNI Metrics helper
 
-That mean that we could easily activate theses addons through GitOps Bridge afterwards.
+This means we can easily activate these addons through GitOps Bridge afterwards.
 
 ### 2. Provide addon IAM role to Argo CD
 
-We use the Terraform EKS Blueprints addons module to create AWS resources for EKS addons. These resources identifiers need to be provided to Argo CD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by Argo CD.
+We use the Terraform EKS Blueprints addons module to create AWS resources for EKS addons. These resource identifiers need to be provided to Argo CD, which handles actually installing the addons on the Kubernetes cluster. In this case, the IAM roles for the load balancer controller will be set on the service accounts of the addon by Argo CD.
 
-The EKS addons module makes it easy to access the created AWS resources identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by Argo CD.
+The EKS addons module makes it easy to access the created AWS resource identifiers using the "gitops_metadata" output. This output is passed to the GitOps bridge, which sets annotations on the cluster. The annotations contain the proper info and can be accessed by the addon ApplicationSets deployed by Argo CD.
 
 ```bash
 sed -i "s/#enableaddonmetadata//g" ~/environment/hub/main.tf
@@ -143,17 +143,17 @@ locals{
 
 ### 3. More about GitOps Bridge v2
 
-The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using Argo CD. The steps will show you how a simple change to the Git repository can trigger Argo CD to deploy and manage an addon in an automated way.
+The goal of this chapter is to demonstrate how easy it can be to install an addon on a Kubernetes cluster using Argo CD. We will show how a simple change to the Git repository can trigger Argo CD to deploy and manage an addon in an automated way.
 
-With GitOps Bridge v2, we rely on a Helm Charts to create the addons ApplicationSets. This Generic Helm chart is configured with a value file, that you can find here:
+With GitOps Bridge v2, we rely on a Helm Chart to create the addons ApplicationSets. This Generic Helm chart is configured with a value file, that we can find here:
 
 ```bash
 code $GITOPS_DIR/addons/charts/gitops-bridge/values.yaml
 ```
 
-This file, contain all the addons, with their version, and configurations that we may want to enable in the cluster.
+This file contains all the addons, with their versions, and configurations that we may want to enable in the cluster.
 
-For example, If we search for **load-balancer-controller** in this file we should get this output:
+For example, if we search for **load-balancer-controller** in this file we should get this output:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='14,15,16'}
@@ -181,15 +181,15 @@ For example, If we search for **load-balancer-controller** in this file we shoul
 :::
 <!-- prettier-ignore-end -->
 
-We can see that this addons will be installed, if we provide the label **enable_aws_load_balancer_controller** with **true** value.
+We can see that this addon will be installed if we provide the label **enable_aws_load_balancer_controller** with **true** value.
 
-If we remember how we created the addons-applicationset, we have a way to pass several valueFiles, that can be used to change the default value depending on the context:
+If we remember how we created the addons-applicationset, we have a way to pass several valueFiles that can be used to change the default value depending on the context:
 
 ```bash
 cat $GITOPS_DIR/platform/bootstrap/addons-applicationset.yaml | grep value
 ```
 
-That should output
+That should output:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='9'}
@@ -208,30 +208,9 @@ That should output
 :::
 <!-- prettier-ignore-end -->
 
-That mean we can have custom values by **environment**, **clusters**, or by **tenants**.
+This means we can have custom values by **environment**, **clusters**, or by **tenants**.
 
-In this case, we are going to update the highlighted one, so, at **cluster** level.
-
-<!--
-### 4. Enable load-balancer-controller for our cluster.
-
-In order to activate this only for our cluster, we are going to activate this at the **cluster** values file level.
-
-let's create
-
-```bash
-mkdir -p $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/
-cp $BASE_DIR/solution/gitops/addons/clusters/hub-cluster/addons/gitops-bridge/values.yaml $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/values.yaml
-```
-
-Commit the change
-
-```bash
-git -C ${GITOPS_DIR}/addons add .  || true
-git -C ${GITOPS_DIR}/addons commit -m "Activate Load balancer controller" || true
-git -C ${GITOPS_DIR}/addons push || true
-```
--->
+In this case, we are going to update the highlighted one, so at the **cluster** level.
 
 ### 4. Enable load-balancer-controller for our cluster.
 
@@ -244,7 +223,7 @@ addons = {
 EOF
 ```
 
-You can refresh the application in Argo CD UI.
+We can refresh the application in Argo CD UI.
 
 ### 5. Apply Terraform
 
@@ -255,12 +234,12 @@ terraform apply --auto-approve
 ```
 
 :::alert{header="Important" type="info"}
-This process will take some times, as we are creating with Terraform all the pre-requisites for out addons
+This process will take some time, as we are creating with Terraform all the pre-requisites for our addons
 :::
 
 ### 6. Verify the load balancer deployment
 
-You can accelerate the argocd reconciliation with manual sync:
+We can accelerate the argocd reconciliation with manual sync:
 
 ```bash
 argocd app sync argocd/cluster-addons
@@ -283,7 +262,7 @@ aws-load-balancer-controller   2/2     2            2           2m47s
 
 ### 6. Verify the Karpenter deployment
 
-You can accelerate the argocd reconciliation with manual sync:
+We can accelerate the argocd reconciliation with manual sync:
 
 ```bash
 kubectl get deployment -n kube-system karpenter --context hub-cluster
@@ -298,10 +277,10 @@ karpenter   2/2     2            2           3m33s
 
 ### 7. Troubleshoot
 
-In case of issues, you can check the logs of different components. Generally the ApplicationSet controller is a good choice:
+In case of issues, we can check the logs of different components. Generally the ApplicationSet controller is a good choice:
 
 ```bash
 kubectl stern -n argocd applicationset --tail=10
 ```
 
-This command will show you the logs of the controller. you can use `Crtl-C` to qui the tail of the logs.
+This command will show us the logs of the controller. We can use `Crtl-C` to quit the tail of the logs.

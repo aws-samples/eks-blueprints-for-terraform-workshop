@@ -10,7 +10,7 @@ mkdir -p ~/environment/vpc
 cd ~/environment/vpc
 ```
 
-Define Terraform and providers versions:
+Let's define the Terraform and provider versions:
 
 ```bash
 cat > ~/environment/vpc/versions.tf << 'EOF'
@@ -51,7 +51,7 @@ EOF
 
 ### 3. Configure VPC
 
-The provided Terraform code sets up the foundational infrastructure for an Amazon Virtual Private Cloud (VPC) with public and private subnets spanning three Availability Zones, along with necessary networking components like an Internet Gateway, NAT Gateway, and default network resources. The public and private subnets are tagged specifically for later use with the Kubernetes load balancer controller to dynamically discover them. This VPC infrastructure serves as the foundation for deploying and running Kubernetes clusters and other resources within the VPC.
+Let's set up our Amazon VPC with public and private subnets spanning three Availability Zones. The following Terraform code provisions our foundational VPC infrastructure including an Internet Gateway, NAT Gateway, and required network resources. The subnets are tagged specifically to enable dynamic discovery by the Kubernetes load balancer controller. This VPC will serve as the network foundation for deploying and running our Kubernetes clusters.
 
 ```bash
 cat > ~/environment/vpc/main.tf <<'EOF'
@@ -119,9 +119,9 @@ module "vpc" {
 EOF
 ```
 
-### 3. Create outputs
+### 4. Define outputs
 
-VPC and private subnets are used when creating EKS Clusters.
+We'll define VPC and private subnet outputs that will be used when creating EKS Clusters:
 
 ```bash
 cat > ~/environment/vpc/outputs.tf <<'EOF'
@@ -144,25 +144,23 @@ output "vpc_name" {
 EOF
 ```
 
-### 5. Provision VPC:
+### 5. Provision VPC
 
-Initialize Terraform to get required modules and providers
+First, let's initialize Terraform to get the required modules and providers:
 
 ```bash
 cd ~/environment/vpc
 terraform init
 ```
 
-It is always a good practice to use a dry-run command
+It's a good practice to perform a dry-run first:
 
 ```bash
 cd ~/environment/vpc
 terraform plan
 ```
 
-If there are no errors, you can proceed with deployment:
-
-> The auto-approve flag avoids you having to confirm that you want to provision resources.
+If there are no errors, we can proceed with the deployment:
 
 ```bash
 cd ~/environment/vpc
@@ -171,11 +169,11 @@ terraform apply -auto-approve
 
 ::alert[The process of creating a Virtual Private Cloud (VPC) may require up to 5 minutes to complete.]{header="Wait for resources to create"}
 
-Once completed, you can see the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprints-workshop)
+Once completed, we can view the VPC in the [console](https://console.aws.amazon.com/vpc/home?#vpcs:tag:Name=eks-blueprints-workshop)
 
 ::alert[This workshop uses local Terraform state. To learn about a proper setup, take a look at https://www.terraform.io/language/state]{header="Terraform State Management"}
 
-After some times you should see output similar to:
+After some time, we should see output similar to:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='2'}

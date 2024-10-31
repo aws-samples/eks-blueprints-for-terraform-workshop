@@ -10,15 +10,15 @@ Here, we create an EKS cluster (hub) within the previously provisioned VPC, util
 ### 1. Create Remote State
 
 ::::expand{header="Get vpc and private subnet values from the vpc module. Click to know more about Terraform remote state"}
-The use of remote state in Terraform allows you to share and reuse infrastructure resources across multiple configurations or teams. In the context of this code, the remote state is being read to retrieve the VPC and private subnet values from the previously created VPC module. This approach offers several benefits:
+The use of remote state in Terraform enables sharing and reusing infrastructure resources across multiple configurations or teams. In this context, the remote state retrieves VPC and private subnet values from the previously created VPC module. This approach offers several benefits:
 
-1. **Separation of Concerns**: By separating the VPC creation and EKS cluster deployment into different Terraform configurations, you can assign responsibilities to different teams or individuals. For example, a central team could be responsible for creating accounts and VPCs, while another team handles the deployment of EKS clusters within those VPCs.
-2. **Reusability**: Instead of recreating the VPC infrastructure for each EKS cluster deployment, you can reuse the existing VPC by fetching its state from the remote state. This promotes efficient resource utilization and avoids duplication of effort.
-3. **Consistency**: By referencing the remote state, you ensure that the EKS cluster is deployed within the correct VPC and private subnets, maintaining consistency across your infrastructure.
-4. **Collaboration**: Remote state enables collaboration between teams or individuals working on different parts of the infrastructure. Changes made to the VPC by one team are automatically reflected in the EKS cluster deployment, facilitating seamless integration and reducing the risk of configuration drift.
-5. **Modular Architecture**: Leveraging remote state promotes a modular architecture, where different components of your infrastructure can be managed independently while still maintaining dependencies and relationships between them.
+1. **Separation of Concerns**: By separating VPC creation and EKS cluster deployment into different Terraform configurations, we can assign responsibilities to different teams or individuals. For example, a central team could manage accounts and VPCs, while another team handles EKS cluster deployments.
+2. **Reusability**: Instead of recreating VPC infrastructure for each EKS cluster deployment, we can reuse the existing VPC through remote state. This promotes efficient resource utilization and avoids duplication.
+3. **Consistency**: Referencing remote state ensures the EKS cluster deploys within the correct VPC and private subnets, maintaining infrastructure consistency.
+4. **Collaboration**: Remote state enables collaboration between teams working on different infrastructure components. Changes made to the VPC by one team automatically reflect in the EKS cluster deployment.
+5. **Modular Architecture**: Using remote state promotes a modular architecture where different infrastructure components can be managed independently while maintaining dependencies.
 
-By embracing the use of remote state, you can effectively decouple the management of different infrastructure components, enabling better collaboration, reusability, and consistency across your AWS environment.
+By leveraging remote state, we can effectively decouple management of different infrastructure components, enabling better collaboration, reuse, and consistency across our AWS environment.
 ::::
 
 ```bash
@@ -37,17 +37,18 @@ EOF
 
 ### 2. Create variables
 
-In this section, we define the EKS version for the hub-cluster. From the console, you can manage EKS objects such as pods, deployments, namespaces, etc., for the hub-cluster using the EKS admin role. Most of these variables will be configured later using the terraform.tfvars file.
+In this section, we define the EKS version for the hub-cluster. From the console, we can manage EKS objects such as pods, deployments, and namespaces for the hub-cluster using the EKS admin role. Most of these variables will be configured later using the terraform.tfvars file.
 
 :::expand{header="Detailed Explanation of Variables, Click to check the description"}
-Here, we define several variables that will be used to create the EKS cluster:
+Here, we define several variables used to create the EKS cluster:
 
-- **kubernetes_version**: This variable specifies the version of Kubernetes to be installed or updated in the EKS cluster.
-- **eks_admin_role_name**: This variable represents the name of the IAM role that will be granted administrative privileges within the EKS cluster.
-- **addons**: This is a list of EKS add-ons that you want to enable in the cluster. Add-ons provide additional functionality and integrations for your EKS cluster.
-- **authentication_mode**: This variable determines the authentication mode used within the EKS cluster. The value "API_AND_CONFIG_MAP" allows authentication using either the EKS Access API or the Kubernetes aws-auth ConfigMap.
+- **kubernetes_version**: Specifies the version of Kubernetes to install or update in the EKS cluster.
+- **eks_admin_role_name**: Represents the name of the IAM role granted administrative privileges within the EKS cluster.
+- **addons**: Lists EKS add-ons to enable in the cluster. Add-ons provide additional functionality and integrations.
+- **authentication_mode**: Determines the authentication mode used within the EKS cluster. The value "API_AND_CONFIG_MAP" allows authentication using either the EKS Access API or the Kubernetes aws-auth ConfigMap.
   :::
-  By providing these variables, you can customize the EKS cluster deployment according to your specific requirements. The terraform.tfvars file will be used later to configure the values for these variables, allowing you to easily modify the settings without changing the Terraform code directly.
+
+By providing these variables, we can customize the EKS cluster deployment according to specific requirements. The terraform.tfvars file will be used later to configure values for these variables, allowing easy modification of settings without changing the Terraform code directly.
 
 ```bash
 cat > ~/environment/hub/variables.tf << 'EOF'
@@ -110,7 +111,7 @@ EOF
 
 ### 3. Configure EKS Cluster
 
-The EKS cluster (hub) is configured in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if you are completing this workshop independently, you will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
+The EKS cluster (hub) is configured in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if we are completing this workshop independently, we will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
 
 ```bash
 cat > ~/environment/hub/main.tf << 'EOF'
@@ -308,7 +309,7 @@ EOF
 ```
 
 :::alert{header="Important" type="warning"}
-"**WSParticipantRole**" is the given role name when participating in an AWS event workshop. When working through the workshop **independently**, you should update it to reflect your own AWS role you are using in the AWS console
+"**WSParticipantRole**" is the given role name when participating in an AWS event workshop. When working through the workshop **independently**, we should update it to reflect our own AWS role we are using in the AWS console
 
 ![AWS Console Role](/static/images/aws-console-role.png)
 

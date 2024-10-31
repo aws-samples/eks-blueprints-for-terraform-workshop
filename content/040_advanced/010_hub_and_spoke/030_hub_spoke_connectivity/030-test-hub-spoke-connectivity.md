@@ -3,9 +3,9 @@ title: "Test Hub Spoke Connectivity"
 weight: 30
 ---
 
-This chapter validates hub-spoke connectivity by checking for the AWS Load Balancer Controller and other addons installed on the spoke-staging cluster. In this workshop, Argo CD was configured to install addon by setting a label to true. The label enable_aws_load_balancer_controller=true installs the load balancer addon. This label was set during creation of the spoke cluster. Once hub-spoke connectivity between hub and spoke was established, Argo CD installed the load balancer on the spoke by detecting this label had been set.
+In this chapter, we will validate hub-spoke connectivity by examining the AWS Load Balancer Controller and other addons installed on the spoke-staging cluster. Throughout this workshop, we configured Argo CD to install addons by setting specific labels to true. For example, setting the label `enable_aws_load_balancer_controller=true` triggers the installation of the load balancer addon. This label was configured during the spoke cluster creation. Once we established hub-spoke connectivity, Argo CD detected this label and automatically installed the load balancer on the spoke cluster.
 
-You can check on the spoke staging secret the labels showing the addons we wanted to enable:
+We can verify the addon configuration by checking the labels on the spoke staging secret:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd spoke-staging -o json | jq ".metadata.labels" | grep enable_ | grep true
@@ -25,9 +25,9 @@ Expected Output:
   "enable_metrics_server": "true",
 ```
 
-The Terraform blueprint modules and gitops bridge set up an IAM role that gets assigned to the service account for the Karpenter addon. This configures the necessary permissions for Karpenter to operate.
+The Terraform blueprint modules and gitops bridge establish an IAM role that gets assigned to the Karpenter addon's service account. This configuration provides Karpenter with the necessary permissions to operate.
 
-You can check the IAM role on the spoke-stagging annotations:
+We can verify the IAM role configuration in the spoke-staging annotations:
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd spoke-staging -o json | jq ".metadata.annotations.karpenter_node_iam_role_name"
@@ -39,11 +39,11 @@ Expected output:
 "Karpenter-spoke-staging-20241009092211264300000028"
 ```
 
-The Argo CD dashboard should have the stagging load balancer addon.
+The Argo CD dashboard should now display the staging load balancer addon.
 
 ![Stagging LB](/static/images/spoke_applications.jpg)
 
-As you demonstrated in this chapter Argo CD allows enabling/disabling addons on a Kubernetes cluster by setting a boolean variable. When the variable is true, Terraform adds a label to the cluster resource telling Argo CD to install that addon.
+As demonstrated in this chapter, Argo CD enables us to manage addons on a Kubernetes cluster through simple boolean variables. When we set a variable to true, Terraform adds a corresponding label to the cluster resource, instructing Argo CD to install that addon.
 
 :::alert{header="Congratulation!" type="success"}
 Argo CD streamlines the deployment of additional add-ons across multiple EKS clusters, ensuring a consistent and efficient process.

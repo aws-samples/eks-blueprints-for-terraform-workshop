@@ -3,7 +3,7 @@ title: "Namespace and Webstore workload"
 weight: 50
 ---
 
-In this chapter you will associate both namespace and workload application to webstore project created in the previous chapter
+In this chapter, we will associate both the namespace and workload applications with the webstore project created in the previous chapter.
 
 ### 1. Set Project
 
@@ -11,7 +11,7 @@ In this chapter you will associate both namespace and workload application to we
 sed -i "s/project: default/project: webstore/g" $GITOPS_DIR/platform/config/workload/webstore/workload/webstore-applicationset.yaml
 :::
 
-Changes by the code snippet is highlighted below.
+The changes made by the code snippet are highlighted below.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
@@ -58,8 +58,8 @@ cd ~/environment/spoke
 terraform apply --auto-approve
 ```
 
-Once we activate this, the webstore microservice will be deployed.
-Because, we have configured our default Managed Node Group to only accept Critical Addons:
+When we activate this, the webstore microservice will be deployed.
+Because we have configured our default Managed Node Group to only accept Critical Addons:
 
 ```bash
 cat ~/environment/spoke/main.tf | grep -A4 taints
@@ -73,7 +73,7 @@ cat ~/environment/spoke/main.tf | grep -A4 taints
           effect    = "NO_SCHEDULE"
 ```
 
-The webstore application is not able to be deployed on the managed node groups, and we are relying on Karpenter to create additional EC2 instances.
+The webstore application cannot be deployed on the managed node groups, and we are relying on Karpenter to create additional EC2 instances.
 
 ```bash
 eks-node-viewer
@@ -84,8 +84,8 @@ eks-node-viewer
 ### 5. Validate workload
 
 :::alert{header="Important" type="warning"}
-It takes few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
-It takes also few minutes for the loadbalancer to be provisioned correctly.
+It takes a few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
+It also takes a few minutes for the loadbalancer to be provisioned correctly.
 :::
 
 ```bash
@@ -96,4 +96,4 @@ Access webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)
 
-Congratulations!, with this setup, you are able to deploy workloads applications using Argo CD Projects and ApplicationSets, from a configuration cluster (the Hub) to one spoke cluster, but you can easily duplicate this to manage severals spoke clusters with the same mechanisms.
+Congratulations! With this setup, we are able to deploy workload applications using Argo CD Projects and ApplicationSets from a configuration cluster (the Hub) to one spoke cluster. We can easily duplicate this to manage several spoke clusters with the same mechanisms.

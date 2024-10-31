@@ -3,17 +3,16 @@ title: "Deploy Workloads"
 weight: 10
 ---
 
-In this chapter you will deploy webstore workload. Similar to namespace in the previous chapter, we will setup Argo CD so that deploying a new workload is as simple as creating a new folder with manifests.
+In this chapter we will deploy the webstore workload. Similar to the namespace configuration in the previous chapter, we will configure Argo CD so that deploying a new workload requires only creating a new folder with the necessary manifests.
 
 ### 1. Create bootstrap workload applicationset
 
-This ApplicationSet initiates the deployment of all the workloads.
+This ApplicationSet initiates the deployment of all workloads.
 
 ![workload-appofapps](/static/images/workload-appofapps.jpg)
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='22,32'}
-
 cat > $GITOPS_DIR/platform/bootstrap/workload-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -59,14 +58,13 @@ spec:
           - CreateNamespace=true
 
 EOF
-
 :::
 <!-- prettier-ignore-end -->
 
-- Line 22: Git generator iterates through folders under "**config/workload**" in platform git repository
-- Line 32: `{path}` maps to each workload folder under **config/workload**.
-  - For **webstore**, `{path}` maps to **config/workload/webstore**.
-  - Since there is no folder "**config/workload/webstore/workload**", there are no files to process at this point.
+- Line 22: The Git generator iterates through folders under "**config/workload**" in the platform git repository
+- Line 32: `{path}` maps to each workload folder under **config/workload**
+  - For **webstore**, `{path}` maps to **config/workload/webstore**
+  - Since there is no folder "**config/workload/webstore/workload**", there are currently no files to process
 
 ### 2. Git commit
 
@@ -86,14 +84,14 @@ The newly added **workload-applicationset.yaml** file iterates through the **con
 ![workload-appofapps-monitor](/static/images/workload-appofapps-iteration.jpg)
 
 :::alert{header="Important" type="warning"}
-Since the folder `config/workload/webstore/workload` does not exist yet it has nothing to process.
+Since the folder `config/workload/webstore/workload` does not exist yet, there is nothing to process.
 :::
 
 ### 3. Deploy webstore workload
 
-The webstore workload configuration files are in the **workload** git repository, not in the **platform** git repository. This is to show the difference of ownership and responsibilities between platform team and application team.
+The webstore workload configuration files are in the **workload** git repository, not in the **platform** git repository. This separation demonstrates the different ownership and responsibilities between the platform team and application team.
 
-Let's have platform team add webstore applicationset to allow the webstore application team to deploy from the workload git repository.
+Let's have the platform team add a webstore applicationset to allow the webstore application team to deploy from the workload git repository.
 
 ![workload-webstore](/static/images/workload-webstore.jpg)
 
@@ -153,15 +151,15 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-- Line 17: The **webstore** workload is only deployed on clusters that have the label **workload_webstore = true**.
-  - The hub cluster has workload_webstore = true label.
-- Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository.
-- Line 25: It maps to **webstore/** ( microservices under webstore folder).
-- Line 39: **Path** gets the value each microservice directory.
-- The label environment on the hub cluster is "**control-plane**", (taken from cluster secret)
-- **Kustomization** deploys each microservice in "control-plane" environment.
-- Line 42: **path.basename** maps to the microservice directory name, which maps to the target namespace for deployment.
-  - So each microservice deploys into its own matching namespace. This makes asset microservice deploy to asset namespace, carts to carts and so on.
+- Line 17: The **webstore** workload is only deployed on clusters with the label **workload_webstore = true**
+  - The hub cluster has workload_webstore = true label
+- Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository
+- Line 25: Maps to **webstore/** (microservices under webstore folder)
+- Line 39: **Path** gets the value of each microservice directory
+- The label environment on the hub cluster is "**control-plane**" (taken from cluster secret)
+- **Kustomization** deploys each microservice in "control-plane" environment
+- Line 42: **path.basename** maps to the microservice directory name, which maps to the target namespace for deployment
+  - Each microservice deploys into its matching namespace - assets microservice deploys to assets namespace, carts to carts, and so on
 
 ![workload-webstore-folders](/static/images/workload-webstore-deployment.png)
 
@@ -184,12 +182,12 @@ argocd app sync argocd/workload-webstore
 
 ### 5. Validate workload
 
-::alert[It takes few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
+::alert[It takes a few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 
 ```bash
 app_url_hub
 ```
 
-Access webstore in the browser.
+Access the webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)

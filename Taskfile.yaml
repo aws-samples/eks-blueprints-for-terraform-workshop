@@ -184,3 +184,39 @@ tasks:
     desc: Generate a local preview copy of Workshop Studio content
     cmds:
       - preview_build
+
+  review:
+    desc: Review parts of the workshop
+    cmds:
+      - |
+        cd ../../GitLab/workshop-review-bot/ && \
+        yarn start review --context ~/Documents/GitHub/eks-blueprints-for-terraform-workshop/content \
+          --style-guide review-style-guide.md \
+          #--exemplar introduction/helm \
+          #--exemplar fundamentals \
+          #--exemplar security/iam-roles-for-service-accounts \
+          --rate 5 \
+          --write \
+          020_setup
+
+  review-all:
+    desc: Review parts of the workshop
+    cmds:
+      - |
+        cp hack/review-style-guide.md content/
+        cd ../../GitLab/workshop-review-bot/ && \
+        AWS_REGION=us-west-2 && \
+        yarn start review --context ~/Documents/GitHub/eks-blueprints-for-terraform-workshop/content \
+          --style-guide review-style-guide.md \
+          #--exemplar introduction/helm \
+          #--exemplar fundamentals \
+          #--exemplar security/iam-roles-for-service-accounts \
+          --rate 5 \
+          --write \
+          .
+        cd -
+        rm content/review-style-guide.md
+
+#yarn start ask --base-dir ~/projects/my-workshop/content \
+#  --question "Does the workshop content provide a well-structured introduction?" \
+#  lab1

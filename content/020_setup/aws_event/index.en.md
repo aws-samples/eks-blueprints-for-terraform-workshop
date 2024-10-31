@@ -6,30 +6,30 @@ weight: 10
 
 ## Running the workshop at an AWS Event
 
-::alert[If you are not currently participating in an AWS organized workshop event, this section does not apply to you. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}
+::alert[If we are not currently participating in an AWS organized workshop event, this section does not apply. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}
 
-To complete this workshop, you are provided with an AWS account via AWS Workshop Studio and a link to that will be shared by our event staff. AWS Workshop Studio allows AWS field teams to run Workshops, GameDays, Bootcamps, Immersion Days, and other events that require hands-on access to AWS accounts.
+For this workshop, we will be provided with an AWS account through AWS Workshop Studio. Our event staff will share a link to access it. AWS Workshop Studio enables AWS field teams to run Workshops, GameDays, Bootcamps, Immersion Days, and other events requiring hands-on access to AWS accounts.
 
-::alert[If you are currently logged in to an AWS Account, you can logout using this [link](https://console.aws.amazon.com/console/logout!doLogout).]{header="Important" type="warning"}
+::alert[If we are currently logged in to an AWS Account, we can log out using this [link](https://console.aws.amazon.com/console/logout!doLogout).]{header="Important" type="warning"}
 
 ### Access AWS Workshop Studio
 
 1. [Click here](https://catalog.us-east-1.prod.workshops.aws/join/) to access AWS Workshop Studio
 
-2. Choose your preferred sign-in method as follows. For AWS Guided events, use **Email OTP** method.
+2. Choose a preferred sign-in method. For AWS Guided events, use the **Email OTP** method.
 
 ![Workshop Studio Signin](/static/images/setup_ws_signin1.png)
 
-3. Enter the code provided by the event organizer, in the text box. You will usually find this code on a slide that is being shown, or a paper printout at your table.
+3. Enter the event code provided by the event organizer in the text box. This code will be displayed on a slide or available as a paper printout.
 
 ![Workshop Studio Signin Event Code](/static/images/setup_ws_signin2.png)
 
-4. Read and agree to the Terms and Conditions and click Join Event
+4. Review and accept the Terms and Conditions, then click Join Event
 
 ![Workshop Studio Signin Terms](/static/images/setup_ws_signin3.png)
 
-5. Join the event, and you will be taken to the workshop instructions. You can access the console of your personal AWS account for the event by clicking the link in the sidebar.
+5. After joining the event, we will see the workshop instructions. The console for our temporary AWS account can be accessed through the link in the sidebar.
 
 ![Workshop Studio Signin Landing Page](/static/images/setup_ws_signin4.png)
 
-::alert[Please stick to the region you see on the event page throughout your workshop.]{header="Important" type="info"}
+::alert[Please use the region shown on the event page throughout the workshop.]{header="Important" type="info"}

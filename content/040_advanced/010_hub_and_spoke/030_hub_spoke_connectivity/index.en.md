@@ -3,6 +3,6 @@ title: "Hub to Spoke Connectivity"
 weight: 30
 ---
 
-The Hub Cluster's Argo CD manages (installs, uninstalls, updates) addons, namespace and workload on the spoke cluster. In this chapter, you will configure the Hub Cluster's Argo CD to assume a role in the spoke cluster to manage the spoke cluster.
+In this chapter, we will configure the Argo CD installation in the Hub Cluster to assume an IAM role in the spoke cluster. This enables the Hub Cluster's Argo CD to manage (install, uninstall, update) addons, namespaces, and workloads on the spoke cluster.
 
 ![Hub Role](/static/images/hub-manage-spoke-addons.jpg)

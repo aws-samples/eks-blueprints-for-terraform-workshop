@@ -3,7 +3,7 @@ title: "Advanced modules"
 weight: 79
 ---
 
-You can find here more advanced modules, showcasing what you can do with those projects:
+In this section, we will explore advanced modules that demonstrate additional capabilities of these projects:
 
 - Argo CD Hub-Spoke deployment
 - Blue/Green Deployment with Argo Rollouts (coming)
