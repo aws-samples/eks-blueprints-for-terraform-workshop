@@ -187,7 +187,7 @@ tasks:
 
   #arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
   #aws bedrock list-inference-profiles
-  review:
+  llm-review:
     desc: Review parts of the workshop
     cmds:
       - |
