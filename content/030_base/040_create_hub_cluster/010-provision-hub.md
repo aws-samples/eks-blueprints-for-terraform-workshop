@@ -9,17 +9,7 @@ In this section, we will create an EKS cluster (hub) within the previously provi
 
 ### 1. Create remote state
 
-::::expand{header="Get VPC and private subnet values from the VPC module. Click to learn more about Terraform remote state"}
-The use of remote state in Terraform enables sharing and reusing infrastructure resources across multiple configurations or teams. In this context, the remote state retrieves VPC and private subnet values from the previously created VPC module. This approach offers several benefits:
-
-1. **Separation of concerns**: By separating VPC creation and EKS cluster deployment into different Terraform configurations, we can assign responsibilities to different teams or individuals. For example, a central team could manage accounts and VPCs, while another team handles EKS cluster deployments.
-2. **Reusability**: Instead of recreating VPC infrastructure for each EKS cluster deployment, we can reuse the existing VPC through remote state. This promotes efficient resource utilization and avoids duplication.
-3. **Consistency**: Referencing remote state ensures the EKS cluster deploys within the correct VPC and private subnets, maintaining infrastructure consistency.
-4. **Collaboration**: Remote state enables collaboration between teams working on different infrastructure components. Changes made to the VPC by one team automatically reflect in the EKS cluster deployment.
-5. **Modular architecture**: Using remote state promotes a modular architecture where different infrastructure components can be managed independently while maintaining dependencies.
-
-By leveraging remote state, we can effectively decouple management of different infrastructure components, enabling better collaboration, reuse, and consistency across our AWS environment.
-::::
+We need to reference outputs from the VPC module for our hub cluster.
 
 ```bash
 mkdir -p ~/environment/hub
@@ -267,7 +257,7 @@ The Terraform outputs will provide information about the resources we just creat
 cat > ~/environment/hub/outputs.tf << 'EOF'
 
 output "configure_kubectl" {
-  description = "Configure kubectl: make sure you're logged in with the correct AWS profile and run the following command to update your kubeconfig"
+  description = "Configure kubectl: make sure we're logged in with the correct AWS profile and run the following command to update our kubeconfig"
   value       = <<-EOT
     aws eks --region ${local.region} update-kubeconfig --name ${module.eks.cluster_name} --alias ${module.eks.cluster_name}
   EOT

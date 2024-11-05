@@ -25,7 +25,7 @@ Expected Output:
   "enable_metrics_server": "true",
 ```
 
-The Terraform blueprint modules and gitops bridge establish an IAM role that gets assigned to the Karpenter addon's service account. This configuration provides Karpenter with the necessary permissions to operate.
+The Terraform blueprint modules and GitOps bridge establish an IAM role that gets assigned to the Karpenter addon's service account. This configuration provides Karpenter with the necessary permissions to operate.
 
 We can verify the IAM role configuration in the spoke-staging annotations:
 
@@ -41,10 +41,10 @@ Expected output:
 
 The Argo CD dashboard should now display the staging load balancer addon.
 
-![Stagging LB](/static/images/spoke_applications.jpg)
+![Staging LB](/static/images/spoke_applications.jpg)
 
 As demonstrated in this chapter, Argo CD enables us to manage addons on a Kubernetes cluster through simple boolean variables. When we set a variable to true, Terraform adds a corresponding label to the cluster resource, instructing Argo CD to install that addon.
 
-:::alert{header="Congratulation!" type="success"}
+:::alert{header="Congratulations!" type="success"}
 Argo CD streamlines the deployment of additional add-ons across multiple EKS clusters, ensuring a consistent and efficient process.
 :::

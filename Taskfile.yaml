@@ -207,7 +207,9 @@ tasks:
           #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
           --model arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
           #030_base/035_gitrepo \
-          030_base/
+          #030_base \
+          #040_advanced \
+          .
         cd -
         rm content/review-style-guide.md
 

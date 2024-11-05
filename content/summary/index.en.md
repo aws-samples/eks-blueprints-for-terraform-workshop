@@ -13,17 +13,7 @@ We explored the powerful features of Argo CD, a GitOps tool that enables seamles
 
 One of the key advantages of this setup is its scalability and flexibility. As our organization grows, we can easily onboard additional teams by following GitOps principles and submitting Git pull requests for review. Argo CD will automatically create the necessary namespaces, ArgoProjects, and ArgoApplications across one or more clusters, streamlining the onboarding process and ensuring proper segregation of resources.
 
-With this robust and scalable solution in place, we can confidently manage and deploy workloads across multiple clusters, ensuring a reliable and efficient application lifecycle management process throughout our organization. The combination of EKS Blueprints and GitOps principles empowers us to maintain a consistent, repeatable, and scalable approach to cluster deployment and workload management, fostering collaboration and enabling seamless integration with our existing Git repository and development workflows.
-
-<!--
-We see how we can leverage Argo Rollout to do application blue/green deployment.
-
-We make use of Karpenter to allow our application to define and use the resources it needs while having the right EC2 nodes at the right time, binpacking our nodes, and keeping the cost of the cluster low.
-
-We see how we can rely on Spot instances to even reduce our cluster cost and use Kubecost to optimize our workloads.
-
-Finally, we focused on Day2 Operations, and how we can automate Blue/Green EKS cluster migration for doing updates.
--->
+With this robust and scalable solution in place, we can confidently manage and deploy workloads across multiple clusters, ensuring reliable and efficient application lifecycle management throughout our organization. The combination of EKS Blueprints and GitOps principles empowers us to maintain a consistent, repeatable, and scalable approach to cluster deployment and workload management, fostering collaboration and enabling seamless integration with our existing Git repository and development workflows.
 
 We hope you enjoyed this workshop and know that the EKS Blueprint project is open-source. Learn more at: https://github.com/aws-ia/terraform-aws-eks-blueprints
 

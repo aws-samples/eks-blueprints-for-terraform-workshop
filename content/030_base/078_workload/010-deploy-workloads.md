@@ -182,7 +182,9 @@ argocd app sync argocd/workload-webstore
 
 ### 6. Validate workload
 
-::alert[It takes a few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
+:::alert{header="Important" type="warning"}
+It takes a few minutes to deploy the workload and create a loadbalancer
+:::
 
 ```bash
 app_url_hub

@@ -4,7 +4,7 @@ weight: 10
 hidden: true
 ---
 
-In an Argo CD hub-spoke deployment architecture, the hub cluster is dedicated solely to running Argo CD. In the previous chapters, we deployed webstore namespaces and workloads in the hub cluster. Let's clean up these deployments from the hub cluster before redeploying them to the spoke cluster later.
+In an Argo CD hub-spoke deployment architecture, the hub cluster is dedicated solely to running Argo CD. In previous chapters, we deployed webstore namespaces and workloads in the hub cluster. Now, we'll clean up these deployments from the hub cluster before redeploying them to the spoke cluster later.
 
 ### 1. Set labels workload_webstore = false and workloads = false
 
@@ -20,14 +20,14 @@ workload_webstore: 'true'
  .
 :::
 
-To remove the webstore namespaces and workload from the hub-cluster, we will set `workload_webstore=false` and `workloads = false` on that cluster.
+To remove the webstore namespaces and workload from the hub-cluster, we'll set `workload_webstore=false` and `workloads = false` on that cluster.
 
 ```bash
 sed -i "s/workload_webstore = true/workload_webstore = false/g" ~/environment/hub/main.tf
 sed -i "s/workloads = true/workloads = false/g" ~/environment/hub/main.tf
 ```
 
-### 2 Terraform Apply
+### 2. Terraform Apply
 
 ```bash
 cd ~/environment/hub

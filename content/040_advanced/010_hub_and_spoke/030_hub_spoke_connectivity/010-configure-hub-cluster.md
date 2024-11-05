@@ -3,7 +3,7 @@ title: "Configure Hub Cluster"
 weight: 10
 ---
 
-In this chapter, we will create a role that is assumed by the Hub Cluster's Argo CD.
+In this chapter, we will create a role that can be assumed by the Hub Cluster's Argo CD.
 
 ![Hub Role](/static/images/hub-spoke-hub-role.jpg)
 
@@ -15,7 +15,7 @@ The IAM policy aws_assume_policy attached to the hub-cluster-argocd-hub role inc
 
 This role and policy configuration establishes a centralized identity management approach, allowing Argo CD to seamlessly deploy applications and manage resources across multiple EKS clusters within the same AWS account while maintaining proper access controls and security best practices.
 
-Add Variable to save ArgoCD Role in SSM Parameters
+First, let's add a variable to save the Argo CD Role in SSM Parameters:
 
 ```json
 cat <<'EOF' >> ~/environment/hub/variables.tf
@@ -26,6 +26,8 @@ variable "ssm_parameter_name_argocd_role_suffix" {
 }
 EOF
 ```
+
+Now, let's create the IAM role and associated resources:
 
 ```json
 cat <<'EOF' >> ~/environment/hub/pod-identity.tf
@@ -102,15 +104,17 @@ EOF
 
 ### 2. Apply Terraform
 
+Apply the changes to create the IAM role and associated resources:
+
 ```bash
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
 ```
 
-### 3. Argo CD Pods to use new service account token
+### 3. Configure Argo CD Pods to use new service account token
 
-When we initially installed Argo CD, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get configured for pod identity.
+When we initially installed Argo CD, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get configured for pod identity:
 
 ```bash
 kubectl rollout restart -n argocd deployment argocd-server --context hub-cluster
@@ -123,7 +127,7 @@ We can verify that EKS Pod Identity is correctly applied by examining the inject
 kubectl --context hub-cluster exec -it deployment/argocd-server -n argocd -- env | grep AWS
 ```
 
-should be like:
+The output should look similar to this:
 
 ```
 AWS_CONTAINER_CREDENTIALS_FULL_URI=http://169.254.170.23/v1/credentials

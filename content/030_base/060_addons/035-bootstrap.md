@@ -9,7 +9,7 @@ To automatically generate Argo CD applications, we will implement the "App of Ap
 
 ### App of Apps pattern
 
-Normally an Argo CD Application points to a git repo which contains manifests. For example, when provisioning a load balancer controller, it points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `index.yaml` file that references the chart package (tgz file).
+Normally, an Argo CD Application points to a git repo which contains manifests. For example, when provisioning a load balancer controller, it points to the AWS EKS Helm Charts Repository https://aws.github.io/eks-charts, which contains an `index.yaml` file that references the chart package (tgz file).
 
 ![applicationset](/static/images/lb-helmchart-folder.png)
 
@@ -69,7 +69,7 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".m
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_revision" -r
 ```
 
-the Output should be similar to:
+The output should be similar to:
 
 ```
 https://d1nkjb4pxwlir8.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-platform
@@ -95,7 +95,7 @@ EOF
 sed -i "s/#enableapps //g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case it creates bootstrap Application.
+The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case, it creates the bootstrap Application.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}

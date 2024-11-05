@@ -3,17 +3,17 @@ title: "Clean up"
 weight: 90
 ---
 
-In this workshop, we have created a VPC and multiple EKS clusters. While the clusters were created using Terraform, the Applications were deployed using Argo CD.
+In this workshop, we have created a VPC and multiple EKS clusters. Although the clusters were created using Terraform, the Applications were deployed using Argo CD.
 
-Since Terraform is not aware of the Argo CD Applications installed on each EKS cluster, we need to clean up those applications before destroying the clusters with Terraform.
+As Terraform is not aware of the Argo CD Applications installed on each EKS cluster, we need to clean up those applications before destroying the clusters with Terraform.
 
 To simplify this process, we have prepared a `destroy.sh` script that will properly clean up the installed resources in the appropriate order.
 
-If we have deployed additional resources that may have created Cloud resources, we also need to clean those up prior to destroying the clusters. Otherwise, those resources may not be cleaned up properly.
+If we have deployed additional resources that may have created Cloud resources, we should also clean those up prior to destroying the clusters. Otherwise, those resources may not be properly cleaned up.
 
 ### Using the cleanup script
 
-We can execute the cleanup script to remove all resources. The script may show some errors during execution, which is normal as it repeats certain actions until cleanup succeeds.
+We can execute the cleanup script to remove all resources. The script may display some errors during execution, which is normal as it repeats certain actions until cleanup succeeds.
 
 ```bash
 $BASE_DIR/hack/scripts/destroy.sh

@@ -3,7 +3,7 @@ title: "Project"
 weight: 40
 ---
 
-Argo CD [Projects](https://argo-cd.readthedocs.io/en/stable/user-guide/projects/) provide logical groupings of Argo CD Applications. Projects offer several key capabilities:
+Argo CD [Projects](https://argo-cd.readthedocs.io/en/stable/user-guide/projects/) provide logical groupings of Argo CD Applications. They offer several key capabilities:
 
 - Control over what can be deployed:
 
@@ -19,3 +19,5 @@ Argo CD [Projects](https://argo-cd.readthedocs.io/en/stable/user-guide/projects/
 
 - Project role definitions:
   - While this workshop does not cover project roles, we encourage exploring this functionality independently.
+
+By leveraging these capabilities, Argo CD Projects enable fine-grained control over application deployments, enhancing security and maintaining consistency across your Kubernetes environments.

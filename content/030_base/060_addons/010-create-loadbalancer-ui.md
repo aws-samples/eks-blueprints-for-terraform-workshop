@@ -4,7 +4,7 @@ weight: 10
 hidden: true
 ---
 
-In this chapter, we will manually install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. We will automate this process in upcoming chapters. The Load Balancer addon enables Kubernetes resources to access AWS Elastic Load Balancers.
+In this chapter, we will manually install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. This process will be automated in upcoming chapters. The Load Balancer addon enables Kubernetes resources to access AWS Elastic Load Balancers.
 
 ### 1. Create Application
 

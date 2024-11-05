@@ -15,8 +15,8 @@ In this chapter, we will deploy the webstore workload across the namespaces we p
 
 ![Webstore](/static/images/webstore.png)
 
-The webstore workload code is located in our git repository in the `~/environment/gitops-repo/workload/webstore/` directory. We can examine these files that will be deployed using Argo CD.
+The webstore workload code is located in our Git repository in the `~/environment/gitops-repo/workload/webstore/` directory. We can examine these files that will be deployed using Argo CD.
 
 ![Webstore](/static/images/developer-webstore.jpg)
 
-The webstore workload supports multiple environments including hub, staging, and production. Environment-specific configurations are managed through kustomization files.
+The webstore workload supports multiple environments including hub, staging, and production. Environment-specific configurations are managed through Kustomization files.

@@ -13,7 +13,7 @@ This workshop is hosted in the following GitHub repository under the `aws-sample
 ## Prerequisites
 
 1. Access to an AWS account with permissions to provision the following resources: VPC, IAM, EKS, ECR.
-2. CloudFormation access to execute the installation
+2. CloudFormation access to execute the installation.
 
 ## Cost
 
@@ -31,7 +31,7 @@ We can use the AWS CloudFormation quick-create links below to launch the templat
 | `eu-west-3`      | [Launch](https://eu-west-3.console.aws.amazon.com/cloudformation/home#/stacks/quickcreate?templateUrl=https://ws-assets-prod-iad-r-cdg-9e76383c31ad6229.s3.eu-west-3.amazonaws.com/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc/eks-blueprints-workshop-team-stack-self.json&stackName=eks-blueprints-workshop&param_RepositoryRef=VAR::MANIFESTS_REF)            |
 | `ap-southeast-1` | [Launch](https://ap-southeast-1.console.aws.amazon.com/cloudformation/home#/stacks/quickcreate?templateUrl=https://ws-assets-prod-iad-r-sin-694a125e41645312.s3.ap-southeast-1.amazonaws.com/d2b662ae-e9d7-4b31-b68b-64ade19d5dcc/eks-blueprints-workshop-team-stack-self.json&stackName=eks-blueprints-workshop&param_RepositoryRef=VAR::MANIFESTS_REF") |
 
-We need to enter a valid IAM role ARN that will be used to access EKS clusters (this is typically the IAM role we assume to work in our account)
+We need to enter a valid IAM role ARN that will be used to access EKS clusters (this is typically the IAM role we assume to work in our account).
 
 !["enter IAM role for EKS access"](/static/images/cfn_quickstart.jpg)
 
@@ -43,6 +43,6 @@ If we want to deploy in another region, we can download the CloudFormation templ
 
 :button[CloudFormation Template]{variant="primary" href=":assetUrl{path="eks-blueprints-workshop-team-stack-self.json" source=s3}" download}
 
-Create a stack for the workshop using CloudFormation
+Create a stack for the workshop using CloudFormation.
 
 Keep the default options while creating the stack, and wait for the CloudFormation stack status to show `CREATE_COMPLETE`.

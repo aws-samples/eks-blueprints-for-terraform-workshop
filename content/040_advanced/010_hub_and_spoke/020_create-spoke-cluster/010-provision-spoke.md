@@ -65,14 +65,14 @@ cp ~/environment/hub/outputs.tf ~/environment/spoke
 
 ### 5. Configure addons
 
-We will copy the terraform configuration but disable Argo CD since we do not want to deploy it on the spoke cluster:
+We will copy the Terraform configuration but disable Argo CD since we do not want to deploy it on the spoke cluster:
 
 ```bash
 cp ~/environment/hub/terraform.tfvars ~/environment/spoke/terraform.tfvars
 sed -i 's/enable_argocd = "true"/enable_argocd = "false"/' ~/environment/spoke/terraform.tfvars
 ```
 
-### 6. Create terraform workspace & Apply Terraform
+### 6. Create Terraform workspace & Apply Terraform
 
 Let's create a new staging workspace and initialize our configuration:
 

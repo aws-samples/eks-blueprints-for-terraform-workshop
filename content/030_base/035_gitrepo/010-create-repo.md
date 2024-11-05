@@ -5,7 +5,7 @@ weight: 10
 
 ### 1. Check the local filesystem for GitOps files
 
-The GitOps manifests content has already been set up and synced to our local IDE across the three repositories we mentioned:
+The GitOps manifests content has already been set up and synchronized to our local IDE across the three repositories we mentioned:
 
 ![git_local_ide](/static/images/git_local_ide.jpg)
 
