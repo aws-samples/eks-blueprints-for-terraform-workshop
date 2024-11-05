@@ -3,7 +3,7 @@ title: "Create Namespace"
 weight: 10
 ---
 
-In this chapter, we will create **webstore workload** namespaces for carts, catalog, checkout, orders, rabbitmq, assets, and ui. By the end of this chapter, we will configure Argo CD so that creating namespaces for a new workload (for example "payment") is as simple as creating a new "payment" folder with manifests.
+In this chapter, we will create namespaces for the **webstore workload** components: carts, catalog, checkout, orders, rabbitmq, assets, and ui. By the end of this chapter, we will have configured Argo CD so that creating namespaces for a new workload (for example "payment") is as simple as creating a new "payment" folder with the necessary manifests.
 
 ### 1. Create Bootstrap namespace applicationset
 

@@ -3,7 +3,7 @@ title: "Deploy Workloads"
 weight: 10
 ---
 
-In this chapter we will deploy the webstore workload. Similar to the namespace configuration in the previous chapter, we will configure Argo CD so that deploying a new workload requires only creating a new folder with the necessary manifests.
+In this chapter, we will deploy the webstore workload. Similar to the namespace configuration in the previous chapter, we will configure Argo CD so that deploying a new workload requires only creating a new folder with the necessary manifests.
 
 ### 1. Create bootstrap workload applicationset
 
@@ -172,7 +172,7 @@ git commit -m "add bootstrap workload applicationset"
 git push
 ```
 
-### 5. Accelerate ArgoCD sync
+### 5. Accelerate Argo CD sync
 
 ```bash
 argocd app sync argocd/workload-webstore
@@ -180,7 +180,7 @@ argocd app sync argocd/workload-webstore
 
 ![workload-webstore](/static/images/workload_webstore.jpg)
 
-### 5. Validate workload
+### 6. Validate workload
 
 ::alert[It takes a few minutes to deploy the workload and create a loadbalancer]{header="Important" type="warning"}
 

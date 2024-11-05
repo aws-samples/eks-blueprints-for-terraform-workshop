@@ -3,7 +3,7 @@ title: "Self Manage Argo CD"
 weight: 70
 ---
 
-In the "Install Argo CD" chapter, we installed Argo CD with default configuration using GitOps Bridge. Since Argo CD is itself an addon, we can leverage its own capabilities for self-management. By having Argo CD manage its own deployment and lifecycle through GitOps, we demonstrate several key benefits of addon management:
+In the "Install Argo CD" chapter, we installed Argo CD with a default configuration using GitOps Bridge. Since Argo CD is itself an addon, we can leverage its own capabilities for self-management. By having Argo CD manage its own deployment and lifecycle through GitOps, we demonstrate several key benefits of addon management:
 
 - GitOps-based configuration - All manifests are stored in Git, enabling version control, collaboration, and review processes
 

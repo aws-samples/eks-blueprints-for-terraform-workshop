@@ -193,17 +193,21 @@ tasks:
       - |
         cp hack/review-style-guide.md content/
         cd ../../GitLab/workshop-review-bot/ && \
-        export AWS_REGION=us-west-2 && \
+        #export AWS_REGION=us-west-2 && \
+        export AWS_REGION=us-east-1 && \
         echo $AWS_REGION && \
+        export AWS_MAX_ATTEMPTS=60 && \
         yarn start review --base-dir ~/Documents/GitHub/eks-blueprints-for-terraform-workshop/content \
-          #--style-guide review-style-guide.md \
+          --style-guide review-style-guide.md \
           --rate 1 \
           --write \
           #--model arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
           #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-5-sonnet-20241022-v2:0 \
           #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-opus-20240229-v1:0 \
-          --model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
-          .
+          #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
+          --model arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
+          #030_base/035_gitrepo \
+          030_base/
         cd -
         rm content/review-style-guide.md
 

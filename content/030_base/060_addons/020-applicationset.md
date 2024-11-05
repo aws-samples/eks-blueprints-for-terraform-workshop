@@ -1,5 +1,5 @@
 ---
-title: "Applicationset and Generator "
+title: "Applicationset and Generator"
 weight: 20
 ---
 

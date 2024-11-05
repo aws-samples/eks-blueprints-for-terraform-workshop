@@ -3,7 +3,7 @@ title: "Workshop setup"
 weight: 20
 ---
 
-Let's prepare our environment for the workshop by following the installation instructions in this section.
+In this section, we will prepare our environment for the workshop by following the installation instructions.
 
 If we are attending an AWS guided event, we'll set up our environment here:
 

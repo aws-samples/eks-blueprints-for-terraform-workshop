@@ -58,7 +58,7 @@ terraform init
 terraform apply --auto-approve
 ```
 
-### 3. Argocd Sync
+### 3. Argo CD Sync
 
 ```bash
 argocd app sync argocd/bootstrap

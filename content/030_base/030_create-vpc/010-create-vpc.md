@@ -51,7 +51,7 @@ EOF
 
 ### 3. Configure VPC
 
-Let's set up our Amazon VPC with public and private subnets spanning three Availability Zones. The following Terraform code provisions our foundational VPC infrastructure including an Internet Gateway, NAT Gateway, and required network resources. The subnets are tagged specifically to enable dynamic discovery by the Kubernetes load balancer controller. This VPC will serve as the network foundation for deploying and running our Kubernetes clusters.
+Now we will set up our Amazon VPC with public and private subnets spanning three Availability Zones. The following Terraform code provisions our foundational VPC infrastructure, including an Internet Gateway, NAT Gateway, and required network resources. The subnets are tagged specifically to enable dynamic discovery by the Kubernetes load balancer controller. This VPC will serve as the network foundation for deploying and running our Kubernetes clusters.
 
 ```bash
 cat > ~/environment/vpc/main.tf <<'EOF'

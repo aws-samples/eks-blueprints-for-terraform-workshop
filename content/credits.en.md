@@ -29,7 +29,7 @@ title: Credits
 
 ## Version 2.0 - Satish Patil & Sébastien Allamand (June, 2024)
 
-- Complete rewrite using more progressive approach
+- Complete rewrite using a more progressive approach
 - Migration to EKS Blueprint v5, GitOps Bridge, EKS Access Entries
 - Introduction of Standalone and Hub/Spoke patterns
 

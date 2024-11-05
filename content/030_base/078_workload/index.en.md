@@ -3,7 +3,7 @@ title: "Workload"
 weight: 78
 ---
 
-In this chapter, we will deploy the webstore workload across the namespaces we previously provisioned. The webstore workload consists of multiple microservices that work together to provide the complete application functionality:
+In this chapter, we will deploy the webstore workload across the namespaces we previously provisioned. The webstore workload comprises multiple microservices that work together to provide the complete application functionality:
 
 - UI service
 - Orders service
@@ -19,4 +19,4 @@ The webstore workload code is located in our git repository in the `~/environmen
 
 ![Webstore](/static/images/developer-webstore.jpg)
 
-The webstore workload supports multiple environments including hub, staging and production. Environment-specific configurations are managed through kustomization files.
+The webstore workload supports multiple environments including hub, staging, and production. Environment-specific configurations are managed through kustomization files.

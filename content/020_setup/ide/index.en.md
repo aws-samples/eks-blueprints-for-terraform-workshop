@@ -5,7 +5,7 @@ weight: 12
 
 ### Accessing the AWS Workshop IDE
 
-The elements needed to access our Cloud IDE can be found in either the personal dashboard page (scroll down to the Event Outputs section) or in the CloudFormation stack output. Let's open this in a new browser tab.
+We can find the information needed to access our Cloud IDE in either the personal dashboard page (scroll down to the Event Outputs section) or in the CloudFormation stack output. Let's open this in a new browser tab.
 
 ![Event Output](/static/images/event-output-ideurl.jpg)
 
@@ -15,7 +15,7 @@ Enter the password provided in the previous step:
 
 To open the IDE Terminal, follow these steps:
 
-1. Click the menu icon on the top left
+1. Click the menu icon in the top left corner
 2. Select **Terminal** -> **New Terminal** as shown below:
 
 ![IDE](/static/images/10-IDE.jpg)

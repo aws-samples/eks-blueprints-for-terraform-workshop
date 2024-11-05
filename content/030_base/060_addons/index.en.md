@@ -13,17 +13,12 @@ This workshop utilizes a cloned copy of the GitOps Bridge ApplicationSets reposi
 
 ::::expand{header="Why manage addons with Argo CD?"}
 
-- GitOps based - Manifests are stored in Git, enabling version control, collaboration, and review.
-
-- Automated sync - Argo CD auto-syncs the cluster state to match the Git repo. Provides continuous delivery.
-
-- Rollback and auditability - Changes are tracked and can be easily rolled back. Improves reliability.
-
-- Flexible lifecycle management - Upgrades, scaling, etc can be easily automated for addons.
-
-- Multi-cluster capable - Can manage addons across multiple clusters in a consistent way.
-
-- Health monitoring - Argo CD provides health status and alerts for addon deployments.
+- GitOps based - Manifests are stored in Git, enabling version control, collaboration, and review
+- Automated sync - Argo CD auto-syncs the cluster state to match the Git repo, providing continuous delivery
+- Rollback and auditability - Changes are tracked and can be easily rolled back, improving reliability
+- Flexible lifecycle management - Upgrades, scaling, etc can be easily automated for addons
+- Multi-cluster capable - Can manage addons across multiple clusters in a consistent way
+- Health monitoring - Argo CD provides health status and alerts for addon deployments
   ::::
 
 ::::expand{header="How is GitOps Bridge ApplicationSet configured?"}
@@ -32,4 +27,4 @@ The ApplicationSets provided by the GitOps Bridge can be overridden on a per-env
 For example, below is a side-by-side comparison of the GitOps Repo with override files and a snippet of the GitOps Bridge ApplicationSet. The configuration values are read from the default settings first. Then, any environment-specific settings will override the defaults. Finally, any cluster-specific settings will override both the default and environment values. For example, in the aws-load-balancer-controller addon, it gets default values from the folder `environments/default/addons/aws-load-balancer-controller`. Some values can be overridden for the dev environment by adding `values.yaml` under `environments/dev/addons/aws-load-balancer-controller`. These can be overridden for the my-cluster by adding values.yaml under `environments/clusters/my-cluster/addons/aws-load-balancer-controller`. Overriding the default values is optional - we can use the defaults if we don't need any customizations.
 
 ![Kubernetes Addons](/static/images/gitops-bridge-applicationset.png)
-:::
+::::

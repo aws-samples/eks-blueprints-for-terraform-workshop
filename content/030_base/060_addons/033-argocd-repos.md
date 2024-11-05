@@ -5,9 +5,9 @@ weight: 33
 
 When we created the IDE, we set up Gitea "platform" and "workload" Git repositories. There are [different ways](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/) to provide Argo CD access to these repositories. In this chapter, we will grant Argo CD access to the Git repositories using Kubernetes secrets.
 
-### 1. Create Argo CD secret for git repositories
+### 1. Create Argo CD secret for Git repositories
 
-There are multiple approaches to create the secret. We could create it in Secret Manager and use the External Secret Operator to sync the secret into the cluster. For this workshop, we will create the secret using Terraform.
+There are multiple approaches to create the secret. We could create it in Secrets Manager and use the External Secrets Operator to sync the secret into the cluster. For this workshop, we will create the secret using Terraform.
 
 ```json
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -59,11 +59,11 @@ Navigate to the Argo CD dashboard and access the **Settings** page. Select **Rep
 
 The Git repository connection data for Argo CD is stored in a Kubernetes Secret. We can verify that Terraform has created the Secret object containing the configurations to access Git repositories.
 
-```json
+```bash
 kubectl get secret -n argocd --selector=argocd.argoproj.io/secret-type=repository --context hub-cluster
 ```
 
-expected output:
+Expected output:
 
 ```
 NAME            TYPE     DATA   AGE

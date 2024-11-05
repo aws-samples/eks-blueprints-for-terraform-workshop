@@ -1,9 +1,9 @@
 ---
-title: "Workshop Git Repositories"
+title: "Workshop Git repositories"
 weight: 35
 ---
 
-In this chapter we will work with three Git repositories using a [gitea](https://github.com/go-gitea/gitea) server that has already been installed in our IDE instance:
+In this chapter, we will work with three Git repositories using a [gitea](https://github.com/go-gitea/gitea) server that has already been installed in our IDE instance:
 
 ![CodeCommit Repository](/static/images/gitea_repos.jpg)
 
@@ -13,6 +13,6 @@ In this chapter we will work with three Git repositories using a [gitea](https:/
 
 3. **eks-blueprints-workshop-gitops-addons** - Used by platform engineers to store Kubernetes add-on manifests
 
-The separation between workload and platform repositories illustrates the distinct roles and responsibilities between developers and platform engineers.
+The separation between workload and platform repositories illustrates the distinct roles and responsibilities of developers and platform engineers.
 
 We are using Gitea in this workshop for convenience, but any Git management system can be used as a replacement.

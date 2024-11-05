@@ -85,7 +85,7 @@ configs:
 EOF
 ```
 
-### 2. Apply Terraform
+### 3. Apply Terraform
 
 ```bash
 cd ~/environment/hub
@@ -93,9 +93,9 @@ terraform init
 terraform apply -auto-approve
 ```
 
-### 3. Validate Argo CD install
+### 4. Validate Argo CD install
 
-Get the Argo CD dashboard URL:
+To retrieve the Argo CD dashboard URL, execute:
 
 ```bash
 argocd_hub_credentials

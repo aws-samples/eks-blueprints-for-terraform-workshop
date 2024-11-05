@@ -24,7 +24,7 @@ For this workshop, we will be provided with an AWS account through AWS Workshop 
 
 ![Workshop Studio Signin Event Code](/static/images/setup_ws_signin2.png)
 
-4. Review and accept the Terms and Conditions, then click Join Event
+4. Review and accept the Terms and Conditions, then click Join Event.
 
 ![Workshop Studio Signin Terms](/static/images/setup_ws_signin3.png)
 

@@ -4,7 +4,7 @@ weight: 10
 hidden: true
 ---
 
-In this chapter, we will install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. We will automate this process in upcoming chapters. The Load Balancer addon enables Kubernetes resources to access AWS Elastic Load Balancers.
+In this chapter, we will manually install the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) addon on the hub cluster using the Argo CD UI. We will automate this process in upcoming chapters. The Load Balancer addon enables Kubernetes resources to access AWS Elastic Load Balancers.
 
 ### 1. Create Application
 
@@ -14,7 +14,7 @@ In this chapter, we will install the [AWS Load Balancer Controller](https://kube
 
 3. On the "Create Application" page:
 
-We have **two options** for creating the Application - either provide the manifest file directly, or enter the values manually.
+We have **two options** for creating the Application - either provide the manifest file directly or enter the values manually.
 
 #### Create with Manifest
 
@@ -79,7 +79,7 @@ IngressClass: elbv2.k8s.aws
 
 ### 2. Sync Application
 
-Click "SYNC" and click "SYNCHRONIZE". This will deploy the Load Balancer controller and related objects to the hub cluster.
+Click "SYNC" and then "SYNCHRONIZE". This will deploy the Load Balancer controller and related objects to the hub cluster.
 
 ![loadBalancer-sync](/static/images/lb-sync.png)
 

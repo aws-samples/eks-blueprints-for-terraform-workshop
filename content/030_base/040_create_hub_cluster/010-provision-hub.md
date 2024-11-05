@@ -1,22 +1,22 @@
 ---
-title: "Create EKS Cluster"
+title: "Create EKS cluster"
 weight: 10
 ---
 
-Here, we create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.
+In this section, we will create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.
 
 ![EKS Cluster](/static/images/argocd-bootstrap-eks.jpg)
 
-### 1. Create Remote State
+### 1. Create remote state
 
-::::expand{header="Get vpc and private subnet values from the vpc module. Click to know more about Terraform remote state"}
+::::expand{header="Get VPC and private subnet values from the VPC module. Click to learn more about Terraform remote state"}
 The use of remote state in Terraform enables sharing and reusing infrastructure resources across multiple configurations or teams. In this context, the remote state retrieves VPC and private subnet values from the previously created VPC module. This approach offers several benefits:
 
-1. **Separation of Concerns**: By separating VPC creation and EKS cluster deployment into different Terraform configurations, we can assign responsibilities to different teams or individuals. For example, a central team could manage accounts and VPCs, while another team handles EKS cluster deployments.
+1. **Separation of concerns**: By separating VPC creation and EKS cluster deployment into different Terraform configurations, we can assign responsibilities to different teams or individuals. For example, a central team could manage accounts and VPCs, while another team handles EKS cluster deployments.
 2. **Reusability**: Instead of recreating VPC infrastructure for each EKS cluster deployment, we can reuse the existing VPC through remote state. This promotes efficient resource utilization and avoids duplication.
 3. **Consistency**: Referencing remote state ensures the EKS cluster deploys within the correct VPC and private subnets, maintaining infrastructure consistency.
 4. **Collaboration**: Remote state enables collaboration between teams working on different infrastructure components. Changes made to the VPC by one team automatically reflect in the EKS cluster deployment.
-5. **Modular Architecture**: Using remote state promotes a modular architecture where different infrastructure components can be managed independently while maintaining dependencies.
+5. **Modular architecture**: Using remote state promotes a modular architecture where different infrastructure components can be managed independently while maintaining dependencies.
 
 By leveraging remote state, we can effectively decouple management of different infrastructure components, enabling better collaboration, reuse, and consistency across our AWS environment.
 ::::
@@ -39,7 +39,7 @@ EOF
 
 In this section, we define the EKS version for the hub-cluster. From the console, we can manage EKS objects such as pods, deployments, and namespaces for the hub-cluster using the EKS admin role. Most of these variables will be configured later using the terraform.tfvars file.
 
-:::expand{header="Detailed Explanation of Variables, Click to check the description"}
+:::expand{header="Detailed explanation of variables, click to check the description"}
 Here, we define several variables used to create the EKS cluster:
 
 - **kubernetes_version**: Specifies the version of Kubernetes to install or update in the EKS cluster.
@@ -109,9 +109,9 @@ variable "secret_name_git_data_workloads" {
 EOF
 ```
 
-### 3. Configure EKS Cluster
+### 3. Configure EKS cluster
 
-The EKS cluster (hub) is configured in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if we are completing this workshop independently, we will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
+We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if we are completing this workshop independently, we will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
 
 ```bash
 cat > ~/environment/hub/main.tf << 'EOF'
@@ -335,7 +335,7 @@ terraform apply -auto-approve
 
 ::alert[The process of creating Amazon EKS cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
-### 7. Access Hub Cluster
+### 7. Access hub cluster
 
 To configure kubectl, execute the following command, which retrieves the connection details from the Terraform output to access the cluster:
 
