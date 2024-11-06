@@ -7,6 +7,45 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Default values
+ASK_DELETE=false
+ACCEPT_DELETE=false
+
+[[ -n "${DEBUG:-}" ]] && set -x
+
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Options:"
+    echo "  -d, --ask-delete     Ask before deleting resources"
+    echo "  -f, --accept-delete  Automatically accept deletion without prompting"
+    echo "  -h, --help           Display this help message"
+}
+
+# Parse command line arguments
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -d|--ask-delete)
+                ASK_DELETE=true
+                shift
+                ;;
+            -f|--accept-delete)
+                ACCEPT_DELETE=true
+                shift
+                ;;
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1"
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
 aws_debug() {
     set -x
     aws "$@"
@@ -270,4 +309,45 @@ delete_vpc_endpoints() {
     done
 }
 
+delete_eks_clusters() {
+    echo "List of clusters to check"
 
+    echo "Checking if EKS clusters exist..."
+    all_clusters=$(aws_debug eks list-clusters --output text --query 'clusters[*]')
+    clusters_to_delete=()
+    for cluster in "${CLUSTERS[@]}"; do
+        if echo "$all_clusters" | grep -q "$cluster"; then
+            echo -e "${GREEN}EKS cluster '$cluster' exists.${NC}"
+            clusters_to_delete+=("$cluster")
+        else
+            echo -e "${RED}EKS cluster '$cluster' does not exist.${NC}"
+        fi
+    done
+
+    echo ""
+
+    if [ ${#clusters_to_delete[@]} -gt 0 ]; then
+        if confirm_deletion "EKS clusters"; then
+            for cluster in "${clusters_to_delete[@]}"; do
+                echo "Deleting managed node groups for EKS cluster '$cluster'..."
+                node_groups=$(aws_debug eks list-nodegroups --cluster-name "$cluster" --query 'nodegroups[*]' --output text)
+                for node_group in $node_groups; do
+                    aws_debug eks delete-nodegroup --cluster-name "$cluster" --nodegroup-name "$node_group"
+                    echo "Waiting for managed node group '$node_group' to be deleted..."
+                    aws_debug eks wait nodegroup-deleted --cluster-name "$cluster" --nodegroup-name "$node_group"
+                done
+
+                echo "Deleting EKS cluster '$cluster'..."
+                aws_debug eks delete-cluster --name "$cluster"
+                echo "Waiting for EKS cluster '$cluster' to be deleted..."
+                aws_debug eks wait cluster-deleted --name "$cluster"
+            done
+        else
+            echo "Skipping EKS cluster deletion."
+        fi
+    else
+        echo "No EKS clusters found to delete."
+    fi
+
+    echo ""
+}

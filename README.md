@@ -29,7 +29,7 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
 
 ### How to use in your account: Pre-requisites
 
-- Follow the instructions : [Workshop Quick Start Template Getting Started](https://gitlab.aws.dev/aws-tfc-containers/containers-hands-on-content/workshop-quickstart-template#getting-started), you need to configure `.npmrc` with a gitlab token
+- Follow the instructions : [Workshop Quick Start Template Getting Started](), you need to configure `.npmrc` with a gitlab token
 
 - Taskfile (brew install go-task/tap/go-task)
 - use node version v18
@@ -57,7 +57,7 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   ```
 - Install pre-commit 
   - `brew install pre-commit`
-  - configure it see : https://gitlab.aws.dev/aws-tfc-containers/containers-hands-on-content/workshop-quickstart-template#pre-commit
+  - configure it
     ```bash
     git config --system --unset-all core.hookspath
     pre-commit install
@@ -139,4 +139,4 @@ task assets
 
 This will generate cloudformation in the path referenced by your contentspec.yaml. and push in the s3 buckets the version for on-your-own path
 
-Then, you need to commit your files and you can push this directly to workshop studio git (see [Workshop Quick Start Template Getting Started](https://gitlab.aws.dev/aws-tfc-containers/containers-hands-on-content/workshop-quickstart-template#getting-started))).
+Then, you need to commit your files and you can push this directly to workshop studio git (see [Workshop Quick Start Template Getting Started]())).
