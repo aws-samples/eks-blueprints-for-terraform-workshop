@@ -37,6 +37,10 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   nvm install lts/hydrogen
   nvm use lts/hydrogen
   ```
+- Install yarn
+  ```bash
+  brew install yarn
+  ```
 - Install direnv
   ```bash
   brew install direnv

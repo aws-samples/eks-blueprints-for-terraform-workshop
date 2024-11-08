@@ -1,18 +1,58 @@
-name: Spell Check
+name: Spellcheck
 
-on: [pull_request]
+on:
+  push:
+    branches: [ main, mainline ]
+  pull_request:
+    branches: [ main, mainline ]
 
 jobs:
-
-  spell-check:
-  name: "Spell checker"
-  runs-on: ubuntu-latest
-  steps:
+  spellcheck:
+    runs-on: ubuntu-latest
+    steps:
     - uses: actions/checkout@v4
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
-    - run: |
-        npm install --save-dev cspell@latest
-        npx cspell lint "content/**/*.md"
+        node-version: '20'
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+    - uses: actions/cache@v3
+      id: yarn-cache
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+    - name: Run spellcheck
+      id: spellcheck
+      run: |
+        echo "### Spellcheck Results" >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        if ! yarn spelling:check | tee spellcheck_output.txt; then
+          cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
+        echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+    - name: Comment PR
+      if: failure() && github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const workflowRunUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `Spellcheck failed. Please review the [workflow run](${workflowRunUrl}) for details. To fix:
+              1. Correct spelling errors in content files and README.md
+              2. Add correctly spelled but unrecognized words to cspell.config.yaml
+              3. Run \`yarn spelling:check\` locally to verify
+              4. Commit and push changes to re-run the workflow`
+          });

@@ -192,7 +192,7 @@ tasks:
     cmds:
       - |
         cp hack/review-style-guide.md content/
-        cd ../../GitLab/workshop-review-bot/ && \
+        cd ~/working/gitlab/workshop-review-bot/ && \
         #export AWS_REGION=us-west-2 && \
         export AWS_REGION=us-east-1 && \
         echo $AWS_REGION && \
@@ -206,10 +206,10 @@ tasks:
           #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-opus-20240229-v1:0 \
           #--model arn:aws:bedrock:us-west-2::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
           --model arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0 \
-          #030_base/035_gitrepo \
+          030_base/035_gitrepo 
           #030_base \
           #040_advanced \
-          .
+          #.
         cd -
         rm content/review-style-guide.md
 
