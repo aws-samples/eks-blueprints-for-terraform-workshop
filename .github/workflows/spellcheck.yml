@@ -86,22 +86,23 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `### 🚨 Spellcheck Failed
+            body: |
+              ### 🚨 Spellcheck Failed
 
-Spellcheck detected potential spelling issues in the repository. Please review and address them.
+              Spellcheck detected potential spelling issues in the repository. Please review and address them.
 
-[View Workflow Run](${workflowRunUrl})
+              [View Workflow Run](${workflowRunUrl})
 
-#### Spellcheck Output:
-\`\`\`
-${truncatedOutput}
-\`\`\`
+              #### Spellcheck Output:
+              \`\`\`
+              ${truncatedOutput}
+              \`\`\`
 
-**How to Fix:**
-1. Correct spelling errors in content files
-2. Add correctly spelled but unrecognized words to \`cspell.config.yaml\`
-3. Run \`yarn spelling:check\` locally to verify
-4. Commit and push changes`
+              **How to Fix:**
+              1. Correct spelling errors in content files
+              2. Add correctly spelled but unrecognized words to \`cspell.config.yaml\`
+              3. Run \`yarn spelling:check\` locally to verify
+              4. Commit and push changes
           });
 
     # Fail the job if spellcheck failed
