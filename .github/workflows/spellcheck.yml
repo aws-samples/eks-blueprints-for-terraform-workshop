@@ -48,6 +48,7 @@ jobs:
         SPELLCHECK_EXIT_CODE=$?
         set -e
         
+        set -x
         # Add output to step summary
         cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY
