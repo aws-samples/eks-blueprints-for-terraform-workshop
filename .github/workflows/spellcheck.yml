@@ -54,7 +54,7 @@ jobs:
         
         # Determine job status
         if [ $SPELLCHECK_EXIT_CODE -ne 0 ]; then
-          echo "spellcheck_failed=true" >> $GITHUB_OUTPUT
+          echo "spellcheck_failed=true" >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
 
