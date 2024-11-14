@@ -49,7 +49,7 @@ jobs:
         
         # Capture output and exit code
         set +e
-        yarn spelling:ci-check | tee spellcheck_output.txt
+        yarn spelling:ci-check | tee ./tmp/spellcheck_output.txt
         #SPELLCHECK_EXIT_CODE=$?
         SPELLCHECK_EXIT_CODE=${PIPESTATUS[0]}  # Capture the exit code of cspell, not tee
         echo "Exit code: $SPELLCHECK_EXIT_CODE"
@@ -57,7 +57,7 @@ jobs:
         
         set -x
         # Add output to step summary
-        cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
+        cat ./tmp/spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
         echo "end" >> $GITHUB_STEP_SUMMARY
         
         # Determine job status
@@ -81,6 +81,11 @@ jobs:
             spellcheckOutput = fs.readFileSync('spellcheck_output.txt', 'utf8');
           } catch (error) {
             console.log('Could not read spellcheck output file');
+          }
+
+          // Ensure we have content
+          if (!spellcheckOutput) {
+            spellcheckOutput = 'No spellcheck output available. Please check the workflow run for details.';
           }
 
           // Truncate output if too long
