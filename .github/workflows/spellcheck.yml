@@ -32,9 +32,10 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        corepack enable
+        #corepack enable
         #yarn install --immutable
         # Install cspell globally
+        set -x
         npm install -g cspell
 
     - name: Run Spellcheck
