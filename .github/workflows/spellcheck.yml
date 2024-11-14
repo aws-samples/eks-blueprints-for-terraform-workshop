@@ -51,7 +51,7 @@ jobs:
         set -x
         # Add output to step summary
         cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
-        echo "```" >> $GITHUB_STEP_SUMMARY
+        #echo "```" >> $GITHUB_STEP_SUMMARY
         
         # Determine job status
         if [ $SPELLCHECK_EXIT_CODE -ne 0 ]; then
