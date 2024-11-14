@@ -36,7 +36,7 @@ jobs:
         #yarn install --immutable
         # Install cspell globally
         set -x
-        yarn add --dev cspell
+        yarn add --dev -W cspell
 
     - name: Run Spellcheck
       id: spellcheck
@@ -89,7 +89,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: |
+            body: `
               ### 🚨 Spellcheck Failed
 
               Spellcheck detected potential spelling issues in the repository. Please review and address them.
@@ -108,7 +108,7 @@ jobs:
               4. Commit and push changes
               5. install locall checks before commit:
                 sudo git config --system --unset-all core.hookspath
-                pre-commit install
+                pre-commit install`
           });
 
     # Fail the job if spellcheck failed
