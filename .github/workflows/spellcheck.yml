@@ -11,6 +11,7 @@ concurrency:
 
 jobs:
   spellcheck:
+    if: false # deactivate it (need private gitlab to work)
     runs-on: ubuntu-latest
     permissions:
       contents: read
