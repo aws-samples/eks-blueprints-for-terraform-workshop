@@ -69,6 +69,8 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
     git defender --install
     ```
 
+nonexistingwork
+
 Create an `.envrc` file:
 The `PARTICIPANT_ROLE_ARN` should have same permissions as specified in `contentspec.yaml` You can use your `Admin` role for testing
 
