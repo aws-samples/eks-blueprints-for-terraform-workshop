@@ -36,7 +36,8 @@ jobs:
         #yarn install --immutable
         # Install cspell globally
         set -x
-        yarn add --dev -W cspell
+        #yarn add --dev -W cspell
+        yarn add --dev -W --no-lockfile cspell --ignore-optional --ignore-scripts
 
     - name: Run Spellcheck
       id: spellcheck
