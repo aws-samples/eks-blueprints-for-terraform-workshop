@@ -63,7 +63,7 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   - `brew install pre-commit`
   - configure it see : https://gitlab.aws.dev/aws-tfc-containers/containers-hands-on-content/workshop-quickstart-template#pre-commit
     ```bash
-    git config --system --unset-all core.hookspath
+    sudo git config --system --unset-all core.hookspath
     pre-commit install
     # If you use git defender make sure to re-enable it
     git defender --install
