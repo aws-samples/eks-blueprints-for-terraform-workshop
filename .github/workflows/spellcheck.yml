@@ -50,8 +50,9 @@ jobs:
         # Capture output and exit code
         set +e
         yarn spelling:ci-check | tee spellcheck_output.txt
-        SPELLCHECK_EXIT_CODE=$?
-        echo $SPELLCHECK_EXIT_CODE
+        #SPELLCHECK_EXIT_CODE=$?
+        SPELLCHECK_EXIT_CODE=${PIPESTATUS[0]}  # Capture the exit code of cspell, not tee
+        echo "Exit code: $SPELLCHECK_EXIT_CODE"
         set -e
         
         set -x
