@@ -2,9 +2,7 @@ name: Spellcheck
 
 on:
   push:
-    branches: [ main, mainline ]
   pull_request:
-    branches: [ main, mainline ]
 
 # Limit concurrent runs and cancel in-progress runs
 concurrency:
