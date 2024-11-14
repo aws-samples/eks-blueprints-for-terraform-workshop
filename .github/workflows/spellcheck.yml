@@ -51,6 +51,7 @@ jobs:
         set +e
         yarn spelling:ci-check | tee spellcheck_output.txt
         SPELLCHECK_EXIT_CODE=$?
+        echo $SPELLCHECK_EXIT_CODE
         set -e
         
         set -x
