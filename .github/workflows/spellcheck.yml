@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   spellcheck:
-    if: false # deactivate it (need private gitlab to work)
+    if: true # deactivate it (need private gitlab to work)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,10 +30,10 @@ jobs:
         node-version: '20'
         cache: 'yarn'  # Use built-in caching
 
-    - name: Install Dependencies
-      run: |
-        corepack enable
-        yarn install --immutable
+    # - name: Install Dependencies
+    #   run: |
+    #     corepack enable
+    #     yarn install --immutable
 
     - name: Run Spellcheck
       id: spellcheck

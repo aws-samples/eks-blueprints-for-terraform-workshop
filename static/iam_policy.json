@@ -32,7 +32,8 @@
             "iam:DetachRolePolicy",
             "iam:GetPolicyVersion",
             "fis:*",
-            "iam:ListPolicyVersions"
+            "iam:ListPolicyVersions",
+            "resiliencehub:*"
       ],
       "Resource": ["*"]
     },
