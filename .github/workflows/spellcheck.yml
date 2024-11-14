@@ -37,7 +37,8 @@ jobs:
         # Install cspell globally
         set -x
         #yarn add --dev -W cspell
-        yarn add --dev -W --no-lockfile cspell --ignore-optional --ignore-scripts
+        #yarn add --dev -W --no-lockfile cspell --ignore-optional --ignore-scripts
+        npm install -g cspell
 
     - name: Run Spellcheck
       id: spellcheck
