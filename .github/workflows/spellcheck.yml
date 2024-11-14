@@ -48,13 +48,12 @@ jobs:
         SPELLCHECK_EXIT_CODE=$?
         set -e
         
-        set -x
         # Add output to step summary
         cat spellcheck_output.txt >> $GITHUB_STEP_SUMMARY
-        #echo "```" >> $GITHUB_STEP_SUMMARY
+        echo "```" >> $GITHUB_STEP_SUMMARY
         
         # Determine job status
-        if [ $SPELLCHECK_EXIT_CODE -ne 0 ]; then
+        if [[ "${SPELLCHECK_EXIT_CODE:-0}" -ne 0 ]]; then
           echo "spellcheck_failed=true" >> $GITHUB_STEP_SUMMARY
           exit 1
         fi
