@@ -49,7 +49,7 @@ jobs:
         
         # Capture output and exit code
         set +e
-        yarn spelling:check | tee spellcheck_output.txt
+        yarn spelling:ci-check | tee spellcheck_output.txt
         SPELLCHECK_EXIT_CODE=$?
         set -e
         
