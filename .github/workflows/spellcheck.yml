@@ -47,6 +47,8 @@ jobs:
         echo "### Spellcheck Results" >> $GITHUB_STEP_SUMMARY
         echo "start" >> $GITHUB_STEP_SUMMARY
         
+        mkdir -p tmp
+
         # Capture output and exit code
         set +e
         yarn spelling:ci-check | tee ./tmp/spellcheck_output.txt
@@ -78,7 +80,7 @@ jobs:
           // Read spellcheck output
           let spellcheckOutput = '';
           try {
-            spellcheckOutput = fs.readFileSync('spellcheck_output.txt', 'utf8');
+            spellcheckOutput = fs.readFileSync('./tmp/spellcheck_output.txt', 'utf8');
           } catch (error) {
             console.log('Could not read spellcheck output file');
           }
