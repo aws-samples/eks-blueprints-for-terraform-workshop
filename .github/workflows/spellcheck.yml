@@ -123,8 +123,10 @@ jobs:
               3. Run \`yarn spelling:check\` locally to verify
               4. Commit and push changes
               5. install locall checks before commit:
+                \`\`\`bash
                 sudo git config --system --unset-all core.hookspath
-                pre-commit install`
+                pre-commit install
+              \`\`\``
           });
 
     # Fail the job if spellcheck failed
