@@ -64,15 +64,19 @@ jobs:
         
         # Determine job status
         if [[ "${SPELLCHECK_EXIT_CODE:-0}" -ne "0" ]]; then
-          echo "spellcheck_failed=true" >> $GITHUB_STEP_SUMMARY
+          echo "spellcheck_failed=true" >> $GITHUB_ENV
           exit 1
+        else
+          echo "spellcheck_failed=false" >> $GITHUB_ENV
+          exit 0
         fi
 
     - name: Create PR Comment
-      #if: failure() && github.event_name == 'pull_request'
-      if: |
-        github.event_name == 'pull_request' && 
-        steps.spellcheck.outputs.exit_code != '0'
+      if: failure() 
+      #&& github.event_name == 'pull_request'
+      #if: |
+      #  github.event_name == 'pull_request' && 
+      #  steps.spellcheck.outputs.exit_code != '0'
       uses: actions/github-script@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -127,5 +131,5 @@ jobs:
 
     # Fail the job if spellcheck failed
     - name: Check Spellcheck Status
-      if: steps.spellcheck.outputs.spellcheck_failed == 'true'
+      if: steps.spellcheck.outcome != 'success'
       run: exit 1
