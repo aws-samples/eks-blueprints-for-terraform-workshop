@@ -72,11 +72,9 @@ jobs:
         fi
 
     - name: Create PR Comment
-      if: failure() 
-      #&& github.event_name == 'pull_request'
-      #if: |
-      #  github.event_name == 'pull_request' && 
-      #  steps.spellcheck.outputs.exit_code != '0'
+      if: steps.spellcheck.outcome != 'success' && 
+          github.event_name == 'pull_request'
+
       uses: actions/github-script@v7
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
