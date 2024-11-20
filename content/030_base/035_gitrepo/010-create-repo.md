@@ -5,24 +5,24 @@ weight: 10
 
 ### 1. Check the local filesystem for GitOps files
 
-We have already setup for you content for our Gitops manifests spread into the 3 repositories that we mentioned that have been synced into your local IDE:
+The GitOps manifests content has already been set up and synchronized to our local IDE across the three repositories we mentioned:
 
 ![git_local_ide](/static/images/git_local_ide.jpg)
 
-### 2. Sync with ArgoCD
+### 2. Sync with Argo CD
 
-Later in the workshop we are going to use ArgoCD to synchronize from the Gitea Git repositories.
+Later in the workshop, we will use Argo CD to synchronize from the Gitea Git repositories.
 
-If you like you can access the Gitea server to see the repositories, but we will just use our local filesystem and `git push` commands to interact with it during the workshop.
+While we can access the Gitea server to view the repositories, during the workshop we will primarily interact with our local filesystem and use `git push` commands.
 
-You can find your Gitea URL by executing:
+To find our Gitea URL, we can execute:
 
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 gitea_credentials
 :::
 
 :::alert{header="Important" type="info"}
-We are using several bash functions in the workshop. If you want to know more about them, you can execute `type <function_name>` to find the source file of the function
+Throughout the workshop, we use several bash functions. To learn more about any function, we can execute `type <function_name>` to find its source file:
 
 ```bash
 type gitea_credentials
@@ -44,10 +44,10 @@ Gitea Password: 8yJPQ4IMsW97EQdKXJXGqRlIty6n3B
 https://d3aeqzejs2v8j.cloudfront.net/gitea/workshop-user/
 ```
 
-Then You can click on the output link to open it in your browser, and the first time it will ask you to enter the output login and password.
+We can click on the output link to open it in our browser. The first time, we will need to enter the provided login and password.
 
 ![gitea login](/static/images/gitea_login.jpg)
 
-From then, you can navigate the repositories and files:
+After logging in, we can navigate through the repositories and files:
 
 ![CodeCommit Repository](/static/images/gitea_repos.jpg)

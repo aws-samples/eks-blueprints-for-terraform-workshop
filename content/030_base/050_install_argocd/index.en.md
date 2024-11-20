@@ -6,33 +6,28 @@ weight: 50
 Argo CD is a declarative continuous delivery tool for Kubernetes.
 
 ::::expand{header="What is GitOps?"}
-[GitOps](https://www.cncf.io/blog/2021/09/28/gitops-101-whats-it-all-about/) is a way of managing infrastructure and applications using Git as the single source of truth. GitOps watches this Git repository and automatically applies any changes to make the actual state match the desired state in Git
+[GitOps](https://www.cncf.io/blog/2021/09/28/gitops-101-whats-it-all-about/) is an operational framework that applies DevOps best practices to infrastructure automation. It uses Git as the single source of truth for infrastructure and application definitions. Infrastructure changes are made by merging pull requests to Git repositories rather than making changes directly in the runtime environment.
 ::::
 
 ::::expand{header="What is Argo CD?"}
-[Argo CD](https://argo-cd.readthedocs.io/en/stable/) is an open source GitOps continuous delivery tool for Kubernetes.
+[Argo CD](https://argo-cd.readthedocs.io/en/stable/) is an open-source GitOps continuous delivery tool designed specifically for Kubernetes environments.
 ::::
 
 ::::expand{header="Why use Argo CD instead of Terraform to deploy Kubernetes resources?"}
-Terraform and Argo CD are complementary tools for infrastructure automation. Terraform excels at provisioning infrastructure like VPCs, EKS clusters, RDS instances, etc. However, it can become complex when trying to use it for ongoing infrastructure operations like managing addons, deploying workloads, creating namespaces, etc.
+While Terraform and Argo CD are both valuable infrastructure automation tools, they serve different purposes. Terraform excels at provisioning infrastructure components like VPCs, EKS clusters, and RDS instances. However, managing ongoing Kubernetes operations such as addon installation, workload deployments, and namespace creation can become complex with Terraform.
 
-Argo CD specializes in continuous delivery for Kubernetes. It monitors the live state of a cluster and automatically syncs any configuration drift back to the desired state defined in Git. This makes Argo CD well-suited for deploying applications and managing configuration for a Kubernetes cluster.
+Argo CD specializes in continuous delivery for Kubernetes resources. It continuously monitors cluster state and automatically synchronizes any configuration drift back to the desired state defined in Git. This makes Argo CD well-suited for managing the lifecycle of Kubernetes applications and configurations.
 
-A key difference is that Terraform performs one-time provisioning, while Argo CD provides continuous reconciliation. Terraform does not monitor or alert on infrastructure changes after the initial provisioning. Argo CD gives real-time alerts if the live state drifts from the desired state in Git.
+The key difference is that Terraform performs one-time provisioning, while Argo CD provides continuous reconciliation. Unlike Terraform, Argo CD actively monitors for infrastructure changes and alerts when live state diverges from Git.
 ::::
 
 ::::expand{header="Why GitOps Bridge?"}
-Argo CD specializes in continuous delivery for Kubernetes, but requires integration with infrastructure providers like AWS to manage some cluster addons and services. [GitOps Bridge](https://github.com/gitops-bridge-dev/gitops-bridge) assists with this by:
+While Argo CD excels at continuous delivery for Kubernetes resources, it needs integration with cloud providers like AWS to manage certain cluster addons and services. [GitOps Bridge](https://github.com/gitops-bridge-dev/gitops-bridge) facilitates this integration by:
 
-- It provides provisioned IAM roles for addons like Karpenter and load balancers to access AWS accounts
-
-- An interface to update labels and annotations on cloud resources
-
-- Automated initial installation of Argo CD
-
-- Cluster Bootstrap using ”App of ApplicationSets” pattern
-
-- Simple Self-management of the Argo CD configuration
-
-- Sample ApplicationSets for addons to customize for your needs
+- Providing pre-configured IAM roles for addons like Karpenter and load balancers to access AWS services
+- Offering an interface to manage labels and annotations on cloud resources
+- Automating the initial Argo CD installation process
+- Enabling cluster bootstrap using the "App of ApplicationSets" pattern
+- Simplifying self-management of Argo CD configuration
+- Including sample ApplicationSets for addons that can be customized for specific needs
   ::::

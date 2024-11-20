@@ -5,14 +5,14 @@ repos:
         language: node
         name: Run linting staged
         entry: task lint-staged
-        stages: [commit]
+        stages: [pre-commit]
         verbose: true
         pass_filenames: false
       - id: lint
         language: node
         name: Run linting
         entry: task lint
-        stages: [commit]
+        stages: [pre-commit]
         verbose: true
         pass_filenames: false
       - id: cfn
@@ -20,6 +20,6 @@ repos:
         name: Generate Cfn
         entry: task cfn
         # uses current branch for WORKSHOP_GIT_BRANCH
-        stages: [commit]
+        stages: [pre-commit]
         verbose: true
         pass_filenames: false

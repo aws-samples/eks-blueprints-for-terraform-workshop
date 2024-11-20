@@ -3,17 +3,18 @@ title: "Self Manage Argo CD"
 weight: 70
 ---
 
-In the "Install Argo CD" chapter, Argo CD was installed with default configuration with GitOps Bridge. Argo CD is another addon. Can Argo CD install itself and
-self manage? Yes it can. By having Argo CD self-manage its own deployment and lifecycle through GitOps, it demonstrates the advantages and benefits of having addons managed by Argo CD.
+In the "Install Argo CD" chapter, we installed Argo CD with a default configuration using GitOps Bridge. Since Argo CD is itself an addon, we can leverage its own capabilities for self-management. By having Argo CD manage its own deployment and lifecycle through GitOps, we demonstrate several key benefits of addon management:
 
-- GitOps based - Manifests are stored in Git, enabling version control, collaboration, and review.
+- GitOps-based configuration: All manifests are stored in Git, enabling version control, collaboration, and review processes.
 
-- Automated sync - Argo CD auto-syncs the cluster state to match the Git repo. Provides continuous delivery.
+- Automated synchronization: Argo CD continuously syncs cluster state to match the Git repository, providing true continuous delivery.
 
-- Rollback and auditability - Changes are tracked and can be easily rolled back. Improves reliability.
+- Rollback capability and audit trail: Changes are tracked and can be easily rolled back, improving overall reliability.
 
-- Flexible lifecycle management - Upgrades, scaling, etc can be easily automated for addons.
+- Flexible lifecycle management: Upgrades, scaling, and other operations can be easily automated.
 
-- Multi-cluster capable - Can manage addons across multiple clusters in a consistent way.
+- Multi-cluster support: Addons can be managed consistently across multiple clusters.
 
-- Health monitoring - Argo CD provides health status and alerts for addon deployments.
+- Health monitoring: Argo CD provides health status and alerts for addon deployments.
+
+By implementing self-management for Argo CD through GitOps practices, we establish a foundation for managing all cluster addons in a consistent and automated way.

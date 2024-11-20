@@ -18,6 +18,7 @@
     "destroy": "yarn workspace cdk cdk destroy eks-blueprints-workshop --require-approval never --progress events",
     "bootstrap": "yarn workspace cdk cdk bootstrap",
     "spelling:check": "yarn cspell 'content/**/*.md' README.md",
+    "spelling:ci-check": "cspell 'content/**/*.md' README.md",
     "links:check": "markdown-link-check -q -c link-check-config.json content/**/*.md",
     "format:check": "prettier -c cdk",
     "format:fix": "prettier -w content",
@@ -46,6 +47,6 @@
     ]
   },
   "dependencies": {
-    "aws-cdk": "^2.161.1"
+    "aws-cdk": "^2.166.0"
   }
 }

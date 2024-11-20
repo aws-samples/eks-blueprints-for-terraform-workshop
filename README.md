@@ -37,6 +37,10 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   nvm install lts/hydrogen
   nvm use lts/hydrogen
   ```
+- Install yarn
+  ```bash
+  brew install yarn
+  ```
 - Install direnv
   ```bash
   brew install direnv
@@ -59,7 +63,7 @@ The CDK code will bootstrap the workshop on each custom AWS accounts provided by
   - `brew install pre-commit`
   - configure it
     ```bash
-    git config --system --unset-all core.hookspath
+    sudo git config --system --unset-all core.hookspath
     pre-commit install
     # If you use git defender make sure to re-enable it
     git defender --install

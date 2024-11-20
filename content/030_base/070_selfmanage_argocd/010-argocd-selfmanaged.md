@@ -5,27 +5,6 @@ weight: 10
 
 ### 1. Set Argo CD label
 
-<!--
-```bash
-sed -i '/argocd:/,/enabled:/ s/enabled: false/enabled: true/' $GITOPS_DIR/addons/clusters/hub-cluster/addons/gitops-bridge/values.yaml
-```
-
-The code snippet activate the argocd addon in our gitops-bridge value file, causing the gitops-bridge helm chart to generate an additional ApplicationSet for ArgoCD.
-
-The changes by the code snippet is highlighted below.
-
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='3'}
-...
-argocd:
-enabled: true # ArgoCD is enabled to replace the argocd installed at bootstrap time via terraform helm provider
-prometheus_node_exporter:
-enabled: false
-kube_state_metrics:
-enabled: false
-...
-:::
--->
-
 ```bash
 sed -i '
 /addons = {/,/}/{
@@ -35,7 +14,7 @@ sed -i '
 ' ~/environment/hub/terraform.tfvars
 ```
 
-This update the terraform.tfvars with:
+This update to terraform.tfvars adds:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='6'}
@@ -49,11 +28,11 @@ addons = {
 :::
 <!-- prettier-ignore-end -->
 
-The ApplicationSet addons-aws-oss-argocd-hub-appset.yaml file references configuration values for Argo CD from the `addons/environments/default/addons/argo-cd/values.yaml` file in gitops-platform . You can update the `values.yaml` as per your need. The default Refresh interval for the Argo CD is 3 minutes (180 seconds). For this workshop, the Refresh interval has been updated to 5 seconds by setting the `timeout.reconciliation` value in `values.yaml` to 5. This shorter interval allows changes to happen faster during the workshop demonstrations.
+The ApplicationSet file addons-aws-oss-argocd-hub-appset.yaml references Argo CD configuration values from the `addons/environments/default/addons/argo-cd/values.yaml` file in gitops-platform. We can update the `values.yaml` as needed. For this workshop, we have set the Refresh interval to 5 seconds by configuring `timeout.reconciliation` to 5 in `values.yaml`. This shorter interval allows changes to propagate more quickly during workshop demonstrations, compared to the default 3-minute (180 second) interval.
 
 ![argocd-values](/static/images/argocd-values.jpg)
 
-You can open the file in the IDE. Don't forget to commit if you make any changes.
+We can open the file in the IDE. Let's remember to commit if we make any changes.
 
 ```bash
 code $GITOPS_DIR/addons/environments/control-plane/addons/argocd/values.yaml
@@ -69,17 +48,7 @@ configs:
 :::
 <!-- prettier-ignore-end -->
 
-We are updating the server `basehref` so that it works with our proxy setup.
-
-<!--
-### 2. Push Changes to Git:
-
-```bash
-git -C ${GITOPS_DIR}/addons add . || true
-git -C ${GITOPS_DIR}/addons commit -m "Activate Managed Argo CD" || true
-git -C ${GITOPS_DIR}/addons push || true
-```
--->
+We are updating the server `basehref` to work with our proxy setup.
 
 ### 2. Apply the changes with Terraform
 
@@ -89,19 +58,19 @@ terraform init
 terraform apply --auto-approve
 ```
 
-### 3. Argocd Sync
+### 3. Argo CD Sync
 
 ```bash
 argocd app sync argocd/bootstrap
 argocd app sync argocd/cluster-addons
 ```
 
-Argo CD dashboard should have Argo CD Application.
+The Argo CD dashboard should now display the Argo CD Application.
 
 ![argocd-values](/static/images/argocd-selfmanage.jpg)
 
 :::alert{header=Note type=warning}
-At some point, ArgoCD, will redeploy ArgoCD, in that case, you will lost the port-forward as the target pod will be renewed, you'll need to re-execute the following command to retrieve back the access
+When Argo CD redeploys itself, we will temporarily lose the port-forward connection as the target pod gets renewed. We will need to run the following command to restore access:
 
 ```bash
 argocd_hub_credentials
@@ -110,5 +79,5 @@ argocd_hub_credentials
 :::
 
 :::alert{header=Congratulations type=success}
-Now you are managing your Argo CD system with Argo CD!
+We are now managing our Argo CD system with Argo CD!
 :::

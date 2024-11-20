@@ -3,15 +3,15 @@ title: "Configure Spoke Staging"
 weight: 20
 ---
 
-In the previous chapter, an IAM role was created for the Hub Cluster's Argo CD. In this chapter, another IAM role (spoke) will be created that can be assumed by the Hub Cluster's IAM role.
+In the previous chapter, we created an IAM role for the Hub Cluster's Argo CD. Now, we'll create another IAM role (spoke) that can be assumed by the Hub Cluster's IAM role.
 
 ![Hub Role](/static/images/hub-spoke-spoke-role.jpg)
 
 ### 1. Create Argo CD spoke-staging cluster with hub-cluster
 
-The Hub Cluster manages all cluster objects created in the Hub's Argo CD. The spoke-staging cluster should also be managed by the Hub's Argo CD. Use GitOps Bridge to create the spoke-staging cluster secret object in the hub cluster. The spoke Terraform can update the Hub because we configure the Kubernetes provider setting with `'kubernetes = kubernetes.hub'` to allows access.
+The Hub Cluster manages all cluster objects created in the Hub's Argo CD. The spoke-staging cluster should also be managed by the Hub's Argo CD. We'll use GitOps Bridge to create the spoke-staging cluster secret object in the hub cluster. The spoke Terraform can update the Hub because we configure the Kubernetes provider setting with `'kubernetes = kubernetes.hub'` to allow access.
 
-The spoke cluster does not need its own Argo CD installation since it depends on the Hub's Argo CD. You can prevent Argo CD installation on the spoke by setting the GitOps bridge configuration `'install = false'`.
+Since the spoke cluster depends on the Hub's Argo CD, it doesn't need its own Argo CD installation. We can prevent Argo CD installation on the spoke by setting the GitOps bridge configuration `'install = false'`.
 
 ```bash
 cat <<'EOF' >> ~/environment/spoke/main.tf
@@ -70,7 +70,7 @@ EOF
 
 ### 2. Spoke Role to trust Hub Role
 
-Create an IAM role for the spoke cluster that can be assumed by the Hub's Argo CD.
+Let's create an IAM role for the spoke cluster that can be assumed by the Hub's Argo CD.
 
 ```bash
 
@@ -90,7 +90,7 @@ data "aws_ssm_parameter" "argocd_hub_role" {
 EOF
 ```
 
-Create Spoke Role, which allow assume role from Hub role:
+Create Spoke Role, which allows assume role from Hub role:
 
 ```bash
 cat <<'EOF' >> ~/environment/spoke/main.tf
@@ -116,7 +116,7 @@ EOF
 
 ### 3. Spoke Role to assume admin access on the spoke cluster
 
-The spoke IAM role should have admin access on the spoke Kubernetes cluster. This spoke IAM role will be assumed by the Hub Argo CD. It needs admin access in order to create addons, namespaces, and deploy workloads on the spoke cluster. For that, we add an additional rule in our EKS access entries:
+The spoke IAM role should have admin access on the spoke Kubernetes cluster. Since this role will be assumed by the Hub Argo CD to create addons, namespaces, and deploy workloads on the spoke cluster, it needs admin access. We'll add an additional rule in our EKS access entries:
 
 ```bash
 sed -i '
@@ -139,15 +139,13 @@ sed -i '
 ' ~/environment/spoke/main.tf
 ```
 
-The code snippet above update the access_entries section of eks module to grant admin access to the spoke IAM role.
+The code snippet above updates the access_entries section of the EKS module to grant admin access to the spoke IAM role.
 
-### 4. Allow Hub Nodes to access to Spoke cluster
+### 4. Allow Hub Nodes to access the Spoke cluster
 
-In this workshop, the hub and spoke clusters reside within the same VPC. The Argo CD instance running on the hub cluster needs to communicate with the spoke Kubernetes cluster to create namespaces, deploy add-ons, and manage resources. To enable this communication, we need to configure the security group associated with the spoke cluster to allow inbound traffic on port 443 from the security group of the hub cluster's nodes.
+In this workshop, both the hub and spoke clusters reside within the same VPC. For Argo CD running on the hub cluster to manage the spoke cluster (creating namespaces, deploying add-ons, etc.), we need to configure the spoke cluster's security group to allow inbound traffic on port 443 from the hub cluster's node security group.
 
-Specifically, we need to allow the Argo CD Pods (app-controller and api-server) on the hub cluster to connect to the EKS spoke cluster's endpoint. Although the spoke cluster has public endpoint access, the endpoint hostname resolves to the private IP address within the VPC. By default, the security group only allows nodes on the spoke cluster to connect to its API endpoint.
-
-To resolve this, we will create a new security group rule that permits inbound traffic on port 443 from the security group associated with the hub cluster's nodes. This will enable the Argo CD Pods on the hub cluster to communicate with the spoke cluster's API endpoint within the VPC, facilitating centralized management and deployment across multiple clusters.
+While the spoke cluster has public endpoint access, the endpoint hostname resolves to a private IP address within the VPC. By default, only nodes on the spoke cluster can connect to its API endpoint. To enable communication between the Argo CD Pods (app-controller and api-server) on the hub cluster and the spoke cluster's API endpoint, we'll create a security group rule allowing inbound traffic on port 443 from the hub cluster's node security group.
 
 ```bash
 cat <<'EOF' >> ~/environment/spoke/main.tf
@@ -166,7 +164,7 @@ EOF
 
 ### 5. Configure the addons to deploy
 
-let's enabled some addons in our terraform configuration:
+Let's enable some addons in our terraform configuration:
 
 ```bash
 sed -i '/addons = {/,/}/ c\
@@ -195,7 +193,7 @@ terraform apply --auto-approve
 
 ### 7. Check Hub Cluster Configuration
 
-The Hub Argo CD Dashboard should have the spoke-staging cluster in it's cluster list.
+The Hub Argo CD Dashboard should now include the spoke-staging cluster in its cluster list.
 
 Connect again to the Hub Cluster Argo CD UI:
 
