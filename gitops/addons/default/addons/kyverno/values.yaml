@@ -17,6 +17,20 @@ backgroundController:
   tolerations:
   - key: "CriticalAddonsOnly"
     operator: "Exists"
+  rbac:
+    clusterRole:
+      extraResources:
+        - apiGroups:
+            - apps
+          resources:
+            - deployments
+          verbs:
+            - get
+            - list
+            - create
+            - update
+            - delete
+            - patch
 
 cleanupController:
   tolerations:
@@ -179,7 +193,9 @@ config:
     - '[*,amazon-cloudwatch,*]'
     - '[*,amazon-guardduty,*]'
     - '[*,argocd,*]'
-    - '[*,kube-prometheus-stack,*]'    
+    - '[*,kube-prometheus-stack,*]'
+    - '[*,opentelemetry-operator-system,*]'
+    - '[*,adot-collector-kubeprometheus,*]'
 
 
 features:
