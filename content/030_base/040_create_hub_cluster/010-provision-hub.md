@@ -60,7 +60,7 @@ variable "addons" {
   default = {
     enable_aws_load_balancer_controller = false
     enable_aws_argocd = false
-    enable_karpenter = true
+    enable_karpenter = false
   }
 }
 
