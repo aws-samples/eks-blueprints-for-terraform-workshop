@@ -154,8 +154,8 @@ locals{
     { fleet_member = local.fleet_member },
     { tenant = local.tenant },  
     { aws_cluster_name = module.eks.cluster_name },
-    #{ workloads = true }
-    #enablewebstore,{ workload_webstore = true }  
+    #{ workloads = true },
+    #enablewebstore{ workload_webstore = true }
   )
 
   addons_metadata = merge(
@@ -189,12 +189,12 @@ locals{
       workload_repo_path = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
     },
-    {
-      karpenter_namespace = local.karpenter.namespace
-      karpenter_service_account = local.karpenter.service_account
-      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
-      karpenter_sqs_queue_name = module.karpenter.queue_name
-    },
+    #enablekarpenter{
+    #enablekarpenter  karpenter_namespace = local.karpenter.namespace
+    #enablekarpenter  karpenter_service_account = local.karpenter.service_account
+    #enablekarpenter  karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+    #enablekarpenter  karpenter_sqs_queue_name = module.karpenter.queue_name
+    #enablekarpenter},
     {
       external_secrets_namespace = local.external_secrets.namespace
       external_secrets_service_account = local.external_secrets.service_account
@@ -205,7 +205,7 @@ locals{
     },
     {
       #amp_endpoint_url = "${data.aws_ssm_parameter.amp_endpoint.value}"
-    }    
+    }
   )
 }
 

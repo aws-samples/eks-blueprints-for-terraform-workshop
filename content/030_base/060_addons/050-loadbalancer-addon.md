@@ -215,7 +215,7 @@ That means we can have custom values by **environment**, **clusters**, or by **t
 
 In this case, we are going to update the highlighted one, so at the **cluster** level.
 
-### 4. Enable load-balancer-controller for our cluster
+### 4.1 Enable load-balancer-controller for our cluster
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/terraform.tfvars
@@ -227,6 +227,34 @@ EOF
 ```
 
 We can refresh the application in Argo CD UI.
+
+### 4.2 Enable Karpenter dependencies for our cluster
+
+```bash
+sed -i "s/#enablekarpenter//g" ~/environment/hub/main.tf
+```
+
+Updated change highlighted below.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='6-11'}
+    {
+      .
+      .
+      workload_repo_revision = local.gitops_workload_revision
+    },
+    {
+      karpenter_namespace = local.karpenter.namespace
+      karpenter_service_account = local.karpenter.service_account
+      karpenter_node_iam_role_name = module.karpenter.node_iam_role_name
+      karpenter_sqs_queue_name = module.karpenter.queue_name
+    },
+    {
+      external_secrets_namespace = local.external_secrets.namespace
+      .
+    },
+:::
+<!-- prettier-ignore-end -->
 
 ### 5. Apply Terraform
 
