@@ -81,12 +81,13 @@ This file defines several roles that will be used by some of the addons. Here, t
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='0'}
 module "aws_lb_controller_pod_identity" {
   source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  version = "~> 1.11.0"
+
+  count = try(var.addons.enable_aws_load_balancer_controller, false) ? 1 : 0
 
   name = "aws-lbc"
 
   attach_aws_lb_controller_policy = true
-
 
   # Pod Identity Associations
   associations = {

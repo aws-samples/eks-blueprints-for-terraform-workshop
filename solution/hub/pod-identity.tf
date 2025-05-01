@@ -2,21 +2,21 @@
 # External Secrets EKS Access
 ################################################################################
 module "external_secrets_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
 
   name = "external-secrets"
 
   attach_external_secrets_policy        = true
-  external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
+  external_secrets_ssm_parameter_arns   = ["arn:aws:ssm:*:*:parameter/*"]         # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
   external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
-  external_secrets_kms_key_arns         = ["arn:aws:kms:*:*:key/*"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
+  external_secrets_kms_key_arns         = ["arn:aws:kms:*:*:key/*"]               # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
   external_secrets_create_permission    = false
 
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = local.external_secrets.namespace
       service_account = local.external_secrets.service_account
     }
@@ -29,7 +29,7 @@ module "external_secrets_pod_identity" {
 # CloudWatch Observability
 ################################################################################
 module "aws_cloudwatch_observability_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
 
   name = "aws-cloudwatch-observability"
@@ -39,7 +39,7 @@ module "aws_cloudwatch_observability_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = "amazon-cloudwatch"
       service_account = "cloudwatch-agent"
     }
@@ -52,7 +52,7 @@ module "aws_cloudwatch_observability_pod_identity" {
 # Kyverno Policy Reporter SecurityHub Access
 ################################################################################
 module "kyverno_policy_reporter_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
 
   name = "kyverno-policy-reporter"
@@ -64,7 +64,7 @@ module "kyverno_policy_reporter_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = "kyverno"
       service_account = "policy-reporter"
     }
@@ -77,7 +77,7 @@ module "kyverno_policy_reporter_pod_identity" {
 # EBS CSI EKS Access
 ################################################################################
 module "aws_ebs_csi_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
 
   name = "aws-ebs-csi"
@@ -88,7 +88,7 @@ module "aws_ebs_csi_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = "kube-system"
       service_account = "ebs-csi-controller-sa"
     }
@@ -101,8 +101,10 @@ module "aws_ebs_csi_pod_identity" {
 # AWS ALB Ingress Controller EKS Access
 ################################################################################
 module "aws_lb_controller_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
-  version = "~> 1.4.0"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.11.0"
+
+  count = try(var.addons.enable_aws_load_balancer_controller, false) ? 1 : 0
 
   name = "aws-lbc"
 
@@ -112,7 +114,7 @@ module "aws_lb_controller_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = local.aws_load_balancer_controller.namespace
       service_account = local.aws_load_balancer_controller.service_account
     }
@@ -134,14 +136,14 @@ module "karpenter" {
   enable_pod_identity             = true
   create_pod_identity_association = true
 
-  namespace = local.karpenter.namespace
+  namespace       = local.karpenter.namespace
   service_account = local.karpenter.service_account
 
   # Used to attach additional IAM policies to the Karpenter node IAM role
   # Adding IAM policy needed for fluentbit
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-    CloudWatchAgentServerPolicy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    CloudWatchAgentServerPolicy  = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
   }
 
   tags = local.tags
@@ -192,9 +194,9 @@ resource "aws_iam_policy" "cni_metrics_helper_pod_identity_policy" {
 }
 
 module "cni_metrics_helper_pod_identity" {
-  source = "terraform-aws-modules/eks-pod-identity/aws"
+  source  = "terraform-aws-modules/eks-pod-identity/aws"
   version = "~> 1.4.0"
-  name = "cni-metrics-helper"
+  name    = "cni-metrics-helper"
 
   additional_policy_arns = {
     "cni-metrics-help" : aws_iam_policy.cni_metrics_helper_pod_identity_policy.arn
@@ -203,7 +205,7 @@ module "cni_metrics_helper_pod_identity" {
   # Pod Identity Associations
   associations = {
     addon = {
-      cluster_name = module.eks.cluster_name
+      cluster_name    = module.eks.cluster_name
       namespace       = "kube-system"
       service_account = "cni-metrics-helper"
     }
