@@ -36,7 +36,7 @@ provider "kubernetes" {
 ################################################################################
 module "gitops_bridge_bootstrap_hub" {
   source  = "gitops-bridge-dev/gitops-bridge/helm"
-  version = "0.0.1"
+  version = "0.1.0"
 
   # The Argo CD remote cluster secret is deploy on hub cluster not on spoke clusters
   providers = {
