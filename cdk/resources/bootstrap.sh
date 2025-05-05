@@ -170,10 +170,24 @@ pip install pytest_bdd boto3 kubernetes
 
 curl -sfL https://direnv.net/install.sh | bash
 
-#Install some VsCode plugins
-/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform
-/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders
+#Try Install some VsCode plugins
+/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform || true
+/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders || true
+/usr/lib/code-server/bin/code-server --install-extension amazonwebservices.amazon-q-vscode || true
 
+#Install Amazon Q
+curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "/tmp/q.zip"
+unzip /tmp/q.zip -d /tmp
+/tmp/q/install.sh --no-confirm
+
+#Install ag silver search
+## Install build dependencies
+sudo dnf install -y git gcc make pkg-config automake autoconf pcre-devel xz-devel zlib-devel
+## Clone the repository, build and install from source
+cd /tmp && git clone https://github.com/ggreer/the_silver_searcher.git && \
+cd the_silver_searcher && \
+./build.sh && \
+sudo make install
 
 #Install fuzzy search
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
