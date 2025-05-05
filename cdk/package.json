@@ -24,7 +24,7 @@
     "@workshop-cdk-constructs/codebuild-custom-resource": "^0.2.0",
     "@workshop-cdk-constructs/vscode-ide": "^0.8.1",
     "@workshop-cdk-constructs/workshop-studio-utils": "^0.2.3",
-    "aws-cdk-lib": "^2.186.0",
+    "aws-cdk-lib": "^2.189.1",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }
