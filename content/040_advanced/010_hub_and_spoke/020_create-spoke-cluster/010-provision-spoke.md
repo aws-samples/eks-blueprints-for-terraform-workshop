@@ -36,7 +36,6 @@ Let's reuse the Terraform configuration from the hub cluster with some modificat
 ```bash
 cp ~/environment/hub/git_data.tf ~/environment/spoke
 cp ~/environment/hub/main.tf ~/environment/spoke
-cp ~/environment/hub/pod-identity.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
 sed -i 's/environment     = "control-plane"/environment     = terraform.workspace/' ~/environment/spoke/main.tf
 sed -i 's/fleet_member     = "control-plane"/fleet_member     = "spoke"/' ~/environment/spoke/main.tf
@@ -93,19 +92,18 @@ To configure kubectl, we will execute:
 eval $(terraform output -raw configure_kubectl)
 ```
 
-Let's verify we can see the nodes in our spoke cluster:
+To verify that kubectl is correctly configured, run the command below to see the nodes in the EKS cluster. 
 
 ```bash
-kubectl get nodes --context spoke-staging
+kubectl get nodes --context hub-cluster
 ```
+
+Since there is no workload deployed, no nodes have been created to host that workload. However, the fact that no nodes were created does validate that the system can access the cluster.
 
 Expected output:
 
 ```
-NAME                                        STATUS   ROLES    AGE   VERSION
-ip-10-0-40-218.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks-a737599
-ip-10-0-44-149.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks-a737599
-ip-10-0-49-157.eu-west-1.compute.internal   Ready    <none>   19m   v1.28.13-eks-a737599
+No resources found
 ```
 
 We can now see our spoke-staging cluster in the AWS Console under EKS > Clusters.

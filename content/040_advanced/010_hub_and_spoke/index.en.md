@@ -1,5 +1,5 @@
 ---
-title: "Advanced modules"
+title: "Hub-Spoke Deployment"
 weight: 79
 ---
 
