@@ -29,6 +29,7 @@ provider "helm" {
 
 locals{
   argocd_namespace = "argocd"
+  environment = "dev"
 }
 
 resource "kubernetes_namespace" "argocd" {
@@ -44,9 +45,9 @@ module "gitops_bridge_bootstrap" {
   version = "0.1.0"
   cluster = {
     cluster_name = module.eks.cluster_name
-    #enablecontrolplane environment = local.environment
+    environment = local.environment
     #enableannotation metadata     = local.annotations
-    #enablelabel addons       = local.labels
+    #enableaddons addons       = local.addons
   }
 
   #enableapps apps = local.argocd_apps

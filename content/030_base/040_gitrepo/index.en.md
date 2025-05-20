@@ -1,5 +1,5 @@
 ---
-title: "Workshop Git repositories"
+title: "Git Repository Overview"
 weight: 40
 ---
 

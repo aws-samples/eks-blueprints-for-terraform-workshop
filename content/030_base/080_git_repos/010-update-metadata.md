@@ -2,21 +2,37 @@
 title: "Update Annotations"
 weight: 10
 ---
-
-
-In this chapter, we’ll add annotations to the cluster. 
-
-In the Argo CD user interface, go to the hub cluster. The hub-cluster currently has some existing Labels and Annotations defined. These are added by GitOps Bridge.
+Annotations are key-value pairs attached to ArgoCD Cluster object. In the Argo CD user interface, navigate to the hub-cluster. You’ll notice that the cluster already has some annotations defined. These are added automatically by the GitOps Bridge module.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-metadata.png)
 
-> Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information.
+> Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information like repo URL.
 
-### 1. Git repository 
-We have configured three Git repositories to store add-ons and workloads. The repository URLs are already stored in AWS Secrets Manager. We will retrieve these into terraform variables.
+In upcoming chapters, you will create an ApplicationSet that references Git repositories. Argo CD supports referencing annotations. For example to reference workload_repo_url annotation:
 
 
-```json
+<!-- prettier-ignore-start -->
+:::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7'}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+...
+template:
+   spec:
+      source:
+        repoURL:'{{.metadata.annotations.workload_repo_url}}'
+:::
+<!-- prettier-ignore-end -->
+
+Information about repositories(platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform . This secret holds information about platform git repository.
+
+![Git Secrets](/static/images/git-secrets.png)
+
+In this chapter you will copy these values into annotations so that they can be referenced in ArgoCD ApplicationSet.
+
+### 1. Retrieve AWS Secrets
+
+
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/git_data.tf
 # retrive from secret manager the git data for the platform and workload repositories
 
@@ -42,20 +58,16 @@ data "aws_secretsmanager_secret_version" "git_data_version_workload" {
 
 
 EOF
-```
+:::
 
 ### 2. Define annotation variables
 
-Define **enable_XXX_addons** boolean variables. These provide a simple way to control whether addons are installed or removed, that will be stored as labels.
+Each secret contains keys such as url, basepath, path, and revision. This modular structure allows you to use a single Git repository for multiple purposes by defining different base paths. Since this workshop uses separate repositories for each concern (addons, platform, and workload), basepath is unused, but included for completeness.
 
-Define addons_metadata variable as a list of key/value pairs that will be mapped to the secret annotations, and contain any important data that Argo CD can uses to configure the Applications.
-
-Some values are commented and will be used later in the workshop.
-
-For example, in the highlighted section below, We’ve defined the enable_cert_manager variable in the Terraform variables file. When it is set enable_cert_manager = true, Cert Manager is deployed; setting it to false removes it.
+Add the following block to your main.tf file to parse secrets and assign values to local variables:
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='6'}
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
@@ -65,18 +77,12 @@ locals{
   gitops_addons_path     = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).path
   gitops_addons_revision = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).revision
 
-  gitops_addons_repo_secret_key = var.secret_name_git_data_addons
-  gitops_addons_repo_username = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).username
-  gitops_addons_repo_password = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_addons.secret_string).password
 
   gitops_platform_url      = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).url
   gitops_platform_basepath = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).basepath
   gitops_platform_path     = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).path
   gitops_platform_revision = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).revision
 
-  gitops_platform_repo_secret_key = var.secret_name_git_data_platform
-  gitops_platform_repo_username = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).username
-  gitops_platform_repo_password = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_platform.secret_string).password
 
   gitops_workload_url      = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_workload.secret_string).url
   gitops_workload_basepath = jsondecode(data.aws_secretsmanager_secret_version.git_data_version_workload.secret_string).basepath
@@ -113,7 +119,11 @@ locals{
       workload_repo_basepath = local.gitops_workload_basepath
       workload_repo_path = local.gitops_workload_path
       workload_repo_revision = local.gitops_workload_revision
-    }
+    },
+    #enableeso{
+    #enableeso  external_secrets_service_account = local.external_secrets.service_account
+    #enableeso  external_secrets_namespace = local.external_secrets.namespace
+    #enableeso}    
   )
 }
 
@@ -121,18 +131,22 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-### 4. Update Labels and Annotations
+You can reference a folder in workload gitea repository in the following format.
 
-We need to update the labels and annotations on the hub-cluster Cluster object. To do this, we will use the GitOps Bridge. The GitOps Bridge is configured to update labels and annotations on the specified cluster object.
+![Git Folders](/static/images/gitea-folder.png)
+
+### 4. Update Annotations
+
+The annotations are applied to the hub-cluster object using the GitOps Bridge module. Use the following command to uncomment the metadata line( line 7) and enable annotation injection:
 
 ```bash
 sed -i "s/#enableannotation//g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments metadata and addons variables as highlighted below in `main.tf`. The values defined in the addons variable are assigned to Labels, while the metadata values are assigned to Annotations on the cluster object.
+The code provided above uncomments metadata  as highlighted below in `main.tf`.  metadata values are assigned to Annotations on the cluster object.
 
 <!-- prettier-ignore-start -->
-:::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7'}
+:::code{language=yml showCopyAction=false showLineNumbers=true highlightLines='7'}
 module "gitops_bridge_bootstrap" {
   source = "gitops-bridge-dev/gitops-bridge/helm"
   version = "0.0.1"
@@ -140,7 +154,7 @@ module "gitops_bridge_bootstrap" {
     cluster_name = module.eks.cluster_name
     environment = local.environment
     metadata = local.annotations
-    #enablelable addons = local.labels
+    #enableaddons addons = local.labels
 }
 :::
 <!-- prettier-ignore-end -->
@@ -154,11 +168,12 @@ terraform apply --auto-approve
 
 ### 6. Validate update to labels and addons
 
-Goto to the **Settings > Clusters > hub-cluster** in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
+Go to to the **Settings > Clusters > hub-cluster** in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
 
-Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret.
+
+Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update annotations for the secret.
 
 You can check the Labels and annotations on the cluster secret:
 

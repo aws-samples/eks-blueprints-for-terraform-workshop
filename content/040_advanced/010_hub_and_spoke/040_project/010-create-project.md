@@ -30,7 +30,7 @@ spec:
           - clusters:
               selector:
                 matchLabels:
-                  fleet_member: control-plane
+                  fleet_member: hub
               values:
                 addonChart: argocd-apps
                 addonChartVersion: '1.4.1'
@@ -39,7 +39,7 @@ spec:
               repoURL: '{{metadata.annotations.platform_repo_url}}'
               revision: '{{metadata.annotations.platform_repo_revision}}'
               directories:
-                - path: '{{metadata.annotations.platform_repo_basepath}}config/workload/*'
+                - path: '{{metadata.annotations.platform_repo_basepath}}config/*'
   template:
     metadata:
       name: 'argoprojects-{{path.basename}}'
@@ -58,7 +58,7 @@ spec:
           helm:
             releaseName: 'argoprojects-{{path.basename}}'
             valueFiles:
-              - '$values/{{metadata.annotations.platform_repo_basepath}}config/workload/{{path.basename}}/project/project-values.yaml'
+              - '$values/{{metadata.annotations.platform_repo_basepath}}config/{{path.basename}}/project/project-values.yaml'
             parameters:
               - name: "projects[0].sourceRepos[0]"
                 value: '{{metadata.annotations.workload_repo_url}}'
@@ -93,8 +93,8 @@ Now, let's create the webstore project values.
 The following helm values file contains source repositories, destinations, and allowed resources for the webstore workload. Some values are commented out for use in upcoming chapters.
 
 ```bash
-mkdir -p $GITOPS_DIR/platform/config/workload/webstore/project
-cat > $GITOPS_DIR/platform/config/workload/webstore/project/project-values.yaml << 'EOF'
+mkdir -p $GITOPS_DIR/platform/config/webstore/project
+cat > $GITOPS_DIR/platform/config/webstore/project/project-values.yaml << 'EOF'
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
 projects:
 - name: webstore

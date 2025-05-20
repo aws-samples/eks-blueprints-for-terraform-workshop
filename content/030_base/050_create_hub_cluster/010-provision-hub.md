@@ -72,9 +72,9 @@ variable "authentication_mode" {
 }
 
 variable "enable_irsa" {
-  description = "IRSA is not required as cluster uses Pod Identity"
+  description = "Enable IRSA"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "secret_name_git_data_addons" {

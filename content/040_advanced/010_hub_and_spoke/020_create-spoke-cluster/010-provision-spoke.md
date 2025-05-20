@@ -37,17 +37,15 @@ Let's reuse the Terraform configuration from the hub cluster with some modificat
 cp ~/environment/hub/git_data.tf ~/environment/spoke
 cp ~/environment/hub/main.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
-sed -i 's/environment     = "control-plane"/environment     = terraform.workspace/' ~/environment/spoke/main.tf
-sed -i 's/fleet_member     = "control-plane"/fleet_member     = "spoke"/' ~/environment/spoke/main.tf
+sed -i 's/environment = "dev"/environment = terraform.workspace/' ~/environment/spoke/main.tf
+sed -i 's/fleet_member = "hub"/fleet_member = "spoke"/' ~/environment/spoke/main.tf
 
-sed -i '
-s/{ workloads = true },/{ workloads = false },/
-s/{ workload_webstore = true }/{ workload_webstore = false }/
-' ~/environment/spoke/main.tf
+sed -i 's/{ workload_webstore = true }/{ workload_webstore = false }/' ~/environment/spoke/main.tf
 
 # Clean some parts
 sed -i 's/^    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/#    bootstrap   = file("${path.module}\/bootstrap\/bootstrap-applicationset.yaml")/' ~/environment/spoke/main.tf
 sed -i '/^module "gitops_bridge_bootstrap" {/,/^}/d' ~/environment/spoke/main.tf
+
 ```
 
 ### 3. Define variables
@@ -69,6 +67,9 @@ We will copy the Terraform configuration but disable Argo CD since we do not wan
 ```bash
 cp ~/environment/hub/terraform.tfvars ~/environment/spoke/terraform.tfvars
 sed -i 's/enable_argocd = "true"/enable_argocd = "false"/' ~/environment/spoke/terraform.tfvars
+sed -i 's/enable_ingress_nginx = "true"/enable_ingress_nginx = "false"/' ~/environment/spoke/terraform.tfvars
+sed -i 's/enable_external_secrets = "true"/enable_external_secrets = false/' ~/environment/spoke/terraform.tfvars
+
 ```
 
 ### 6. Create Terraform workspace & Apply Terraform
