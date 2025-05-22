@@ -1,21 +1,32 @@
 ---
-title: "Onboard Workload"
+title: "Automate Webstore Deployment"
 weight: 10
 ---
 
+To automate Webstore workload, we have to understand folder structure.
 
-### 3. Deploy webstore workload
+![Webstore Workload Folders](/static/images/webstore-workload-folders.png)
 
-The webstore workload configuration files are in the **workload** git repository, not in the **platform** git repository. This separation demonstrates the different ownership and responsibilities between the platform team and application team.
+Webstore workload has
+* 6 microservices( assets, carts, catalog, checkout, orders, ui)
+* Each microservice has 
+  - base: directory holds the common configuration that applies to all    environments.
+  - environment specfic directories(dev,staging,prod) hold environment specific configurations, allowing for easy overide and customization
+* To deploy webstore dev version, you have to deploy all microservices kstomization.yaml in dev folder
 
-Let's have the platform team add a webstore applicationset to allow the webstore application team to deploy from the workload git repository.
+### 1. Automate dev webstore workload deployment
 
-![workload-webstore](/static/images/workload-webstore.jpg)
+In "Namespace And Workload" automation, we have already created create-deployment application that continuously scans and process mainfests under config/*/deployment folder in platform repo.
+
+Let's create an ApplicationSet that is responsible for deploying dev webstore workload.
+
+![Webstore Workload Deployment](/static/images/deployment-webstore-applicationset.png)
+
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,27,30'}
 mkdir -p $GITOPS_DIR/platform/config/webstore/deployment
-cat > $GITOPS_DIR/platform/config/webstore/deployment/webstore-dev-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/config/webstore/deployment/deployment-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -74,17 +85,9 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-- Line 17: The **webstore** workload is only deployed on clusters with the label **workload_webstore = true**
-  - The hub cluster has workload_webstore = true label
-- Line 22: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository
-- Line 25: Maps to **webstore/** (microservices under webstore folder)
-- Line 39: **Path** gets the value of each microservice directory
-- The label environment on the hub cluster is "**control-plane**" (taken from cluster secret)
-- **Kustomization** deploys each microservice in "control-plane" environment
-- Line 42: **path.basename** maps to the microservice directory name, which maps to the target namespace for deployment
-  - Each microservice deploys into its matching namespace - assets microservice deploys to assets namespace, carts to carts, and so on
-
-![workload-webstore-folders](/static/images/workload-webstore-deployment.png)
+- Line 17: The **webstore** workload is only deployed on clusters with the label **workload_webstore = true** and **environment = dev**
+- Line 27: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository
+- Line 30: Maps to **webstore/*/dev** ( each microservices dev folder under webstore )
 
 ### 4. Git commit
 
@@ -118,6 +121,8 @@ Access the webstore in the browser.
 ![webstore](/static/images/webstore-ui.png)
 
 ### 7. Create 
+
+Let's also create configuration to deploy staging and production as well.
 
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
 sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-dev-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-staging-applicationset.yaml

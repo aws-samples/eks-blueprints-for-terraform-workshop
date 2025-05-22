@@ -1,13 +1,10 @@
 ---
-title: "Advanced modules"
-weight: 79
+title: "Hub-Spoke Strategy"
+weight: 40
 ---
 
-In this section, we will explore advanced modules that demonstrate additional capabilities of these projects:
+In the **Hub-Spoke** approach, a single, centralized Argo CD instance (running in the **hub cluster**) is responsible for managing applications and addons across multiple **spoke EKS clusters**.
 
-- Argo CD Hub-Spoke deployment
-- Blue/Green Deployment with Argo Rollouts (coming soon)
-- Autoscaling with Karpenter (coming soon)
-- Day 2 operations: Blue/Green EKS cluster Upgrade (coming soon)
+In this chapter, we will configure Argo CD in the **hub cluster** to manage applications and addons deployed on the **spoke-staging cluster**.
 
-These modules will provide deeper insights into more complex deployment patterns and operational techniques, allowing us to further leverage the power of EKS Blueprints and GitOps principles in our infrastructure management.
+![Platform Task](/static/images/advanced-hub-spoke.png)

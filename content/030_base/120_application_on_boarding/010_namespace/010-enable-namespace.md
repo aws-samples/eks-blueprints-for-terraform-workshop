@@ -1,17 +1,56 @@
 ---
-title: "Create Namespace"
+title: "Automate Webstore Namespace Creation"
 weight: 10
 ---
 
+We already have a helm chart to deploy namespace in platform gitrepo. 
 
-### 3. Create webstore namespace configuration
+![namespace-helm](/static/images/namespace-helm.png)
+
+:::expand{header="Check the files in helm chart:"}
+```
+├── Chart.yaml
+├── README.md
+├── templates
+│   ├── _helpers.tpl
+│   ├── limitrange
+│   │   └── limitrange.yaml
+│   ├── namespace
+│   │   └── namespace.yaml
+│   ├── networkpolicy
+│   │   ├── egress
+│   │   │   ├── allow-dns.yaml
+│   │   │   └── deny-all.yaml
+│   │   ├── ingress
+│   │   │   └── deny-all.yaml
+│   │   └── networkpolicy.yaml
+│   ├── rbac
+│   │   ├── rolebinding.yaml
+│   │   └── role.yaml
+│   └── resourcequota
+│       └── resourcequota.yaml
+├── values.schema.json
+├── values-test.yaml
+└── values.yaml
+```
+:::
+
+To create namespace, we have to deploy namespace helm chart and pass values.
+
+![namespace-helm-deploy](/static/images/namespace-helm-deploy.png)
+
+### 1. Create webstore namespace configuration
+
+ In "Namespace And Workload" automation, we have already created create-namespace application that continuously scans and process mainfests under config/*/name folder in platform repo. 
 
 Let's create an ApplicationSet that is responsible for the namespaces associated with the webstore workload.
 
-![namespace-helm](/static/images/namespace-webstore-applicationset.jpg)
+![namespace  webstore](/static/images/namespace-webstore-applicationset.png)
+
+
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='15,29,35,36'}
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,29,30,36,37'}
 mkdir -p $GITOPS_DIR/platform/config/webstore/namespace
 cat > $GITOPS_DIR/platform/config/webstore/namespace/namespace-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
@@ -64,10 +103,9 @@ EOF
 <!-- prettier-ignore-end -->
 
 - Line 15: Only clusters that have label workload_webstore: 'true' are selected
-- Line 29: Deploy the helm chart present in the folder charts/namespace  
-  ![namespace-helm](/static/images/namespace-helm.jpg)
+- Line 29: Deploy the helm chart present in the folder charts/namespace in platform git repo  
 - Line 35: Default values for the namespace helm chart
-- Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = prod with the file prod-values.yaml
+- Line 36: (optional) Override values for the namespace helm chart. For example you could override default values for environment = dev with the file dev-values.yaml. If this file does not exist then it is ignored.
 
 ### 4. Create webstore namespace default values
 
@@ -85,39 +123,6 @@ code $GITOPS_DIR/platform/config/workload/webstore/namespace/values/default-valu
 ```
 
 :::
-
-```bash
-tree $GITOPS_DIR/platform/charts/namespace
-```
-
-Output:
-
-```
-/home/ec2-user/environment/gitops-repo/platform/charts/namespace
-├── Chart.yaml
-├── README.md
-├── templates
-│   ├── _helpers.tpl
-│   ├── limitrange
-│   │   └── limitrange.yaml
-│   ├── namespace
-│   │   └── namespace.yaml
-│   ├── networkpolicy
-│   │   ├── egress
-│   │   │   ├── allow-dns.yaml
-│   │   │   └── deny-all.yaml
-│   │   ├── ingress
-│   │   │   └── deny-all.yaml
-│   │   └── networkpolicy.yaml
-│   ├── rbac
-│   │   ├── rolebinding.yaml
-│   │   └── role.yaml
-│   └── resourcequota
-│       └── resourcequota.yaml
-├── values.schema.json
-├── values-test.yaml
-└── values.yaml
-```
 
 ### 5. Enable hub cluster for webstore workload
 
@@ -158,10 +163,6 @@ git commit -m "add webstore namespace applicationset and namespace values"
 git push
 ```
 
-The namespace-applicationset.yaml file makes Argo CD iterates through the folders under config/workload/\<\<workload>>/namespace.
-With the recent commit, it now processes the files located under config/workload/webstore/namespace.
-
-![namespace-helm](/static/images/namespace-process-webstore-applicationset.png)
 
 So it creates a new **namespace-webstore** application:
 
@@ -174,9 +175,10 @@ Wait few minutes and refresh the UI
 
 The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
 
-![namespace-helm](/static/images/namespace-create-webstore-namespace.jpg)
 
 ### 8. Validate namespaces
+
+With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using Argo CD and Helm, driven by simple Git changes.
 
 ```bash
 kubectl get ns --context hub-cluster
@@ -201,7 +203,7 @@ ui                Active   6h
 
 :::
 
-To view the LimitRange set for the ui namespace in the spoke-staging cluster.
+To view the LimitRange set for the ui namespace in the hub-cluster.
 
 ```bash
 kubectl get limitrange  -n ui --context hub-cluster -o yaml

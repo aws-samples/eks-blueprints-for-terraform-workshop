@@ -14,9 +14,3 @@ The platform team is responsible for establishing guardrails and defaults for ea
 Application teams are granted permission to deploy workloads within the provisioned namespaces. However, they are not allowed to modify the guardrails enforced by the platform team. This separation of responsibilities ensures that the platform team maintains control over the cluster's overall security and resource management, while application teams can focus on deploying and managing their workloads within the defined boundaries.
 
 By following this approach, we can achieve a balance between centralized governance and decentralized application deployment, promoting a secure and scalable Kubernetes environment.
-
-## Workloads
-
-In upcoming chapters, we will deploy the webstore workload. It consists of the ui, carts, catalog, orders, checkout, rabbitmq and assets microservices. In this chapter, we will create namespaces to isolate these microservices.
-
-![Webstore](/static/images/webstore.png)
