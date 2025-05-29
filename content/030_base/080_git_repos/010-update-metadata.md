@@ -1,15 +1,19 @@
 ---
-title: "Update Annotations"
+title: "Inject Cluster Annotations Using GitOps Bridge"
 weight: 10
 ---
-Annotations are key-value pairs attached to ArgoCD Cluster object. In the Argo CD user interface, navigate to the hub-cluster. You’ll notice that the cluster already has some annotations defined. These are added automatically by the GitOps Bridge module.
+
+In the previous "Application" chapter, you deployed the Guestbook application using a hardcoded repoURL in the Argo CD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata — specifically, from annotations on cluster objects.
+
+Annotations are key-value pairs attached to ArgoCD cluster object.
+The hub-cluster already includes annotations injected by GitOps Bridge. You can view these by navigating to ArgoCD Dashboard > Settings > Clusters > hub-cluster.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-metadata.png)
 
 > Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information like repo URL.
 
-In upcoming chapters, you will create an ApplicationSet that references Git repositories. Argo CD supports referencing annotations. For example to reference workload_repo_url annotation:
 
+In upcoming chapters, you'll create an ApplicationSet that references Git repositories. ArgoCD lets you reference these repositories dynamically using annotations. For example to reference workload_repo_url annotation:
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7'}
@@ -23,18 +27,20 @@ template:
 :::
 <!-- prettier-ignore-end -->
 
-Information about repositories(platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform . This secret holds information about platform git repository.
+You will use Annotations to store dynamic values such as Git repository URLs, paths, and revisions for different concerns (e.g., platform, workloads, addons). 
+
+Information about repositories (platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
 
 ![Git Secrets](/static/images/git-secrets.png)
 
 In this chapter you will copy these values into annotations so that they can be referenced in ArgoCD ApplicationSet.
 
-### 1. Retrieve AWS Secrets
+### 1. Reference Secrets Manager
 
 
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/git_data.tf
-# retrive from secret manager the git data for the platform and workload repositories
+# Retrieve Git repository metadata from AWS Secrets Manager for platform, workload, and addon repositories
 
 
 data "aws_secretsmanager_secret" "git_data_addons" {
@@ -60,9 +66,9 @@ data "aws_secretsmanager_secret_version" "git_data_version_workload" {
 EOF
 :::
 
-### 2. Define annotation variables
+### 2. Retrieve Git Metadata from AWS Secrets
 
-Each secret contains keys such as url, basepath, path, and revision. This modular structure allows you to use a single Git repository for multiple purposes by defining different base paths. Since this workshop uses separate repositories for each concern (addons, platform, and workload), basepath is unused, but included for completeness.
+Each secret contains keys such as url, basepath, path, and revision. 
 
 Add the following block to your main.tf file to parse secrets and assign values to local variables:
 
@@ -131,11 +137,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-You can reference a folder in workload gitea repository in the following format.
-
-![Git Folders](/static/images/gitea-folder.png)
-
-### 4. Update Annotations
+### 3. Inject Annotations
 
 The annotations are applied to the hub-cluster object using the GitOps Bridge module. Use the following command to uncomment the metadata line( line 7) and enable annotation injection:
 
@@ -143,7 +145,7 @@ The annotations are applied to the hub-cluster object using the GitOps Bridge mo
 sed -i "s/#enableannotation//g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments metadata  as highlighted below in `main.tf`.  metadata values are assigned to Annotations on the cluster object.
+The command above uncomments the metadata line in main.tf, enabling annotation injection.
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=true highlightLines='7'}
@@ -159,80 +161,15 @@ module "gitops_bridge_bootstrap" {
 :::
 <!-- prettier-ignore-end -->
 
-### 5. Terraform apply
+### 4. Terraform apply
 
 ```bash
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### 6. Validate update to labels and addons
+### 5. Validate update to labels and addons
 
-Go to to the **Settings > Clusters > hub-cluster** in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
+Go to  **Settings > Clusters > hub-cluster** in the Argo CD dashboard and examine the hub-cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)
-
-
-Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update annotations for the secret.
-
-You can check the Labels and annotations on the cluster secret:
-
-```bash
-kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
-```
-
-:::expand{header="Example of output"}
-
-```
-apiVersion: v1
-data:
-  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7CiAgICAiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
-  name: aHViLWNsdXN0ZXI=
-  server: aHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3Zj
-kind: Secret
-metadata:
-  annotations:
-    addons_repo_basepath: ""
-    addons_repo_path: bootstrap
-    addons_repo_revision: HEAD
-    addons_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-addons
-    argocd_namespace: argocd
-    aws_account_id: "012345678910"
-    aws_cluster_name: hub-cluster
-    aws_load_balancer_controller_namespace: kube-system
-    aws_load_balancer_controller_service_account: aws-load-balancer-controller-sa
-    aws_region: us-west-2
-    aws_vpc_id: vpc-0281c90d8fb4ce6a2
-    cluster_name: hub-cluster
-    environment: control-plane
-    external_secrets_namespace: external-secrets
-    external_secrets_service_account: external-secrets-sa
-    platform_repo_basepath: ""
-    platform_repo_path: bootstrap
-    platform_repo_revision: HEAD
-    platform_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-platform
-    workload_repo_basepath: ""
-    workload_repo_path: ""
-    workload_repo_revision: HEAD
-    workload_repo_url: https://dcv3flp70gaiw.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-apps
-  creationTimestamp: "2024-10-07T21:40:44Z"
-  labels:
-    argocd.argoproj.io/secret-type: cluster
-    aws_cluster_name: hub-cluster
-    cluster_name: hub-cluster
-    enable_argocd: "true"
-    environment: control-plane
-    fleet_member: control-plane
-    kubernetes_version: "1.30"
-    tenant: tenant1
-    workloads: "true"
-  name: hub-cluster
-  namespace: argocd
-  resourceVersion: "6865"
-  uid: af0dfcb9-a034-4f2d-be9b-167eb78c830a
-type: Opaque
-```
-
-:::
-
-You can see now in the secret all the metadatas that has been configured by the **gitops_bridge_bootstrap** terraform module.

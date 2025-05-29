@@ -3,10 +3,8 @@ title: "ApplicationSet"
 weight: 20
 ---
 
-### 1. ApplicationSet
-
-In the previous chapter, you deployed an application using an Application object. This application was deployed to the hub-cluster.
-To deploy the same application to the spoke-cluster, you would need to create another Application manually.
+In the previous chapter, you deployed an application using an ArgoCD Application object to the hub-cluster.
+To deploy the same application to the spoke-cluster, you would need to create another ArgoCD Application manually.
 
 ![With ApplicationSet](/static/images/without-applicationset.png)
 
@@ -15,17 +13,19 @@ Instead of doing that every time, Argo CD offers a more scalable and automated s
 ![With ApplicationSet](/static/images/with-applicationset.png)
 
 
-Think of an ApplicationSet as a factory for Applications. It defines a template and uses generators to create multiple Application objects.
+Think of an ApplicationSet as a factory for ArgoCD Applications. It defines a template and uses generators to create multiple Application objects.
 
 ![ApplicationSet Template](/static/images/applicationset-template.png)
 
 
 
-### 2. Static List Generator
-Let’s create an ApplicationSet that deploys the Guestbook application to list of clusters. In this example to hub-cluster.
+# Static List Generator
+Let’s create an ApplicationSet that deploys the guestbook ArgoCD Application to list of clusters. In this example to hub-cluster.
+
+### 1. Create guestbook ApplicationSet
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=json highlightLines='12,13,14,15,16,17'}
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='12,13,14,15,16,17,25'}
 cd ~/environment/basics
 cat <<'EOF' >> ~/environment/basics/guestbookApplicationSet.yaml
 apiVersion: argoproj.io/v1alpha1
@@ -50,17 +50,55 @@ spec:
     spec:
       project: "default"
       source:
-        repoURL: https://github.com/argoproj/argocd-example-apps.git 
+        repoURL: <<APP REPO URL>>
         path: guestbook
         targetRevision: HEAD
       destination:
         name: '{{.name}}'
         namespace: guestbook
+      syncPolicy:
+        automated: {}        
+
 EOF
 :::
 <!-- prettier-ignore-end -->
 
-### 2. Apply Static List Generator
+### 2. Update repoURL
+
+This ApplicationSet is using a placeholder `<<APP REPO URL>>` for the Git repository URL. In this step, we’ll update it with the actual URL of your Guestbook app repo.
+
+Open guestbook applicationset  in VSCode.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+code ~/environment/basics/guestbookApplicationSet.yaml
+:::
+<!-- prettier-ignore-end -->
+
+
+Navigate to the gitea Dashboard and copy HTTPS url of the application repository(eks-blueprints-workshop-gitops-apps).
+
+
+:::alert{header="Gitea Dashboard URL"}
+You execute the following command in the terminal for gitea url.
+
+```bash
+gitea_credentials
+```
+:::
+
+
+![Application GitRepo](/static/images/developer-repo-url.png)
+
+**Replace** `<<APP REPO URL>>` with the application repository url
+
+### 3. Save the file
+You have updated the file. Save the file.
+
+Click on hamburger > File > Save
+
+
+### 4. Apply Static List Generator
 
 Apply the manifest
 
@@ -68,9 +106,9 @@ Apply the manifest
 kubectl create ns guestbook
 kubectl apply -f ~/environment/basics/guestbookApplicationSet.yaml
 ```
-### 3. Verify Application
+### 5. Verify Application
 
-Navigate to the ArgoCD web UI. You should see the guestbook application listed.
+Navigate to the ArgoCD web UI. You should see the guestbook ArgoCD Application listed.
 
 ![ApplicationSet Guestbook](/static/images/applicationset-guestbook.png)
 
@@ -81,50 +119,35 @@ After you create spoke-cluster, uncommenting the spoke-cluster section will auto
 ```bash
 argocd appset delete guestbook  -y
 kubectl delete ns guestbook
+kubectl get secrets -n argocd -o json | jq -r '
+  .items[]
+  | select(.data != null)
+  | select(any(.data[]?; @base64d == "guestbookrepo"))
+  | .metadata.name
+' | xargs -r -I{} kubectl delete secret -n argocd {}
+
 ```
 
-### Dynamic Generator
+# Dynamic Generator
 
 The static list generator requires you to manually add each cluster. A better approach is to dynamically select clusters using the Cluster generator, which selects clusters based on labels. 
 
 ArgoCD supports different types of [Generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix and more, to dynamically generate Applications.
 
 
+## Cluster Generator
 
-Let's explore how the Cluster generator works. The Cluster generator selects clusters based on labels defined on the cluster object. You can view these labels using the following command:
+Let's explore how the Cluster generator works. The Cluster generator selects clusters based on **labels** defined on the cluster object. You can view labels navigating to ArgoCD dashboard > Settings > Clusters > hub-cluster:
 
-```bash
-kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
-```
-A sample output might look like this. You'll notice that it already includes several labels,  which are populated automatically by GitOps Bridge. You will add labels to meet specific selection criteria in upcoming chapters.
+![Hub Cluster Labels](/static/images/hubcluster-initial-labels.png)
 
-:::code{showCopyAction=false showLineNumbers=false language=json highlightLines='14,15,16,17,18'}
+These labels are created by GitOps Bridge.
 
-```
-apiVersion: v1
-data:
-  config: ewogICJ0bHNDbGllbnRDb25maWciOiB7CiAgICAiaW5zZWN1cmUiOiBmYWxzZQogIH0KfQo=
-  name: aHViLWNsdXN0ZXI=
-  server: aHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3Zj
-kind: Secret
-metadata:
-  annotations:
-    cluster_name: hub-cluster
-    environment: control-plane
-  creationTimestamp: "2024-10-03T18:51:28Z"
-  labels:
-    argocd.argoproj.io/secret-type: cluster
-    cluster_name: hub-cluster
-    enable_argocd: "true"
-    environment: dev
-  name: hub-cluster
-  namespace: argocd
-  resourceVersion: "6498"
-  uid: ad023c6c-1a97-45c7-92b6-33a3f17021b7
-type: Opaque
-```
+Labels are similar to AWS tags. For example, in AWS you can designate a role for an EC2 instance using tags like app=webserver or app=appserver. These tags help identify the role or purpose of the instance.
 
-:::
+Labels in ArgoCD work in a similar way. You can assign labels to clusters to indicate their role, environment, or purpose. For instance, labeling a cluster with workload_webstore=true(indicating it can deploy the Webstore app) or environment=staging( indicating it should receive staging versions) allows tools like Argo CD ApplicationSet to target the right clusters dynamically based on these roles.
+
+Let's look at a few examples of how to use labels with the Cluster generator.
 
 Let's say there are 3 cluster objects - hub-cluster, spoke-staging and spoke-prod with different labels (key value pairs).
 
@@ -155,3 +178,7 @@ The following generator creates 2 applications because 2 cluster labels match th
 ```
 
 ![applicationset](/static/images/applicationset-workloads.png)
+
+If you update the labels on a cluster, the ApplicationSet controller will **dynamically** generate new ArgoCD Applications or delete existing ones based on the updated label values. 
+
+For example, in the scenario above, if you set workloads=true on the hub-cluster, the ApplicationSet will automatically generate an additional Application targeting that cluster.

@@ -114,6 +114,17 @@ terraform apply --auto-approve
 
 ### 5. Validate ESO addon
 
+:::alert{header="Sync Application"}
+If the new addon-external-secrets-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
+
+```bash
+argocd app sync argocd/cluster-addons
+```
+
+:::
+
 We already have Gittea repository information in AWS Secret Manager. We will create an External Secret to copy from AWS Secret eks-blueprints-workshop-gitops-addons to Kubernetes secret-addon secret.
 
 :::code{showCopyAction=true language=json }
@@ -154,6 +165,14 @@ Create External Secret
 
 :::code{showCopyAction=true language=json }
 kubectl apply -f ~/environment/basic/eso.yaml
+:::
+
+:::alert{header="Sync Application"}
+If you throws an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again. 
+
+```bash
+kubectl apply -f ~/environment/basic/eso.yaml
+```
 :::
 
 Validate Kubernetes Secret

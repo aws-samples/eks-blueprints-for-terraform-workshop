@@ -88,7 +88,7 @@ git push
 On the Argo CD dashboard click on bootstrap Application to see newly created namespace applicationset.
 
 :::alert{header="Sync Application"}
-If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+If the new create-namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 

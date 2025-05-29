@@ -1,113 +1,146 @@
 ---
-title: "App of Apps"
+title: "App of Apps Pattern"
 weight: 30
 ---
+**There is no lab in this chapter, but the App of Apps pattern is extensively used throughout the workshop.**
+
+### Background
+
+In real-world organizations, deploying an application involves multiple teams. Let's categorize them broadly:
+
+- ![Developers](/static/images/developer-task.png) **Developers**: Responsible for application code and Kubernetes manifests for their workload.
+- ![Platform](/static/images/platform-task.png) **Platform Team**: Responsible for infrastructure (VPC, clusters, addons), namespace creation (quotas, limits, policies), and automating workload deployments.
+
+To enable clear separation of responsibilities and automation, ArgoCD users often adopt the App of Apps pattern.
+
+### What is the App of Apps Pattern?
+
+Normally, an ArgoCD Application is used to deploy Kubernetes manifests.
+For example, in earlier chapters, you saw how a guestbook Application deployed Deployment and Service resources directly to the hub-cluster.
+
+![App of Apps Guestbook](/static/images/appofapps-guestbook.png)
+
+The **App of Apps** pattern in ArgoCD is a strategy where a single *parent* `Application` deploys multiple *child* `Applications/ApplicationSets`. For example, the webstore parent Application deploys Applications for the ui, assets, carts microservices.
+
+![App of Apps Webstore](/static/images/appofapps-webstore-concept.png)
+
+
+Let’s walk through how the **webstore** workload can be deployed using this pattern.
+
+![Webstore](/static/images/webstore.png)
+
+The *webstore* consists of multiple microservices like `ui`, `orders`, `checkout`, `carts`, `catalog`, and `assets`.
+
+
+### Developer Repository Layout
+
+Developers organize their code and manifests using a modular structure. Each microservice is a folder under `webstore/`:
+
+![Webstore Repo](/static/images/appofapps-webstore-repo.png)
+
+
+### Platform Onboarding Webstore Workload
+
+![Platform](/static/images/platform-task.png) The platform team onboards the *webstore* workload by creating a `deploy-webstore.yaml` file in the `workload/` folder of the platform repository. This file defines an `ApplicationSet` that deploys all webstore microservices.
+
+![Webstore AppSet](/static/images/appofapps-webstore-appset.png)
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='10-11,13-14d,21,23,25,26'}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: webstore-applications
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://<developer-repo-url>
+        revision: HEAD
+        directories:
+          - path: webstore/*
+  template:
+    metadata:
+      name: '{{.path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://<developer-repo-url>
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+      destination:
+        name: hub-cluster
+        namespace: '{{.path.basename}}'
+      syncPolicy:
+        automated: {}
+:::
+<!-- prettier-ignore-end -->
+
+#### Generator
+- **Line 10**: Uses the [Git generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git/) to dynamically detect directories.
+- **Lines 13–14**: Traverses all subdirectories under `webstore/`.
+
+The Git generator scans the webstore/ directory in the developer repo and finds six subfolders—one for each microservice (ui, orders, checkout, carts, catalog, assets).
+This results in six generator values, and for each value, ArgoCD creates a child Application using the template section.
+
+#### Template
+- **Line 21**: Points to the developer Git repo.
+- **Line 22**: `{{.path.path}}` resolves to paths like `webstore/ui`, `webstore/orders`.
+- **Line 25**: Deploys to `hub-cluster`.
+- **Line 26**: `{{.path.basename}}` gives the namespace microservice name like ui, carts etc.
+
+This `ApplicationSet` creates one Argo CD Application for each microservice.
+
+![Deploy Webstore](/static/images/appofapps-deploy-webstore-appset.png)
 
 
 
+### Root Application 
 
-### App of Apps
+To enable the App of Apps pattern, the platform team creates a *root* Argo CD Application that deploys the above `ApplicationSet`.
 
-In the previous chapter, you deployed a single application using an Argo CD Application object. That worked great — but what happens when:
-
-* You have multiple microservices 
-* You need to deploy them to multiple environments like dev and uat
-* You want to scale this process without overwhelming the platform team?
-
-This is where the App of Apps pattern comes in. In this example you want to deploy E-Commerce(ecomm) app with 3 microservices( auth, orders, payments)
-
-### Basic Setup Without App of Apps
-Let’s say a developer wants to deploy a microservices app to to dev. They create Argo CD Application manifests like this:
-
-<!-- ```
-├── dev/
-    ├── auth.yaml
-    ├── orders.yaml
-    └── payments.yaml
-└── uat/
-    ├── auth.yaml
-    ├── orders.yaml
-    └── payments.yaml
-├── deploy/
-    ├── uat-apps.yaml      
-    └── dev-apps.yaml      
-``` -->
-Then they send these manifests to the platform team, who manually creates three Argo CD Applications (three per environment). As the number of apps and environments grows, this becomes unmanageable.
-
-### Automate with App of Apps
-
-With the App of Apps pattern, we break the responsibilities like this:
-
-✅ Developers: Still write Argo CD Application YAMLs for each service in each environment.
-
-✅ Platform Team: Adds a layer to automate deployment and structure.
+![Webstore AppSet](/static/images/appofapps-root.png)
 
 
-![Platform Team](/static/images/kubernetes1.png) Platform Team: Adds a layer to automate deployment and structure
-Satish
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='9-10'}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: webstore-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://<platform-repo-url>
+    path: workload
+    targetRevision: HEAD
+  destination:
+    name: hub-cluster
+    namespace: argocd
+  syncPolicy:
+    automated: {}
+:::
+<!-- prettier-ignore-end -->
 
-![DeveloperSa](/static/images/Developer2.png) test Satish
+- **Line 9**: Repo URL points to the platform repo.
+- **Line 10**: Syncs all manifests under the `workload/` folder ( `deploy-webstore.yaml`).
 
-They also create environment-level ApplicationSets, like:
+### Diagram: How It Works
 
-├── deploy/
-│   ├── dev-apps.yaml      # points to dev/auth.yaml, dev/orders.yaml...
-│   └── uat-apps.yaml      # points to uat/auth.yaml, uat/orders.yaml...
+![App of Apps Flow](/static/images/webstore-appofapps-argocd.png)
 
-These ApplicationSets generate actual Argo CD Applications automatically.
-
-Then the platform team creates a single root Application like this:
-
-├── appofapps/
-│   └── ecomm.yaml   # deploys dev-apps.yaml and uat-apps.yaml
-
-And finally, a root.yaml Application is created to sync everything in the appofapps/ folder.
-
-
-Let's say you need to deploy a micrservices application(auth, orders,paymers) to dev and UAT environment. Developer can create these ArgoCD Application objects and send them to platform team to deploy the application. 
-
-
-├── dev/
-  ├── auth.yaml
-  ├── orders.yaml
-  └── payments.yaml
-└── uat/
-  ├── auth.yaml
-  ├── orders.yaml
-  └── payments.yaml
-
-Let's see how this can be automated.
-
-Developers still responsible to create ArgoCD application for each environment. These are stored in an application git repository. They also create env deployment files dev-apps.yaml and uat-apps.yaml. These application set point to Application in corresponding folders.
-
-├── dev/
-  ├── auth.yaml
-  ├── orders.yaml
-  └── payments.yaml
-└── uat/
-  ├── auth.yaml
-  ├── orders.yaml
-  └── payments.yaml
-└── deploy/
-  ├── dev-apps.yaml
-  └── uat-apps.yaml
-
-To deploy an application, platform team creates an ArgoCD Application for each application. 
-
-├── appofapps/
-  └── ecomm.yaml
-
-Then Platform team has to create root.yaml once. This will deploy all applications in appofapps folder.
-If you need to enroll a new applicaiton, platform creates a new application in appofapps folder and everything is automated.
+- Root Application (`webstore-root`) syncs the `workload` folder.
+- This triggers the `ApplicationSet` (`deploy-webstore`) to generate one Argo CD `Application` per microservice.
 
 
+### Benefits of the App of Apps Pattern
 
-In the previous chapter, you deployed an application using an Application object. This application was deployed to the hub-cluster.
-To deploy the same application to the spoke-cluster, you would need to create another Application.
+- 🔄 **Automation**: Root app deploys `ApplicationSet`, which deploys all microservices.  
+To onboard a new workload, the platform team simply adds a new ApplicationSet in the workload folder of the platform Git repository.
+- 👥 **Separation of Responsibilities**:
+  - Platform team defines structure and environment policies.
+  - Developers own their service manifests.
 
-Benefits of the Split
-Platform team controls structure and environment-level control.
-
-Developers have full ownership of what runs in each app.
-
-Keeps Git clean and security boundaries cleat

@@ -3,19 +3,10 @@ title: "Gitea Dashboard"
 weight: 10
 ---
 
-### 1. Check the local filesystem for GitOps files
 
-The GitOps manifests content has already been set up and synchronized to our local IDE across the three repositories we mentioned:
+You can access the Gitea server to view the repositories.
 
-![git_local_ide](/static/images/git_local_ide.jpg)
-
-### 2. Sync with Argo CD
-
-Later in the workshop, we will use Argo CD to synchronize from the Gitea Git repositories.
-
-While we can access the Gitea server to view the repositories, during the workshop we will primarily interact with our local filesystem and use `git push` commands.
-
-To find our Gitea URL, we can execute:
+To find our Gitea URL, you can execute:
 
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 gitea_credentials

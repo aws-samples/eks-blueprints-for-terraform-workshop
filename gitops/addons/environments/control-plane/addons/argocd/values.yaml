@@ -1,6 +1,0 @@
-# resources for the addon
-configs:
-  cm:
-    ui.bannercontent: "Management Environment ArgoCD"
-  params:
-    server.basehref: /proxy/8081/

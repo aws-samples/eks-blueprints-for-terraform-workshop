@@ -11,7 +11,7 @@ Initially, Argo CD was installed using the GitOps Bridge. However, ArgoCD itself
 sed -i '
 /addons = {/,/}/{
     /}/i\
-    enable_argocd = "true"
+    enable_argocd = true
 }
 ' ~/environment/hub/terraform.tfvars
 ```

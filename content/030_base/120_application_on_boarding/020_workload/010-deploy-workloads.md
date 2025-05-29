@@ -26,7 +26,7 @@ Let's create an ApplicationSet that is responsible for deploying dev webstore wo
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,27,30'}
 mkdir -p $GITOPS_DIR/platform/config/webstore/deployment
-cat > $GITOPS_DIR/platform/config/webstore/deployment/deployment-webstore-applicationset.yaml << 'EOF'
+cat > $GITOPS_DIR/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml << 'EOF'
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -89,7 +89,7 @@ EOF
 - Line 27: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository
 - Line 30: Maps to **webstore/*/dev** ( each microservices dev folder under webstore )
 
-### 4. Git commit
+### 2. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform
@@ -97,39 +97,33 @@ git add .
 git commit -m "add bootstrap workload applicationset"
 git push
 ```
+![c]
+argocd app sync argocd/bootstrap
 
-### 5. Accelerate Argo CD sync
+### 3. Accelerate Argo CD sync
 
 ```bash
-argocd app sync argocd/workload-webstore
+argocd app sync argocd/bootstrap
 ```
-
-![workload-webstore](/static/images/workload_webstore.jpg)
-
-### 6. Validate workload
-
-:::alert{header="Important" type="warning"}
-It takes a few minutes to deploy the workload and create a loadbalancer
+:::alert{header=Note type=warning}
+It can take few minutes for minutes to show create-deployment-webstore applicaion.
+Refresh the browser.
 :::
 
-```bash
-app_url_hub
-```
+![Create Deployment Webstore](/static/images/create-deployment-webstore.png)
 
-Access the webstore in the browser.
+![Webstore Workload Folders](/static/images/create-deployment-dev-webstore.png)
 
-![webstore](/static/images/webstore-ui.png)
-
-### 7. Create 
+### 4. Onboard staging and prod 
 
 Let's also create configuration to deploy staging and production as well.
 
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
-sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-dev-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-staging-applicationset.yaml
-sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-dev-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/webstore-prod-applicationset.yaml
+sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-staging-webstore-applicationset.yaml
+sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-prod-webstore-applicationset.yaml
 :::
 
-### 4. Git commit
+### 5. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform
@@ -137,3 +131,18 @@ git add .
 git commit -m "add bootstrap workload applicationset"
 git push
 ```
+
+:::alert{header="Sync Application"}
+If the new deployment and prod are not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
+
+```bash
+argocd app sync argocd/create-deployment-webstore
+```
+
+:::
+
+
+
+![Webstore Workload Folders](/static/images/create-deployment-allenv-webstore.png)

@@ -13,7 +13,7 @@ In the following code, let's deploy nginx by setting enable_ingress_nginx=true.
 sed -i '
 /addons = {/,/}/{
     /}/i\
-    enable_ingress_nginx = "true"
+    enable_ingress_nginx = true
 }
 ' ~/environment/hub/terraform.tfvars
 :::
@@ -38,6 +38,17 @@ Navigate to ArgoCD dashboard>Applications>cluster-addon. You can see  addon-ingr
 ![Enable Nginx](/static/images/nginx-application.png)
 
 ### 5. Validate Nginx in Kubernetes
+
+:::alert{header="Sync Application"}
+If the new addon-ingress-nginx-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
+
+```bash
+argocd app sync argocd/cluster-addons
+```
+
+:::
 
 You can check nginx pods
 

@@ -77,6 +77,17 @@ git commit -m "add bootstrap workload applicationset"
 git push
 ```
 
+:::alert{header="Sync Application"}
+If the new create-deployment is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
+
+```bash
+argocd app sync argocd/bootstrap
+```
+
+:::
+
 As the **bootstrap** folder is monitored, when a new file like **workload-applicationset.yaml** is added, it gets processed.
 
 ![workload-appofapps-monitor](/static/images/workload-appofapps-monitor.png)

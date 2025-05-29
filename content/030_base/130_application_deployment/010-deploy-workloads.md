@@ -18,7 +18,8 @@ We will now copy the **Dev environment** to the Git repository. Remember, all en
 for svc in /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/workload/webstore/*; do
   svc_name=$(basename $svc)
   mkdir -p ${GITOPS_DIR}/workload/webstore/$svc_name
-  cp -r $svc/base $svc/dev ${GITOPS_DIR}/workload/webstore/$svc_name/ 2>/dev/null
+  cp -r $svc/base  ${GITOPS_DIR}/workload/webstore/$svc_name/ 2>/dev/null
+  cp -r $svc/dev   ${GITOPS_DIR}/workload/webstore/$svc_name/ 2>/dev/null
 done
 :::
 <!-- prettier-ignore-end -->
@@ -33,4 +34,7 @@ git add .
 git commit -m "add bootstrap workload applicationset"
 git push
 ```
+
+![Workload GitRepo](/static/images/create-deployment-dev-webstore-deployment.png)
+
 

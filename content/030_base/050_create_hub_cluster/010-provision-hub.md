@@ -102,7 +102,7 @@ EOF
 
 ### 3. Configure EKS cluster
 
-We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module. It provisions a Managed Node Group with three EC2 instances, one in each Availability Zone, ensuring high availability. Additionally, it installs the following EKS managed add-ons: VPC-CNI for providing IP addresses to pods from the VPC private subnets, kube-proxy for internal traffic routing from services to pods, CoreDNS for internal service name resolution, and EKS Pod Identity for assigning IAM roles to pods in the cluster. Furthermore, an EKS access entry is created for the EKS admin IAM role, which was set up during the workshop and grants administrative access to the Kubernetes cluster. The IAM role is retrieved using a variable, and if we are completing this workshop independently, we will be prompted later to update the role using the terraform.tfvars configuration file that will be created.
+We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module. 
 
 ```bash
 cat > ~/environment/hub/main.tf << 'EOF'
@@ -232,9 +232,10 @@ output "cluster_region" {
   description = "Cluster region"
   value       = local.region
 }
-output "cluster_node_security_group_id" {
-  description = "Cluster node security group"
-  value       = module.eks.node_security_group_id
+
+output "cluster_primary_security_group_id" {
+  description = "Cluster primary security group"
+  value       = module.eks.cluster_primary_security_group_id
 }
 
 EOF
