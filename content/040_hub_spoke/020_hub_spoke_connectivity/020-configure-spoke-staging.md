@@ -1,5 +1,5 @@
 ---
-title: "Configure Spoke Staging"
+title: "Configure Spoke Cluster"
 weight: 20
 ---
 
