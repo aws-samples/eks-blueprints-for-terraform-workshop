@@ -14,7 +14,7 @@ In this chapter, we will deploy the External Secrets Operator (ESO) to access AW
 ![ESO](/static/images/eso.png)
 
 
-### 1 Install External Secrets Operator (ESO)
+### 1 Enable the ESO Add-on with a Label
 This can be installed by setting label enable_external_secrets = true
 
 :::code{showCopyAction=true language=json highlightLines='4'}
@@ -28,11 +28,11 @@ sed -i '
 
 
 
-### 2. Pod Identity
+### 2. Associate an IAM Role with the ESO Service Account
 
 The following code creates Pod Identity for ESO Service Account.
 
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='7'}
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals {
@@ -67,9 +67,9 @@ module "external_secrets_pod_identity" {
 EOF
 :::
 
-### 3. Add ESO Service Account annotation
+### 3. Add ESO Service Account Annotations
 
-ESO helm chart installed GitOps bridge requires service account name and namespace to create for the ESO. It gets this information from annotation. It uses default value specified in GitOps Bridge if not specified.
+The GitOps Bridge uses annotations to determine the name and namespace of the ESO service account to create. If annotations are not provided, it falls back to default values defined in the Helm chart.
 
 The following code uncomments to add annotation to the hub cluster.
 
@@ -112,7 +112,7 @@ terraform apply --auto-approve
 :::
 
 
-### 5. Validate ESO addon
+### 5. Validate the ESO Add-on
 
 :::alert{header="Sync Application"}
 If the new addon-external-secrets-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
@@ -168,7 +168,7 @@ kubectl apply -f ~/environment/basic/eso.yaml
 :::
 
 :::alert{header="Sync Application"}
-If you throws an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again. 
+If you see an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again. 
 
 ```bash
 kubectl apply -f ~/environment/basic/eso.yaml

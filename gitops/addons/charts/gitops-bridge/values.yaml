@@ -562,7 +562,7 @@ addons:
       serviceAccount:
         name: '{{.metadata.annotations.external_secrets_service_account}}'
         annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.external_secrets_iam_role_arn}}'
+          eks.amazonaws.com/role-arn:  '{{default "" (index .metadata.annotations "external_secrets_iam_role_arn")}}'
   aws_privateca_issuer:
     enabled: false
     releaseName: privateca-issuer

@@ -1,19 +1,20 @@
 ---
-title: "Label Clusters for Addon Automation"
+title: "Inject Label for Add-on Automation"
 weight: 10
 ---
 
-In this chapter, you'll label your cluster with metadata that enables GitOps automation of add-on installation and removal. These labels are read by Argo CD and GitOps Bridge to determine which add-ons should be deployed to each cluster.
+In this chapter, you'll label your cluster with metadata that enables automation of add-on installation and removal.
+In upcoming chapters, these labels are read by ArgoCD and GitOps Bridge to determine which add-ons should be deployed or removed on each cluster.
 
 
 ### 1. Define addons label variables
 
-The following code defines boolean variables for addons. These provide a simple way to control whether addons are installed or removed, which are then stored as labels. For example, in the highlighted section below, We've defined a boolean variable enable_ingress_nginx(line 12) in the Terraform locals block. When it is set enable_ingress_nginx = true, Nginx Controller will be deployed. Setting it to false removes it.
+The following code defines boolean variables for add-ons. 
 
-Variables are broken into aws_addons and oss_addons for easy readability. aws_addons require an IAM role to function (e.g., External Secrets Operator needs access to AWS Secrets Manager). "oss_addons" are open-source tools that don’t need AWS-specific integration.
+Variables are organized into two categories: aws_addons and oss_addons. aws_addons require require AWS-specific integrations, such as IAM roles (e.g., External Secrets Operator needs access to AWS Secrets Manager). "oss_addons" are open-source tools that don’t rely AWS-specific services( Eg Nginx).
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='12,42'}
+:::code{showCopyAction=true showLineNumbers=true language=json highlightLines='4,12,34,42'}
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 locals{
@@ -73,10 +74,10 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-### 2. Update labels
+### 2. Inject labels
 
-In previous Bootstrap chaper, we already added **addons** variable that is used by GitOps Bridge to set labels. We will add aws_addons and oss_addons defined abouve to that variable.  
-
+In the previous Bootstrap chapter, we added an `addons` variable used by GitOps Bridge to generate labels.
+Now, we’ll merge the aws_addons and oss_addons defined above into that variable
 
 ```bash
 sed -i "s/#enableaddonvariable//g" ~/environment/hub/main.tf
@@ -107,11 +108,12 @@ terraform apply --auto-approve
 
 ### 4. Validate labels 
 
-Go to the **Settings > Clusters > hub-cluster** in the Argo CD dashboard. Examine the Hub-Cluster Cluster object. This will confirm that GitOps Bridge has successfully updated the Labels and Annotations.
+Navigate to Settings > Clusters > hub-cluster in the Argo CD dashboard.
+Examine the hub-cluster object to confirm that GitOps Bridge has successfully updated its labels.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-labels.png)
 
-Argo CD pulls labels and annotations for the cluster object from a kubernetes secret. We used gitops bridge to update labels and annotations for the secret.
+ArgoCD reads the labels from a Kubernetes Secret that represents the cluster. 
 
 You can check the Labels and annotations on the cluster secret:
 

@@ -1,16 +1,16 @@
 ---
-title: "Webstore Staging Namespace Creation"
+title: "Webstore Staging: Namespace Setup with Overrides"
 weight: 30
 ---
 
+In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the spoke-staging cluster.
 
-![Platform Task](/static/images/platform-task.png) Platform engineer tasks for onboarding an application involve creating a namespace. In this chapter you will create namespace for Webstore workload on spoke-staging cluster.
+In the **"Webstore Workload Namespace Creation"** chapter, we’ve already configured the system to install a Helm chart using the default values. The `default-values.yaml` file is already in place.
 
-In "Webstore Workload Namespace Creation" chapter we have already configure to install helm chart with default-values. We already have default-values.yaml. 
+The `namespace-webstore-applicationset.yaml` manifest defined in that chapter shows that it picks up the default values (line 11) and then applies environment-specific overrides (line 12).
 
-namespace-webstore-applicationset.yaml created in that chapter shows it pickus up default-values.yaml( line 11) and then environment specific overrides( line 12).
 
-:::code{showCopyAction=true showLineNumbers=true language=bash highlightLines='11-12'}
+:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='11-12'}
     .
     .
     source:
@@ -29,7 +29,7 @@ namespace-webstore-applicationset.yaml created in that chapter shows it pickus u
 
 ### 1. Set staging overrides
 
-We are going to increase only CPU limits for carts microservices.
+In this step, we will override only the CPU limits for the `carts` microservice:
 
 ```bash
 cat > ~/environment/gitops-repos/platform/config/webstore/namespace/values/staging-values.yaml << 'EOF'
@@ -81,21 +81,87 @@ cd ~/environment/spoke
 terraform apply --auto-approve
 ```
 
-### 5. Validate workload
+### 5. Validate namespaces
 
-:::alert{header="Important" type="warning"}
-It takes a few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
-It also takes a few minutes for the load balancer to be provisioned correctly.
+:::alert{header=Note type=warning}
+It can few minutes for namespaces to be created.
+Wait few minutes and try again
 :::
 
-To access the webstore application, run:
+With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using Argo CD and Helm, driven by simple Git changes.
 
 ```bash
-app_url_staging
+kubectl get ns --context spoke-staging
 ```
 
-Access the webstore in the browser.
+:::expand{header="Output"}
 
-![webstore](/static/images/webstore-ui.png)
+```
+NAME              STATUS   AGE
+assets            Active   6h
+carts             Active   6h
+catalog           Active   6h
+checkout          Active   6h
+default           Active   8h
+kube-node-lease   Active   8h
+kube-public       Active   8h
+kube-system       Active   8h
+orders            Active   6h
+rabbitmq          Active   6h
+ui                Active   6h
+```
 
-Congratulations! We have successfully set up a system where we can deploy workload applications using Argo CD Projects and ApplicationSets from a configuration cluster (the Hub) to a spoke cluster. This process can be easily replicated to manage several spoke clusters using the same mechanisms.
+:::
+
+To view the LimitRange set for the ui namespace in the hub-cluster.
+
+```bash
+kubectl get limitrange  -n carts --context hub-cluster -o yaml
+```
+
+:::expand{header="Output"}
+
+```
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: LimitRange
+  metadata:
+    annotations:
+      argocd.argoproj.io/tracking-id: namespace-staging-webstore:/LimitRange:ui/default
+      helm.sh/chart: team-1.0.0
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"LimitRange","metadata":{"annotations":{"argocd.argoproj.io/tracking-id":"namespace-staging-webstore:/LimitRange:ui/default","helm.sh/chart":"team-1.0.0"},"labels":{"app.kubernetes.io/created-by":"eks-workshop","app.kubernetes.io/instance":"webstore","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"webstore","environment":"hub","helm.sh/chart":"team-1.0.0"},"name":"default","namespace":"ui"},"spec":{"limits":[{"default":{"cpu":"500m"},"defaultRequest":{"cpu":"500m"},"max":{"cpu":"2"},"min":{"cpu":"100m"},"type":"Container"}]}}
+    creationTimestamp: "2024-06-06T09:41:07Z"
+    labels:
+      app.kubernetes.io/created-by: eks-workshop
+      app.kubernetes.io/instance: webstore
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: webstore
+      environment: control-plane
+      helm.sh/chart: team-1.0.0
+    name: default
+    namespace: carts
+    resourceVersion: "656271"
+    uid: a5674ebd-cd53-4ab5-9a5a-0de02c238789
+  spec:
+    limits:
+    - default:
+        cpu: 500m
+      defaultRequest:
+        cpu: 500m
+      max:
+        cpu: "2"
+      min:
+        cpu: 100m
+      type: Container
+kind: List
+metadata:
+  resourceVersion: ""
+```
+
+:::
+
+You can also see the application namespace-spoke-webstore on the Argo CD dashboard.
+
+![namespace-hub-webstore](/static/images/namespace-hub-webstore.png)

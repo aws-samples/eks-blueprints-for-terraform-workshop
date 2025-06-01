@@ -3,24 +3,21 @@ title: "Automate Webstore Deployment"
 weight: 10
 ---
 
-To automate Webstore workload, we have to understand folder structure.
+In this chapter, you will automate Webstore workload deployment.
 
-![Webstore Workload Folders](/static/images/webstore-workload-folders.png)
-
-Webstore workload has
-* 6 microservices( assets, carts, catalog, checkout, orders, ui)
-* Each microservice has 
-  - base: directory holds the common configuration that applies to all    environments.
-  - environment specfic directories(dev,staging,prod) hold environment specific configurations, allowing for easy overide and customization
-* To deploy webstore dev version, you have to deploy all microservices kstomization.yaml in dev folder
-
-### 1. Automate dev webstore workload deployment
-
-In "Namespace And Workload" automation, we have already created create-deployment application that continuously scans and process mainfests under config/*/deployment folder in platform repo.
-
-Let's create an ApplicationSet that is responsible for deploying dev webstore workload.
+Building on the automation in the 'Namespace and Workload Automation'>'workload Automation' chapter, we'll now apply it to the webstore workload. Specifically, we’ll add a new folder at config/webstore/deployment in the platform Git repository. When this folder and its manifest are pushed to Git, the existing create-deployment ApplicationSet will:
 
 ![Webstore Workload Deployment](/static/images/deployment-webstore-applicationset.png)
+
+1. The create-deployment ApplicationSet detects the config/webstore/deployment folder.
+2. It creates a new Argo CD Application named create-deployment-webstore.
+3. This Application deploys manifests in config/webstore/deployment
+
+# Automate Dev Webstore Deployment
+
+### 1. Create Dev Deployment ApplicationSet
+
+Let's create an ApplicationSet that is responsible for deploying dev webstore workload.
 
 
 <!-- prettier-ignore-start -->
@@ -89,6 +86,17 @@ EOF
 - Line 27: **metadata.annotations.workload_repo_url** i.e workload_repo_url annotation on the hub cluster has the value of the workload git repository
 - Line 30: Maps to **webstore/*/dev** ( each microservices dev folder under webstore )
 
+Webstore folder structure.
+
+![Webstore Workload Folders](/static/images/webstore-workload-folders.png)
+
+Webstore workload has
+* 6 microservices( assets, carts, catalog, checkout, orders, ui)
+* Each microservice has 
+  - base: directory holds the common configuration that applies to all    environments.
+  - environment specfic directories(dev,staging,prod) hold environment specific configurations, allowing for easy overide and customization
+* To deploy webstore dev version, you have to deploy all microservices kstomization.yaml in dev folder
+
 ### 2. Git commit
 
 ```bash
@@ -97,24 +105,32 @@ git add .
 git commit -m "add bootstrap workload applicationset"
 git push
 ```
-![c]
-argocd app sync argocd/bootstrap
 
-### 3. Accelerate Argo CD sync
+
+### 3. Validate deployment
+
+:::alert{header="Sync Application"}
+If the new create-deployment-webstore is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
+
+Or you can do it also with cli:
 
 ```bash
 argocd app sync argocd/bootstrap
 ```
-:::alert{header=Note type=warning}
-It can take few minutes for minutes to show create-deployment-webstore applicaion.
-Refresh the browser.
+
 :::
+
+You can navigate to the ArgoCD dashboard> Applications> bootstrap to see Workload specific ArgoCD application i.e. create-deployment-webstore.
 
 ![Create Deployment Webstore](/static/images/create-deployment-webstore.png)
 
+If you click on create-deployment-webstore then you will see dev specific ArgoCD Application i.e create-deployment-dev-webstore. This is the application you added in this chapter. This applictionset is ready to create ArgoCD Application for workload/webstore/*/dev folders. It has not deployed any application as there is no code in the application repository yet.
+
 ![Webstore Workload Folders](/static/images/create-deployment-dev-webstore.png)
 
-### 4. Onboard staging and prod 
+# Automate Prod and Staging Webstore Deployment
+
+### 1. Onboard staging and prod 
 
 Let's also create configuration to deploy staging and production as well.
 
@@ -123,7 +139,7 @@ sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/dep
 sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-prod-webstore-applicationset.yaml
 :::
 
-### 5. Git commit
+### 2. Git commit
 
 ```bash
 cd $GITOPS_DIR/platform

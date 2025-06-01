@@ -1,23 +1,19 @@
 ---
-title: "Bootstrap"
+title: "Bootstrap the Platform Repository"
 weight: 10
 ---
 
-**This chapter sets up one of the foundational building blocks in Argo CD automation**
-
-In this chapter, we begin the automation process. You'll configure Argo CD to automatically detect when a new add-on, namespace, or workload is enabled via a label and generate the corresponding Application resource. This is one of several steps that will build on each other throughout the workshop.
-
-We’ll configure a bootstrap application that uses the App of Apps pattern to watch a folder - bootstrap in your platform Git repository. Any files in this folder get processed automatically.
+We’ll configure an application to watch a folder - bootstrap in your platform Git repository. Any files in this folder get processed automatically.
 
 ![Hub Cluster Updated Metadata](/static/images/bootstrap-empty.png)
 
+In upcoming chapters you will add files to this folder for addon, namespace and workload automation.
 
+# Create the Bootstrap ApplicationSet
 
-### 1. Create bootstrap applicationset
+The ApplicationSet creates a new ArgoCD Application named "bootstrap" that points to the platform/bootstrap directory in the platform Git repository.
 
-The ApplicationSet creates a new Argo CD Application named "bootstrap" that points to the platform/bootstrap directory in our Git repository.
-
-
+### 1. Create the Bootstrap ApplicationSet
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,22,23,24'}
 mkdir -p ~/environment/hub/bootstrap
@@ -59,7 +55,9 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-Note Lines 22–24 use annotations from the Argo CD cluster secret. You can check values in your current environment.
+Note Lines 22–24 use annotations from the ArgoCD cluster secret.  
+
+You can check values in your current environment.
 
 ```bash
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url" -r
@@ -69,7 +67,7 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".m
 ```
 
 
-The output should be similar to the following. It should point to bootstrap folder of platform repo:
+The output should be similar to the following. It should point to bootstrap folder of platform repo. You will notice platform_repo_basepath is not used in this workshop so it is set to empty string:
 
 ```
 https://d3mkl1q53qn8v6.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-platform
@@ -78,8 +76,51 @@ bootstrap
 HEAD
 ```
 
-### 2. Add fleet_member label
-The ApplicationSet generator (line 16) filters clusters that have the label fleet_member = hub. Let’s add this label to the hub cluster definition.
+### 2. Reference the Bootstrap ApplicationSet in Terraform
+We created bootstrap applicaitonset in ~/environment/hub/bootstrap/bootstrap-applicationset.yaml. Let's recreate a variable to reference that.
+
+```bash
+cat <<'EOF' >> ~/environment/hub/main.tf
+locals{
+  argocd_apps = {
+    bootstrap   = file("${path.module}/bootstrap/bootstrap-applicationset.yaml")
+  }
+}
+EOF
+```
+
+### 3. Deploy the Bootstrap ApplicationSet using GitOps Bridge
+
+We created a variable to reference bootstrap ApplicationSet in the previous step. We will use GitOps Bridge to create this ApplicationSet.
+
+```bash
+sed -i "s/#enableapps //g" ~/environment/hub/main.tf
+```
+
+The code provided above uncomments GitOps Bridge to create the ArgoCD Application. In this case, it creates the bootstrap Application.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
+module "gitops_bridge_bootstrap" {
+  source = "gitops-bridge-dev/gitops-bridge/helm"
+  version = "0.0.1"
+  cluster = {
+    cluster_name = module.eks.cluster_name
+    environment = local.environment
+    #enableannotation metadata = local.addons_metadata
+    #enableaddons addons = local.addons
+  }
+  apps = local.argocd_apps
+  argocd = {
+    namespace = local.argocd_namespace
+  ...
+:::
+<!-- prettier-ignore-end -->
+
+# Label the hub-cluster 
+
+### 1. Add fleet_member label variable
+The ApplicationSet cluster generator (line 16) filters clusters that have the label fleet_member = hub. Let’s add this label to the hub cluster definition.
 
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-labels.png)
@@ -106,15 +147,15 @@ EOF
 <!-- prettier-ignore-end -->
 
 
-### 3. Update labels
+### 2. Enable Label Injection via GitOps Bridge
 
-We need to update addons labels on the hub-cluster object. To do this, we will use the GitOps Bridge. The GitOps Bridge is configured to update labels on the specified cluster object.
+We will use GitOps Bridge to  add labels to the hub-cluster object.  The GitOps Bridge is configured to add labels on the specified cluster object.
 
 ```bash
 sed -i "s/#enableaddons//g" ~/environment/hub/main.tf
 ```
 
-The code above uncomments the addons variables in main.tf, as highlighted below.
+The code above uncomments the addons variables in main.tf, as highlighted below. Any value assigned to GitOps Bridge `addons` (Line 8) variable gets assigned to the cluster label.
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='8'}
@@ -131,58 +172,16 @@ module "gitops_bridge_bootstrap" {
 <!-- prettier-ignore-end -->
 
 
-### 4. GitOps Bridge root application
-
-We have created bootstrap ApplicationSet in step 1. We will use GitOps Bridge to create this ApplicationSet.
-
-```bash
-sed -i "s/#enableapps //g" ~/environment/hub/main.tf
-```
-
-The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case, it creates the bootstrap Application.
-
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
-module "gitops_bridge_bootstrap" {
-  source = "gitops-bridge-dev/gitops-bridge/helm"
-  version = "0.0.1"
-  cluster = {
-    cluster_name = module.eks.cluster_name
-    environment = local.environment
-    #enableannotation metadata = local.addons_metadata
-    addons = local.addons
-  }
-  apps = local.argocd_apps
-  argocd = {
-    namespace = local.argocd_namespace
-  ...
-:::
-<!-- prettier-ignore-end -->
-
-
-### 5. Add variable to read bootstrap applicationset
-
-```bash
-cat <<'EOF' >> ~/environment/hub/main.tf
-locals{
-  argocd_apps = {
-    bootstrap   = file("${path.module}/bootstrap/bootstrap-applicationset.yaml")
-  }
-}
-EOF
-```
-
-
-### 6. Apply Terraform
+# Apply Terraform
 
 ```bash
 cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### 7. Validate bootstrap Application
+### Validate the Bootstrap Application in ArgoCD
 
-Navigate to the Argo CD dashboard in the UI and click on **Applications** to validate that the **bootstrap** Application was created successfully. The bootstrap Argo CD Application is currently configured to point to the `bootstrap` folder in our platform Git repository.
+Navigate to the ArgoCD dashboard in the UI and click on **Applications** to validate that the **bootstrap** Application was created successfully. The bootstrap ArgoCD Application is currently configured to point to the `bootstrap` folder in our platform Git repository.
 ![bootstrap-application](/static/images/bootstrap-application.jpg)
 
 The folder is currently empty. In the upcoming chapters, you'll populate it with ApplicationSet files for add-ons, namespaces, projects, and workloads.

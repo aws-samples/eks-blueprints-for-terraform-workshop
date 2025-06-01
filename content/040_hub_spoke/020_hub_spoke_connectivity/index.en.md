@@ -3,10 +3,19 @@ title: "Hub to Spoke Connectivity"
 weight: 20
 ---
 
-In this chapter, we will configure the Argo CD installation in the Hub Cluster to assume an IAM role in the spoke cluster. This setup enables the Hub Cluster's Argo CD to manage (install, uninstall, update) addons, namespaces, and workloads on the spoke cluster.
+The following diagram explains how the hub ArgoCD manages a remote cluster (`spoke-staging`):
 
-The following diagram illustrates the connectivity between the Hub and Spoke clusters:
+![Hub Spoke Connectivity](/static/images/hub-spoke-connectivity.png)
 
-![Hub Role](/static/images/hub-manage-spoke-addons.jpg)
+To enable ArgoCD in the hub cluster to manage workloads on a spoke cluster, we need the following:
 
-By establishing this connection, we create a centralized management structure that allows for efficient control and deployment across multiple clusters from a single Hub. This approach simplifies cluster management, ensures consistency, and streamlines operations across our Kubernetes infrastructure.
+1. **IAM Role in Hub**: Associate ArgoCD service accounts with an IAM role (`hub-role`) that has permission to assume the `spoke-role`.
+
+2. **IAM Role in Spoke**: Create a spoke IAM role (`spoke-role`) with admin permissions on the spoke cluster. This role must trust the ArgoCD IAM role (`hub-role`).
+
+3. **Cluster Object in Hub**: Create a `Cluster` object (`spoke-staging`) in the hub with the following:
+    - API endpoint of the spoke cluster
+    - Cluster certificate
+    - `roleArn`: `spoke-role`
+
+When an ArgoCD Application deploys to the `spoke-staging` cluster, ArgoCD assumes the `spoke-role`. This role grants access to the spoke cluster’s Kubernetes API server, allowing ArgoCD to deploy applications, manage addons, and orchestrate workloads remotely.

@@ -3,7 +3,7 @@ title: "Webstore Deployment"
 weight: 10
 ---
 
-So far, we have created the namespace for the Webstore workload. However, we have not deployed the application yet. The workload Git repository is already configured to be scanned and deployed automatically by Argo CD.
+So far, we have created the namespace for the Webstore workload.  The workload Git repository is already configured to be scanned and deployed automatically by Argo CD.
 
 Currently, the Webstore application is **not deployed** because the workload Git repository is empty.
 
@@ -38,3 +38,19 @@ git push
 ![Workload GitRepo](/static/images/create-deployment-dev-webstore-deployment.png)
 
 
+### 3. Validate workload
+
+:::alert{header="Important" type="warning"}
+It takes a few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
+It also takes a few minutes for the load balancer to be provisioned correctly.
+:::
+
+To access the webstore application, run:
+
+```bash
+app_url_hub
+```
+
+Access the webstore in the browser.
+
+![webstore](/static/images/webstore-ui.png)

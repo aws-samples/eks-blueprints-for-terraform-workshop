@@ -3,6 +3,9 @@ title: "Kubernetes Addons"
 weight: 100
 ---
 
+In this chapter, as a Platform Engineer ![Platform](/static/images/platform-task.png) you'll automate addons management.
+
+
 ![Kubernetes Addons](/static/images/kubernetes-addons.jpg)
 
 An addon provides supporting operational capabilities to Kubernetes applications. Addon software is typically built and maintained by the Kubernetes community, cloud providers like AWS, or third-party vendors. [Amazon EKS Auto](https://docs.aws.amazon.com/eks/latest/userguide/automode.html) automatically manages addons such as the Amazon VPC CNI plugin for Kubernetes, Karpenter, kube-proxy, CoreDNS, PodIdentity etc for every cluster. We need to install and manage all other addons ourselves.

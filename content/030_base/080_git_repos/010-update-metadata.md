@@ -1,9 +1,9 @@
 ---
-title: "Inject Cluster Annotations Using GitOps Bridge"
+title: "Inject Cluster Annotations"
 weight: 10
 ---
 
-In the previous "Application" chapter, you deployed the Guestbook application using a hardcoded repoURL in the Argo CD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata — specifically, from annotations on cluster objects.
+Earlier in the "Application" chapter, you updated manually repoURL in the ArgoCD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata, from annotations on cluster objects.
 
 Annotations are key-value pairs attached to ArgoCD cluster object.
 The hub-cluster already includes annotations injected by GitOps Bridge. You can view these by navigating to ArgoCD Dashboard > Settings > Clusters > hub-cluster.
@@ -27,7 +27,6 @@ template:
 :::
 <!-- prettier-ignore-end -->
 
-You will use Annotations to store dynamic values such as Git repository URLs, paths, and revisions for different concerns (e.g., platform, workloads, addons). 
 
 Information about repositories (platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
 
@@ -145,7 +144,7 @@ The annotations are applied to the hub-cluster object using the GitOps Bridge mo
 sed -i "s/#enableannotation//g" ~/environment/hub/main.tf
 ```
 
-The command above uncomments the metadata line in main.tf, enabling annotation injection.
+The command above uncomments the metadata line( line 7) in main.tf, enabling annotation injection.
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=true highlightLines='7'}

@@ -1,11 +1,14 @@
 ---
-title: "Self-Manage Argo CD as an Addon"
+title: "Self-Manage ArgoCD as an Addon"
 weight: 50
 ---
+Initially, ArgoCD was installed using the GitOps Bridge Terraform module. However, ArgoCD can also be managed as a GitOps-managed add-on—just like any other add-on. 
 
-Initially, Argo CD was installed using the GitOps Bridge. However, ArgoCD itself can also be managed as an addon. By enabling it as an addon, we allow  ArgoCD to fully manage its lifecycle—just like any other addon. This enables us to upgrade, modify, or uninstall ArgoCD declaratively via GitOps 
+By enabling ArgoCD as an add-on, we allow it to manage its own lifecycle. This enables declarative upgrades, configuration changes, and even clean removal, all via GitOps.
 
-### 1. Set Argo CD label
+
+
+### 1. Set ArgoCD label
 
 ```bash
 sed -i '
@@ -37,19 +40,27 @@ cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### 3. Argo CD Sync
+
+
+### 3. Validate ArgoCD add-on
+
+:::alert{header="Sync Application"}
+If the new addon-argocd-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.
+
+Alternatively you can do it with CLI:
 
 ```bash
-argocd app sync argocd/bootstrap
 argocd app sync argocd/cluster-addons
 ```
 
-You should now see the Argo CD application itself listed in the dashboard, managed like other addons.
+:::
+
+You should now see the ArgoCD application itself listed in the dashboard, managed like other addons.
 
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
 :::alert{header=Note type=warning}
-When Argo CD redeploys itself, we will temporarily lose the port-forward connection as the target pod gets renewed. We will need to run the following command to restore access:
+When ArgoCD redeploys itself, we will temporarily lose the port-forward connection as the target pod gets renewed. We will need to run the following command to restore access:
 
 ```bash
 argocd_hub_credentials
@@ -58,5 +69,5 @@ argocd_hub_credentials
 :::
 
 :::alert{header=Congratulations type=success}
-We are now managing our Argo CD system with Argo CD!
+We are now managing our ArgoCD system with ArgoCD!
 :::

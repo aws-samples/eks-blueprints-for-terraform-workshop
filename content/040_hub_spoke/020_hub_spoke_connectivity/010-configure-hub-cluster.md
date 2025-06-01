@@ -3,21 +3,15 @@ title: "Configure Hub Cluster"
 weight: 10
 ---
 
-In this chapter, we will create a role that can be assumed by the Hub Cluster's Argo CD.
+In this chapter you will create a role that is assumed by ArgoCD service accounts. This role will have assume role permission for other roles.
 
 ![Hub Role](/static/images/hub-spoke-hub-role.png)
 
-### 1. Create Role
-
-We will create an IAM role named hub-cluster-argocd-hub that can be assumed by Argo CD service accounts running on the EKS cluster. This IAM role has permissions to assume other IAM roles associated with remote EKS spoke clusters within the same AWS account. This enables centralized deployment and management capabilities from the hub Argo CD cluster across multiple EKS clusters.
-
-The IAM policy aws_assume_policy attached to the hub-cluster-argocd-hub role includes conditions that restrict role assumption to the current AWS account and the specific EKS cluster where Argo CD runs. This ensures secure and controlled access while adhering to the principle of least privilege.
-
-This role and policy configuration establishes a centralized identity management approach, allowing Argo CD to seamlessly deploy applications and manage resources across multiple EKS clusters within the same AWS account while maintaining proper access controls and security best practices.
+### 1. Create Variable
 
 First, let's add a variable to save the Argo CD Role in SSM Parameters:
-
-```json
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cat <<'EOF' >> ~/environment/hub/variables.tf
 variable "ssm_parameter_name_argocd_role_suffix" {
   description = "SSM parameter name for ArgoCD role"
@@ -25,11 +19,17 @@ variable "ssm_parameter_name_argocd_role_suffix" {
   default     = "argocd-central-role"
 }
 EOF
-```
+:::
+<!-- prettier-ignore-start -->
+
+
+### 1. Create Role
+
 
 Now, let's create the IAM role and associated resources:
 
-```json
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cat <<'EOF' >> ~/environment/hub/pod-identity.tf
 ################################################################################
 # ArgoCD EKS Pod Identity Association
@@ -100,27 +100,34 @@ resource "aws_eks_pod_identity_association" "argocd_server" {
   tags = local.tags
 }
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 ### 2. Apply Terraform
 
 Apply the changes to create the IAM role and associated resources:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
-### 3. Configure Argo CD Pods to use new service account token
+### 3. Restart Argo CD Pods to Apply Pod Identity
 
 When we initially installed Argo CD, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get configured for pod identity:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 kubectl rollout restart -n argocd deployment argocd-server --context hub-cluster
 kubectl rollout restart -n argocd statefulset argocd-application-controller --context hub-cluster
-```
+:::
+<!-- prettier-ignore-end -->
 
+<!--
 We can verify that EKS Pod Identity is correctly applied by examining the injected environment variables:
 
 ```bash
@@ -141,12 +148,15 @@ AWS_DEFAULT_REGION=us-east-2
 AWS_REGION=us-east-2
 AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
 ```
+-->
 
 :::alert{header=Note type=warning}
-After the rollout restart, the argocd Pods are replaced, which means the port-forward has also been interrupted. We may need to execute the following command again to regain access to the Argo CD UI:
+After the rollout restart, the argocd Pods are replaced. We may need to execute the following command again to regain access to the Argo CD UI:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd_hub_credentials
-```
-
 :::
+<!-- prettier-ignore-end -->
+
+

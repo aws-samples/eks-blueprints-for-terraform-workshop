@@ -7,4 +7,4 @@ In the **Hub-Spoke** approach, a single, centralized Argo CD instance (running i
 
 In this chapter, we will configure Argo CD in the **hub cluster** to manage applications and addons deployed on the **spoke-staging cluster**.
 
-![Platform Task](/static/images/standalone-argocd.png)
+![Platform Task](/static/images/advanced-hub-spoke.png)

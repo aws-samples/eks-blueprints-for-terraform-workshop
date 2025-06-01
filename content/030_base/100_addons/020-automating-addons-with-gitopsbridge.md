@@ -1,10 +1,12 @@
 ---
-title: "Deploy GitOps Bridge to Automate Add-on Management"
+title: "Automate Add-on Management"
 weight: 20
 ---
-In this chapter, you'll automate the installation and lifecycle management of cluster add-ons using Argo CD and GitOps Bridge.
+In an earlier chapter, you used the GitOps Bridge Terraform module to install ArgoCD and inject the required labels and annotations into the cluster.
 
-GitOps Bridge provides a pre-built Helm chart that simplifies managing add-ons using a declarative approach. This chart lives in the addons repository.
+In this chapter, you’ll take the next step: using the GitOps Bridge Helm chart to automate the installation and lifecycle management of cluster add-ons.
+
+GitOps Bridge provides a pre-built Helm chart that simplifies managing add-ons using a declarative approach. This chart lives in the addons repository under charts folder.
 
 ![GitOps Bridge Helm](/static/images/gitops-bridge-helm.png)
 
@@ -12,7 +14,7 @@ GitOps Bridge provides a pre-built Helm chart that simplifies managing add-ons u
 
 ### 1. Configure Addons ApplicationSet
 
-In a earlier bootstrap chapter, you created an Argo CD Application that continuously watches the bootstrap/ folder in the platform Git repository. Now, you'll add an ApplicationSet to bootstrap folder that dynamically deploys the GitOps Bridge Helm chart to hub-cluster. 
+In an earlier bootstrap chapter, you created an Argo CD Application that continuously watches the bootstrap/ folder in the platform Git repository. Now, you'll add an ApplicationSet to bootstrap folder that dynamically deploys the GitOps Bridge Helm chart to the hub-cluster. 
 
 ![Addons ApplicationSet](/static/images/addons-applicationset-bootstrap.png)
 
@@ -102,7 +104,7 @@ Navigate to the Argo CD dashboard in the UI and verify that the "cluster-addons"
 :::alert{header="Sync Application"}
 If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
-Or you can do it also with cli:
+Alternatively, use the CLI:
 
 ```bash
 argocd app sync argocd/bootstrap
@@ -138,7 +140,7 @@ Currently, no add-ons are deployed because their installation has not been activ
 
 :::alert{header="Important" type="info"}
 
-1. The ApplicationSet **cluster-addons**, point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
+1. The **cluster-addons** ApplicationSet point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
 
 2. The Addons to be deployed, must be enabled in the cluster secret, which is not the case at the moment.
    :::
