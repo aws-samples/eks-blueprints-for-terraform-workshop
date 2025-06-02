@@ -3,12 +3,12 @@ title: "Webstore Staging: Namespace Setup with Overrides"
 weight: 30
 ---
 
-In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the spoke-staging cluster.
+In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the `spoke-staging` cluster.
 
-In the **"Webstore Workload Namespace Creation"** chapter, we’ve already configured the system to install a Helm chart using the default values. The `default-values.yaml` file is already in place.
+This chapter builds on the namespace automation introduced in the **"Webstore Workload Namespace Creation"** chapter. That setup already configured Argo CD to install the namespace Helm chart.
 
-The `namespace-webstore-applicationset.yaml` manifest defined in that chapter shows that it picks up the default values (line 11) and then applies environment-specific overrides (line 12).
-
+Let’s quickly recap:  
+You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that provisions namespaces by deploying the namespace Helm chart. It uses a default values file (line 11), then applies environment-specific overrides (line 12):
 
 :::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='11-12'}
     .
@@ -29,7 +29,7 @@ The `namespace-webstore-applicationset.yaml` manifest defined in that chapter sh
 
 ### 1. Set staging overrides
 
-In this step, we will override only the CPU limits for the `carts` microservice:
+In this step, we’ll override only the CPU limits for the carts microservice:
 
 ```bash
 cat > ~/environment/gitops-repos/platform/config/webstore/namespace/values/staging-values.yaml << 'EOF'
@@ -66,7 +66,7 @@ git push
 
 ### 3. Enable workload_webstore labels on spoke cluster
 
-We'll update the Terraform configuration to enable the workload_webstore label:
+We’ll update the Terraform configuration to enable the workload_webstore label:
 
 ```bash
 sed -i "s/workload_webstore = false/workload_webstore = true/g" ~/environment/spoke/main.tf
@@ -84,11 +84,11 @@ terraform apply --auto-approve
 ### 5. Validate namespaces
 
 :::alert{header=Note type=warning}
-It can few minutes for namespaces to be created.
-Wait few minutes and try again
+It can take a few minutes for the namespaces to be created.
+Wait a few minutes and try again.
 :::
 
-With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using Argo CD and Helm, driven by simple Git changes.
+With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using ArgoCD and Helm, driven by simple Git changes.
 
 ```bash
 kubectl get ns --context spoke-staging
@@ -113,7 +113,7 @@ ui                Active   6h
 
 :::
 
-To view the LimitRange set for the ui namespace in the hub-cluster.
+To view the LimitRange set for the ui namespace in the spoke-cluster.
 
 ```bash
 kubectl get limitrange  -n carts --context hub-cluster -o yaml

@@ -8,7 +8,7 @@ In this chapter, you will configure the spoke-staging cluster so that it can be 
 
 ### 1. Spoke-Staging Access to Hub Cluster
 
-The spoke-staging cluster needs access to the hub cluster to retrieve the Argo CD hub role from the SSM parameter and to register itself as a managed cluster.
+The spoke-staging Terraform needs access to the hub cluster to register itself( ArgoCD cluster object) as a managed cluster.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
@@ -61,7 +61,7 @@ EOF
 
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=yaml}
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='15'}
 cat <<'EOF' >> ~/environment/spoke/main.tf
 ################################################################################
 # ArgoCD EKS Access
@@ -84,6 +84,8 @@ EOF
 
 :::
 <!-- prettier-ignore-end -->
+
+Line 15: Spoke role  Trust's hub role
 
 ### 4. Grant Admin Access
 
@@ -122,7 +124,7 @@ sed -i '
 
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=yaml}
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='14'}
 cat <<'EOF' >> ~/environment/spoke/main.tf
 ################################################################################
 # GitOps Bridge: Bootstrap for Hub Cluster
@@ -162,6 +164,8 @@ EOF
 
 :::
 <!-- prettier-ignore-end -->
+
+Line 15: Does not install ArgoCD on the spoke cluster
 
 ### 6. Allow Hub Nodes to access the Spoke cluster
 
