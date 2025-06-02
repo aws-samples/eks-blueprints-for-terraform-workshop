@@ -5,12 +5,19 @@ weight: 30
 
 In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the `spoke-staging` cluster.
 
-This chapter builds on the namespace automation introduced in the **"Webstore Workload Namespace Creation"** chapter. That setup already configured Argo CD to install the namespace Helm chart.
+This chapter builds on the namespace automation introduced in the **"Webstore Workload Onboarding>Namespace>Create Webstore Namespace"** chapter, which already configured Argo CD to install the namespace Helm chart.
 
 Let’s quickly recap:  
-You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that provisions namespaces by deploying the namespace Helm chart. It uses a default values file (line 11), then applies environment-specific overrides (line 12):
+You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that provisions namespaces by deploying the namespace Helm chart (Line 11-12) on Clusters with label workload_webstore = true (Line 7). The chart uses a default values file (line 11) and applies environment-specific overrides (line 12):
 
-:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='11-12'}
+:::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='7,11-12,18-19'}
+    .
+    .
+    generators:
+     - clusters:
+        selector:
+          matchLabels:
+            workload_webstore: 'true'
     .
     .
     source:
@@ -60,7 +67,7 @@ Let's commit our changes:
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/platform
 git add .
-git commit -m "set namespace and webstore applicationset project to webstore"
+git commit -m "add namespace webstore staging values"
 git push
 :::
 
@@ -113,10 +120,10 @@ ui                Active   6h
 
 :::
 
-To view the LimitRange set for the ui namespace in the spoke-cluster.
+To view the LimitRange set for the carts namespace in the spoke-staging cluster.
 
 ```bash
-kubectl get limitrange  -n carts --context hub-cluster -o yaml
+kubectl get limitrange  -n carts --context spoke-staging -o yaml
 ```
 
 :::expand{header="Output"}
@@ -162,6 +169,6 @@ metadata:
 
 :::
 
-You can also see the application namespace-spoke-webstore on the Argo CD dashboard.
+You can also see the application namespace-spoke-webstore on the ArgoCD dashboard.
 
 ![namespace-hub-webstore](/static/images/namespace-hub-webstore.png)
