@@ -9,7 +9,7 @@ In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge.
 
 ### 1. Configure GitOps Bridge
 
-GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup. It configures a LoadBalancer to provide access to the dashboard.
+GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup. 
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/main.tf

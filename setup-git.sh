@@ -43,7 +43,7 @@ mkdir -p ${GITOPS_DIR}
 # populate workload repository
 git init ${GITOPS_DIR}/workload
 git -C ${GITOPS_DIR}/workload remote add origin ${gitops_workload_url}
-##workload will be populated in workshop chpaters
+###workload will be populated in workshop chpaters
 #cp -r ${ROOTDIR}/gitops/workload/*  ${GITOPS_DIR}/workload
 
 git -C ${GITOPS_DIR}/workload add . || true
