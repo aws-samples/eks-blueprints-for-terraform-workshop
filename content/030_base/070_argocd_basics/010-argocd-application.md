@@ -86,7 +86,7 @@ Let's push changes to the application Git repository.
 cd ~/environment/gitops-repos/workload
 git add .
 git commit -m "initial guestbook"
-git push
+git push --set-upstream origin main
 :::
 <!-- prettier-ignore-end -->
 
@@ -119,7 +119,7 @@ Replace `<GIT_PASSWORD>` with the password for workshop-user in step 2. This is 
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-argocd repo add <APP_REPO_URL> --username workshop-user --password <GIT_PASSWORD> --name guestbookrepo
+argocd repo add <APP_REPO_URL> --name guestbookrepo --username workshop-user --password <GIT_PASSWORD> 
 :::
 <!-- prettier-ignore-end -->
 
@@ -205,7 +205,7 @@ Let's push changes to Application Git repository.
 cd ~/environment/gitops-repos/workload
 git add .
 git commit -m "updated replica count to 3"
-git push
+git push 
 :::
 <!-- prettier-ignore-end -->
 

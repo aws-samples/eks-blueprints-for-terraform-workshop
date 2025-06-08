@@ -47,7 +47,7 @@ git -C ${GITOPS_DIR}/workload remote add origin ${gitops_workload_url}
 #cp -r ${ROOTDIR}/gitops/workload/*  ${GITOPS_DIR}/workload
 
 git -C ${GITOPS_DIR}/workload add . || true
-git -C ${GITOPS_DIR}/workload commit -m "initial commit" || true
+git -C ${GITOPS_DIR}/workload commit -m  "initial commit" --allow-empty  || true
 git -C ${GITOPS_DIR}/workload push -u origin main -f  || true
 
 # populate platform repository

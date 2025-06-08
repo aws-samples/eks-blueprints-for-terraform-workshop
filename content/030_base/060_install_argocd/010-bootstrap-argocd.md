@@ -77,7 +77,14 @@ configs:
     timeout.reconciliation: 30s
   params:
     server.insecure: true
-    server.basehref: /proxy/8081/
+
+server:
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 8080
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing 
 EOF
 ```
 
