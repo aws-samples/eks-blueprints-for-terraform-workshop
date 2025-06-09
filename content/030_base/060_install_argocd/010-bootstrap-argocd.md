@@ -108,7 +108,7 @@ Copy the Argo CD password from the above command and use `admin` as the username
 
 We can click on the output link and select **Open** to access the Argo CD user interface.
 
-::alert[As this is a lab workshop environment, we do not have a custom domain, so we use the default one. We can ignore the warning about the self-signed certificate when accessing the dashboard.]{header="Note"}
+::alert[In this workshop environment, we are using the HTTP protocol for simplicity. However, in a production environment, you should always use the HTTPS protocol to ensure secure communication.]{header="Note"}
 
 After GitOps Bridge installs Argo CD, we can access the Argo CD dashboard using the default admin user and the auto-generated password.
 In the Argo CD UI, we will find the hub cluster already registered under **Settings > Clusters**. This means Argo CD has the capability to administer the hub-cluster.
