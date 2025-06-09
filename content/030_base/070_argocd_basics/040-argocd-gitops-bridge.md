@@ -1,6 +1,7 @@
 ---
 title: "GitOps Bridge"
 weight: 40
+hidden: true
 ---
 
 

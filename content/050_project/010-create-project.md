@@ -1,6 +1,7 @@
 ---
 title: "Argo CD Project"
 weight: 10
+hidden: true
 ---
 
 Projects in Argo CD define guardrails that set constraints for associated applications. When we associate an application with a project, it must operate within the guardrails established by that project.

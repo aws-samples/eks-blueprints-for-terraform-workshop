@@ -1,6 +1,7 @@
 ---
 title: "Project"
 weight: 50
+hidden: true
 ---
 
 Argo CD [Projects](https://argo-cd.readthedocs.io/en/stable/user-guide/projects/) provide logical groupings of Argo CD Applications. They offer several key capabilities:
