@@ -1,5 +1,5 @@
 ---
-title: "EKS Blueprints for Terraform and Argo CD"
+title: "Argo CD on EKS"
 weight: 0
 ---
 
