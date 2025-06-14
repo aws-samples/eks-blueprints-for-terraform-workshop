@@ -101,10 +101,13 @@ locals{
 
 ### 3. Terraform apply
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 ### 4. Validate labels 
 
@@ -117,9 +120,11 @@ ArgoCD reads the labels from a Kubernetes Secret that represents the cluster.
 
 You can check the Labels and annotations on the cluster secret:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o yaml
-```
+:::
+<!-- prettier-ignore-end -->
 
 :::expand{header="Example of output"}
 

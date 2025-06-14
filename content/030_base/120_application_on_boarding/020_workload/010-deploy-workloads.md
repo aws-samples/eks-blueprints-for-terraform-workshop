@@ -48,6 +48,7 @@ spec:
               values:
                 workload: webstore
           - git:
+              requeueAfterSeconds: 30
               repoURL: '{{ .metadata.annotations.workload_repo_url }}'
               revision: '{{ .metadata.annotations.workload_repo_revision }}'
               directories:
@@ -99,13 +100,14 @@ Webstore workload has
 
 ### 2. Git commit
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add bootstrap workload applicationset"
 git push
-```
-
+:::
+<!-- prettier-ignore-end -->
 
 ### 3. Validate deployment
 
@@ -114,11 +116,11 @@ If the new create-deployment-webstore is not visible after a few minutes, you ca
 
 Or you can do it also with cli:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd app sync argocd/bootstrap
-```
-
 :::
+<!-- prettier-ignore-end -->
 
 You can navigate to the ArgoCD dashboard> Applications> bootstrap to see Workload specific ArgoCD application i.e. create-deployment-webstore.
 
@@ -141,23 +143,27 @@ sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deploy
 
 ### 2. Git commit
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add bootstrap workload applicationset"
 git push
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 :::alert{header="Sync Application"}
 If the new deployment and prod are not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 
-```bash
-argocd app sync argocd/create-deployment-webstore
-```
 
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
+argocd app sync argocd/create-deployment-webstore
 :::
+<!-- prettier-ignore-end -->
 
 
 

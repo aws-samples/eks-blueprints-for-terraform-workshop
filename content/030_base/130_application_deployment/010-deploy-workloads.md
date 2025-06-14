@@ -14,7 +14,7 @@ Currently, the Webstore application is **not deployed** because the workload Git
 We will now copy the **Dev environment** to the Git repository. Remember, all environments (like `dev`) apply customizations on top of the shared `base` folder. We will copy both the `base` and `dev` folders.
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='22,32'}
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 for svc in /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/workload/webstore/*; do
   svc_name=$(basename $svc)
   mkdir -p ${GITOPS_DIR}/workload/webstore/$svc_name
@@ -28,12 +28,14 @@ done
 
 ### 2. Git commit
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd $GITOPS_DIR/workload
 git add .
 git commit -m "add bootstrap workload applicationset"
 git push
-```
+:::
+<!-- prettier-ignore-end -->
 
 ![Workload GitRepo](/static/images/create-deployment-dev-webstore-deployment.png)
 
@@ -47,9 +49,11 @@ It also takes a few minutes for the load balancer to be provisioned correctly.
 
 To access the webstore application, run:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 app_url_hub
-```
+:::
+<!-- prettier-ignore-end -->
 
 Access the webstore in the browser.
 

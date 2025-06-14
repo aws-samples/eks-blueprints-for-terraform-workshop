@@ -13,6 +13,8 @@ In this chapter, you’ll deploy the NGINX Ingress Controller by setting the `en
 
 Add the label to your `terraform.tfvars` file:
 
+
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json highlightLines='4'}
 sed -i '
 /addons = {/,/}/{
@@ -21,13 +23,16 @@ sed -i '
 }
 ' ~/environment/hub/terraform.tfvars
 :::
-
+<!-- prettier-ignore-end -->
 ### 2. Terraform Apply
 
-:::code{showCopyAction=true language=json }
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform apply --auto-approve
 :::
+<!-- prettier-ignore-end -->
 
 ### 3. Validate Label in ArgoCD
 
@@ -44,7 +49,7 @@ Navigate to ArgoCD dashboard>Applications>cluster-addon. You can see  addon-ingr
 
 ### 5. Validate NGINX Add-on Deployment
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the `addon-ingress-nginx-hub-cluster` application is not visible after a few minutes, click **SYNC** and then **SYNCHRONIZE** in Argo CD.
 
 Alternatively, you can sync it via CLI:
@@ -52,14 +57,15 @@ Alternatively, you can sync it via CLI:
 ```bash
 argocd app sync argocd/cluster-addons
 ```
-
-:::
+::: -->
 
 You can check nginx pods
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get pods -n ingress-nginx
-```
+:::
+<!-- prettier-ignore-end -->
 
 You should see output similar to the following.
 
@@ -76,16 +82,20 @@ ingress-nginx-controller-d46976f8f-w48ln   1/1     Running     0          73m
 Set the label to false in terraform.tfvars:
 
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 sed -i 's/enable_ingress_nginx *= *.*/enable_ingress_nginx = false/' ~/environment/hub/terraform.tfvars
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 2. Apply Terraform
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 3. Validate Nginx removed
 

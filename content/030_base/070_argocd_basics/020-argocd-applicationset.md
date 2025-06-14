@@ -82,11 +82,11 @@ Navigate to the gitea Dashboard and copy HTTPS url of the application repository
 :::alert{header="Gitea Dashboard URL"}
 You execute the following command in the terminal for gitea url.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json}
 gitea_credentials
-```
 :::
-
+<!-- prettier-ignore-start -->
 
 ![Application GitRepo](/static/images/developer-repo-url.png)
 
@@ -102,10 +102,13 @@ Click on hamburger > File > Save
 
 Apply the manifest
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json}
 kubectl create ns guestbook
 kubectl apply -f ~/environment/basics/guestbookApplicationSet.yaml
-```
+:::
+<!-- prettier-ignore-end -->
+
 ### 5. Verify Application
 
 Navigate to the ArgoCD web UI. You should see the guestbook ArgoCD Application listed.
@@ -116,17 +119,18 @@ After you create spoke-cluster, uncommenting the spoke-cluster section will auto
 
 ### 3. Clean Up
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json}
 argocd appset delete guestbook  -y
-kubectl delete ns guestbook
+kubectl delete ns guestbook --force
 kubectl get secrets -n argocd -o json | jq -r '
   .items[]
   | select(.data != null)
   | select(any(.data[]?; @base64d == "guestbookrepo"))
   | .metadata.name
 ' | xargs -r -I{} kubectl delete secret -n argocd {}
-
-```
+:::
+<!-- prettier-ignore-end -->
 
 # Dynamic Generator
 

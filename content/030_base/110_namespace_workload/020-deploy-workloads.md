@@ -79,12 +79,15 @@ This ApplicationSet initiates the creation of deployment-specific ArgoCD Applica
 
 ### 2. Git commit
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add bootstrap workload applicationset"
 git push
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 :::alert{header="Sync Application"}
 If the new create-deployment is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.

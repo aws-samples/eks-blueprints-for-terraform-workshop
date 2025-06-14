@@ -212,9 +212,11 @@ git push
 
 ### 2. Validate auto reconciliation
 
-You can verify that ArgoCD reconciled with the application git repository and deployment to 3 replicas. You should see 3 pods. ArgoCD checks the Git repository for changes every 30 seconds( configured for this workshop) and automatically syncs updates to the cluster.
+You can verify that ArgoCD reconciled with the application git repository and deployment to 3 replicas. You should see 3 pods. 
 
+Argo CD polls the Git repository for changes **every 30 seconds** (as configured in this workshop) and automatically syncs any updates to the cluster. Reconciliation might take **a minute or two** if the server is under load.
 
+** It may take a minute or two reconcile as server might be busy**
   <!-- prettier-ignore-start -->
   :::code{showCopyAction=true showLineNumbers=false language=json }
   kubectl get pods -n guestbook
@@ -227,9 +229,8 @@ Use ArgoCD CLI to delete the application and its managed resources.
 
 ```bash
 argocd app delete guestbook --cascade -y
-kubectl delete ns guestbook
+kubectl delete ns guestbook --force
 
 ```
 
-It may take a couple of minutes to delete the namespace.
 

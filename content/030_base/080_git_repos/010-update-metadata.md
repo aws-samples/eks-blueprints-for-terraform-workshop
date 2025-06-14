@@ -140,9 +140,11 @@ EOF
 
 The annotations are applied to the hub-cluster object using the GitOps Bridge module. Use the following command to uncomment the metadata line( line 7) and enable annotation injection:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{language=yml showCopyAction=true showLineNumbers=false}
 sed -i "s/#enableannotation//g" ~/environment/hub/main.tf
-```
+:::
+<!-- prettier-ignore-end -->
 
 The command above uncomments the metadata line( line 7) in main.tf, enabling annotation injection.
 
@@ -162,10 +164,12 @@ module "gitops_bridge_bootstrap" {
 
 ### 4. Terraform apply
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{language=yml showCopyAction=true showLineNumbers=false}
 cd ~/environment/hub
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 5. Validate update to labels and addons
 

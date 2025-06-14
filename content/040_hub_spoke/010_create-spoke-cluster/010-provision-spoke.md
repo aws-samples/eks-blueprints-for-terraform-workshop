@@ -70,23 +70,28 @@ Line 12–14: Disable the bootstrap ApplicationSet and remove the GitOps Bridge 
 
 Copy the .tfvars file and disable Argo CD and other optional components:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cp ~/environment/hub/terraform.tfvars ~/environment/spoke/terraform.tfvars
 sed -i 's/enable_argocd = true/enable_argocd = false/' ~/environment/spoke/terraform.tfvars
 sed -i 's/enable_ingress_nginx = true/enable_ingress_nginx = false/' ~/environment/spoke/terraform.tfvars
 sed -i 's/enable_external_secrets = true/enable_external_secrets = false/' ~/environment/spoke/terraform.tfvars
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 4. Create Terraform workspace & Apply Terraform
 
 Create a new staging workspace and apply the configuration:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd ~/environment/spoke
 terraform workspace new staging
 terraform init
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 ::alert[The process of creating the cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 

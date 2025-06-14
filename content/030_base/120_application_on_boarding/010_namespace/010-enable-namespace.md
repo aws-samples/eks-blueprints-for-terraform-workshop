@@ -111,10 +111,12 @@ EOF
 Copy the default values file for the webstore namespace Helm chart.
 
 
-```json
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 mkdir -p $GITOPS_DIR/platform/config/webstore/namespace/values
 cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/default-values.yaml $GITOPS_DIR/platform/config/webstore/namespace/values/default-values.yaml
-```
+:::
+<!-- prettier-ignore-end -->
 
 ![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
 
@@ -132,9 +134,11 @@ code $GITOPS_DIR/platform/config/webstore/namespace/values/default-values.yaml
 The namespace ApplicationSet only targets clusters labeled with workload_webstore: 'true'. Let’s enable this label for the hub cluster.
 
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 sed -i "s/#enablewebstore//g" ~/environment/hub/main.tf
-```
+:::
+<!-- prettier-ignore-end -->
 
 Changes by the code snippet is highlighted below.
 
@@ -153,32 +157,38 @@ addons = merge(
 
 This will set the label workload_webstore: 'true' on the hub cluster.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd ~/environment/hub
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 5. Git commit
 
 Push the newly added ApplicationSet and value files to Git:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add webstore namespace applicationset and namespace values"
 git push
-```
+:::
+<!-- prettier-ignore-end -->
 
 :::alert{header="Sync Application"}
 If the new create-namespace-webstore is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd app sync argocd/bootstrap
-```
-
 :::
+<!-- prettier-ignore-end -->
+
+
 
 So it creates a new **create-namespace-webstore** application:
 
@@ -201,9 +211,12 @@ Wait few minutes and try again
 
 With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using Argo CD and Helm, driven by simple Git changes.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 kubectl get ns --context hub-cluster
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 :::expand{header="Output"}
 
@@ -226,9 +239,12 @@ ui                Active   6h
 
 To view the LimitRange set for the ui namespace in the hub-cluster.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 kubectl get limitrange  -n ui --context hub-cluster -o yaml
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 :::expand{header="Output"}
 

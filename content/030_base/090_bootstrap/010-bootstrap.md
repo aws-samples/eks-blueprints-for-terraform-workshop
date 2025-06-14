@@ -59,12 +59,15 @@ Note Lines 22–24 use annotations from the ArgoCD cluster secret.
 
 You can check values in your current environment.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_url" -r
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_basepath" -r
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_path" -r
 kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".metadata.annotations.platform_repo_revision" -r
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 
 The output should be similar to the following. It should point to bootstrap folder of platform repo. You will notice platform_repo_basepath is not used in this workshop so it is set to empty string:
@@ -79,7 +82,8 @@ HEAD
 ### 2. Reference the Bootstrap ApplicationSet in Terraform
 We created bootstrap applicaitonset in ~/environment/hub/bootstrap/bootstrap-applicationset.yaml. Let's recreate a variable to reference that.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
 locals{
   argocd_apps = {
@@ -87,7 +91,8 @@ locals{
   }
 }
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 3. Deploy the Bootstrap ApplicationSet using GitOps Bridge
 

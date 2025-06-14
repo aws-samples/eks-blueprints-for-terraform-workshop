@@ -23,7 +23,7 @@ terraform apply --auto-approve
 
 ### 3. Validate Nginx in Kubernetes
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new addon-ingress-nginx-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
@@ -32,7 +32,7 @@ Or you can do it also with cli:
 argocd app sync argocd/cluster-addons
 ```
 
-:::
+::: -->
 
 You can check nginx pods
 

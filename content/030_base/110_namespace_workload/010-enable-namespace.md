@@ -82,16 +82,18 @@ This ApplicationSet initiates the creation of namespace-specific ArgoCD Applicat
 
 ### 2. Git commit
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add bootstrap namespace applicationset"
 git push
-```
+:::
+<!-- prettier-ignore-end -->
 
 After pushing, navigate to the ArgoCD dashboard and open the bootstrap application. You should see the newly created create-namespace ApplicationSet.
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new create-namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.
 
 Alternatively, you can use the CLI:
@@ -100,7 +102,7 @@ Alternatively, you can use the CLI:
 argocd app sync argocd/bootstrap
 ```
 
-:::
+::: -->
 
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.png)
 

@@ -166,13 +166,5 @@ AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/s
 ```
 -->
 
-:::alert{header=Note type=warning}
-After the rollout restart, the argocd Pods are replaced. We may need to execute the following command again to regain access to the ArgoCD UI:
-
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=yaml }
-argocd_hub_credentials
-:::
-<!-- prettier-ignore-end -->
 
 

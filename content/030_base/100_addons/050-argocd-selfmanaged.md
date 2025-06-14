@@ -10,15 +10,16 @@ By enabling ArgoCD as an add-on, we allow it to manage its own lifecycle. This e
 
 ### 1. Set ArgoCD label
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 sed -i '
 /addons = {/,/}/{
     /}/i\
     enable_argocd = true
 }
 ' ~/environment/hub/terraform.tfvars
-```
-
+:::
+<!-- prettier-ignore-end -->
 This update to terraform.tfvars adds:
 
 <!-- prettier-ignore-start -->
@@ -35,16 +36,19 @@ addons = {
 
 ### 2. Apply the changes with Terraform
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml }
 cd ~/environment/hub
 terraform apply --auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
+
 
 
 
 ### 3. Validate ArgoCD add-on
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new addon-argocd-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.
 
 Alternatively you can do it with CLI:
@@ -53,7 +57,7 @@ Alternatively you can do it with CLI:
 argocd app sync argocd/cluster-addons
 ```
 
-:::
+::: -->
 
 You should now see the ArgoCD application itself listed in the dashboard, managed like other addons.
 
@@ -62,11 +66,13 @@ You should now see the ArgoCD application itself listed in the dashboard, manage
 :::alert{header=Note type=warning}
 When ArgoCD redeploys itself, we will temporarily lose the port-forward connection as the target pod gets renewed. We will need to run the following command to restore access:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=yaml }
 argocd_hub_credentials
-```
-
 :::
+<!-- prettier-ignore-end -->
+
+
 
 :::alert{header=Congratulations type=success}
 We are now managing our ArgoCD system with ArgoCD!
