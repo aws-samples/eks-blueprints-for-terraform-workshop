@@ -64,13 +64,9 @@ You should now see the ArgoCD application itself listed in the dashboard, manage
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
 :::alert{header=Note type=warning}
-When ArgoCD redeploys itself, we will temporarily lose the port-forward connection as the target pod gets renewed. We will need to run the following command to restore access:
-
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=false showLineNumbers=false language=yaml }
-argocd_hub_credentials
+When ArgoCD redeploys itself, the connection will be temporarily lost as the target pod is renewed. It may take a **few minutes** for the ArgoCD Dashboard to re-establish the connection. 
 :::
-<!-- prettier-ignore-end -->
+
 
 
 

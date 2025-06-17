@@ -111,16 +111,18 @@ git push
 
 ### 3. Validate deployment
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new create-deployment-webstore is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 
-<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd app sync argocd/bootstrap
+::: -->
+
+:::alert{header=Note type=warning}
+The 'create-deployment-webstore' application will become visible after a few minutes. 
 :::
-<!-- prettier-ignore-end -->
 
 You can navigate to the ArgoCD dashboard> Applications> bootstrap to see Workload specific ArgoCD application i.e. create-deployment-webstore.
 
@@ -153,18 +155,19 @@ git push
 <!-- prettier-ignore-end -->
 
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new deployment and prod are not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 
 
-<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd app sync argocd/create-deployment-webstore
-:::
-<!-- prettier-ignore-end -->
+::: -->
 
+:::alert{header=Note type=warning}
+The 'staging' and 'production' applications will become visible after a few minutes. 
+:::
 
 
 ![Webstore Workload Folders](/static/images/create-deployment-allenv-webstore.png)

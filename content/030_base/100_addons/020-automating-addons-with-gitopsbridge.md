@@ -101,7 +101,7 @@ git -C ${GITOPS_DIR}/platform push || true
 
 Navigate to the Argo CD dashboard in the UI and verify that the "cluster-addons" Application was created successfully.
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Alternatively, use the CLI:
@@ -110,12 +110,12 @@ Alternatively, use the CLI:
 argocd app sync argocd/bootstrap
 ```
 
-:::
+::: -->
 
 
 ![addons-rootapp](/static/images/addons-rootapp.jpg)
 
-:::alert{header="Important" type="warning"}
+<!-- :::alert{header="Important" type="warning"}
 We are using port-forward to access Argo CD UI in this workshop.
 While this setup is convenient, the websocket sync mechanism or the UI is not working properly, you may need to totally refresh the page (Ctrl+R) to see updates in the UI.
 
@@ -125,7 +125,7 @@ Also, if during the workshop, the UI became not responsive, that may be because 
 argocd_hub_credentials
 ```
 
-:::
+::: -->
 
 In the Argo CD dashboard, click on the "bootstrap" Application and examine the list of Applications that were generated from it.
 
@@ -136,11 +136,11 @@ The **cluster-addons** Application creates ApplicationSets for all add-ons defin
 
 ![cluster-addons](/static/images/cluster-addons-applicationsets.jpg)
 
-Currently, no add-ons are deployed because their installation has not been activated in the cluster secret labels.
+Currently, **no add-ons** are deployed because their installation has not been activated in the cluster labels.
 
-:::alert{header="Important" type="info"}
+<!-- :::alert{header="Important" type="info"}
 
 1. The **cluster-addons** ApplicationSet point to the **eks-blueprint-workshop-gitops-addons** git repository which is synchronized from `~/environment/gitops-repos/addons` directory.
 
 2. The Addons to be deployed, must be enabled in the cluster secret, which is not the case at the moment.
-   :::
+   ::: -->

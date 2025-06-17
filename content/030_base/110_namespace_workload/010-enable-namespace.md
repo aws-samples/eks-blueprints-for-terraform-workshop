@@ -104,5 +104,9 @@ argocd app sync argocd/bootstrap
 
 ::: -->
 
+:::alert{header=Note type=warning}
+The 'create-namespace' applicationset will become visible after a few minutes. 
+:::
+
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.png)
 

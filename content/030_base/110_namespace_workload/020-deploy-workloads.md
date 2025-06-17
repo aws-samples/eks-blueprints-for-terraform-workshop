@@ -89,7 +89,7 @@ git push
 <!-- prettier-ignore-end -->
 
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new create-deployment is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Alternatively, you can use the CLI:
@@ -98,6 +98,10 @@ Alternatively, you can use the CLI:
 argocd app sync argocd/bootstrap
 ```
 
+::: -->
+
+:::alert{header=Note type=warning}
+The 'create-deployment' applicationset will become visible after a few minutes. 
 :::
 
 As the **bootstrap** folder is monitored, when a new file like **workload-applicationset.yaml** is added, it gets processed.

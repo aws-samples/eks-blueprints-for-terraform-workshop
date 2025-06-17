@@ -43,6 +43,7 @@ git push
 ### 3. Validate workload
 
 :::alert{header="Important" type="warning"}
+
 It takes a few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
 It also takes a few minutes for the load balancer to be provisioned correctly.
 :::
@@ -54,6 +55,12 @@ To access the webstore application, run:
 app_url_hub
 :::
 <!-- prettier-ignore-end -->
+
+:::alert{header="Important" type="warning"}
+If you encounter the error `services "ui-nlb" not found`, then you should run the 'app_url_hub' command again.
+:::
+
+
 
 Access the webstore in the browser.
 

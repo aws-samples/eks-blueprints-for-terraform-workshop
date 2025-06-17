@@ -177,27 +177,28 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-:::alert{header="Sync Application"}
+<!-- :::alert{header="Sync Application"}
 If the new create-namespace-webstore is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
 Or you can do it also with cli:
 
-<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
 argocd app sync argocd/bootstrap
-:::
-<!-- prettier-ignore-end -->
+::: -->
 
+:::alert{header=Note type=warning}
+The 'create-namespace-webstore' application will become visible after a few minutes. 
+:::
 
 
 So it creates a new **create-namespace-webstore** application:
 
 ![namespace-workload](/static/images/namespace_webstore.png)
 
-:::alert{header=Note type=warning}
+<!-- :::alert{header=Note type=warning}
 Be patient, it can takes some times for the **namespace-webstore** to reflect in Argocd UI.
 Wait few minutes and refresh the UI
-:::
+::: -->
 
 The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
 
