@@ -828,7 +828,7 @@
                 "Ref": "AssetsBucketPrefix"
                },
                "WORKSHOP_GIT_URL": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop",
-               "WORKSHOP_GIT_BRANCH": "auto"
+               "WORKSHOP_GIT_BRANCH": "auto2023"
               }
              ]
             },
@@ -1045,7 +1045,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "auto"
+       "Value": "auto2023"
       },
       {
        "Name": "FORCE_DELETE_VPC",
