@@ -3,6 +3,9 @@ title: "Create EKS cluster"
 weight: 10
 ---
 
+::video{id=CYXp_fQZyw0}
+
+
 In this section, we will create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.
 
 ![EKS Cluster](/static/images/argocd-bootstrap-eks.png)
@@ -11,7 +14,8 @@ In this section, we will create an EKS cluster (hub) within the previously provi
 
 We need to reference outputs from the VPC module for our hub cluster.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 mkdir -p ~/environment/hub
 cd ~/environment/hub
 cat > ~/environment/hub/remote_state.tf << 'EOF'
@@ -23,7 +27,8 @@ data "terraform_remote_state" "vpc" {
   }
 }
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 2. Create variables
 
@@ -40,7 +45,8 @@ Here, we define several variables used to create the EKS cluster:
 
 By providing these variables, we can customize the EKS cluster deployment according to specific requirements. The terraform.tfvars file will be used later to configure values for these variables, allowing easy modification of settings without changing the Terraform code directly.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/hub/variables.tf << 'EOF'
 variable "kubernetes_version" {
   description = "EKS version"
@@ -98,13 +104,15 @@ variable "secret_name_git_data_workloads" {
 
 
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 3. Configure EKS cluster
 
 We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module. 
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/hub/main.tf << 'EOF'
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -200,13 +208,15 @@ module "eks" {
 }
 
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 4. Define outputs
 
 The Terraform outputs will provide information about the resources we just created, including the command to access the EKS cluster and additional details that will be used later in the workshop.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/hub/outputs.tf << 'EOF'
 
 output "configure_kubectl" {
@@ -239,20 +249,23 @@ output "cluster_primary_security_group_id" {
 }
 
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 5. Define variable values
 
 We create the `terraform.tfvars` file to configure our Terraform parameters. The EKS admin role will be granted administrator rights inside Kubernetes, and enables access to view cluster resources through the AWS console.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat >  ~/environment/hub/terraform.tfvars <<EOF
 eks_admin_role_name          = "WSParticipantRole"
 addons = {
 }
 
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 :::alert{header="Important" type="warning"}
 "**WSParticipantRole**" is the given role name when participating in an AWS event workshop. When working through the workshop **independently**, we should update it to reflect our own AWS role we are using in the AWS console
@@ -271,29 +284,61 @@ eks_admin_role_name          = "Admin"
 
 :::
 
-### 6. Create EKS cluster
+### 6. Create Required Providers
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+cat >  ~/environment/hub/versions.tf <<EOF
+terraform {
+  required_version = ">= 1.4.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.67.0, < 6.0.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.10.1, < 3.0.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.36.0, < 3.0.0"
+    }
+  }
+}
 
-```bash
+EOF
+:::
+<!-- prettier-ignore-end -->
+
+### 7. Create EKS cluster
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform init
 terraform apply -auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
 ::alert[The process of creating Amazon EKS cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
-### 7. Access hub cluster
+### 8. Access hub cluster
 
 To configure kubectl, execute the following command, which retrieves the connection details from the Terraform output to access the cluster:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 eval $(terraform output -raw configure_kubectl)
-```
+:::
+<!-- prettier-ignore-end -->
 
 To verify that kubectl is correctly configured, run the command below to see if the API endpoint is reachable. 
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get svc --context hub-cluster
-```
+:::
+<!-- prettier-ignore-start -->
 
 
 Example output:

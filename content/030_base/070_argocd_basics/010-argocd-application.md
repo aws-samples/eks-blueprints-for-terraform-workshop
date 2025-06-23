@@ -3,6 +3,8 @@ title: "Application"
 weight: 10
 ---
 
+::video{id=DMJhqkbhjgo}
+
 If you want to deploy Kubernetes manifests, you need two key pieces of information: the local manifest file(what to deploy) and the target EKS cluster(where to deploy). For example:
 
 <!-- prettier-ignore-start -->
@@ -233,4 +235,8 @@ kubectl delete ns guestbook --force
 
 ```
 
-
+<!-- prettier-ignore-start -->
+:::alert{header=Note type=warning}
+It may take a few minutes to delete resources. 
+:::
+<!-- prettier-ignore-end -->

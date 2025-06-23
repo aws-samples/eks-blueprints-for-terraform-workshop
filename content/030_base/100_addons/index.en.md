@@ -3,6 +3,8 @@ title: "Kubernetes Addons"
 weight: 100
 ---
 
+::video{id=kc2Mox2OyHE}
+
 In this chapter, as a Platform Engineer ![Platform](/static/images/platform-task.png) you'll automate addons management.
 
 

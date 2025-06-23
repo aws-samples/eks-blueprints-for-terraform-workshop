@@ -3,16 +3,21 @@ title: "Create Amazon VPC"
 weight: 10
 ---
 
+::video{id=CMNLqdBYSAQ}
+
 ### 1. Create Terraform project
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 mkdir -p ~/environment/vpc
 cd ~/environment/vpc
-```
+:::
+<!-- prettier-ignore-end -->
 
 Let's define the Terraform and provider versions:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/vpc/versions.tf << 'EOF'
 terraform {
   required_version = ">= 1.4.0"
@@ -28,11 +33,13 @@ terraform {
   }
 }
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 2. Define variables
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/vpc/variables.tf << 'EOF'
 variable "environment_name" {
   description = "The name of environment Infrastructure stack, feel free to rename it. Used for cluster and VPC names."
@@ -47,13 +54,15 @@ variable "vpc_cidr" {
 }
 
 EOF
-```
+:::
+<!-- prettier-ignore-start -->
 
 ### 3. Configure VPC
 
 Now we will set up our Amazon VPC with public and private subnets spanning three Availability Zones. The following Terraform code provisions our foundational VPC infrastructure, including an Internet Gateway, NAT Gateway, and required network resources. The subnets are tagged specifically to enable dynamic discovery by the Kubernetes load balancer controller. This VPC will serve as the network foundation for deploying and running our Kubernetes clusters.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/vpc/main.tf <<'EOF'
 
 data "aws_availability_zones" "available" {
@@ -115,13 +124,15 @@ module "vpc" {
 }
 
 EOF
-```
+:::
+<!-- prettier-ignore-start -->
 
 ### 4. Define outputs
 
 We'll define VPC and private subnet outputs that will be used when creating EKS Clusters:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat > ~/environment/vpc/outputs.tf <<'EOF'
 output "vpc_id" {
   description = "The ID of the VPC"
@@ -140,30 +151,36 @@ output "vpc_name" {
 
 
 EOF
-```
+:::
+<!-- prettier-ignore-end -->
 
 ### 5. Provision VPC
 
 First, let's initialize Terraform to get the required modules and providers:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/vpc
 terraform init
-```
+:::
+<!-- prettier-ignore-start -->
 
 It's a good practice to perform a dry-run first:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/vpc
 terraform plan
-```
+<!-- prettier-ignore-end -->
 
 If there are no errors, we can proceed with the deployment:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/vpc
 terraform apply -auto-approve
-```
+:::
+<!-- prettier-ignore-end -->
 
 ::alert[The process of creating a Virtual Private Cloud (VPC) may require up to 5 minutes to complete.]{header="Wait for resources to create"}
 

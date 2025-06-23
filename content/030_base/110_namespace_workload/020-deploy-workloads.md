@@ -3,6 +3,8 @@ title: "Workload Automation"
 weight: 20
 ---
 
+::video{id=WQTL4_zfFBo}
+
 Similar to namespace automation in the previous chapter, the goal of this chapter is to create an ArgoCD Application for each workload to manage workload deployment. This is a bootstrap-level application that deploys the manifests found in the `deployment` folder of each workload.
 
 For example, the `create-deployment-workload-a` ArgoCD Application will be responsible for deploying the manifests located in the `workload-a/deployment` folder.

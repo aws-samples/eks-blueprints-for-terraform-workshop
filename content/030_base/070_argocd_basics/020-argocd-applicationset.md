@@ -3,6 +3,8 @@ title: "ApplicationSet"
 weight: 20
 ---
 
+::video{id=KKHVP2Ogq64}
+
 In the previous chapter, you deployed an application using an ArgoCD Application object to the hub-cluster.
 To deploy the same application to the spoke-cluster, you would need to create another ArgoCD Application manually.
 
@@ -131,6 +133,13 @@ kubectl get secrets -n argocd -o json | jq -r '
 ' | xargs -r -I{} kubectl delete secret -n argocd {}
 :::
 <!-- prettier-ignore-end -->
+
+<!-- prettier-ignore-start -->
+:::alert{header=Note type=warning}
+It may take a few minutes to delete resources. 
+:::
+<!-- prettier-ignore-end -->
+
 
 # Dynamic Generator
 

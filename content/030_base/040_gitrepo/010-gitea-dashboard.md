@@ -3,6 +3,7 @@ title: "Gitea Dashboard"
 weight: 10
 ---
 
+::video{id=kRUM9ABx97s}
 
 You can access the Gitea server to view the repositories.
 
@@ -15,9 +16,11 @@ gitea_credentials
 :::alert{header="Important" type="info"}
 Throughout the workshop, we use several bash functions. To learn more about any function, we can execute `type <function_name>` to find its source file:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 type gitea_credentials
-```
+:::
+<!-- prettier-ignore-end -->
 
 example output
 
@@ -25,7 +28,7 @@ example output
 gitea_credentials is a shell function from /home/ec2-user/.bashrc.d/argocd.bash
 ```
 
-:::
+
 
 Example output
 

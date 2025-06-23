@@ -3,6 +3,8 @@ title: "Install External Secrets Operator(ESO) Addon"
 weight: 40
 ---
 
+::video{id=e0lhzdE5ciI}
+
 Some addons require IAM roles to access AWS services.
 * External Secrets Operator (ESO) – needs IAM role to access AWS Secrets Manager
 * Karpenter – requires IAM role to access EC2 API
@@ -167,7 +169,7 @@ Create External Secret
 kubectl apply -f ~/environment/basic/eso.yaml
 :::
 
-:::alert{header="Sync Application"}
+:::alert{header="Troubleshooting" type="warning"}
 If you see an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again. 
 
 ```bash

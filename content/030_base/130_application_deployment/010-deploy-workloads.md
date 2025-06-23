@@ -3,6 +3,8 @@ title: "Webstore Deployment"
 weight: 10
 ---
 
+::video{id=sOKVWkNNEcE}
+
 So far, we have created the namespace for the Webstore workload.  The workload Git repository is already configured to be scanned and deployed automatically by Argo CD.
 
 Currently, the Webstore application is **not deployed** because the workload Git repository is empty.

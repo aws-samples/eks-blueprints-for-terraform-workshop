@@ -2,6 +2,10 @@
 title: "Deploy Webstore to Staging"
 weight: 40
 ---
+
+::video{id=gnzumq6rntI}
+
+
 In this chapter application team ![Developer Task](/static/images/developer-task.png) deploys the webstore staging application independently, without any direct involvement from the platform team.
 
 So far, we’ve created the staging namespace for the Webstore workload, but we haven’t deployed the staging Webstore application itself yet. 

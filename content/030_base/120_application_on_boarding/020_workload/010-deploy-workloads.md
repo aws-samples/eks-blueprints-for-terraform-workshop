@@ -3,6 +3,8 @@ title: "Automate Webstore Deployment"
 weight: 10
 ---
 
+::video{id=WDQ0A0z_l3g}
+
 In this chapter, you will automate Webstore workload deployment.
 
 Building on the automation in the 'Namespace and Workload Automation'>'workload Automation' chapter, we'll now apply it to the webstore workload. Specifically, we’ll add a new folder at config/webstore/deployment in the platform Git repository. When this folder and its manifest are pushed to Git, the existing create-deployment ApplicationSet will:

@@ -3,6 +3,8 @@ title: "Webstore Staging: Namespace Setup with Overrides"
 weight: 30
 ---
 
+::video{id=AbHXa6qp6Xk}
+
 In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the `spoke-staging` cluster.
 
 This chapter builds on the namespace automation introduced in the **"Webstore Workload Onboarding>Namespace>Create Webstore Namespace"** chapter, which already configured Argo CD to install the namespace Helm chart.

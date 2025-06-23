@@ -3,6 +3,8 @@ title: "Inject Cluster Annotations"
 weight: 10
 ---
 
+::video{id=m2Yr-cjrGE0}
+
 Earlier in the "Application" chapter, you updated manually repoURL in the ArgoCD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata, from annotations on cluster objects.
 
 Annotations are key-value pairs attached to ArgoCD cluster object.

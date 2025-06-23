@@ -3,6 +3,8 @@ title: "Test Hub-to-Spoke Connectivity with NGINX Add-on"
 weight: 30
 ---
 
+::video{id=S2Zi516AV6E}
+
 In this chapter, you'll enable the NGINX ingress controller on the spoke-staging cluster using GitOps. This helps validate that the hub cluster can manage spoke cluster add-ons.
 
 ### 1. Enable the NGINX Add-on Label

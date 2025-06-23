@@ -3,6 +3,8 @@ title: "Inject Label for Add-on Automation"
 weight: 10
 ---
 
+::video{id=6bm1YZM5LAw}
+
 In this chapter, you'll label your cluster with metadata that enables automation of add-on installation and removal.
 In upcoming chapters, these labels are read by ArgoCD and GitOps Bridge to determine which add-ons should be deployed or removed on each cluster.
 

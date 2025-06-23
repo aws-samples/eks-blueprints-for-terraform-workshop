@@ -3,6 +3,8 @@ title: "Install Ngnix Controller Addon"
 weight: 30
 ---
 
+::video{id=AB82_H6fMh4}
+
 GitOps Bridge makes it easy to install cluster add-ons by simply setting a label to `true`.
 
 In this chapter, you’ll deploy the NGINX Ingress Controller by setting the `enable_ingress_nginx=true` label.

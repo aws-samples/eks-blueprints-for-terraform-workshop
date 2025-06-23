@@ -4,6 +4,8 @@ chapter: false
 weight: 10
 ---
 
+::video{id=-_0e1xr-DlA}
+
 ## Running the workshop at an AWS Event
 
 ::alert[If we are not currently participating in an AWS organized workshop event, this section does not apply. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}

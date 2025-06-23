@@ -2,6 +2,9 @@
 title: "ArgoCD Git Repo"
 weight: 20
 ---
+
+::video{id=YH0hH-F7DaY}
+
 We have Git repositories hosted in Gitea, but Argo CD does not yet have access to them. In this chapter, you will configure ArgoCD access to GitOps repositories. There are [different ways](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/) to provide Argo CD access to these repositories. We will use username and password method.
 
 Credentials for repositories(platform,workloads,addons)  is already stored in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform secret . 

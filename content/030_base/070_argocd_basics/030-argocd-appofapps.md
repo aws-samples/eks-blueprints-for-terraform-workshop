@@ -2,6 +2,9 @@
 title: "App of Apps Pattern"
 weight: 30
 ---
+
+::video{id=UGRG-jW7Pfk}
+
 **There is no lab in this chapter, but the App of Apps pattern is extensively used throughout the workshop.**
 
 ### Background

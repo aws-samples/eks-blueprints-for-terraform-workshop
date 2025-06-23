@@ -3,6 +3,8 @@ title: "Create Spoke Staging Cluster"
 weight: 10
 ---
 
+::video{id=rLwkZmxfK88}
+
 The **spoke-staging cluster** has a configuration similar to the **hub-cluster**. In this step, we'll copy the Terraform configuration from the hub-cluster and update it where necessary to create our staging spoke cluster.
 
 
@@ -45,6 +47,7 @@ cp ~/environment/hub/git_data.tf ~/environment/spoke
 cp ~/environment/hub/main.tf ~/environment/spoke
 cp ~/environment/hub/variables.tf ~/environment/spoke
 cp ~/environment/hub/outputs.tf ~/environment/spoke
+cp ~/environment/hub/versions.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
 sed -i 's/environment = "dev"/environment = terraform.workspace/' ~/environment/spoke/main.tf
 sed -i 's/fleet_member = "hub"/fleet_member = "spoke"/' ~/environment/spoke/main.tf
