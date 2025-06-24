@@ -171,6 +171,7 @@ It's a good practice to perform a dry-run first:
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/vpc
 terraform plan
+:::
 <!-- prettier-ignore-end -->
 
 If there are no errors, we can proceed with the deployment:

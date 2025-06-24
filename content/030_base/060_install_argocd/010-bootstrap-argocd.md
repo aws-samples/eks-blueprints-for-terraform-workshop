@@ -81,12 +81,28 @@ configs:
     server.insecure: true
 
 server:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
   service:
     type: LoadBalancer
     port: 80
     targetPort: 8080
     annotations:
       service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing 
+repoServer:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+controller:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+      
 EOF
 ```
 
