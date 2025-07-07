@@ -1,5 +1,5 @@
 ---
-title: "Namespace And Workload Autoamtion"
+title: "Namespace And Workload Automation"
 weight: 110
 ---
 
