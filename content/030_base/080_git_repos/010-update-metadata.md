@@ -14,7 +14,6 @@ The hub-cluster already includes annotations injected by GitOps Bridge. You can 
 
 > Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information like repo URL.
 
-
 In upcoming chapters, you'll create an ApplicationSet that references Git repositories. ArgoCD lets you reference these repositories dynamically using annotations. For example to reference workload_repo_url annotation:
 
 <!-- prettier-ignore-start -->
@@ -29,8 +28,7 @@ template:
 :::
 <!-- prettier-ignore-end -->
 
-
-Information about repositories (platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from  eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
+Information about repositories (platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
 
 ![Git Secrets](/static/images/git-secrets.png)
 
@@ -38,38 +36,36 @@ In this chapter you will copy these values into annotations so that they can be 
 
 ### 1. Reference Secrets Manager
 
-
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/git_data.tf
+
 # Retrieve Git repository metadata from AWS Secrets Manager for platform, workload, and addon repositories
 
-
 data "aws_secretsmanager_secret" "git_data_addons" {
-  name = var.secret_name_git_data_addons
+name = var.secret_name_git_data_addons
 }
 data "aws_secretsmanager_secret_version" "git_data_version_addons" {
-  secret_id = data.aws_secretsmanager_secret.git_data_addons.id
+secret_id = data.aws_secretsmanager_secret.git_data_addons.id
 }
 data "aws_secretsmanager_secret" "git_data_platform" {
-  name = var.secret_name_git_data_platform
+name = var.secret_name_git_data_platform
 }
 data "aws_secretsmanager_secret_version" "git_data_version_platform" {
-  secret_id = data.aws_secretsmanager_secret.git_data_platform.id
+secret_id = data.aws_secretsmanager_secret.git_data_platform.id
 }
 data "aws_secretsmanager_secret" "git_data_workload" {
-  name = var.secret_name_git_data_workloads
+name = var.secret_name_git_data_workloads
 }
 data "aws_secretsmanager_secret_version" "git_data_version_workload" {
-  secret_id = data.aws_secretsmanager_secret.git_data_workload.id
+secret_id = data.aws_secretsmanager_secret.git_data_workload.id
 }
-
 
 EOF
 :::
 
 ### 2. Retrieve Git Metadata from AWS Secrets
 
-Each secret contains keys such as url, basepath, path, and revision. 
+Each secret contains keys such as url, basepath, path, and revision.
 
 Add the following block to your main.tf file to parse secrets and assign values to local variables:
 
@@ -175,6 +171,6 @@ terraform apply --auto-approve
 
 ### 5. Validate update to labels and addons
 
-Go to  **Settings > Clusters > hub-cluster** in the Argo CD dashboard and examine the hub-cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
+Go to **Settings > Clusters > hub-cluster** in the Argo CD dashboard and examine the hub-cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-metadata.png)

@@ -7,11 +7,9 @@ weight: 10
 
 The **spoke-staging cluster** has a configuration similar to the **hub-cluster**. In this step, we'll copy the Terraform configuration from the hub-cluster and update it where necessary to create our staging spoke cluster.
 
-
 ### 1. Configure Remote state
 
 We need to reference outputs from the VPC module (for subnets) and the hub module (for hub-spoke connectivity) in the spoke-staging cluster.
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
@@ -65,8 +63,8 @@ Changes made to the hub-cluster Terraform configuration:
  
 Line 5: Rename cluster from hub-cluster to spoke-${terraform.workspace}. The workspace "staging" will be created in a later step.  
 Line 6: Set label environment=staging.  
-Line 7: Set lable fleet_member=spoke.  
-Line 9: Set lable workload_webstore=false. This will be set to true during applicationd deployment in the latter chapter.
+Line 7: Set label fleet_member=spoke.  
+Line 9: Set label workload_webstore=false. This will be set to true during application deployment in the latter chapter.
 Line 12–14: Disable the bootstrap ApplicationSet and remove the GitOps Bridge module (we don’t deploy Argo CD on spoke-staging cluster).
 
 ### 3. Configure addons
@@ -95,7 +93,6 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-
 ::alert[The process of creating the cluster typically requires approximately 15 minutes to complete.]{header="Wait for resources to create"}
 
 ### 5. Access Spoke Staging Cluster
@@ -109,7 +106,6 @@ eval $(terraform output -raw configure_kubectl)
 <!-- prettier-ignore-end -->
 
 To verify that kubectl is correctly configured, run:
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }

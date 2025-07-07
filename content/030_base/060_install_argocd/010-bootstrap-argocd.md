@@ -11,7 +11,7 @@ In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge.
 
 ### 1. Configure GitOps Bridge
 
-GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup. 
+GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup.
 
 ```bash
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -90,7 +90,7 @@ server:
     port: 80
     targetPort: 8080
     annotations:
-      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing 
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 repoServer:
   resources:
     requests:
@@ -102,7 +102,7 @@ controller:
     requests:
       cpu: 300m
       memory: 512Mi
-      
+
 EOF
 ```
 

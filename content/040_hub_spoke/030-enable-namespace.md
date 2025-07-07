@@ -13,27 +13,24 @@ Let’s quickly recap:
 You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that provisions namespaces by deploying the namespace Helm chart (Line 11-12) on Clusters with label workload_webstore = true (Line 7). The chart uses a default values file (line 11) and applies environment-specific overrides (line 12):
 
 :::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='7,11-12,18-19'}
-    .
-    .
-    generators:
-     - clusters:
-        selector:
-          matchLabels:
-            workload_webstore: 'true'
-    .
-    .
-    source:
-      repoURL: '{{ .metadata.annotations.platform_repo_url }}'
-      path: '{{ .metadata.annotations.platform_repo_basepath }}charts/namespace'
-      targetRevision: '{{ .metadata.annotations.platform_repo_revision }}'
-      helm:
-        releaseName: 'webstore'
-        ignoreMissingValueFiles: true
-        valueFiles:
-          - '../../config/webstore/namespace/values/default-values.yaml'
-          - '../../config/webstore/namespace/values/{{ .metadata.labels.environment }}-values.yaml'
-    .
-    .
+.
+.
+generators: - clusters:
+selector:
+matchLabels:
+workload_webstore: 'true'
+.
+.
+source:
+repoURL: '{{ .metadata.annotations.platform_repo_url }}'
+path: '{{ .metadata.annotations.platform_repo_basepath }}charts/namespace'
+targetRevision: '{{ .metadata.annotations.platform_repo_revision }}'
+helm:
+releaseName: 'webstore'
+ignoreMissingValueFiles: true
+valueFiles: - '../../config/webstore/namespace/values/default-values.yaml' - '../../config/webstore/namespace/values/{{ .metadata.labels.environment }}-values.yaml'
+.
+.
 :::
 
 ### 1. Set staging overrides
@@ -60,7 +57,6 @@ namespaces:
               cpu: "200m"         # 100m × 2
 EOF
 ```
-
 
 ### 2. Git commit
 

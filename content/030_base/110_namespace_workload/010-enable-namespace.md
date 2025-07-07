@@ -3,7 +3,7 @@ title: "Namespace Automation"
 weight: 10
 ---
 
-::video{id=_TdKzq1jXhM}
+::video{id=\_TdKzq1jXhM}
 
 The goal of this chapter is to create an ArgoCD Application for each workload to manage namespace creation. This is a bootstrap-level application that deploys the manifests found in the `namespace` folder of each workload.
 
@@ -14,7 +14,6 @@ For example, the `create-namespace-workload-a` ArgoCD Application will be respon
 To create an ArgoCD namespace Application for each workload, we will use an ApplicationSet. In an earlier bootstrap chapter, you created an ArgoCD Application that continuously watches the `bootstrap/` folder in the platform Git repository. In this chapter, you'll add a namespace ApplicationSet to that folder.
 
 ![Bootstrap Namespace](/static/images/namespace-applicationset-bootstrap.png)
-
 
 ### 1. Create Bootstrap namespace applicationset
 
@@ -81,7 +80,6 @@ This ApplicationSet initiates the creation of namespace-specific ArgoCD Applicat
   - For example, for `workload-a`, the path will be `config/workload-a/namespace`.
   - If no folders are present under `config/*`, there will be no applications created yet.
 
-
 ### 2. Git commit
 
 <!-- prettier-ignore-start -->
@@ -107,8 +105,7 @@ argocd app sync argocd/bootstrap
 ::: -->
 
 :::alert{header=Note type=warning}
-The 'create-namespace' applicationset will become visible after a few minutes. 
+The 'create-namespace' applicationset will become visible after a few minutes.
 :::
 
 ![namespace-helm](/static/images/bootstrap-namespace-applicationset.png)
-

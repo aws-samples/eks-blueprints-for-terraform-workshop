@@ -5,10 +5,9 @@ weight: 40
 
 ::video{id=gnzumq6rntI}
 
-
 In this chapter application team ![Developer Task](/static/images/developer-task.png) deploys the webstore staging application independently, without any direct involvement from the platform team.
 
-So far, we’ve created the staging namespace for the Webstore workload, but we haven’t deployed the staging Webstore application itself yet. 
+So far, we’ve created the staging namespace for the Webstore workload, but we haven’t deployed the staging Webstore application itself yet.
 
 This chapter builds on the namespace automation introduced in the **"Webstore Workload Onboarding > workload > Automate Webstore Deployment"** chapter, which already configured ArgoCD to deploy both staging and prod environment.
 
@@ -16,7 +15,8 @@ This chapter builds on the namespace automation introduced in the **"Webstore Wo
 
 ### 1. Copy Webstore Staging environment
 
-We will now copy the **Staging environment** code to the workoad Git repository. Remember, all environments (like `staging`) apply customizations on top of the shared `base` folder. We have already have base, We will copy `staging` folders.
+We will now copy the **Staging environment** code to the workload Git repository. Remember, all environments (like `staging`) apply customizations on top of the shared `base` folder. We have already have base, We will copy `staging` folders.
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash}
 for svc in /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/workload/webstore/*; do
@@ -38,8 +38,6 @@ git commit -m "add staging manifests for webstore microservices"
 git push
 :::
 
-
-
 ### 3. Validate the deployment
 
 :::alert{header="Important" type="warning"}
@@ -56,5 +54,3 @@ app_url_staging
 Access the webstore in the browser.
 
 ![webstore](/static/images/webstore-ui.png)
-
-

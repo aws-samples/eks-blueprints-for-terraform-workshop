@@ -7,7 +7,6 @@ weight: 20
 
 In this chapter, you will configure the spoke-staging cluster so that it can be registered as a managed cluster in the hub Argo CD instance. This allows Argo CD running in the hub cluster to deploy workloads to the spoke.
 
-
 ### 1. Spoke-Staging Access to Hub Cluster
 
 The spoke-staging Terraform needs access to the hub cluster to register itself( ArgoCD cluster object) as a managed cluster.
@@ -61,7 +60,6 @@ EOF
 
 ![Staging Cluster Role](/static/images/hub-spoke-spoke-role.png)
 
-
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='15'}
 cat <<'EOF' >> ~/environment/spoke/main.tf
@@ -87,14 +85,13 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-Line 15: Spoke role  Trust's hub role
+Line 15: Spoke role Trust's hub role
 
 ### 4. Grant Admin Access
 
 Grant Cluster Admin access to the spoke role.
 
 ![Staging Cluster Role Admin Access](/static/images/hub-spoke-spoke-role-admin-access.png)
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
@@ -123,7 +120,6 @@ sed -i '
 ### 5. Register Spoke-Staging cluster with Hub ArgoCD
 
 ![Staging Cluster Registration](/static/images/hub-spoke-cluster-object.png)
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='14'}
@@ -174,37 +170,39 @@ Line 15: Does not install ArgoCD on the spoke cluster
 Although the spoke cluster has public endpoint access, the DNS resolves to a private IP within the VPC. To allow the hub cluster's Argo CD pods to connect to the spoke cluster API, we need to open inbound port 443 in the spoke cluster's security group.
 
 <!-- prettier-ignore-start -->
+
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 
 cat <<'EOF' >> ~/environment/spoke/main.tf
 
 resource "aws_vpc_security_group_ingress_rule" "hub_to_spoke" {
-  security_group_id = module.eks.cluster_primary_security_group_id
-  referenced_security_group_id = data.terraform_remote_state.hub.outputs.cluster_primary_security_group_id
-  ip_protocol = "tcp"
-  from_port = "443"
-  to_port = "443"
+security_group_id = module.eks.cluster_primary_security_group_id
+referenced_security_group_id = data.terraform_remote_state.hub.outputs.cluster_primary_security_group_id
+ip_protocol = "tcp"
+from_port = "443"
+to_port = "443"
 
 }
 
 EOF
 :::
-<!-- prettier-ignore-start -->
 
+<!-- prettier-ignore-start -->
 
 ### 7. Apply the changes
 
 <!-- prettier-ignore-start -->
+
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 cd ~/environment/spoke
 terraform init
 terraform apply --auto-approve
 :::
-<!-- prettier-ignore-start -->
 
+<!-- prettier-ignore-start -->
 
 ### 8. Check Hub Cluster Configuration
 
-After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the ArgoCD UI running on the hub cluster. 
+After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the ArgoCD UI running on the hub cluster.
 
 ![Staging Cluster](/static/images/spoke-staging-cluster.png)

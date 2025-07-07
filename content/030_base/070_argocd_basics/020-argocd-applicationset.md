@@ -14,14 +14,12 @@ Instead of doing that every time, Argo CD offers a more scalable and automated s
 
 ![With ApplicationSet](/static/images/with-applicationset.png)
 
-
 Think of an ApplicationSet as a factory for ArgoCD Applications. It defines a template and uses generators to create multiple Application objects.
 
 ![ApplicationSet Template](/static/images/applicationset-template.png)
 
-
-
 # Static List Generator
+
 Let’s create an ApplicationSet that deploys the guestbook ArgoCD Application to list of clusters. In this example to hub-cluster.
 
 ### 1. Create guestbook ApplicationSet
@@ -69,7 +67,7 @@ EOF
 
 This ApplicationSet is using a placeholder `<<APP REPO URL>>` for the Git repository URL. In this step, we’ll update it with the actual URL of your Guestbook app repo.
 
-Open guestbook applicationset  in VSCode.
+Open guestbook applicationset in VSCode.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -77,9 +75,7 @@ code ~/environment/basics/guestbookApplicationSet.yaml
 :::
 <!-- prettier-ignore-end -->
 
-
 Navigate to the gitea Dashboard and copy HTTPS url of the application repository(eks-blueprints-workshop-gitops-apps).
-
 
 :::alert{header="Gitea Dashboard URL"}
 You execute the following command in the terminal for gitea url.
@@ -117,7 +113,7 @@ Navigate to the ArgoCD web UI. You should see the guestbook ArgoCD Application l
 
 ![ApplicationSet Guestbook](/static/images/applicationset-guestbook.png)
 
-After you create spoke-cluster, uncommenting the spoke-cluster section will automatically generate a second Application targeting that cluster. 
+After you create spoke-cluster, uncommenting the spoke-cluster section will automatically generate a second Application targeting that cluster.
 
 ### 3. Clean Up
 
@@ -140,13 +136,11 @@ It may take a few minutes to delete resources.
 :::
 <!-- prettier-ignore-end -->
 
-
 # Dynamic Generator
 
-The static list generator requires you to manually add each cluster. A better approach is to dynamically select clusters using the Cluster generator, which selects clusters based on labels. 
+The static list generator requires you to manually add each cluster. A better approach is to dynamically select clusters using the Cluster generator, which selects clusters based on labels.
 
 ArgoCD supports different types of [Generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix and more, to dynamically generate Applications.
-
 
 ## Cluster Generator
 
@@ -192,6 +186,6 @@ The following generator creates 2 applications because 2 cluster labels match th
 
 ![applicationset](/static/images/applicationset-workloads.png)
 
-If you update the labels on a cluster, the ApplicationSet controller will **dynamically** generate new ArgoCD Applications or delete existing ones based on the updated label values. 
+If you update the labels on a cluster, the ApplicationSet controller will **dynamically** generate new ArgoCD Applications or delete existing ones based on the updated label values.
 
 For example, in the scenario above, if you set workloads=true on the hub-cluster, the ApplicationSet will automatically generate an additional Application targeting that cluster.

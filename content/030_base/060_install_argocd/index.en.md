@@ -3,8 +3,7 @@ title: "Install Argo CD"
 weight: 60
 ---
 
-In this chapter, as a Platform Engineer ![Platform](/static/images/platform-task.png) you will install ArgoCD in the EKS Cluster. 
-
+In this chapter, as a Platform Engineer ![Platform](/static/images/platform-task.png) you will install ArgoCD in the EKS Cluster.
 
 ::::expand{header="Why use Argo CD instead of Terraform to deploy Kubernetes resources?"}
 While Terraform and Argo CD are both valuable infrastructure automation tools, they serve different purposes. Terraform excels at provisioning infrastructure components like VPCs, EKS clusters, and RDS instances. However, managing ongoing Kubernetes operations such as addon installation, workload deployments, and namespace creation can become complex with Terraform.

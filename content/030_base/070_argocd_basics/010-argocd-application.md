@@ -12,25 +12,27 @@ If you want to deploy Kubernetes manifests, you need two key pieces of informati
 kubectl apply -f ./local-path-to-manifest.yaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
+
 This command deploys the manifest to the hub-cluster
 
 Argo CD follows a similar approach using an Application object. It defines what to deploy (from Git) and where to deploy it (target cluster and namespace).
 
 # Create guestbook Application
+
 In this section you will create guestbook ArgoCD application. It will deploy the code from the application repository to the hub-cluster.
 
 ![ArgoCD Application](/static/images/argocd-application.png)
 
-### 1. Create guestbook ArgoCD Application 
+### 1. Create guestbook ArgoCD Application
 
 An ArgoCD **Application** is a special Kubernetes object(CRD) that tells ArgoCD what to deploy from Git and where to deploy it. It keeps checking the actual state in your cluster and automatically syncs it to match what’s in Git.
 
 In this step, you'll deploy an ArgoCD Application. Each Application must specify:
 
-* Source: the Git repository containing the manifests.
-* Destination: the target Kubernetes cluster and namespace.
+- Source: the Git repository containing the manifests.
+- Destination: the target Kubernetes cluster and namespace.
 
-In the example below, we have placeholders for source (line 13) and destination( line 16).  We will update these in latter steps.
+In the example below, we have placeholders for source (line 13) and destination( line 16). We will update these in latter steps.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='13,16'}
@@ -58,7 +60,6 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-
 Open guestbook workload in VSCode
 
 <!-- prettier-ignore-start -->
@@ -80,7 +81,6 @@ cp -r /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/workload/guest
 :::
 <!-- prettier-ignore-end -->
 
-
 Let's push changes to the application Git repository.
 
 <!-- prettier-ignore-start -->
@@ -92,10 +92,10 @@ git push --set-upstream origin main
 :::
 <!-- prettier-ignore-end -->
 
-
 Navigate to the gitea Dashboard and copy HTTPS url of the application repository(eks-blueprints-workshop-gitops-apps).
 
 Execute the following in the terminal to get gitea dashboard URL
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 gitea_credentials
@@ -104,8 +104,7 @@ gitea_credentials
 
 ![Application GitRepo](/static/images/developer-repo-url.png)
 
-You can also see the repository contains guestbook. 
-
+You can also see the repository contains guestbook.
 
 **Replace** `<<APP REPO URL>>` with the application repository url from step 3.
 
@@ -113,11 +112,11 @@ You can also see the repository contains guestbook.
 
 ### 3. Configure ArgoCD To Access Git Repository
 
-Let's provide ArgoCD access to the git repository with the ArgoCD cli. 
+Let's provide ArgoCD access to the git repository with the ArgoCD cli.
 
 Replace `<APP_REPO_URL>` with the HTTPS URL copied in step 2. Do not use the URL from the command gitea_credentials. It is the URL for gitea dashboard.
 
-Replace `<GIT_PASSWORD>` with the password for workshop-user in step 2. This is the password displayed with gitea_credentials. Gitea repos use the same password as the dashboard for conviniance. 
+Replace `<GIT_PASSWORD>` with the password for workshop-user in step 2. This is the password displayed with gitea_credentials. Gitea repos use the same password as the dashboard for convenience.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -126,6 +125,7 @@ argocd repo add <APP_REPO_URL> --name guestbookrepo --username workshop-user --p
 <!-- prettier-ignore-end -->
 
 like the following
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=json }
 argocd repo add https://d2exxxxxxxx.cloudfront.net/gitea/workshop-user/eks-blueprints-workshop-gitops-apps.git --username workshop-user --password pmQ5mWKM3aiISbVvxxxxxxx
@@ -137,31 +137,29 @@ You can validate new created git repo on the ArgoCD dashboard. Navigate to Setti
 ![GuestbookRepo](/static/images/guestbookrepo.png)
 
 ### 4. Update Destination
+
 GitOps Bridge has already provided ArgoCD with the access to hub-cluster.
 
 Navigate ArgoCD dashboard > Settings > Clusters > hub-cluster. Note name of the cluster( i.e hub-cluster).
 
 ![Hub Cluster](/static/images/hub-cluster-name.png)
 
- **Replace** `<<CLUSTER NAME>>` with the cluster name in the guestbook manifest.
+**Replace** `<<CLUSTER NAME>>` with the cluster name in the guestbook manifest.
 
 ![Replace Developer GitRepo](/static/images/replace-hub-cluster.png)
 
-
 ### 5. Save the file
+
 You have updated the file. Save the file.
 
 Click on hamburger > File > Save
-
-
-
 
 ### 6. Apply guestbook manifest
 
 When you apply this manifest:
 
-* ArgoCD creates an Application object.
-* ArgoCD syncs and deploys the resources (Deployment, Service, Pods) to the hub-cluster.
+- ArgoCD creates an Application object.
+- ArgoCD syncs and deploys the resources (Deployment, Service, Pods) to the hub-cluster.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -181,12 +179,14 @@ You can click on the guestbook to see all the resources created by the guestbook
 You can check resources created by the Application(svc,deployment, replicaset, pods)
 
   <!-- prettier-ignore-start -->
-  :::code{showCopyAction=true showLineNumbers=false language=json }
-  kubectl get all -n guestbook
-  :::
+
+:::code{showCopyAction=true showLineNumbers=false language=json }
+kubectl get all -n guestbook
+:::
+
   <!-- prettier-ignore-end -->
 
-# Auto  Reconciliation
+# Auto Reconciliation
 
 In this section you will modify manifest in the application git repo and watch it automatically reconciled with the cluster.
 
@@ -211,22 +211,24 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
 ### 2. Validate auto reconciliation
 
-You can verify that ArgoCD reconciled with the application git repository and deployment to 3 replicas. You should see 3 pods. 
+You can verify that ArgoCD reconciled with the application git repository and deployment to 3 replicas. You should see 3 pods.
 
 Argo CD polls the Git repository for changes **every 30 seconds** (as configured in this workshop) and automatically syncs any updates to the cluster. Reconciliation might take **a minute or two** if the server is under load.
 
 ** It may take a minute or two reconcile as server might be busy**
+
   <!-- prettier-ignore-start -->
-  :::code{showCopyAction=true showLineNumbers=false language=json }
-  kubectl get pods -n guestbook
-  :::
+
+:::code{showCopyAction=true showLineNumbers=false language=json }
+kubectl get pods -n guestbook
+:::
+
   <!-- prettier-ignore-end -->
 
-
 ### 8. Clean Up
+
 Use ArgoCD CLI to delete the application and its managed resources.
 
 ```bash

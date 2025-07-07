@@ -13,7 +13,7 @@ In this chapter you will create a role that is assumed by ArgoCD service account
 ### 1. Create Variable
 
 First, let's add a variable to save the ArgoCD Role in SSM Parameters:
-<!-- prettier-ignore-start 
+<!-- prettier-ignore-start
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
 cat <<'EOF' >> ~/environment/hub/variables.tf
 variable "ssm_parameter_name_argocd_role_suffix" {
@@ -23,12 +23,10 @@ variable "ssm_parameter_name_argocd_role_suffix" {
 }
 EOF
 :::
-<!-- prettier-ignore-start 
+<!-- prettier-ignore-start
 -->
 
-
 ### 1. Create ArgoCD Hub Role
-
 
 Now, let's create the IAM role and associated resources:
 
@@ -119,8 +117,7 @@ EOF
 
 Line 14: Both AssumeRole and TagSession are required for pod identity  
 Line 50: Store hub role ARN in a parameter store. Spoke Cluster terraform module looks the parameter for the arn. It needs this to create trust with the spoke  
-Line 56-63: Associate the role with the ArgoCD service accounts  
-
+Line 56-63: Associate the role with the ArgoCD service accounts
 
 ### 2. Apply Terraform
 
@@ -167,6 +164,3 @@ AWS_REGION=us-east-2
 AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
 ```
 -->
-
-
-

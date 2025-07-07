@@ -15,7 +15,6 @@ In this chapter, you’ll deploy the NGINX Ingress Controller by setting the `en
 
 Add the label to your `terraform.tfvars` file:
 
-
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json highlightLines='4'}
 sed -i '
@@ -26,8 +25,8 @@ sed -i '
 ' ~/environment/hub/terraform.tfvars
 :::
 <!-- prettier-ignore-end -->
-### 2. Terraform Apply
 
+### 2. Terraform Apply
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -40,12 +39,11 @@ terraform apply --auto-approve
 
 Navigate to **Argo CD > Settings > hub-cluster**. You should see the label `enable_ingress_nginx=true`.
 
-
 ![Enable Nginx](/static/images/enable-nginx.png)
 
 ### 4. Validate Nginx Application addon
 
-Navigate to ArgoCD dashboard>Applications>cluster-addon. You can see  addon-ingress-nginx-hub-cluster ApplicationSet.
+Navigate to ArgoCD dashboard>Applications>cluster-addon. You can see addon-ingress-nginx-hub-cluster ApplicationSet.
 
 ![Enable Nginx](/static/images/nginx-application.png)
 
@@ -79,10 +77,9 @@ ingress-nginx-controller-d46976f8f-w48ln   1/1     Running     0          73m
 
 # Remove Nginx Add-on
 
-### 1. Disable the Nginx label 
+### 1. Disable the Nginx label
 
 Set the label to false in terraform.tfvars:
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -104,4 +101,3 @@ terraform apply --auto-approve
 Check the Argo CD dashboard to confirm that the application has been deleted.
 
 Kubernetes resources created by the application are not deleted automatically due to the sync policy, which protects against accidental deletions. This behavior is configurable.
-

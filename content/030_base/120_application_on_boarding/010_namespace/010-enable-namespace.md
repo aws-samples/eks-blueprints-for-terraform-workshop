@@ -73,11 +73,12 @@ EOF
 <!-- prettier-ignore-end -->
 
 - Line 15: Only clusters that have label workload_webstore: 'true' are selected
-- Line 29: Points to the namespace Helm chart located in charts/namespace  
+- Line 29: Points to the namespace Helm chart located in charts/namespace
 
 ![namespace-helm](/static/images/namespace-helm.png)
 
 :::expand{header="Check the files in helm chart:"}
+
 ```
 ├── Chart.yaml
 ├── README.md
@@ -103,15 +104,14 @@ EOF
 ├── values-test.yaml
 └── values.yaml
 ```
+
 :::
 
 - Line 36-37: Specifies default and optional environment-specific Helm value files
 
-
 ### 2. Create webstore namespace default values
 
 Copy the default values file for the webstore namespace Helm chart.
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
@@ -121,7 +121,6 @@ cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/
 <!-- prettier-ignore-end -->
 
 ![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
-
 
 :::expand{header="Check the file content:"}
 
@@ -134,7 +133,6 @@ code $GITOPS_DIR/platform/config/webstore/namespace/values/default-values.yaml
 ### 3. Enable hub cluster for webstore workload
 
 The namespace ApplicationSet only targets clusters labeled with workload_webstore: 'true'. Let’s enable this label for the hub cluster.
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
@@ -189,9 +187,8 @@ argocd app sync argocd/bootstrap
 ::: -->
 
 :::alert{header=Note type=warning}
-The 'create-namespace-webstore' application will become visible after a few minutes. 
+The 'create-namespace-webstore' application will become visible after a few minutes.
 :::
-
 
 So it creates a new **create-namespace-webstore** application:
 
@@ -203,7 +200,6 @@ Wait few minutes and refresh the UI
 ::: -->
 
 The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
-
 
 ### 6. Validate namespaces
 
@@ -219,7 +215,6 @@ With this setup, the webstore namespace and its policies (like LimitRange and Ne
 kubectl get ns --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
-
 
 :::expand{header="Output"}
 
@@ -247,7 +242,6 @@ To view the LimitRange set for the ui namespace in the hub-cluster.
 kubectl get limitrange  -n ui --context hub-cluster -o yaml
 :::
 <!-- prettier-ignore-end -->
-
 
 :::expand{header="Output"}
 

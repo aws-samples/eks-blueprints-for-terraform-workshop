@@ -8,10 +8,9 @@ weight: 10
 In this chapter, you'll label your cluster with metadata that enables automation of add-on installation and removal.
 In upcoming chapters, these labels are read by ArgoCD and GitOps Bridge to determine which add-ons should be deployed or removed on each cluster.
 
-
 ### 1. Define addons label variables
 
-The following code defines boolean variables for add-ons. 
+The following code defines boolean variables for add-ons.
 
 Variables are organized into two categories: aws_addons and oss_addons. aws_addons require require AWS-specific integrations, such as IAM roles (e.g., External Secrets Operator needs access to AWS Secrets Manager). "oss_addons" are open-source tools that don’t rely AWS-specific services( Eg Nginx).
 
@@ -110,15 +109,14 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-
-### 4. Validate labels 
+### 4. Validate labels
 
 Navigate to Settings > Clusters > hub-cluster in the Argo CD dashboard.
 Examine the hub-cluster object to confirm that GitOps Bridge has successfully updated its labels.
 
 ![Hub Cluster Updated Metadata](/static/images/hubcluster-update-labels.png)
 
-ArgoCD reads the labels from a Kubernetes Secret that represents the cluster. 
+ArgoCD reads the labels from a Kubernetes Secret that represents the cluster.
 
 You can check the Labels and annotations on the cluster secret:
 

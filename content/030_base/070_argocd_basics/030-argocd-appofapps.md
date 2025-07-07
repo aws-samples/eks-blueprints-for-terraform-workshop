@@ -23,17 +23,15 @@ For example, in earlier chapters, you saw how a guestbook Application deployed D
 
 ![App of Apps Guestbook](/static/images/appofapps-guestbook.png)
 
-The **App of Apps** pattern in ArgoCD is a strategy where a single *parent* `Application` deploys multiple *child* `Applications/ApplicationSets`. For example, the webstore parent Application deploys Applications for the ui, assets, carts microservices.
+The **App of Apps** pattern in ArgoCD is a strategy where a single _parent_ `Application` deploys multiple _child_ `Applications/ApplicationSets`. For example, the webstore parent Application deploys Applications for the ui, assets, carts microservices.
 
 ![App of Apps Webstore](/static/images/appofapps-webstore-concept.png)
-
 
 Let’s walk through how the **webstore** workload can be deployed using this pattern.
 
 ![Webstore](/static/images/webstore.png)
 
-The *webstore* consists of multiple microservices like `ui`, `orders`, `checkout`, `carts`, `catalog`, and `assets`.
-
+The _webstore_ consists of multiple microservices like `ui`, `orders`, `checkout`, `carts`, `catalog`, and `assets`.
 
 ### Developer Repository Layout
 
@@ -41,10 +39,9 @@ Developers organize their code and manifests using a modular structure. Each mic
 
 ![Webstore Repo](/static/images/appofapps-webstore-repo.png)
 
-
 ### Platform Onboarding Webstore Workload
 
-![Platform](/static/images/platform-task.png) The platform team onboards the *webstore* workload by creating a `deploy-webstore.yaml` file in the `workload/` folder of the platform repository. This file defines an `ApplicationSet` that deploys all webstore microservices.
+![Platform](/static/images/platform-task.png) The platform team onboards the _webstore_ workload by creating a `deploy-webstore.yaml` file in the `workload/` folder of the platform repository. This file defines an `ApplicationSet` that deploys all webstore microservices.
 
 ![Webstore AppSet](/static/images/appofapps-webstore-appset.png)
 
@@ -82,6 +79,7 @@ spec:
 <!-- prettier-ignore-end -->
 
 #### Generator
+
 - **Line 10**: Uses the [Git generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Git/) to dynamically detect directories.
 - **Lines 13–14**: Traverses all subdirectories under `webstore/`.
 
@@ -89,6 +87,7 @@ The Git generator scans the webstore/ directory in the developer repo and finds 
 This results in six generator values, and for each value, ArgoCD creates a child Application using the template section.
 
 #### Template
+
 - **Line 21**: Points to the developer Git repo.
 - **Line 22**: `{{.path.path}}` resolves to paths like `webstore/ui`, `webstore/orders`.
 - **Line 25**: Deploys to `hub-cluster`.
@@ -98,14 +97,11 @@ This `ApplicationSet` creates one Argo CD Application for each microservice.
 
 ![Deploy Webstore](/static/images/appofapps-deploy-webstore-appset.png)
 
+### Root Application
 
-
-### Root Application 
-
-To enable the App of Apps pattern, the platform team creates a *root* Argo CD Application that deploys the above `ApplicationSet`.
+To enable the App of Apps pattern, the platform team creates a _root_ Argo CD Application that deploys the above `ApplicationSet`.
 
 ![Webstore AppSet](/static/images/appofapps-root.png)
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='9-10'}
@@ -138,12 +134,10 @@ spec:
 - Root Application (`webstore-root`) syncs the `workload` folder.
 - This triggers the `ApplicationSet` (`deploy-webstore`) to generate one Argo CD `Application` per microservice.
 
-
 ### Benefits of the App of Apps Pattern
 
 - 🔄 **Automation**: Root app deploys `ApplicationSet`, which deploys all microservices.  
-To onboard a new workload, the platform team simply adds a new ApplicationSet in the workload folder of the platform Git repository.
+  To onboard a new workload, the platform team simply adds a new ApplicationSet in the workload folder of the platform Git repository.
 - 👥 **Separation of Responsibilities**:
   - Platform team defines structure and environment policies.
   - Developers own their service manifests.
-

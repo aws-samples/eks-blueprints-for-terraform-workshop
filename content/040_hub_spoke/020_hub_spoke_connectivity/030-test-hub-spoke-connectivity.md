@@ -22,7 +22,6 @@ cd ~/environment/spoke
 terraform apply --auto-approve
 :::
 
-
 ### 3. Validate Nginx in Kubernetes
 
 <!-- :::alert{header="Sync Application"}
@@ -49,6 +48,3 @@ NAME                                       READY   STATUS      RESTARTS   AGE
 ingress-nginx-admission-patch-r59hq        0/1     Completed   0          72m
 ingress-nginx-controller-d46976f8f-w48ln   1/1     Running     0          73m
 ```
-
-
-

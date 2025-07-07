@@ -16,6 +16,7 @@ In upcoming chapters you will add files to this folder for addon, namespace and 
 The ApplicationSet creates a new ArgoCD Application named "bootstrap" that points to the platform/bootstrap directory in the platform Git repository.
 
 ### 1. Create the Bootstrap ApplicationSet
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='16,22,23,24'}
 mkdir -p ~/environment/hub/bootstrap
@@ -57,7 +58,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-Note Lines 22–24 use annotations from the ArgoCD cluster secret.  
+Note Lines 22–24 use annotations from the ArgoCD cluster secret.
 
 You can check values in your current environment.
 
@@ -70,8 +71,6 @@ kubectl --context hub-cluster get secrets -n argocd hub-cluster -o json | jq ".m
 :::
 <!-- prettier-ignore-end -->
 
-
-
 The output should be similar to the following. It should point to bootstrap folder of platform repo. You will notice platform_repo_basepath is not used in this workshop so it is set to empty string:
 
 ```
@@ -82,7 +81,8 @@ HEAD
 ```
 
 ### 2. Reference the Bootstrap ApplicationSet in Terraform
-We created bootstrap applicaitonset in ~/environment/hub/bootstrap/bootstrap-applicationset.yaml. Let's recreate a variable to reference that.
+
+We created bootstrap applicationset in ~/environment/hub/bootstrap/bootstrap-applicationset.yaml. Let's recreate a variable to reference that.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -124,11 +124,11 @@ module "gitops_bridge_bootstrap" {
 :::
 <!-- prettier-ignore-end -->
 
-# Label the hub-cluster 
+# Label the hub-cluster
 
 ### 1. Add fleet_member label variable
-The ApplicationSet cluster generator (line 16) filters clusters that have the label fleet_member = hub. Let’s add this label to the hub cluster definition.
 
+The ApplicationSet cluster generator (line 16) filters clusters that have the label fleet_member = hub. Let’s add this label to the hub cluster definition.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-labels.png)
 
@@ -153,10 +153,9 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-
 ### 2. Enable Label Injection via GitOps Bridge
 
-We will use GitOps Bridge to  add labels to the hub-cluster object.  The GitOps Bridge is configured to add labels on the specified cluster object.
+We will use GitOps Bridge to add labels to the hub-cluster object. The GitOps Bridge is configured to add labels on the specified cluster object.
 
 ```bash
 sed -i "s/#enableaddons//g" ~/environment/hub/main.tf
@@ -177,7 +176,6 @@ module "gitops_bridge_bootstrap" {
 }
 :::
 <!-- prettier-ignore-end -->
-
 
 # Apply Terraform
 

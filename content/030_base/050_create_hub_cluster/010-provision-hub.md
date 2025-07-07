@@ -5,7 +5,6 @@ weight: 10
 
 ::video{id=CYXp_fQZyw0}
 
-
 In this section, we will create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.
 
 ![EKS Cluster](/static/images/argocd-bootstrap-eks.png)
@@ -109,7 +108,7 @@ EOF
 
 ### 3. Configure EKS cluster
 
-We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module. 
+We configure the EKS cluster (hub) in the private subnets using the Terraform EKS module.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -285,6 +284,7 @@ eks_admin_role_name          = "Admin"
 :::
 
 ### 6. Create Required Providers
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat >  ~/environment/hub/versions.tf <<EOF
@@ -332,14 +332,15 @@ eval $(terraform output -raw configure_kubectl)
 :::
 <!-- prettier-ignore-end -->
 
-To verify that kubectl is correctly configured, run the command below to see if the API endpoint is reachable. 
+To verify that kubectl is correctly configured, run the command below to see if the API endpoint is reachable.
 
 <!-- prettier-ignore-start -->
+
 :::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get svc --context hub-cluster
 :::
-<!-- prettier-ignore-start -->
 
+<!-- prettier-ignore-start -->
 
 Example output:
 

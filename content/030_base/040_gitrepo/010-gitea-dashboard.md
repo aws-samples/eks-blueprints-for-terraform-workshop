@@ -28,8 +28,6 @@ example output
 gitea_credentials is a shell function from /home/ec2-user/.bashrc.d/argocd.bash
 ```
 
-
-
 Example output
 
 ```

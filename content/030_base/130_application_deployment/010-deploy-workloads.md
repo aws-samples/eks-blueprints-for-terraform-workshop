@@ -5,7 +5,7 @@ weight: 10
 
 ::video{id=sOKVWkNNEcE}
 
-So far, we have created the namespace for the Webstore workload.  The workload Git repository is already configured to be scanned and deployed automatically by Argo CD.
+So far, we have created the namespace for the Webstore workload. The workload Git repository is already configured to be scanned and deployed automatically by Argo CD.
 
 Currently, the Webstore application is **not deployed** because the workload Git repository is empty.
 
@@ -26,8 +26,6 @@ done
 :::
 <!-- prettier-ignore-end -->
 
-
-
 ### 2. Git commit
 
 <!-- prettier-ignore-start -->
@@ -40,7 +38,6 @@ git push
 <!-- prettier-ignore-end -->
 
 ![Workload GitRepo](/static/images/create-deployment-dev-webstore-deployment.png)
-
 
 ### 3. Validate workload
 
@@ -61,8 +58,6 @@ app_url_hub
 :::alert{header="Important" type="warning"}
 If you encounter the error `services "ui-nlb" not found`, then you should run the 'app_url_hub' command again.
 :::
-
-
 
 Access the webstore in the browser.
 
