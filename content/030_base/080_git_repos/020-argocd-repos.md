@@ -43,38 +43,39 @@ There are multiple approaches to create the secret. We could create it in Secret
 cat <<'EOF' >> ~/environment/hub/main.tf
 
 resource "kubernetes_secret" "git_secrets" {
-depends_on = [kubernetes_namespace.argocd]
-for_each = {
-git-addons = {
-type = "git"
-url = local.gitops_addons_url
-username = local.gitops_addons_repo_username
-password = local.gitops_addons_repo_password
-}
-git-platform = {
-type = "git"
-url = local.gitops_platform_url
-username = local.gitops_platform_repo_username
-password = local.gitops_platform_repo_password
-}
-git-workloads = {
-type = "git"
-url = local.gitops_workload_url
-username = local.gitops_workload_repo_username
-password = local.gitops_workload_repo_password
-}
-}
-metadata {
-name = each.key
-namespace = kubernetes_namespace.argocd.metadata[0].name
-labels = {
-"argocd.argoproj.io/secret-type" = "repository"
-}
-}
-data = each.value
+  depends_on = [kubernetes_namespace.argocd]
+  for_each = {
+    git-addons = {
+      type     = "git"
+      url      = local.gitops_addons_url
+      username = local.gitops_addons_repo_username
+      password = local.gitops_addons_repo_password
+    }
+    git-platform = {
+      type     = "git"
+      url      = local.gitops_platform_url
+      username = local.gitops_platform_repo_username
+      password = local.gitops_platform_repo_password
+    }
+    git-workloads = {
+      type     = "git"
+      url      = local.gitops_workload_url
+      username = local.gitops_workload_repo_username
+      password = local.gitops_workload_repo_password
+    }
+  }
+  metadata {
+    name      = each.key
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+  data = each.value
 }
 EOF
 :::
+
 
 ### 3. Apply Terraform
 
