@@ -3,6 +3,8 @@ title: "Install Argo CD with GitOps Bridge"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=Ub4kmIIP3aY}
 
 In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge. GitOps Bridge also creates a Kubernetes secret to store metadata like labels and annotations about the cluster.

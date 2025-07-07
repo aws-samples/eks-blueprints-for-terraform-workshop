@@ -3,6 +3,8 @@ title: "Application"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=DMJhqkbhjgo}
 
 If you want to deploy Kubernetes manifests, you need two key pieces of information: the local manifest file(what to deploy) and the target EKS cluster(where to deploy). For example:

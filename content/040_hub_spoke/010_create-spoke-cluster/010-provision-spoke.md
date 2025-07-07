@@ -3,6 +3,8 @@ title: "Create Spoke Staging Cluster"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=rLwkZmxfK88}
 
 The **spoke-staging cluster** has a configuration similar to the **hub-cluster**. In this step, we'll copy the Terraform configuration from the hub-cluster and update it where necessary to create our staging spoke cluster.

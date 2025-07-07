@@ -3,6 +3,8 @@ title: "Self-Manage ArgoCD as an Addon"
 weight: 50
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=v-WLsiTiiP8}
 
 Initially, ArgoCD was installed using the GitOps Bridge Terraform module. However, ArgoCD can also be managed as a GitOps-managed add-on—just like any other add-on.

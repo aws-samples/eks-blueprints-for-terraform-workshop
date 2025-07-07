@@ -3,6 +3,8 @@ title: "Configure Hub Cluster"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=p3_gHW9QX2g}
 
 In this chapter you will create a role that is assumed by ArgoCD service accounts. This role will have assume role permission for other roles.

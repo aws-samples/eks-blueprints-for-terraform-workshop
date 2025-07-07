@@ -3,6 +3,8 @@ title: "Create Webstore Namespace"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=HPQvdbKVGmo}
 
 In this chapter, you will onboard Webstore application to create environment(dev) specific namespaces (ui,orders,checkout,carts,catalog,assets).

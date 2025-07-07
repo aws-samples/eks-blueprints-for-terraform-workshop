@@ -1,7 +1,9 @@
 ---
-title: "Install Ngnix Controller Addon"
+title: "Install Nginx Controller Addon"
 weight: 30
 ---
+
+<!-- cspell:disable-next-line -->
 
 ::video{id=AB82_H6fMh4}
 

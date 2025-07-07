@@ -4,6 +4,8 @@ chapter: false
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=-\_0e1xr-DlA}
 
 ## Running the workshop at an AWS Event

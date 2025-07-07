@@ -3,6 +3,8 @@ title: "Bootstrap the Platform Repository"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=pqw8FHhTiQY}
 
 We’ll configure an application to watch a folder - bootstrap in your platform Git repository. Any files in this folder get processed automatically.

@@ -3,6 +3,8 @@ title: "Create Amazon VPC"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=CMNLqdBYSAQ}
 
 ### 1. Create Terraform project

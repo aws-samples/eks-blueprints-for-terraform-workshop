@@ -3,7 +3,11 @@ title: "Argo CD on EKS"
 weight: 0
 ---
 
-::video{id=JtXgjtizKN8}
+<!-- cspell:disable-next-line -->
+
+::video{id=tXgjtizKN8J}
+
+<!-- cspell:disable-next-line -->
 
 ::video{id=sdBGtAKEvEw}
 

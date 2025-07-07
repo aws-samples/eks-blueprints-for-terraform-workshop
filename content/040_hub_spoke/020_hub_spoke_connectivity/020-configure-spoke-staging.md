@@ -3,6 +3,8 @@ title: "Configure Spoke Cluster"
 weight: 20
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=9_1kx8TW1do}
 
 In this chapter, you will configure the spoke-staging cluster so that it can be registered as a managed cluster in the hub Argo CD instance. This allows Argo CD running in the hub cluster to deploy workloads to the spoke.

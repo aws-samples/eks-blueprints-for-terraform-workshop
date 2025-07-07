@@ -3,6 +3,8 @@ title: "ArgoCD Git Repo"
 weight: 20
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=YH0hH-F7DaY}
 
 We have Git repositories hosted in Gitea, but Argo CD does not yet have access to them. In this chapter, you will configure ArgoCD access to GitOps repositories. There are [different ways](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/) to provide Argo CD access to these repositories. We will use username and password method.

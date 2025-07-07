@@ -3,6 +3,8 @@ title: "Webstore Staging: Namespace Setup with Overrides"
 weight: 30
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=AbHXa6qp6Xk}
 
 In this chapter, you’ll act as a ![Platform Task](/static/images/platform-task.png) platform engineer and create a namespace for the Webstore workload on the `spoke-staging` cluster.
@@ -15,23 +17,27 @@ You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that prov
 :::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='7,11-12,18-19'}
 .
 .
-generators: - clusters:
-selector:
-matchLabels:
-workload_webstore: 'true'
+generators: 
+  - clusters:
+      selector:
+        matchLabels:
+          workload_webstore: 'true'
 .
 .
 source:
-repoURL: '{{ .metadata.annotations.platform_repo_url }}'
-path: '{{ .metadata.annotations.platform_repo_basepath }}charts/namespace'
-targetRevision: '{{ .metadata.annotations.platform_repo_revision }}'
+  repoURL: '{{ .metadata.annotations.platform_repo_url }}'
+  path: '{{ .metadata.annotations.platform_repo_basepath }}charts/namespace'
+  targetRevision: '{{ .metadata.annotations.platform_repo_revision }}'
 helm:
-releaseName: 'webstore'
-ignoreMissingValueFiles: true
-valueFiles: - '../../config/webstore/namespace/values/default-values.yaml' - '../../config/webstore/namespace/values/{{ .metadata.labels.environment }}-values.yaml'
+  releaseName: 'webstore'
+  ignoreMissingValueFiles: true
+  valueFiles: 
+    - '../../config/webstore/namespace/values/default-values.yaml' 
+    - '../../config/webstore/namespace/values/{{ .metadata.labels.environment }}-values.yaml'
 .
 .
 :::
+
 
 ### 1. Set staging overrides
 

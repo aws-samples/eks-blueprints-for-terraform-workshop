@@ -3,6 +3,8 @@ title: "Namespace Automation"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=\_TdKzq1jXhM}
 
 The goal of this chapter is to create an ArgoCD Application for each workload to manage namespace creation. This is a bootstrap-level application that deploys the manifests found in the `namespace` folder of each workload.

@@ -3,6 +3,8 @@ title: "Inject Cluster Annotations"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=m2Yr-cjrGE0}
 
 Earlier in the "Application" chapter, you updated manually repoURL in the ArgoCD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata, from annotations on cluster objects.
@@ -42,22 +44,22 @@ cat <<'EOF' >> ~/environment/hub/git_data.tf
 # Retrieve Git repository metadata from AWS Secrets Manager for platform, workload, and addon repositories
 
 data "aws_secretsmanager_secret" "git_data_addons" {
-name = var.secret_name_git_data_addons
+  name = var.secret_name_git_data_addons
 }
 data "aws_secretsmanager_secret_version" "git_data_version_addons" {
-secret_id = data.aws_secretsmanager_secret.git_data_addons.id
+  secret_id = data.aws_secretsmanager_secret.git_data_addons.id
 }
 data "aws_secretsmanager_secret" "git_data_platform" {
-name = var.secret_name_git_data_platform
+  name = var.secret_name_git_data_platform
 }
 data "aws_secretsmanager_secret_version" "git_data_version_platform" {
-secret_id = data.aws_secretsmanager_secret.git_data_platform.id
+  secret_id = data.aws_secretsmanager_secret.git_data_platform.id
 }
 data "aws_secretsmanager_secret" "git_data_workload" {
-name = var.secret_name_git_data_workloads
+  name = var.secret_name_git_data_workloads
 }
 data "aws_secretsmanager_secret_version" "git_data_version_workload" {
-secret_id = data.aws_secretsmanager_secret.git_data_workload.id
+  secret_id = data.aws_secretsmanager_secret.git_data_workload.id
 }
 
 EOF

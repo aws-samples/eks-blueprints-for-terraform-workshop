@@ -3,6 +3,8 @@ title: "ApplicationSet"
 weight: 20
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=KKHVP2Ogq64}
 
 In the previous chapter, you deployed an application using an ArgoCD Application object to the hub-cluster.

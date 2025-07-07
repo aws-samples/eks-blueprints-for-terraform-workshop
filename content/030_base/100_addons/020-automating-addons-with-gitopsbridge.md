@@ -3,6 +3,8 @@ title: "Automate Add-on Management"
 weight: 20
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=Fp0eTwzJIq0}
 
 In an earlier chapter, you used the GitOps Bridge Terraform module to install ArgoCD and inject the required labels and annotations into the cluster.

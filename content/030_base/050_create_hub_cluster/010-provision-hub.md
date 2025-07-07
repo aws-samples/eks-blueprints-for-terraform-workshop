@@ -3,6 +3,8 @@ title: "Create EKS cluster"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=CYXp_fQZyw0}
 
 In this section, we will create an EKS cluster (hub) within the previously provisioned VPC, utilizing the EKS Terraform module to streamline the deployment process.

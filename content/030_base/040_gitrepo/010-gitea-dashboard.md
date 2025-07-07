@@ -3,6 +3,8 @@ title: "Gitea Dashboard"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=kRUM9ABx97s}
 
 You can access the Gitea server to view the repositories.

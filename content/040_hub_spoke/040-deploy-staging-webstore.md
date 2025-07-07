@@ -3,6 +3,8 @@ title: "Deploy Webstore to Staging"
 weight: 40
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=gnzumq6rntI}
 
 In this chapter application team ![Developer Task](/static/images/developer-task.png) deploys the webstore staging application independently, without any direct involvement from the platform team.

@@ -3,6 +3,8 @@ title: "Inject Label for Add-on Automation"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=6bm1YZM5LAw}
 
 In this chapter, you'll label your cluster with metadata that enables automation of add-on installation and removal.

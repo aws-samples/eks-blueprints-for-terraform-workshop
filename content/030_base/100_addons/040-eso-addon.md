@@ -3,6 +3,8 @@ title: "Install External Secrets Operator(ESO) Addon"
 weight: 40
 ---
 
+<!-- cspell:disable-next-line -->
+
 ::video{id=e0lhzdE5ciI}
 
 Some addons require IAM roles to access AWS services.
@@ -47,10 +49,10 @@ version = "~> 1.4.0"
 
 name = "external-secrets"
 
-attach_external_secrets_policy = true
+attach*external_secrets_policy = true
 external_secrets_ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
-  external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/_"
-external_secrets_kms_key_arns = ["arn:aws:kms:_:_:key/_"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/\*"
+  external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
+external*secrets_kms_key_arns = ["arn:aws:kms:*:_:key/_"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/\*"
 external_secrets_create_permission = false
 
 # Pod Identity Associations
