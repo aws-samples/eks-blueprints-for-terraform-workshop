@@ -5,14 +5,14 @@ function argocd_kill_port_forward (){
 function argocd_credentials (){
     # This might not need it during workshop
 	# argocd_kill_port_forward $1 $2
-    kubectl --context $1 port-forward svc/argocd-server -n argocd $2:80 >/dev/null 2>&1 &
-    # wait for port-forward to be up
-    sleep 3
+	argo_url
+	export ARGO_CD_URL=$(kubectl --context hub-cluster get svc -n argocd  argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+	echo "ArgoCD URL: before $ARGO_CD_URL after"
 	export ARGOCD_PWD=$(kubectl get secrets argocd-initial-admin-secret -n argocd --template='{{index .data.password | base64decode}}' --context $1)
-    argocd login "localhost:$2" --plaintext --username admin --password $ARGOCD_PWD --name $1
+    argocd login "$ARGO_CD_URL" --plaintext --username admin --password $ARGOCD_PWD --name $1
 	echo "ArgoCD Username: admin"
 	echo "ArgoCD Password: $ARGOCD_PWD"
-	echo "ArgoCD URL: $IDE_URL/proxy/$2"
+	echo "ArgoCD URL: $ARGO_CD_URL"
 }
 
 function gitea_credentials (){
@@ -22,14 +22,9 @@ function gitea_credentials (){
 }
 
 function argocd_hub_credentials (){
-	argocd_credentials hub-cluster 8081
+	argocd_credentials hub-cluster 
 }
-function argocd_staging_credentials (){
-	argocd_credentials staging-cluster 8082
-}
-function argocd_prod_credentials (){
-	argocd_credentials prod-cluster 8083
-}
+
 
 
 

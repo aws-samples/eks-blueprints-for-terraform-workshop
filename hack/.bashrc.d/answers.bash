@@ -32,6 +32,10 @@ function deploy_prod (){
   git -C $GITOPS_DIR/apps push
 }
 
+function argo_url (){
+  wait-for-lb-argocd $(kubectl --context hub-cluster get svc -n argocd  argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+}
+
 function app_url_hub (){
   wait-for-lb $(kubectl --context hub-cluster get svc -n ui ui-nlb -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 }

@@ -1,8 +1,0 @@
-disallowedrepos:
-  spec:
-    =(ephemeralContainers):
-    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | !k8s.gcr.io/*"
-    =(initContainers):
-    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | !k8s.gcr.io/*"
-    containers:
-    - image: "ghcr.io/* | *.amazonaws.com/* | quay.io/* | registry.k8s.io/* | docker.io/* | gcr.io/* | !k8s.gcr.io/*"
