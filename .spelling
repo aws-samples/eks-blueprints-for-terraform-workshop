@@ -62,3 +62,5 @@ subfolders
 ecomm
 Nginx
 gitea
+tolerations
+enableannotation

@@ -95,7 +95,6 @@ git push
 
 After pushing, navigate to the ArgoCD dashboard and open the bootstrap application. You should see the newly created create-namespace ApplicationSet.
 
-
 :::alert{header=Note type=warning}
 The 'create-namespace' applicationset will become visible after a few minutes.
 :::

@@ -91,8 +91,6 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
-
 :::alert{header=Note type=warning}
 The 'create-deployment' applicationset will become visible after a few minutes.
 :::

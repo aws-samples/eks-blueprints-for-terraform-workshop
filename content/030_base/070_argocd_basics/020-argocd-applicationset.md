@@ -93,10 +93,10 @@ gitea_credentials
 **Replace** `<<APP REPO URL>>` with the application repository url
 
 ### 3. Save the file
+
 You have updated the file. Save the file.
 
 Click on hamburger > File > Save
-
 
 ### 4. Apply Static List Generator
 
