@@ -86,7 +86,7 @@ You execute the following command in the terminal for gitea url.
 :::code{showCopyAction=true showLineNumbers=false language=json}
 gitea_credentials
 :::
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 ![Application GitRepo](/static/images/developer-repo-url.png)
 

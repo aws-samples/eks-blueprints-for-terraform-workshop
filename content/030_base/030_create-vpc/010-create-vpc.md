@@ -57,7 +57,7 @@ variable "vpc_cidr" {
 
 EOF
 :::
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 ### 3. Configure VPC
 
@@ -127,7 +127,7 @@ module "vpc" {
 
 EOF
 :::
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 ### 4. Define outputs
 
@@ -165,7 +165,7 @@ First, let's initialize Terraform to get the required modules and providers:
 cd ~/environment/vpc
 terraform init
 :::
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 It's a good practice to perform a dry-run first:
 

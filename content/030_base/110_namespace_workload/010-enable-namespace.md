@@ -95,16 +95,6 @@ git push
 
 After pushing, navigate to the ArgoCD dashboard and open the bootstrap application. You should see the newly created create-namespace ApplicationSet.
 
-<!-- :::alert{header="Sync Application"}
-If the new create-namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.
-
-Alternatively, you can use the CLI:
-
-```bash
-argocd app sync argocd/bootstrap
-```
-
-::: -->
 
 :::alert{header=Note type=warning}
 The 'create-namespace' applicationset will become visible after a few minutes.

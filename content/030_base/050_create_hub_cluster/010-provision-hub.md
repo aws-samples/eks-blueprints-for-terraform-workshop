@@ -342,7 +342,7 @@ To verify that kubectl is correctly configured, run the command below to see if 
 kubectl get svc --context hub-cluster
 :::
 
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 Example output:
 

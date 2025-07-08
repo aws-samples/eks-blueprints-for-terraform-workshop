@@ -180,13 +180,11 @@ You can click on the guestbook to see all the resources created by the guestbook
 
 You can check resources created by the Application(svc,deployment, replicaset, pods)
 
-  <!-- prettier-ignore-start -->
-
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get all -n guestbook
 :::
-
-  <!-- prettier-ignore-end -->
+<!-- prettier-ignore-end -->
 
 # Auto Reconciliation
 
@@ -221,13 +219,11 @@ Argo CD polls the Git repository for changes **every 30 seconds** (as configured
 
 ** It may take a minute or two reconcile as server might be busy**
 
-  <!-- prettier-ignore-start -->
-
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get pods -n guestbook
 :::
-
-  <!-- prettier-ignore-end -->
+<!-- prettier-ignore-end -->
 
 ### 8. Clean Up
 

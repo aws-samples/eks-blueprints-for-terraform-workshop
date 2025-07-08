@@ -15,7 +15,8 @@ In this chapter, we will install Argo CD on the hub cluster using GitOps Bridge.
 
 GitOps Bridge handles the initial configuration to get Argo CD up and running with minimal setup.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
 provider "helm" {
   kubernetes {
@@ -66,11 +67,12 @@ module "gitops_bridge_bootstrap" {
 }
 EOF
 
-```
+<!-- prettier-ignore-end -->
 
 ### 2. Create value file for Argo CD
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/argocd-initial-values.yaml
 global:
   tolerations:
@@ -106,23 +108,28 @@ controller:
       memory: 512Mi
 
 EOF
-```
+<!-- prettier-ignore-end -->
+
 
 ### 3. Apply Terraform
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform init
 terraform apply -auto-approve
-```
+<!-- prettier-ignore-end -->
+
 
 ### 4. Validate Argo CD install
 
 To retrieve the Argo CD dashboard URL, execute:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 argocd_hub_credentials
-```
+<!-- prettier-ignore-end -->
+
 
 Copy the Argo CD password from the above command and use `admin` as the username to log in to the Argo CD UI.
 
@@ -137,9 +144,11 @@ In the Argo CD UI, we will find the hub cluster already registered under **Setti
 
 We can also validate that gitops-bridge has correctly created the secrets for this EKS cluster in the argocd namespace:
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl --context hub-cluster get secrets -n argocd hub-cluster
-```
+<!-- prettier-ignore-end -->
+
 
 Expected output:
 

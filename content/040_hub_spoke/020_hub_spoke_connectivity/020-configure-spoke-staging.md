@@ -172,23 +172,20 @@ Line 15: Does not install ArgoCD on the spoke cluster
 Although the spoke cluster has public endpoint access, the DNS resolves to a private IP within the VPC. To allow the hub cluster's Argo CD pods to connect to the spoke cluster API, we need to open inbound port 443 in the spoke cluster's security group.
 
 <!-- prettier-ignore-start -->
-
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 
 cat <<'EOF' >> ~/environment/spoke/main.tf
 
 resource "aws_vpc_security_group_ingress_rule" "hub_to_spoke" {
-security_group_id = module.eks.cluster_primary_security_group_id
-referenced_security_group_id = data.terraform_remote_state.hub.outputs.cluster_primary_security_group_id
-ip_protocol = "tcp"
-from_port = "443"
-to_port = "443"
-
+  security_group_id            = module.eks.cluster_primary_security_group_id
+  referenced_security_group_id = data.terraform_remote_state.hub.outputs.cluster_primary_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = "443"
+  to_port                      = "443"
 }
 
 EOF
 :::
-
 <!-- prettier-ignore-start -->
 
 ### 7. Apply the changes

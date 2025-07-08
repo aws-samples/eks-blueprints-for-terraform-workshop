@@ -159,9 +159,11 @@ EOF
 
 We will use GitOps Bridge to add labels to the hub-cluster object. The GitOps Bridge is configured to add labels on the specified cluster object.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{language=yml showCopyAction=true showLineNumbers=false }
 sed -i "s/#enableaddons//g" ~/environment/hub/main.tf
-```
+<!-- prettier-ignore-end -->
+
 
 The code above uncomments the addons variables in main.tf, as highlighted below. Any value assigned to GitOps Bridge `addons` (Line 8) variable gets assigned to the cluster label.
 

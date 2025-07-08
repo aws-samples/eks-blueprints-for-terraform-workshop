@@ -49,17 +49,6 @@ terraform apply --auto-approve
 
 ### 3. Validate ArgoCD add-on
 
-<!-- :::alert{header="Sync Application"}
-If the new addon-argocd-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in ArgoCD to force it to synchronize.
-
-Alternatively you can do it with CLI:
-
-```bash
-argocd app sync argocd/cluster-addons
-```
-
-::: -->
-
 You should now see the ArgoCD application itself listed in the dashboard, managed like other addons.
 
 ![argocd-values](/static/images/argocd-selfmanage.png)

@@ -65,7 +65,7 @@ data "aws_secretsmanager_secret_version" "git_data_version_workload" {
 
 EOF
 :::
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 ### 2. Retrieve Git Metadata from AWS Secrets
 
