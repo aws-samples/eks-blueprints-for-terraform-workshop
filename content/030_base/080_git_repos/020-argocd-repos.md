@@ -38,7 +38,7 @@ EOF
 ### 2. Create Argo CD secret for Git repositories
 
 There are multiple approaches to create the secret. We could create it in Secrets Manager and use the External Secrets Operator to sync the secret into the cluster. For this workshop, we will create the secret using Terraform.
-
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
 
@@ -75,7 +75,7 @@ resource "kubernetes_secret" "git_secrets" {
 }
 EOF
 :::
-
+<!-- prettier-ignore-end -->
 
 ### 3. Apply Terraform
 

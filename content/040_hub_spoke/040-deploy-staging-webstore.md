@@ -32,14 +32,14 @@ done
 ### 2. Commit the changes
 
 Let's commit our changes:
-
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/workload
 git add .
 git commit -m "add staging manifests for webstore microservices"
 git push
 :::
-
+<!-- prettier-ignore-end -->
 ### 3. Validate the deployment
 
 :::alert{header="Important" type="warning"}

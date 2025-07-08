@@ -38,6 +38,7 @@ In this chapter you will copy these values into annotations so that they can be 
 
 ### 1. Reference Secrets Manager
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/git_data.tf
 
@@ -64,6 +65,7 @@ data "aws_secretsmanager_secret_version" "git_data_version_workload" {
 
 EOF
 :::
+<!-- prettier-ignore-start -->
 
 ### 2. Retrieve Git Metadata from AWS Secrets
 

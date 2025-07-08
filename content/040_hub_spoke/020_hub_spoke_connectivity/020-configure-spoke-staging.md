@@ -201,7 +201,7 @@ terraform init
 terraform apply --auto-approve
 :::
 
-<!-- prettier-ignore-start -->
+<!-- prettier-ignore-end -->
 
 ### 8. Check Hub Cluster Configuration
 

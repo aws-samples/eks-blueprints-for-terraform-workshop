@@ -18,11 +18,12 @@ sed -i 's/enable_ingress_nginx *= *.*/enable_ingress_nginx = true/' ~/environmen
 ```
 
 ### 2. Terraform Apply
-
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
 cd ~/environment/spoke
 terraform apply --auto-approve
 :::
+<!-- prettier-ignore-end -->
 
 ### 3. Validate Nginx in Kubernetes
 

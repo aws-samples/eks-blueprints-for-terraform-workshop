@@ -23,58 +23,72 @@ In an earlier bootstrap chapter, you created an Argo CD Application that continu
 
 Now, you’ll add the cluster-addons ApplicationSet to the bootstrap folder in the platform Git repository. The highlighted lines below show the repoURL and path pointing to the GitOps Bridge Helm chart in the addons Git repository.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='33-34'}
-cat <<'EOF' >> ~/environment/gitops-repos/platform/bootstrap/addons-applicationset.yaml
+  cat <<'EOF' >> ~/environment/gitops-repos/platform/bootstrap/addons-applicationset.yaml
 
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-name: create-cluster-addons
-namespace: argocd
-spec:
-syncPolicy:
-preserveResourcesOnDeletion: true
-goTemplate: true
-goTemplateOptions: - missingkey=error
-generators: - clusters:
-selector:
-matchLabels:
-fleet_member: hub
-values:
-addonChart: gitops-bridge
-template:
-metadata:
-name: cluster-addons
-finalizers: # This is here only for workshop purposes. In a real-world scenario, you should not use this - resources-finalizer.argocd.argoproj.io
-spec:
-project: default
-sources: - ref: values
-repoURL: "{{.metadata.annotations.addons_repo_url}}"
-targetRevision: "{{.metadata.annotations.addons_repo_revision}}" - repoURL: "{{.metadata.annotations.addons_repo_url}}"
-path: "{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}"
-targetRevision: "{{.metadata.annotations.addons_repo_revision}}"
-helm:
-valuesObject:
-#selectorMatchLabels: # fleet_member: control-plane
-ignoreMissingValueFiles: true
-valueFiles: - "$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml"
-              - "$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml" - "$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
-              - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml" - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml"
-              - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
-destination:
-namespace: argocd
-name: "{{.name}}"
-syncPolicy:
-automated:
-selfHeal: false
-allowEmpty: true
-prune: false
-retry:
-limit: 100
-syncOptions: - CreateNamespace=true - ServerSideApply=true
+  apiVersion: argoproj.io/v1alpha1
+  kind: ApplicationSet
+  metadata:
+    name: create-cluster-addons
+    namespace: argocd
+  spec:
+    syncPolicy:
+      preserveResourcesOnDeletion: true
+    goTemplate: true
+    goTemplateOptions: 
+      - missingkey=error
+    generators: 
+      - clusters:
+          selector:
+            matchLabels:
+              fleet_member: hub
+          values:
+            addonChart: gitops-bridge
+    template:
+      metadata:
+        name: cluster-addons
+        finalizers: 
+          # This is here only for workshop purposes. In a real-world scenario, you should not use this 
+          - resources-finalizer.argocd.argoproj.io
+      spec:
+        project: default
+        sources: 
+          - ref: values
+            repoURL: "{{.metadata.annotations.addons_repo_url}}"
+            targetRevision: "{{.metadata.annotations.addons_repo_revision}}" 
+          - repoURL: "{{.metadata.annotations.addons_repo_url}}"
+            path: "{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}"
+            targetRevision: "{{.metadata.annotations.addons_repo_revision}}"
+            helm:
+              valuesObject:
+                #selectorMatchLabels: 
+                # fleet_member: control-plane
+              ignoreMissingValueFiles: true
+              valueFiles: 
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml"
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml" 
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml" 
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml"
+                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
+        destination:
+          namespace: argocd
+          name: "{{.name}}"
+        syncPolicy:
+          automated:
+            selfHeal: false
+            allowEmpty: true
+            prune: false
+          retry:
+            limit: 100
+          syncOptions: 
+            - CreateNamespace=true 
+            - ServerSideApply=true
 
-EOF
+  EOF
 :::
+<!-- prettier-ignore-end -->
 
 Commit and push the updated ApplicationSet configuration to the platform repository.
 
@@ -88,30 +102,9 @@ git -C ${GITOPS_DIR}/platform push || true
 
 Navigate to the Argo CD dashboard in the UI and verify that the "cluster-addons" Application was created successfully.
 
-<!-- :::alert{header="Sync Application"}
-If the new namespace is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
-
-Alternatively, use the CLI:
-
-```bash
-argocd app sync argocd/bootstrap
-```
-
-::: -->
 
 ![addons-rootapp](/static/images/addons-rootapp.jpg)
 
-<!-- :::alert{header="Important" type="warning"}
-We are using port-forward to access Argo CD UI in this workshop.
-While this setup is convenient, the websocket sync mechanism or the UI is not working properly, you may need to totally refresh the page (Ctrl+R) to see updates in the UI.
-
-Also, if during the workshop, the UI became not responsive, that may be because the port-forward has stopped. you can re-enable it at any time by executing again
-
-```bash
-argocd_hub_credentials
-```
-
-::: -->
 
 In the Argo CD dashboard, click on the "bootstrap" Application and examine the list of Applications that were generated from it.
 

@@ -14,6 +14,7 @@ This chapter builds on the namespace automation introduced in the **"Webstore Wo
 Let’s quickly recap:  
 You added an ApplicationSet (`namespace-webstore-applicationset.yaml`) that provisions namespaces by deploying the namespace Helm chart (Line 11-12) on Clusters with label workload_webstore = true (Line 7). The chart uses a default values file (line 11) and applies environment-specific overrides (line 12):
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=true language=bash highlightLines='7,11-12,18-19'}
 .
 .
@@ -37,7 +38,7 @@ helm:
 .
 .
 :::
-
+<!-- prettier-ignore-end -->
 
 ### 1. Set staging overrides
 
@@ -68,13 +69,14 @@ EOF
 
 Let's commit our changes:
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add namespace webstore staging values"
 git push
 :::
-
+<!-- prettier-ignore-end -->
 ### 3. Enable workload_webstore labels on spoke cluster
 
 We’ll update the Terraform configuration to enable the workload_webstore label:

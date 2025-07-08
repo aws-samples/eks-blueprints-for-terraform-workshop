@@ -21,6 +21,7 @@ In this chapter, we will deploy the External Secrets Operator (ESO) to access AW
 
 This can be installed by setting label enable_external_secrets = true
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json highlightLines='4'}
 sed -i '
 /addons = {/,/}/ {
@@ -29,46 +30,49 @@ sed -i '
 }
 ' ~/environment/hub/terraform.tfvars
 :::
+<!-- prettier-ignore-end -->
 
 ### 2. Associate an IAM Role with the ESO Service Account
 
 The following code creates Pod Identity for ESO Service Account.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-cat <<'EOF' >> ~/environment/hub/main.tf
+  cat <<'EOF' >> ~/environment/hub/main.tf
 
-locals {
-external_secrets = {
-namespace = "external-secrets"
-service_account = "external-secrets-sa"
-}
-}
-module "external_secrets_pod_identity" {
-source = "terraform-aws-modules/eks-pod-identity/aws"
-version = "~> 1.4.0"
+  locals {
+    external_secrets = {
+      namespace = "external-secrets"
+      service_account = "external-secrets-sa"
+    }
+  }
+  module "external_secrets_pod_identity" {
+    source = "terraform-aws-modules/eks-pod-identity/aws"
+    version = "~> 1.4.0"
 
-name = "external-secrets"
+    name = "external-secrets"
 
-attach*external_secrets_policy = true
-external_secrets_ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
-  external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
-external*secrets_kms_key_arns = ["arn:aws:kms:*:_:key/_"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/\*"
-external_secrets_create_permission = false
+    attach_external_secrets_policy = true
+    external_secrets_ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
+    external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
+    external_secrets_kms_key_arns = ["arn:aws:kms:*:*:key/*"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
+    external_secrets_create_permission = false
 
-# Pod Identity Associations
+    # Pod Identity Associations
 
-associations = {
-addon = {
-cluster_name = module.eks.cluster_name
-namespace = local.external_secrets.namespace
-service_account = local.external_secrets.service_account
-}
-}
+    associations = {
+      addon = {
+        cluster_name = module.eks.cluster_name
+        namespace = local.external_secrets.namespace
+        service_account = local.external_secrets.service_account
+      }
+    }
 
-tags = local.tags
-}
-EOF
+    tags = local.tags
+  }
+  EOF
 :::
+<!-- prettier-ignore-end -->
 
 ### 3. Add ESO Service Account Annotations
 
@@ -76,24 +80,28 @@ The GitOps Bridge uses annotations to determine the name and namespace of the ES
 
 The following code uncomments to add annotation to the hub cluster.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 sed -i "s/#enableeso//g" ~/environment/hub/main.tf
 :::
+<!-- prettier-ignore-end -->
 
 Uncommenting code shows as below
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=json highlightLines='5,6' }
-annotations = merge(
-.
-.
-{
-external_secrets_service_account = local.external_secrets.service_account
-external_secrets_namespace = local.external_secrets.namespace
-}
-.
-.  
- )
+  annotations = merge(
+    .
+    .
+    {
+      external_secrets_service_account = local.external_secrets.service_account
+      external_secrets_namespace = local.external_secrets.namespace
+    }
+    .
+    .  
+  )
 :::
+<!-- prettier-ignore-end -->
 
 :::alert{header="Note" type="info"}
 
@@ -108,12 +116,13 @@ We configure the Terraform module to create only the required AWS resources but 
 
 ### 4. Terraform Apply
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
 :::
-
+<!-- prettier-ignore-end -->
 ### 5. Validate the ESO Add-on
 
 <!-- :::alert{header="Sync Application"}
@@ -129,48 +138,51 @@ argocd app sync argocd/cluster-addons
 
 We already have Gitea repository information in AWS Secret Manager. We will create an External Secret to copy from AWS Secret eks-blueprints-workshop-gitops-addons to Kubernetes secret-addon secret.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
-mkdir ~/environment/basic
-cat <<'EOF' >> ~/environment/basic/eso.yaml
+  mkdir ~/environment/basic
+  cat <<'EOF' >> ~/environment/basic/eso.yaml
 
-apiVersion: external-secrets.io/v1beta1
-kind: SecretStore
-metadata:
-name: aws-secretsmanager
-namespace: default
-spec:
-provider:
-aws:
-service: SecretsManager
-region: us-west-2
+  apiVersion: external-secrets.io/v1beta1
+  kind: SecretStore
+  metadata:
+    name: aws-secretsmanager
+    namespace: default
+  spec:
+    provider:
+      aws:
+        service: SecretsManager
+        region: us-west-2
 
----
+  ---
 
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-name: service-addon
-namespace: default
-spec:
-refreshInterval: 1h
-secretStoreRef:
-name: aws-secretsmanager
-kind: SecretStore
-target:
-name: secret-addon
-creationPolicy: Owner
-dataFrom:
-
-- extract:
-  key: "eks-blueprints-workshop-gitops-addons"
+  apiVersion: external-secrets.io/v1beta1
+  kind: ExternalSecret
+  metadata:
+    name: service-addon
+    namespace: default
+  spec:
+    refreshInterval: 1h
+    secretStoreRef:
+      name: aws-secretsmanager
+      kind: SecretStore
+    target:
+      name: secret-addon
+      creationPolicy: Owner
+    dataFrom:
+      - extract:
+          key: "eks-blueprints-workshop-gitops-addons"
   EOF
-  :::
+:::
+<!-- prettier-ignore-end -->
 
 Create External Secret
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
 kubectl apply -f ~/environment/basic/eso.yaml
 :::
+<!-- prettier-ignore-end -->
 
 :::alert{header="Troubleshooting" type="warning"}
 If you see an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again.
@@ -182,8 +194,9 @@ kubectl apply -f ~/environment/basic/eso.yaml
 :::
 
 Validate Kubernetes Secret
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
 kubectl get secrets secret-addon -oyaml
 :::
-
+<!-- prettier-ignore-end -->
 You can see eks-blueprints-workshop-gitops-addons secrets copied under data: section in encoded in base64.

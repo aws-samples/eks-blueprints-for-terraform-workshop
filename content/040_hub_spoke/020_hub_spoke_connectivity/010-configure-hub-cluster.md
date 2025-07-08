@@ -11,22 +11,6 @@ In this chapter you will create a role that is assumed by ArgoCD service account
 
 ![Hub Role](/static/images/hub-spoke-hub-role.png)
 
-<!--
-### 1. Create Variable
-
-First, let's add a variable to save the ArgoCD Role in SSM Parameters:
-<!-- prettier-ignore-start
-:::code{showCopyAction=true showLineNumbers=false language=yaml }
-cat <<'EOF' >> ~/environment/hub/variables.tf
-variable "ssm_parameter_name_argocd_role_suffix" {
-  description = "SSM parameter name for ArgoCD role"
-  type        = string
-  default     = "argocd-central-role"
-}
-EOF
-:::
-<!-- prettier-ignore-start
--->
 
 ### 1. Create ArgoCD Hub Role
 
@@ -144,25 +128,3 @@ kubectl rollout restart -n argocd statefulset argocd-application-controller --co
 :::
 <!-- prettier-ignore-end -->
 
-<!--
-We can verify that EKS Pod Identity is correctly applied by examining the injected environment variables:
-
-```bash
-kubectl --context hub-cluster exec -it deployment/argocd-server -n argocd -- env | grep AWS
-```
-
-:::alert{header=Note type=warning}
-It might take a few minutes to show the environment variables.
-
-:::
-
-The output should look similar to this:
-
-```
-AWS_CONTAINER_CREDENTIALS_FULL_URI=http://169.254.170.23/v1/credentials
-AWS_STS_REGIONAL_ENDPOINTS=regional
-AWS_DEFAULT_REGION=us-east-2
-AWS_REGION=us-east-2
-AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE=/var/run/secrets/pods.eks.amazonaws.com/serviceaccount/eks-pod-identity-token
-```
--->

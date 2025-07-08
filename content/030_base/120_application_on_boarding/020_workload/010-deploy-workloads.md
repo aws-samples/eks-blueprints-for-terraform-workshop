@@ -113,15 +113,6 @@ git push
 
 ### 3. Validate deployment
 
-<!-- :::alert{header="Sync Application"}
-If the new create-deployment-webstore is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
-
-Or you can do it also with cli:
-
-:::code{showCopyAction=true showLineNumbers=false language=yaml }
-argocd app sync argocd/bootstrap
-::: -->
-
 :::alert{header=Note type=warning}
 The 'create-deployment-webstore' application will become visible after a few minutes.
 :::
@@ -140,10 +131,12 @@ If you click on create-deployment-webstore then you will see dev specific ArgoCD
 
 Let's also create configuration to deploy staging and production as well.
 
+<!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,22,25,39,42'}
-sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-staging-webstore-applicationset.yaml
-sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-prod-webstore-applicationset.yaml
+  sed -e 's/dev/staging/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-staging-webstore-applicationset.yaml
+  sed -e 's/dev/prod/g' < ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-dev-webstore-applicationset.yaml > ${GITOPS_DIR}/platform/config/webstore/deployment/deployment-prod-webstore-applicationset.yaml
 :::
+<!-- prettier-ignore-end -->
 
 ### 2. Git commit
 
@@ -156,15 +149,7 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-<!-- :::alert{header="Sync Application"}
-If the new deployment and prod are not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
-Or you can do it also with cli:
-
-
-:::code{showCopyAction=true showLineNumbers=false language=yaml }
-argocd app sync argocd/create-deployment-webstore
-::: -->
 
 :::alert{header=Note type=warning}
 The 'staging' and 'production' applications will become visible after a few minutes.
