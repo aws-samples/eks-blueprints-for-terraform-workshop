@@ -102,9 +102,7 @@ git -C ${GITOPS_DIR}/platform push || true
 
 Navigate to the Argo CD dashboard in the UI and verify that the "cluster-addons" Application was created successfully.
 
-
 ![addons-rootapp](/static/images/addons-rootapp.jpg)
-
 
 In the Argo CD dashboard, click on the "bootstrap" Application and examine the list of Applications that were generated from it.
 

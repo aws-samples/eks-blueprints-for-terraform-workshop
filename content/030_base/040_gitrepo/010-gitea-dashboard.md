@@ -10,6 +10,7 @@ weight: 10
 You can access the Gitea server to view the repositories.
 
 To find our Gitea URL, you can execute:
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash highlightLines='0'}
 gitea_credentials

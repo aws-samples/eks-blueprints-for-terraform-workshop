@@ -11,7 +11,6 @@ In this chapter you will create a role that is assumed by ArgoCD service account
 
 ![Hub Role](/static/images/hub-spoke-hub-role.png)
 
-
 ### 1. Create ArgoCD Hub Role
 
 Now, let's create the IAM role and associated resources:
@@ -127,4 +126,3 @@ kubectl rollout restart -n argocd deployment argocd-server --context hub-cluster
 kubectl rollout restart -n argocd statefulset argocd-application-controller --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
-

@@ -123,6 +123,7 @@ terraform init
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
+
 ### 5. Validate the ESO Add-on
 
 <!-- :::alert{header="Sync Application"}
@@ -194,9 +195,11 @@ kubectl apply -f ~/environment/basic/eso.yaml
 :::
 
 Validate Kubernetes Secret
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true language=json }
 kubectl get secrets secret-addon -oyaml
 :::
 <!-- prettier-ignore-end -->
+
 You can see eks-blueprints-workshop-gitops-addons secrets copied under data: section in encoded in base64.

@@ -149,8 +149,6 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
-
 :::alert{header=Note type=warning}
 The 'staging' and 'production' applications will become visible after a few minutes.
 :::

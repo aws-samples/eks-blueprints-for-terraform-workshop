@@ -77,6 +77,7 @@ git commit -m "add namespace webstore staging values"
 git push
 :::
 <!-- prettier-ignore-end -->
+
 ### 3. Enable workload_webstore labels on spoke cluster
 
 We’ll update the Terraform configuration to enable the workload_webstore label:

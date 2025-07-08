@@ -182,7 +182,6 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
 :::alert{header=Note type=warning}
 The 'create-namespace-webstore' application will become visible after a few minutes.
 :::
@@ -190,7 +189,6 @@ The 'create-namespace-webstore' application will become visible after a few minu
 So it creates a new **create-namespace-webstore** application:
 
 ![namespace-workload](/static/images/namespace_webstore.png)
-
 
 The namespace-webstore application then makes Argo CD installs the namespace Helm chart using the default values.
 
