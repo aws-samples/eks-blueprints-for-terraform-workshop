@@ -1,7 +1,15 @@
 ---
-title: "EKS Blueprints for Terraform and Argo CD"
+title: "Argo CD on EKS"
 weight: 0
 ---
+
+<!-- cspell:disable-next-line -->
+
+::video{id=tXgjtizKN8J}
+
+<!-- cspell:disable-next-line -->
+
+::video{id=sdBGtAKEvEw}
 
 This hands-on workshop guides us through building EKS (Elastic Kubernetes Service) clusters using Terraform Blueprints and Argo CD. It is designed for engineers, developers, and teams responsible for creating and maintaining EKS infrastructure and applications.
 

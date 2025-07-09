@@ -562,7 +562,7 @@ addons:
       serviceAccount:
         name: '{{.metadata.annotations.external_secrets_service_account}}'
         annotations:
-          eks.amazonaws.com/role-arn: '{{.metadata.annotations.external_secrets_iam_role_arn}}'
+          eks.amazonaws.com/role-arn:  '{{default "" (index .metadata.annotations "external_secrets_iam_role_arn")}}'
   aws_privateca_issuer:
     enabled: false
     releaseName: privateca-issuer
@@ -1231,22 +1231,11 @@ addons:
     path: '{{.metadata.annotations.addons_repo_basepath}}charts/eks-upgrade-insights-demo'
     repoUrl: '{{.metadata.annotations.addons_repo_url}}'
     targetRevision: '{{.metadata.annotations.addons_repo_revision}}'
-
-  ack_secretsmanager:
-    enabled: false
-    releaseName: ack-secretsmanager
-    namespace: '{{default "aws-controllers-k8s" (index .metadata.annotations "ack_secretsmanager_namespace")}}'
-    chart: aws-controllers-k8s/secretsmanager-chart
-    repoUrl: public.ecr.aws
-    targetRevision: "1.0.1"
     selector:
       matchExpressions:
-        - key: enable_ack_secretsmanager
+        - key: enable_eks_upgrade_insights_demo
           operator: In
-          values: ['true']
-    values:
-      aws:
-        region: '{{.metadata.annotations.aws_region}}'
+          values: ['true']    
 
   kro:
     enabled: false

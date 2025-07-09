@@ -55,3 +55,12 @@ velero
 webstore
 kustomization
 Taskfile
+prereq
+replicaset
+appserver
+subfolders
+ecomm
+Nginx
+gitea
+tolerations
+enableannotation
