@@ -7,12 +7,12 @@ function argocd_credentials (){
 	# argocd_kill_port_forward $1 $2
 	argo_url
 	export ARGO_CD_URL=$(kubectl --context hub-cluster get svc -n argocd  argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-	echo "ArgoCD URL: before $ARGO_CD_URL after"
+	# echo "ArgoCD URL: before $ARGO_CD_URL after"
 	export ARGOCD_PWD=$(kubectl get secrets argocd-initial-admin-secret -n argocd --template='{{index .data.password | base64decode}}' --context $1)
     argocd login "$ARGO_CD_URL" --plaintext --username admin --password $ARGOCD_PWD --name $1
 	echo "ArgoCD Username: admin"
 	echo "ArgoCD Password: $ARGOCD_PWD"
-	echo "ArgoCD URL: $ARGO_CD_URL"
+	echo "ArgoCD URL: http://$ARGO_CD_URL"
 }
 
 function gitea_credentials (){

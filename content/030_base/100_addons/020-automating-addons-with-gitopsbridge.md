@@ -25,68 +25,68 @@ Now, you’ll add the cluster-addons ApplicationSet to the bootstrap folder in t
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='33-34'}
-  cat <<'EOF' >> ~/environment/gitops-repos/platform/bootstrap/addons-applicationset.yaml
+cat <<'EOF' >> ~/environment/gitops-repos/platform/bootstrap/addons-applicationset.yaml
 
-  apiVersion: argoproj.io/v1alpha1
-  kind: ApplicationSet
-  metadata:
-    name: create-cluster-addons
-    namespace: argocd
-  spec:
-    syncPolicy:
-      preserveResourcesOnDeletion: true
-    goTemplate: true
-    goTemplateOptions: 
-      - missingkey=error
-    generators: 
-      - clusters:
-          selector:
-            matchLabels:
-              fleet_member: hub
-          values:
-            addonChart: gitops-bridge
-    template:
-      metadata:
-        name: cluster-addons
-        finalizers: 
-          # This is here only for workshop purposes. In a real-world scenario, you should not use this 
-          - resources-finalizer.argocd.argoproj.io
-      spec:
-        project: default
-        sources: 
-          - ref: values
-            repoURL: "{{.metadata.annotations.addons_repo_url}}"
-            targetRevision: "{{.metadata.annotations.addons_repo_revision}}" 
-          - repoURL: "{{.metadata.annotations.addons_repo_url}}"
-            path: "{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}"
-            targetRevision: "{{.metadata.annotations.addons_repo_revision}}"
-            helm:
-              valuesObject:
-                #selectorMatchLabels: 
-                # fleet_member: control-plane
-              ignoreMissingValueFiles: true
-              valueFiles: 
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml"
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml" 
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml" 
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml"
-                - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
-        destination:
-          namespace: argocd
-          name: "{{.name}}"
-        syncPolicy:
-          automated:
-            selfHeal: false
-            allowEmpty: true
-            prune: false
-          retry:
-            limit: 100
-          syncOptions: 
-            - CreateNamespace=true 
-            - ServerSideApply=true
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: create-cluster-addons
+  namespace: argocd
+spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  goTemplate: true
+  goTemplateOptions: 
+    - missingkey=error
+  generators: 
+    - clusters:
+        selector:
+          matchLabels:
+            fleet_member: hub
+        values:
+          addonChart: gitops-bridge
+  template:
+    metadata:
+      name: cluster-addons
+      finalizers: 
+        # This is here only for workshop purposes. In a real-world scenario, you should not use this 
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      sources: 
+        - ref: values
+          repoURL: "{{.metadata.annotations.addons_repo_url}}"
+          targetRevision: "{{.metadata.annotations.addons_repo_revision}}" 
+        - repoURL: "{{.metadata.annotations.addons_repo_url}}"
+          path: "{{.metadata.annotations.addons_repo_basepath}}charts/{{.values.addonChart}}"
+          targetRevision: "{{.metadata.annotations.addons_repo_revision}}"
+          helm:
+            valuesObject:
+              #selectorMatchLabels: 
+              # fleet_member: control-plane
+            ignoreMissingValueFiles: true
+            valueFiles: 
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}default/addons/{{.values.addonChart}}/values.yaml"
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml" 
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/default/addons/{{.values.addonChart}}/values.yaml" 
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/environments/{{.metadata.labels.environment}}/addons/{{.values.addonChart}}/values.yaml"
+              - "$values/{{.metadata.annotations.addons_repo_basepath}}tenants/{{.metadata.labels.tenant}}/clusters/{{.name}}/addons/{{.values.addonChart}}/values.yaml"
+      destination:
+        namespace: argocd
+        name: "{{.name}}"
+      syncPolicy:
+        automated:
+          selfHeal: false
+          allowEmpty: true
+          prune: false
+        retry:
+          limit: 100
+        syncOptions: 
+          - CreateNamespace=true 
+          - ServerSideApply=true
 
-  EOF
+EOF
 :::
 <!-- prettier-ignore-end -->
 

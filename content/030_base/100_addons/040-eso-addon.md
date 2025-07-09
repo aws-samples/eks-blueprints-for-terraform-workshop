@@ -38,39 +38,39 @@ The following code creates Pod Identity for ESO Service Account.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-  cat <<'EOF' >> ~/environment/hub/main.tf
+cat <<'EOF' >> ~/environment/hub/main.tf
 
-  locals {
-    external_secrets = {
-      namespace = "external-secrets"
-      service_account = "external-secrets-sa"
+locals {
+  external_secrets = {
+    namespace = "external-secrets"
+    service_account = "external-secrets-sa"
+  }
+}
+module "external_secrets_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  version = "~> 1.4.0"
+
+  name = "external-secrets"
+
+  attach_external_secrets_policy = true
+  external_secrets_ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
+  external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
+  external_secrets_kms_key_arns = ["arn:aws:kms:*:*:key/*"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
+  external_secrets_create_permission = false
+
+  # Pod Identity Associations
+
+  associations = {
+    addon = {
+      cluster_name = module.eks.cluster_name
+      namespace = local.external_secrets.namespace
+      service_account = local.external_secrets.service_account
     }
   }
-  module "external_secrets_pod_identity" {
-    source = "terraform-aws-modules/eks-pod-identity/aws"
-    version = "~> 1.4.0"
 
-    name = "external-secrets"
-
-    attach_external_secrets_policy = true
-    external_secrets_ssm_parameter_arns = ["arn:aws:ssm:*:*:parameter/*"] # In case you want to restrict access to specific SSM parameters "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/${local.name}/*"
-    external_secrets_secrets_manager_arns = ["arn:aws:secretsmanager:*:*:secret:*"] # In case you want to restrict access to specific Secrets Manager secrets "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:${local.name}/*"
-    external_secrets_kms_key_arns = ["arn:aws:kms:*:*:key/*"] # In case you want to restrict access to specific KMS keys "arn:aws:kms:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:key/*"
-    external_secrets_create_permission = false
-
-    # Pod Identity Associations
-
-    associations = {
-      addon = {
-        cluster_name = module.eks.cluster_name
-        namespace = local.external_secrets.namespace
-        service_account = local.external_secrets.service_account
-      }
-    }
-
-    tags = local.tags
-  }
-  EOF
+  tags = local.tags
+}
+EOF
 :::
 <!-- prettier-ignore-end -->
 
@@ -117,7 +117,7 @@ We configure the Terraform module to create only the required AWS resources but 
 ### 4. Terraform Apply
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true language=json }
+:::code{showCopyAction=trueshowLineNumbers=false language=json }
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
@@ -126,61 +126,51 @@ terraform apply --auto-approve
 
 ### 5. Validate the ESO Add-on
 
-<!-- :::alert{header="Sync Application"}
-If the new addon-external-secrets-hub-cluster is not visible after a few minutes, you can click on SYNC and SYNCHRONIZE in Argo CD to force it to synchronize.
 
-Or you can do it also with cli:
-
-```bash
-argocd app sync argocd/cluster-addons
-```
-
-::: -->
 
 We already have Gitea repository information in AWS Secret Manager. We will create an External Secret to copy from AWS Secret eks-blueprints-workshop-gitops-addons to Kubernetes secret-addon secret.
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true language=json }
-  mkdir ~/environment/basic
-  cat <<'EOF' >> ~/environment/basic/eso.yaml
+:::code{showCopyAction=true showLineNumbers=false language=json }
+mkdir ~/environment/basic
+cat <<'EOF' >> ~/environment/basic/eso.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: aws-secretsmanager
+  namespace: default
+spec:
+  provider:
+    aws:
+      service: SecretsManager
+      region: us-west-2
 
-  apiVersion: external-secrets.io/v1beta1
-  kind: SecretStore
-  metadata:
+---
+
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: service-addon
+  namespace: default
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
     name: aws-secretsmanager
-    namespace: default
-  spec:
-    provider:
-      aws:
-        service: SecretsManager
-        region: us-west-2
-
-  ---
-
-  apiVersion: external-secrets.io/v1beta1
-  kind: ExternalSecret
-  metadata:
-    name: service-addon
-    namespace: default
-  spec:
-    refreshInterval: 1h
-    secretStoreRef:
-      name: aws-secretsmanager
-      kind: SecretStore
-    target:
-      name: secret-addon
-      creationPolicy: Owner
-    dataFrom:
-      - extract:
-          key: "eks-blueprints-workshop-gitops-addons"
-  EOF
+    kind: SecretStore
+  target:
+    name: secret-addon
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: "eks-blueprints-workshop-gitops-addons"
+EOF
 :::
 <!-- prettier-ignore-end -->
 
 Create External Secret
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true language=json }
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl apply -f ~/environment/basic/eso.yaml
 :::
 <!-- prettier-ignore-end -->
@@ -188,16 +178,16 @@ kubectl apply -f ~/environment/basic/eso.yaml
 :::alert{header="Troubleshooting" type="warning"}
 If you see an error like "Error from server (InternalError): error when creating" then it is still creating ESO controller. Give it a couple of minutes and execute below command again.
 
-```bash
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl apply -f ~/environment/basic/eso.yaml
-```
-
 :::
+<!-- prettier-ignore-end -->
 
 Validate Kubernetes Secret
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true language=json }
+:::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl get secrets secret-addon -oyaml
 :::
 <!-- prettier-ignore-end -->
