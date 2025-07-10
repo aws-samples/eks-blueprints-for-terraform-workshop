@@ -66,7 +66,7 @@ module "gitops_bridge_bootstrap" {
   }
 }
 EOF
-
+:::
 <!-- prettier-ignore-end -->
 
 ### 2. Create value file for Argo CD
@@ -108,6 +108,7 @@ controller:
       memory: 512Mi
 
 EOF
+:::
 <!-- prettier-ignore-end -->
 
 ### 3. Apply Terraform
@@ -117,6 +118,7 @@ EOF
 cd ~/environment/hub
 terraform init
 terraform apply -auto-approve
+:::
 <!-- prettier-ignore-end -->
 
 ### 4. Validate Argo CD install
@@ -126,6 +128,7 @@ To retrieve the Argo CD dashboard URL, execute:
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 argocd_hub_credentials
+:::
 <!-- prettier-ignore-end -->
 
 Copy the Argo CD password from the above command and use `admin` as the username to log in to the Argo CD UI.
@@ -144,6 +147,7 @@ We can also validate that gitops-bridge has correctly created the secrets for th
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 kubectl --context hub-cluster get secrets -n argocd hub-cluster
+:::
 <!-- prettier-ignore-end -->
 
 Expected output:
