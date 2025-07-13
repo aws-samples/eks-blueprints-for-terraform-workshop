@@ -215,8 +215,18 @@ git checkout $WORKSHOP_GIT_BRANCH
 
 cp hack/.zshrc hack/.p10k.zsh ~/
 
+# Add these lines before the VPC copy section (around line 218)
+echo "=== DEBUG: About to copy VPC folder ===" >> /tmp/bootstrap_debug.log
+echo "BASE_DIR is: $BASE_DIR" >> /tmp/bootstrap_debug.log
+echo "Current working directory: $(pwd)" >> /tmp/bootstrap_debug.log
+echo "Checking if VPC source exists:" >> /tmp/bootstrap_debug.log
+ls -la $BASE_DIR/terraform/ >> /tmp/bootstrap_debug.log 2>&1
+echo "Checking destination directory:" >> /tmp/bootstrap_debug.log
+ls -la /home/ec2-user/environment/ >> /tmp/bootstrap_debug.log 2>&1
+
 # Copy VPC folder and start VPC creation in background
 echo "Setting up VPC pre-creation..."
+echo "DEBUG: Checking BASE_DIR/terraform contents:"
 cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
 cd /home/ec2-user/environment/vpc
 
