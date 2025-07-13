@@ -126,8 +126,6 @@ terraform apply --auto-approve
 
 ### 5. Validate the ESO Add-on
 
-
-
 We already have Gitea repository information in AWS Secret Manager. We will create an External Secret to copy from AWS Secret eks-blueprints-workshop-gitops-addons to Kubernetes secret-addon secret.
 
 <!-- prettier-ignore-start -->
