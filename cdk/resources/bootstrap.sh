@@ -215,6 +215,19 @@ git checkout $WORKSHOP_GIT_BRANCH
 
 cp hack/.zshrc hack/.p10k.zsh ~/
 
+# Copy VPC folder and start VPC creation in background
+echo "Setting up VPC pre-creation..."
+cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
+cd /home/ec2-user/environment/vpc
+
+# Initialize and apply VPC terraform in background
+echo "Starting VPC creation in background..."
+nohup bash -c "
+  terraform init && \
+  terraform apply -auto-approve && \
+  echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag
+" > /tmp/vpc_creation.log 2>&1 &
+
 # Setup bashrc
 ls -lt ~
 mkdir -p ~/.bashrc.d
