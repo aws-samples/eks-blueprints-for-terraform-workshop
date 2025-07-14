@@ -188,7 +188,23 @@ EOF
 :::
 <!-- prettier-ignore-start -->
 
-### 7. Apply the changes
+### 7. Configure Hub Remote state
+
+We need to reference outputs from the hub module for hub-spoke connectivity in the spoke-staging cluster.
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml}
+cat <<'EOF' >> ~/environment/spoke/remote_state.tf
+data "terraform_remote_state" "hub" {
+  backend = "local"
+
+  config = {
+    path = "${path.module}/../hub/terraform.tfstate"
+  }
+}
+:::
+<!-- prettier-ignore-start -->
+
+### 8. Apply the changes
 
 <!-- prettier-ignore-start -->
 
@@ -200,7 +216,7 @@ terraform apply --auto-approve
 
 <!-- prettier-ignore-end -->
 
-### 8. Check Hub Cluster Configuration
+### 9. Check Hub Cluster Configuration
 
 After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the ArgoCD UI running on the hub cluster.
 
