@@ -40,7 +40,7 @@ In this chapter you will copy these values into annotations so that they can be 
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-cat <<'EOF' >> ~/environment/hub/git_data.tf
+cat <<'EOF' >> ~/environment/hub/main.tf
 
 # Retrieve Git repository metadata from AWS Secrets Manager for platform, workload, and addon repositories
 

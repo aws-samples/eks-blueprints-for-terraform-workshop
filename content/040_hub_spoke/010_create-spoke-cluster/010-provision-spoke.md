@@ -42,8 +42,7 @@ EOF
 We’ll reuse the Terraform configuration from the hub cluster with a few changes:
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='17,27,30'}
-cp ~/environment/hub/git_data.tf ~/environment/spoke
+:::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='5,6,7,8,11-13'}
 cp ~/environment/hub/main.tf ~/environment/spoke
 cp ~/environment/hub/variables.tf ~/environment/spoke
 cp ~/environment/hub/outputs.tf ~/environment/spoke
@@ -51,7 +50,6 @@ cp ~/environment/hub/versions.tf ~/environment/spoke
 sed -i 's/hub-cluster/spoke-${terraform.workspace}/g' ~/environment/spoke/main.tf
 sed -i 's/environment = "dev"/environment = terraform.workspace/' ~/environment/spoke/main.tf
 sed -i 's/fleet_member = "hub"/fleet_member = "spoke"/' ~/environment/spoke/main.tf
-
 sed -i 's/{ workload_webstore = true }/{ workload_webstore = false }/' ~/environment/spoke/main.tf
 
 # Clean some parts
@@ -66,8 +64,8 @@ Changes made to the hub-cluster Terraform configuration:
 Line 5: Rename cluster from hub-cluster to spoke-${terraform.workspace}. The workspace "staging" will be created in a later step.  
 Line 6: Set label environment=staging.  
 Line 7: Set label fleet_member=spoke.  
-Line 9: Set label workload_webstore=false. This will be set to true during application deployment in the latter chapter.
-Line 12–14: Disable the bootstrap ApplicationSet and remove the GitOps Bridge module (we don’t deploy Argo CD on spoke-staging cluster).
+Line 8: Set label workload_webstore=false. This will be set to true during application deployment in the latter chapter.  
+Line 11–13: Disable the bootstrap ApplicationSet and remove the GitOps Bridge module (we don’t deploy Argo CD on spoke-staging cluster).
 
 ### 3. Configure addons
 

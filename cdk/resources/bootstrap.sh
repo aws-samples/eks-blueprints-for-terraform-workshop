@@ -223,7 +223,7 @@ nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREA
 # Copy hub folder and start EKS cluster creation in background
 cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
 cd /home/ec2-user/environment/hub
-nohup bash -c "
+nohup bash -c '
   # Wait for VPC creation to complete
   while [ ! -f /tmp/vpc_status.flag ]; do
     sleep 30
@@ -231,11 +231,27 @@ nohup bash -c "
   # Create EKS cluster
   terraform init && terraform apply -auto-approve && 
   # Update kubeconfig
-  eval \$(terraform output -raw configure_kubectl) &&
-  echo 'HUB_CREATION_COMPLETE' > /tmp/hub_status.flag
-" > /tmp/hub_creation.log 2>&1 &
+  eval $(terraform output -raw configure_kubectl) &&
+  echo "HUB_CREATION_COMPLETE" > /tmp/hub_status.flag
+' > /tmp/hub_creation.log 2>&1 &
+cd /home/ec2-user/environment
 
-
+# Copy spoke folder and start spoke cluster creation in background
+cp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/
+cd /home/ec2-user/environment/spoke
+nohup bash -c '
+  # Wait for VPC creation to complete
+  while [ ! -f /tmp/vpc_status.flag ]; do
+    sleep 30
+  done
+  # Create spoke cluster
+  terraform workspace new staging &&
+  terraform init && terraform apply -auto-approve && 
+  # Update kubeconfig
+  eval $(terraform output -raw configure_kubectl) &&
+  echo "SPOKE_CREATION_COMPLETE" > /tmp/spoke_status.flag
+' > /tmp/spoke_creation.log 2>&1 &
+cd /home/ec2-user/environment
 
 # Setup bashrc
 ls -lt ~
