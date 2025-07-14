@@ -220,6 +220,22 @@ cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
 cd /home/ec2-user/environment/vpc
 nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag" > /tmp/vpc_creation.log 2>&1 &
 
+# Copy hub folder and start EKS cluster creation in background
+cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
+cd /home/ec2-user/environment/hub
+nohup bash -c "
+  # Wait for VPC creation to complete
+  while [ ! -f /tmp/vpc_status.flag ]; do
+    sleep 30
+  done
+  # Create EKS cluster
+  terraform init && terraform apply -auto-approve && 
+  # Update kubeconfig
+  eval \$(terraform output -raw configure_kubectl) &&
+  echo 'HUB_CREATION_COMPLETE' > /tmp/hub_status.flag
+" > /tmp/hub_creation.log 2>&1 &
+
+
 
 # Setup bashrc
 ls -lt ~
