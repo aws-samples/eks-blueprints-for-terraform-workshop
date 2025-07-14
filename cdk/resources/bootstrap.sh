@@ -231,7 +231,7 @@ nohup bash -c '
   # Create EKS cluster
   terraform init && terraform apply -auto-approve && 
   # Update kubeconfig
-  eval $(terraform output -no-color -raw configure_kubectl) &&
+  aws eks --region $AWS_REGION update-kubeconfig --name hub-cluster --alias hub-cluster &&
   echo "HUB_CREATION_COMPLETE" > /tmp/hub_status.flag
 ' > /tmp/hub_creation.log 2>&1 &
 cd /home/ec2-user/environment
@@ -248,7 +248,7 @@ nohup bash -c '
   terraform workspace new staging &&
   terraform init && terraform apply -auto-approve && 
   # Update kubeconfig
-  eval $(terraform output -no-color -raw configure_kubectl) &&
+  aws eks --region $AWS_REGION update-kubeconfig --name spoke-staging --alias spoke-staging &&
   echo "SPOKE_CREATION_COMPLETE" > /tmp/spoke_status.flag
 ' > /tmp/spoke_creation.log 2>&1 &
 cd /home/ec2-user/environment
