@@ -109,12 +109,6 @@ locals{
   environment = terraform.workspace
 }
 
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = local.argocd_namespace
-  }
-}
-
 data "aws_secretsmanager_secret" "git_data_addons" {
   name = var.secret_name_git_data_addons
 }
