@@ -216,51 +216,10 @@ git checkout $WORKSHOP_GIT_BRANCH
 cp hack/.zshrc hack/.p10k.zsh ~/
 
 # Copy VPC folder and start VPC creation in background
-echo "Setting up VPC pre-creation..."
-echo "DEBUG: Checking BASE_DIR/terraform contents:"
 cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
 cd /home/ec2-user/environment/vpc
+nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag" > /tmp/vpc_creation.log 2>&1 &
 
-# Create backend configuration for VPC
-cat << EOT > backend_override.tf
-terraform {
-  backend "s3" {
-    bucket         = "$BUCKET_NAME"
-    key            = "vpc/terraform.tfstate"
-    region         = "$AWS_REGION"
-  }
-}
-EOT
-
-# Initialize and apply VPC terraform in background
-echo "Starting VPC creation in background..."
-echo "VPC_CREATION_STARTED" > /tmp/vpc_status.flag
-nohup bash -c "
-  set -e
-  echo 'Starting VPC terraform init...' >> /tmp/vpc_creation.log 2>&1
-  terraform init >> /tmp/vpc_creation.log 2>&1
-  if [ \$? -eq 0 ]; then
-    echo 'VPC terraform init successful, starting apply...' >> /tmp/vpc_creation.log 2>&1
-    terraform apply -auto-approve >> /tmp/vpc_creation.log 2>&1
-    if [ \$? -eq 0 ]; then
-      echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag
-      echo 'VPC creation completed successfully!' >> /tmp/vpc_creation.log 2>&1
-    else
-      echo 'VPC_CREATION_FAILED' > /tmp/vpc_status.flag
-      echo 'VPC terraform apply failed!' >> /tmp/vpc_creation.log 2>&1
-    fi
-  else
-    echo 'VPC_CREATION_FAILED' > /tmp/vpc_status.flag
-    echo 'VPC terraform init failed!' >> /tmp/vpc_creation.log 2>&1
-  fi
-" > /tmp/vpc_creation.log 2>&1 &
-
-# Store the background process PID for potential monitoring
-echo $! > /tmp/vpc_creation.pid
-
-cd /home/ec2-user/environment
-echo "VPC creation started in background. Check /tmp/vpc_creation.log for progress."
-echo "Status can be monitored via: cat /tmp/vpc_status.flag"
 
 # Setup bashrc
 ls -lt ~
