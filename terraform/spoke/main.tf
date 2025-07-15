@@ -193,7 +193,7 @@ locals{
     { tenant = "tenant1" },
      local.aws_addons,
      local.oss_addons,
-    #enablewebstore{ workload_webstore = false }  
+     { workload_webstore = false }  
   )
 
 }

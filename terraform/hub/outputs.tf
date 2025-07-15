@@ -26,3 +26,7 @@ output "cluster_primary_security_group_id" {
   description = "Cluster primary security group"
   value       = module.eks.cluster_primary_security_group_id
 }
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}

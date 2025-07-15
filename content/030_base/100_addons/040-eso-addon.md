@@ -117,7 +117,7 @@ We configure the Terraform module to create only the required AWS resources but 
 ### 4. Terraform Apply
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=trueshowLineNumbers=false language=json }
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
