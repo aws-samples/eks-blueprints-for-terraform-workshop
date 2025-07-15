@@ -203,7 +203,7 @@ With this setup, the webstore namespace and its policies (like LimitRange and Ne
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
-kubectl get ns --context hub-cluster
+kubectl get ns --context hub-cluster --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 

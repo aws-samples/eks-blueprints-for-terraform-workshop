@@ -169,7 +169,7 @@ Create External Secret
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl apply -f ~/environment/basic/eso.yaml
+kubectl apply -f ~/environment/basic/eso.yaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 
@@ -178,7 +178,7 @@ If you see an error like "Error from server (InternalError): error when creating
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl apply -f ~/environment/basic/eso.yaml
+kubectl apply -f ~/environment/basic/eso.yaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 
@@ -186,7 +186,7 @@ Validate Kubernetes Secret
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl get secrets secret-addon -oyaml
+kubectl get secrets secret-addon -oyaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 
