@@ -173,7 +173,7 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 5. Validate update to labels and addons
+### 5. Validate update to Annotations
 
 Go to **Settings > Clusters > hub-cluster** in the Argo CD dashboard and examine the hub-cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
 
