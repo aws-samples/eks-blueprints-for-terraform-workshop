@@ -1,5 +1,5 @@
 ---
-title: "Create EKS cluster"
+title: "Create Hub EKS cluster"
 weight: 10
 ---
 

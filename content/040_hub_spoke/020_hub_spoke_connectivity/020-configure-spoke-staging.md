@@ -105,7 +105,6 @@ Grant Cluster Admin access to the spoke role.
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 sed -i '
 /access_entries = {/,/^  }/ {
-  s/workshop_attendee/eks_admin/
   /^  }/i\
 \
     gitops_role = {\
@@ -121,7 +120,6 @@ sed -i '
     }
 }
 ' ~/environment/spoke/main.tf
-
 :::
 <!-- prettier-ignore-end -->
 
