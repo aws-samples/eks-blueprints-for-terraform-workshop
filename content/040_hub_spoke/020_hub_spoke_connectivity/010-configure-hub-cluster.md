@@ -44,6 +44,14 @@ resource "aws_iam_role" "argocd_hub" {
         Principal = {
           Service = "pods.eks.amazonaws.com"
         }
+        Condition = {
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+          ArnEquals = {
+            "aws:SourceArn" = module.eks.cluster_arn
+          }
+        }        
       },
     ]
   })
@@ -58,14 +66,6 @@ resource "aws_iam_role" "argocd_hub" {
           Action   = ["sts:AssumeRole", "sts:TagSession"]
           Effect   = "Allow"
           Resource = "*"
-          Condition = {
-            StringEquals = {
-              "aws:SourceAccount" = data.aws_caller_identity.current.account_id
-            }
-            ArnEquals = {
-              "aws:SourceArn" = module.eks.cluster_arn
-            }
-          }
         },
       ]
     })
