@@ -123,13 +123,14 @@ cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/
 <!-- prettier-ignore-end -->
 
 :::expand{header="Check the file content:"}
+
 ```bash
 code $GITOPS_DIR/platform/config/webstore/namespace/values/default-values.yaml
 ```
+
 :::
 
 ![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
-
 
 ### 3. Enable hub cluster for webstore workload
 

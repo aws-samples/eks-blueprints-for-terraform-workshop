@@ -853,7 +853,7 @@
               "DomainName"
              ]
             },
-            "codeServerVersion": "4.93.1",
+            "codeServerVersion": "4.100.1",
             "waitConditionHandleUrl": {
              "Ref": "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44"
             },

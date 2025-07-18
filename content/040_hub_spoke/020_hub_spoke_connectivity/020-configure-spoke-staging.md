@@ -79,13 +79,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
     principals {
       type        = "AWS"
       identifiers = [data.aws_ssm_parameter.argocd_hub_role.value]
-    }
-    condition  {
-        test = "StringEquals"
-        variable = "sts:ExternalId"
-        values = [ "${data.terraform_remote_state.hub.outputs.cluster_region}/${data.terraform_remote_state.hub.outputs.account_id}/${data.terraform_remote_state.hub.outputs.cluster_name}/argocd/argocd-application-controller" ]
-                      
-      }    
+    }  
   }
 }
 EOF
