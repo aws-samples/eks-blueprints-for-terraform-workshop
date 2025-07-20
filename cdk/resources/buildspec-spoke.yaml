@@ -38,13 +38,12 @@ phases:
         # This gives access to the EKS cluster in terraform
 
         # Spokes backend config
-        cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf
+        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf
         terraform {
           backend "s3" {
             bucket         = "$BUCKET_NAME"
-            key            = "spokes/terraform.tfstate"
+            key            = "spoke/terraform.tfstate"
             region         = "$AWS_REGION"
-            workspace_key_prefix = "spokes"
           }
         }
         EOT
@@ -53,10 +52,10 @@ phases:
 
         if [[ $REQUESTED_ACTION == 'Delete' ]]; then
           # Cleanup scripts
-          DEBUG=1 $BASE_DIR/terraform/spokes/destroy.sh ${SPOKE}
+          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh 
         else
           # Project Creation
-          DEBUG=1 $BASE_DIR/terraform/spokes/deploy.sh ${SPOKE}
+          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh 
         fi
   post_build:
     commands:
