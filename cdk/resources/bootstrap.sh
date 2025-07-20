@@ -217,41 +217,42 @@ cp hack/.zshrc hack/.p10k.zsh ~/
 
 # Copy VPC folder and start VPC creation in background
 cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
-cd /home/ec2-user/environment/vpc
-nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag" > /tmp/vpc_creation.log 2>&1 &
+
+# cd /home/ec2-user/environment/vpc
+# nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag" > /tmp/vpc_creation.log 2>&1 &
 
 # Copy hub folder and start EKS cluster creation in background
 cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
-cd /home/ec2-user/environment/hub
-nohup bash -c '
-  # Wait for VPC creation to complete
-  while [ ! -f /tmp/vpc_status.flag ]; do
-    sleep 30
-  done
-  # Create EKS cluster
-  terraform init && terraform apply -auto-approve && 
-  # Update kubeconfig
-  aws eks --region $AWS_REGION update-kubeconfig --name hub-cluster --alias hub-cluster &&
-  echo "HUB_CREATION_COMPLETE" > /tmp/hub_status.flag
-' > /tmp/hub_creation.log 2>&1 &
-cd /home/ec2-user/environment
+# cd /home/ec2-user/environment/hub
+# nohup bash -c '
+#   # Wait for VPC creation to complete
+#   while [ ! -f /tmp/vpc_status.flag ]; do
+#     sleep 30
+#   done
+#   # Create EKS cluster
+#   terraform init && terraform apply -auto-approve && 
+#   # Update kubeconfig
+#   aws eks --region $AWS_REGION update-kubeconfig --name hub-cluster --alias hub-cluster &&
+#   echo "HUB_CREATION_COMPLETE" > /tmp/hub_status.flag
+# ' > /tmp/hub_creation.log 2>&1 &
+# cd /home/ec2-user/environment
 
 # Copy spoke folder and start spoke cluster creation in background
 cp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/
 cd /home/ec2-user/environment/spoke
-nohup bash -c '
-  # Wait for VPC creation to complete
-  while [ ! -f /tmp/vpc_status.flag ]; do
-    sleep 30
-  done
-  # Create spoke cluster
-  terraform workspace new staging &&
-  terraform init && terraform apply -auto-approve && 
-  # Update kubeconfig
-  aws eks --region $AWS_REGION update-kubeconfig --name spoke-staging --alias spoke-staging &&
-  echo "SPOKE_CREATION_COMPLETE" > /tmp/spoke_status.flag
-' > /tmp/spoke_creation.log 2>&1 &
-cd /home/ec2-user/environment
+# nohup bash -c '
+#   # Wait for VPC creation to complete
+#   while [ ! -f /tmp/vpc_status.flag ]; do
+#     sleep 30
+#   done
+#   # Create spoke cluster
+#   terraform workspace new staging &&
+#   terraform init && terraform apply -auto-approve && 
+#   # Update kubeconfig
+#   aws eks --region $AWS_REGION update-kubeconfig --name spoke-staging --alias spoke-staging &&
+#   echo "SPOKE_CREATION_COMPLETE" > /tmp/spoke_status.flag
+# ' > /tmp/spoke_creation.log 2>&1 &
+# cd /home/ec2-user/environment
 
 # Setup bashrc
 ls -lt ~
@@ -264,6 +265,17 @@ terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
     key            = "common/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
+# VPC backend config
+cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "vpc/terraform.tfstate"
     region         = "$AWS_REGION"
   }
 }
