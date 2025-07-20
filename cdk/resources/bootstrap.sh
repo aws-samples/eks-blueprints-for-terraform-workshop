@@ -223,25 +223,6 @@ cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
 
 # Copy hub folder and start EKS cluster creation in background
 cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
-
-# Update remote_state.tf in hub directory to use S3 backend
-cat << EOT > /home/ec2-user/environment/hub/remote_state.tf
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config = {
-    bucket = "\${data.aws_ssm_parameter.tfstate_bucket.value}"
-    key    = "vpc/terraform.tfstate"
-    region = "\${data.aws_region.current.name}"
-  }
-}
-
-data "aws_ssm_parameter" "tfstate_bucket" {
-  name = "eks-blueprints-workshop-tf-backend-bucket"
-}
-
-data "aws_region" "current" {}
-EOT
 # cd /home/ec2-user/environment/hub
 # nohup bash -c '
 #   # Wait for VPC creation to complete
@@ -258,26 +239,6 @@ EOT
 
 # Copy spoke folder and start spoke cluster creation in background
 cp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/
-
-# Update remote_state.tf in spoke directory to use S3 backend
-cat << EOT > /home/ec2-user/environment/spoke/remote_state.tf
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config = {
-    bucket = "\${data.aws_ssm_parameter.tfstate_bucket.value}"
-    key    = "vpc/terraform.tfstate"
-    region = "\${data.aws_region.current.name}"
-  }
-}
-
-data "aws_ssm_parameter" "tfstate_bucket" {
-  name = "eks-blueprints-workshop-tf-backend-bucket"
-}
-
-data "aws_region" "current" {}
-EOT
-
 cd /home/ec2-user/environment/spoke
 # nohup bash -c '
 #   # Wait for VPC creation to complete
@@ -297,50 +258,6 @@ cd /home/ec2-user/environment/spoke
 ls -lt ~
 mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
-
-# Common backend config
-cat << EOT > /home/ec2-user/environment/common/backend_override.tf
-terraform {
-  backend "s3" {
-    bucket         = "$BUCKET_NAME"
-    key            = "common/terraform.tfstate"
-    region         = "$AWS_REGION"
-  }
-}
-EOT
-
-# VPC backend config
-cat << EOT > /home/ec2-user/environment/vpc/backend_override.tf
-terraform {
-  backend "s3" {
-    bucket         = "$BUCKET_NAME"
-    key            = "vpc/terraform.tfstate"
-    region         = "$AWS_REGION"
-  }
-}
-EOT
-
-# Hub backend config
-cat << EOT > /home/ec2-user/environment/hub/backend_override.tf
-terraform {
-  backend "s3" {
-    bucket         = "$BUCKET_NAME"
-    key            = "hub/terraform.tfstate"
-    region         = "$AWS_REGION"
-  }
-}
-EOT
-
-# Spoke backend config
-cat << EOT > /home/ec2-user/environment/spoke/backend_override.tf
-terraform {
-  backend "s3" {
-    bucket         = "$BUCKET_NAME"
-    key            = "spoke/terraform.tfstate"
-    region         = "$AWS_REGION"
-  }
-}
-EOT
 
 
 EOF

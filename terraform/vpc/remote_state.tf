@@ -1,9 +1,9 @@
-data "terraform_remote_state" "vpc" {
+data "terraform_remote_state" "common" {
   backend = "s3"
 
   config = {
     bucket = "${data.aws_ssm_parameter.tfstate_bucket.value}"
-    key    = "vpc/terraform.tfstate"
+    key    = "common/terraform.tfstate"
     region = data.aws_region.current.name
   }
 }
