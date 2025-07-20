@@ -353,16 +353,16 @@ echo '=== CLEANING /home/ec2-user ==='
 # for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists
 chown -R ec2-user:ec2-user /home/ec2-user/
 
-echo '=== WAITING FOR INFRASTRUCTURE TO BE READY ==='
-echo "Waiting for infrastructure to be ready..."
-while [ ! -f /tmp/vpc_status.flag ] || [ ! -f /tmp/hub_status.flag ] || [ ! -f /tmp/spoke_status.flag ]; do
-  VPC_STATUS=$([ -f /tmp/vpc_status.flag ] && echo "✓" || echo "⏳")
-  HUB_STATUS=$([ -f /tmp/hub_status.flag ] && echo "✓" || echo "⏳")
-  SPOKE_STATUS=$([ -f /tmp/spoke_status.flag ] && echo "✓" || echo "⏳")
-  echo "Infrastructure still creating... (VPC: $VPC_STATUS, Hub: $HUB_STATUS, Spoke: $SPOKE_STATUS)"
-  sleep 30
-done
-echo "All infrastructure ready! Workshop can begin."
+# echo '=== WAITING FOR INFRASTRUCTURE TO BE READY ==='
+# echo "Waiting for infrastructure to be ready..."
+# while [ ! -f /tmp/vpc_status.flag ] || [ ! -f /tmp/hub_status.flag ] || [ ! -f /tmp/spoke_status.flag ]; do
+#   VPC_STATUS=$([ -f /tmp/vpc_status.flag ] && echo "✓" || echo "⏳")
+#   HUB_STATUS=$([ -f /tmp/hub_status.flag ] && echo "✓" || echo "⏳")
+#   SPOKE_STATUS=$([ -f /tmp/spoke_status.flag ] && echo "✓" || echo "⏳")
+#   echo "Infrastructure still creating... (VPC: $VPC_STATUS, Hub: $HUB_STATUS, Spoke: $SPOKE_STATUS)"
+#   sleep 30
+# done
+# echo "All infrastructure ready! Workshop can begin."
 
 #Don't reboot in ssm document, that break the execution
 echo "Bootstrap completed with return code $?"
