@@ -259,12 +259,45 @@ ls -lt ~
 mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
 
+# Common backend config
+cat << EOT > /home/ec2-user/environment/common/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "common/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
+# VPC backend config
+cat << EOT > /home/ec2-user/environment/vpc/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "vpc/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
 # Hub backend config
 cat << EOT > /home/ec2-user/environment/hub/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
     key            = "hub/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
+# Spoke backend config
+cat << EOT > /home/ec2-user/environment/spoke/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "spoke/terraform.tfstate"
     region         = "$AWS_REGION"
   }
 }
