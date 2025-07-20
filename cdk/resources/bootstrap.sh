@@ -259,6 +259,17 @@ ls -lt ~
 mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
 
+# Hub backend config
+cat << EOT > /home/ec2-user/environment/hub/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "hub/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
 
 EOF
 
