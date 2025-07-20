@@ -24,8 +24,8 @@ phases:
         ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
         BUCKET_NAME=${TFSTATE_BUCKET_NAME}
         BASE_DIR=${CODEBUILD_SRC_DIR}
-        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}
-        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}
+        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop}
+        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-precreate_vpc_eks}
         IS_WS=${IS_WS:-false}
         GITEA_PASSWORD=${GITEA_PASSWORD}
 
@@ -61,28 +61,6 @@ phases:
           backend "s3" {
             bucket         = "$BUCKET_NAME"
             key            = "vpc/terraform.tfstate"
-            region         = "$AWS_REGION"
-          }
-        }
-        EOT
-
-        # Hub backend config
-        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
-        terraform {
-          backend "s3" {
-            bucket         = "$BUCKET_NAME"
-            key            = "hub/terraform.tfstate"
-            region         = "$AWS_REGION"
-          }
-        }
-        EOT
-
-        # Spoke backend config
-        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf
-        terraform {
-          backend "s3" {
-            bucket         = "$BUCKET_NAME"
-            key            = "spoke/terraform.tfstate"
             region         = "$AWS_REGION"
           }
         }
