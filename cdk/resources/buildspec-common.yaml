@@ -66,6 +66,28 @@ phases:
         }
         EOT
 
+        # Hub backend config
+        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
+        terraform {
+          backend "s3" {
+            bucket         = "$BUCKET_NAME"
+            key            = "hub/terraform.tfstate"
+            region         = "$AWS_REGION"
+          }
+        }
+        EOT
+
+        # Spoke backend config
+        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf
+        terraform {
+          backend "s3" {
+            bucket         = "$BUCKET_NAME"
+            key            = "spoke/terraform.tfstate"
+            region         = "$AWS_REGION"
+          }
+        }
+        EOT
+
         GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
         for i in $(seq 1 60);
         do

@@ -281,30 +281,27 @@ terraform {
 }
 EOT
 
+# Hub backend config
+cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "hub/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
-# # Hub backend config
-# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
-# terraform {
-#   backend "s3" {
-#     bucket         = "$BUCKET_NAME"
-#     key            = "hub/terraform.tfstate"
-#     region         = "$AWS_REGION"
-#   }
-# }
-# EOT
-
-
-# # Spokes backend config
-# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf
-# terraform {
-#   backend "s3" {
-#     bucket         = "$BUCKET_NAME"
-#     key            = "spokes/terraform.tfstate"
-#     region         = "$AWS_REGION"
-#     workspace_key_prefix = "spokes"
-#   }
-# }
-# EOT
+# Spoke backend config
+cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "spoke/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
 
 EOF
