@@ -260,7 +260,7 @@ mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
 
 # Common backend config
-cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
+cat << EOT > /home/ec2-user/environment/common/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
@@ -271,7 +271,7 @@ terraform {
 EOT
 
 # VPC backend config
-cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf
+cat << EOT > /home/ec2-user/environment/vpc/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
@@ -282,7 +282,7 @@ terraform {
 EOT
 
 # Hub backend config
-cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
+cat << EOT > /home/ec2-user/environment/hub/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
@@ -293,7 +293,7 @@ terraform {
 EOT
 
 # Spoke backend config
-cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf
+cat << EOT > /home/ec2-user/environment/spoke/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
