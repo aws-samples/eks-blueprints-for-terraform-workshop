@@ -152,6 +152,100 @@
            }
           ]
          ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           }
+          ]
+         ]
         }
        ]
       },
@@ -164,30 +258,80 @@
         "codebuild:UpdateReport"
        ],
        "Effect": "Allow",
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:",
-          {
-           "Ref": "AWS::Partition"
-          },
-          ":codebuild:",
-          {
-           "Ref": "AWS::Region"
-          },
-          ":",
-          {
-           "Ref": "AWS::AccountId"
-          },
-          ":report-group/",
-          {
-           "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
-          },
-          "-*"
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+           },
+           "-*"
+          ]
          ]
-        ]
-       }
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           },
+           "-*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           },
+           "-*"
+          ]
+         ]
+        }
+       ]
       }
      ],
      "Version": "2012-10-17"
@@ -1403,6 +1547,638 @@
      }
     ]
    }
+  },
+  "EKSWSHUBStackDeployProjectB79E3671": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "TFSTATE_BUCKET_NAME",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Ref": "TFStateBackendBucketF0FC9A9D"
+       }
+      },
+      {
+       "Name": "WORKSHOP_GIT_URL",
+       "Type": "PLAINTEXT",
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+      },
+      {
+       "Name": "WORKSHOP_GIT_BRANCH",
+       "Type": "PLAINTEXT",
+       "Value": "precreate_vpc_eks"
+      },
+      {
+       "Name": "FORCE_DELETE_VPC",
+       "Type": "PLAINTEXT",
+       "Value": "false"
+      },
+      {
+       "Name": "GITEA_PASSWORD",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::GetAtt": [
+         "IDEBLUEIdePasswordExporterA384D1E9",
+         "password"
+        ]
+       }
+      },
+      {
+       "Name": "IS_WS",
+       "Type": "PLAINTEXT",
+       "Value": "true"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # Hub backend config\n        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"hub/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/hub/destroy.sh\n\n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/hub/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "Type": "NO_SOURCE"
+    },
+    "TimeoutInMinutes": 60
+   }
+  },
+  "EKSWSHUBStartBuildFunctionServiceRole47C5B33B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codebuild:StartBuild",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSHUBStackDeployProjectB79E3671",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE",
+    "Roles": [
+     {
+      "Ref": "EKSWSHUBStartBuildFunctionServiceRole47C5B33B"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBStartBuildFunction7B1F451A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n  try {\n    const projectName = event.ResourceProperties.ProjectName;\n    const codeBuildIamRoleArn = event.ResourceProperties.CodeBuildIamRoleArn\n\n    const codebuild = new AWS.CodeBuild();\n\n    console.log(`Starting new build of project ${projectName}`);\n\n    const { build } = await codebuild.startBuild({\n      projectName,\n      // Pass CFN related parameters through the build for extraction by the\n      // completion handler.\n      environmentVariablesOverride: [\n        {\n          name: 'CFN_RESPONSE_URL',\n          value: event.ResponseURL\n        },\n        {\n          name: 'CFN_STACK_ID',\n          value: event.StackId\n        },\n        {\n          name: 'CFN_REQUEST_ID',\n          value: event.RequestId\n        },\n        {\n          name: 'CFN_LOGICAL_RESOURCE_ID',\n          value: event.LogicalResourceId\n        },\n        {\n          name: 'REQUESTED_ACTION',\n          value: event.RequestType\n        },\n        {\n          name: 'RESOURCE_CODEBUILD_ROLE_ARN',\n          value: codeBuildIamRoleArn\n        }\n      ]\n    }).promise();\n    console.log(`Build id ${build.id} started - resource completion handled by EventBridge`);\n  } catch(error) {\n    console.error(error);\n    await respond(event, context, 'FAILED', { Error: error });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSHUBStartBuildFunctionServiceRole47C5B33B",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE",
+    "EKSWSHUBStartBuildFunctionServiceRole47C5B33B"
+   ]
+  },
+  "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:ListBuildsForProject"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSHUBStackDeployProjectB79E3671",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "Roles": [
+     {
+      "Ref": "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBReportBuildFunctionD4882511": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n\n  const projectName = event['detail']['project-name'];\n\n  const codebuild = new AWS.CodeBuild();\n\n  const buildId = event['detail']['build-id'];\n  const { builds } = await codebuild.batchGetBuilds({\n    ids: [ buildId ]\n  }).promise();\n\n  console.log(JSON.stringify(builds, null, 4));\n\n  const build = builds[0];\n  // Fetch the CFN resource and response parameters from the build environment.\n  const environment = {};\n  build.environment.environmentVariables.forEach(e => environment[e.name] = e.value);\n\n  const response = {\n    ResponseURL: environment.CFN_RESPONSE_URL,\n    StackId: environment.CFN_STACK_ID,\n    LogicalResourceId: environment.CFN_LOGICAL_RESOURCE_ID,\n    RequestId: environment.CFN_REQUEST_ID\n  };\n\n  if (event['detail']['build-status'] === 'SUCCEEDED') {\n    await respond(response, context, 'SUCCESS', {}, 'build');\n  } else {\n    await respond(response, context, 'FAILED', { Error: 'Build failed' });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+   ]
+  },
+  "EKSWSHUBBuildCompleteRuleA0A3788F": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Build complete",
+    "EventPattern": {
+     "source": [
+      "aws.codebuild"
+     ],
+     "detail-type": [
+      "CodeBuild Build State Change"
+     ],
+     "detail": {
+      "build-status": [
+       "SUCCEEDED",
+       "FAILED",
+       "STOPPED"
+      ],
+      "project-name": [
+       {
+        "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+       }
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "EKSWSHUBReportBuildFunctionD4882511",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSHUBReportBuildFunction56DCA7582390F184": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "EKSWSHUBReportBuildFunctionD4882511",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EKSWSHUBBuildCompleteRuleA0A3788F",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EKSWSHUBClusterStack2E920DC3": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "EKSWSHUBStartBuildFunction7B1F451A",
+      "Arn"
+     ]
+    },
+    "ProjectName": {
+     "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+    },
+    "CodeBuildIamRoleArn": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "ContentHash": "7810135bb0eb5ebcb9b5d49dbc7466b4"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONClusterStackE20A043D",
+    "EKSWSHUBBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSHUBReportBuildFunction56DCA7582390F184",
+    "EKSWSHUBBuildCompleteRuleA0A3788F",
+    "EKSWSHUBReportBuildFunctionD4882511",
+    "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "EKSWSSPOKEStackDeployProjectC79C3CCC": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "TFSTATE_BUCKET_NAME",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Ref": "TFStateBackendBucketF0FC9A9D"
+       }
+      },
+      {
+       "Name": "WORKSHOP_GIT_URL",
+       "Type": "PLAINTEXT",
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+      },
+      {
+       "Name": "WORKSHOP_GIT_BRANCH",
+       "Type": "PLAINTEXT",
+       "Value": "precreate_vpc_eks"
+      },
+      {
+       "Name": "FORCE_DELETE_VPC",
+       "Type": "PLAINTEXT",
+       "Value": "false"
+      },
+      {
+       "Name": "GITEA_PASSWORD",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::GetAtt": [
+         "IDEBLUEIdePasswordExporterA384D1E9",
+         "password"
+        ]
+       }
+      },
+      {
+       "Name": "IS_WS",
+       "Type": "PLAINTEXT",
+       "Value": "true"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "Type": "NO_SOURCE"
+    },
+    "TimeoutInMinutes": 60
+   }
+  },
+  "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codebuild:StartBuild",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSSPOKEStackDeployProjectC79C3CCC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B",
+    "Roles": [
+     {
+      "Ref": "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEStartBuildFunction5C34EB2E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n  try {\n    const projectName = event.ResourceProperties.ProjectName;\n    const codeBuildIamRoleArn = event.ResourceProperties.CodeBuildIamRoleArn\n\n    const codebuild = new AWS.CodeBuild();\n\n    console.log(`Starting new build of project ${projectName}`);\n\n    const { build } = await codebuild.startBuild({\n      projectName,\n      // Pass CFN related parameters through the build for extraction by the\n      // completion handler.\n      environmentVariablesOverride: [\n        {\n          name: 'CFN_RESPONSE_URL',\n          value: event.ResponseURL\n        },\n        {\n          name: 'CFN_STACK_ID',\n          value: event.StackId\n        },\n        {\n          name: 'CFN_REQUEST_ID',\n          value: event.RequestId\n        },\n        {\n          name: 'CFN_LOGICAL_RESOURCE_ID',\n          value: event.LogicalResourceId\n        },\n        {\n          name: 'REQUESTED_ACTION',\n          value: event.RequestType\n        },\n        {\n          name: 'RESOURCE_CODEBUILD_ROLE_ARN',\n          value: codeBuildIamRoleArn\n        }\n      ]\n    }).promise();\n    console.log(`Build id ${build.id} started - resource completion handled by EventBridge`);\n  } catch(error) {\n    console.error(error);\n    await respond(event, context, 'FAILED', { Error: error });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B",
+    "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0"
+   ]
+  },
+  "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:ListBuildsForProject"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSSPOKEStackDeployProjectC79C3CCC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "Roles": [
+     {
+      "Ref": "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEReportBuildFunctionCAD58231": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n\n  const projectName = event['detail']['project-name'];\n\n  const codebuild = new AWS.CodeBuild();\n\n  const buildId = event['detail']['build-id'];\n  const { builds } = await codebuild.batchGetBuilds({\n    ids: [ buildId ]\n  }).promise();\n\n  console.log(JSON.stringify(builds, null, 4));\n\n  const build = builds[0];\n  // Fetch the CFN resource and response parameters from the build environment.\n  const environment = {};\n  build.environment.environmentVariables.forEach(e => environment[e.name] = e.value);\n\n  const response = {\n    ResponseURL: environment.CFN_RESPONSE_URL,\n    StackId: environment.CFN_STACK_ID,\n    LogicalResourceId: environment.CFN_LOGICAL_RESOURCE_ID,\n    RequestId: environment.CFN_REQUEST_ID\n  };\n\n  if (event['detail']['build-status'] === 'SUCCEEDED') {\n    await respond(response, context, 'SUCCESS', {}, 'build');\n  } else {\n    await respond(response, context, 'FAILED', { Error: 'Build failed' });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+   ]
+  },
+  "EKSWSSPOKEBuildCompleteRule8FB17505": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Build complete",
+    "EventPattern": {
+     "source": [
+      "aws.codebuild"
+     ],
+     "detail-type": [
+      "CodeBuild Build State Change"
+     ],
+     "detail": {
+      "build-status": [
+       "SUCCEEDED",
+       "FAILED",
+       "STOPPED"
+      ],
+      "project-name": [
+       {
+        "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+       }
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "EKSWSSPOKEReportBuildFunctionCAD58231",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSSPOKEReportBuildFunction21F69DA8EC6BBC40": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEReportBuildFunctionCAD58231",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEBuildCompleteRule8FB17505",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EKSWSSPOKEClusterStackC01C0A32": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEStartBuildFunction5C34EB2E",
+      "Arn"
+     ]
+    },
+    "ProjectName": {
+     "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+    },
+    "CodeBuildIamRoleArn": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "ContentHash": "eda603e21af02e9505f46f69e68ae4f6"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONClusterStackE20A043D",
+    "EKSWSSPOKEBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSSPOKEReportBuildFunction21F69DA8EC6BBC40",
+    "EKSWSSPOKEBuildCompleteRule8FB17505",
+    "EKSWSSPOKEReportBuildFunctionCAD58231",
+    "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
   }
  },
  "Outputs": {

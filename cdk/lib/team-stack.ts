@@ -27,6 +27,20 @@ const buildspecCommon = fs.readFileSync(
   },
 );
 
+const buildspecHub = fs.readFileSync(
+  path.join(__dirname, "../resources/buildspec-hub.yaml"),
+  {
+    encoding: "utf-8",
+  },
+);
+
+const buildspecSpoke = fs.readFileSync(
+  path.join(__dirname, "../resources/buildspec-spoke.yaml"),
+  {
+    encoding: "utf-8",
+  },
+);
+
 export class TeamStack extends WorkshopStudioTeamStack {
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -178,6 +192,64 @@ export class TeamStack extends WorkshopStudioTeamStack {
         ],
       },
     );
+
+    const hubRunner = new CodeBuildCustomResource(this, "EKSWSHUB", {
+      buildspec: buildspecHub,
+      codeBuildTimeout: cdk.Duration.minutes(60),
+      computeType: codebuild.ComputeType.SMALL,
+      environmentVariables: {
+        TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+        WORKSHOP_GIT_URL: {
+          value:
+            process.env.WORKSHOP_GIT_URL ||
+            "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+        },
+        WORKSHOP_GIT_BRANCH: {
+          value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+        },
+        FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
+        GITEA_PASSWORD: { value: ide.getIdePassword() },
+        IS_WS: {
+          value:
+            this.getCdkSynthMode() == CdkSynthMode.SynthWorkshopStudio
+              ? "true"
+              : "false",
+        },
+      },
+      buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
+      role: sharedRole,
+      //removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    hubRunner.customResource.node.addDependency(commonRunner.customResource);
+
+    const spokeRunner = new CodeBuildCustomResource(this, "EKSWSSPOKE", {
+      buildspec: buildspecSpoke,
+      codeBuildTimeout: cdk.Duration.minutes(60),
+      computeType: codebuild.ComputeType.SMALL,
+      environmentVariables: {
+        TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+        WORKSHOP_GIT_URL: {
+          value:
+            process.env.WORKSHOP_GIT_URL ||
+            "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+        },
+        WORKSHOP_GIT_BRANCH: {
+          value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+        },
+        FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
+        GITEA_PASSWORD: { value: ide.getIdePassword() },
+        IS_WS: {
+          value:
+            this.getCdkSynthMode() == CdkSynthMode.SynthWorkshopStudio
+              ? "true"
+              : "false",
+        },
+      },
+      buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
+      role: sharedRole,
+      //removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    spokeRunner.customResource.node.addDependency(commonRunner.customResource);
 
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });
