@@ -9,6 +9,8 @@ ROOTDIR="$(cd ${SCRIPTDIR}/../..; pwd )"
 # Initialize Terraform
 terraform -chdir=$SCRIPTDIR init --upgrade
 
+terraform workspace new staging
+
 echo "Applying Spoke EKS cluster resources"
 
 terraform -chdir=$SCRIPTDIR apply -auto-approve
