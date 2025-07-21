@@ -223,36 +223,11 @@ cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
 
 # Copy hub folder and start EKS cluster creation in background
 cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
-# cd /home/ec2-user/environment/hub
-# nohup bash -c '
-#   # Wait for VPC creation to complete
-#   while [ ! -f /tmp/vpc_status.flag ]; do
-#     sleep 30
-#   done
-#   # Create EKS cluster
-#   terraform init && terraform apply -auto-approve && 
-#   # Update kubeconfig
-#   aws eks --region $AWS_REGION update-kubeconfig --name hub-cluster --alias hub-cluster &&
-#   echo "HUB_CREATION_COMPLETE" > /tmp/hub_status.flag
-# ' > /tmp/hub_creation.log 2>&1 &
-# cd /home/ec2-user/environment
+
 
 # Copy spoke folder and start spoke cluster creation in background
 cp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/
 cd /home/ec2-user/environment/spoke
-# nohup bash -c '
-#   # Wait for VPC creation to complete
-#   while [ ! -f /tmp/vpc_status.flag ]; do
-#     sleep 30
-#   done
-#   # Create spoke cluster
-#   terraform workspace new staging &&
-#   terraform init && terraform apply -auto-approve && 
-#   # Update kubeconfig
-#   aws eks --region $AWS_REGION update-kubeconfig --name spoke-staging --alias spoke-staging &&
-#   echo "SPOKE_CREATION_COMPLETE" > /tmp/spoke_status.flag
-# ' > /tmp/spoke_creation.log 2>&1 &
-# cd /home/ec2-user/environment
 
 # Setup bashrc
 ls -lt ~
@@ -298,6 +273,17 @@ terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
     key            = "spoke/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
+
+# This is required during delete. 
+cat << EOT > /home/ec2-user/eks-blueprints-for-terraform-workshop/terraform/common/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "common/terraform.tfstate"
     region         = "$AWS_REGION"
   }
 }
@@ -352,17 +338,6 @@ echo '=== Run init script ==='
 echo '=== CLEANING /home/ec2-user ==='
 # for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists
 chown -R ec2-user:ec2-user /home/ec2-user/
-
-# echo '=== WAITING FOR INFRASTRUCTURE TO BE READY ==='
-# echo "Waiting for infrastructure to be ready..."
-# while [ ! -f /tmp/vpc_status.flag ] || [ ! -f /tmp/hub_status.flag ] || [ ! -f /tmp/spoke_status.flag ]; do
-#   VPC_STATUS=$([ -f /tmp/vpc_status.flag ] && echo "✓" || echo "⏳")
-#   HUB_STATUS=$([ -f /tmp/hub_status.flag ] && echo "✓" || echo "⏳")
-#   SPOKE_STATUS=$([ -f /tmp/spoke_status.flag ] && echo "✓" || echo "⏳")
-#   echo "Infrastructure still creating... (VPC: $VPC_STATUS, Hub: $HUB_STATUS, Spoke: $SPOKE_STATUS)"
-#   sleep 30
-# done
-# echo "All infrastructure ready! Workshop can begin."
 
 #Don't reboot in ssm document, that break the execution
 echo "Bootstrap completed with return code $?"
