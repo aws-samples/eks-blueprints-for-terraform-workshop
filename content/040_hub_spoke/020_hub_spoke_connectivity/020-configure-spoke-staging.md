@@ -212,6 +212,7 @@ EOF
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 cd ~/environment/spoke
 terraform init
+terraform workspace select staging
 terraform apply --auto-approve
 :::
 
