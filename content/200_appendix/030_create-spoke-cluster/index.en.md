@@ -1,6 +1,6 @@
 ---
 title: "Create Spoke Staging"
-weight: 10
+weight: 230
 ---
 
 In this chapter, as a platform engineer ![Platform Engineer](/static/images/platform-task.png) we will create another EKS cluster called spoke-staging.

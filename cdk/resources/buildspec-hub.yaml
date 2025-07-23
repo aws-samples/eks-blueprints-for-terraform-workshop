@@ -24,8 +24,8 @@ phases:
         ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
         BUCKET_NAME=${TFSTATE_BUCKET_NAME}
         BASE_DIR=${CODEBUILD_SRC_DIR}
-        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop}
-        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}
+        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}
+        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}
 
         env | sort
 

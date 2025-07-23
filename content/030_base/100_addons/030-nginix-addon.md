@@ -65,7 +65,7 @@ You can check nginx pods
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl get pods -n ingress-nginx
+kubectl get pods -n ingress-nginx --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 

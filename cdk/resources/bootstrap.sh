@@ -215,13 +215,27 @@ git checkout $WORKSHOP_GIT_BRANCH
 
 cp hack/.zshrc hack/.p10k.zsh ~/
 
+# Copy VPC folder and start VPC creation in background
+cp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/
+
+# cd /home/ec2-user/environment/vpc
+# nohup bash -c "terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag" > /tmp/vpc_creation.log 2>&1 &
+
+# Copy hub folder and start EKS cluster creation in background
+cp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/
+
+
+# Copy spoke folder and start spoke cluster creation in background
+cp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/
+cd /home/ec2-user/environment/spoke
+
 # Setup bashrc
 ls -lt ~
 mkdir -p ~/.bashrc.d
 cp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/
 
 # Common backend config
-cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
+cat << EOT > /home/ec2-user/environment/common/backend_override.tf
 terraform {
   backend "s3" {
     bucket         = "$BUCKET_NAME"
@@ -231,30 +245,49 @@ terraform {
 }
 EOT
 
+# VPC backend config
+cat << EOT > /home/ec2-user/environment/vpc/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "vpc/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
-# # Hub backend config
-# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf
-# terraform {
-#   backend "s3" {
-#     bucket         = "$BUCKET_NAME"
-#     key            = "hub/terraform.tfstate"
-#     region         = "$AWS_REGION"
-#   }
-# }
-# EOT
+# Hub backend config
+cat << EOT > /home/ec2-user/environment/hub/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "hub/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
+# Spoke backend config
+cat << EOT > /home/ec2-user/environment/spoke/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "spoke/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
-# # Spokes backend config
-# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf
-# terraform {
-#   backend "s3" {
-#     bucket         = "$BUCKET_NAME"
-#     key            = "spokes/terraform.tfstate"
-#     region         = "$AWS_REGION"
-#     workspace_key_prefix = "spokes"
-#   }
-# }
-# EOT
+# This is required during delete. 
+cat << EOT > /home/ec2-user/eks-blueprints-for-terraform-workshop/terraform/common/backend_override.tf
+terraform {
+  backend "s3" {
+    bucket         = "$BUCKET_NAME"
+    key            = "common/terraform.tfstate"
+    region         = "$AWS_REGION"
+  }
+}
+EOT
 
 
 EOF
@@ -305,5 +338,6 @@ echo '=== Run init script ==='
 echo '=== CLEANING /home/ec2-user ==='
 # for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists
 chown -R ec2-user:ec2-user /home/ec2-user/
+
 #Don't reboot in ssm document, that break the execution
 echo "Bootstrap completed with return code $?"

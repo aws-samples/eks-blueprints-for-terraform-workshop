@@ -125,6 +125,10 @@ terraform apply -auto-approve
 
 To retrieve the Argo CD dashboard URL, execute:
 
+:::alert{header="Important" type="warning"}
+It also takes a few minutes for the load balancer to be provisioned.
+:::
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 argocd_hub_credentials

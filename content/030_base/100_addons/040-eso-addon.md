@@ -117,7 +117,7 @@ We configure the Terraform module to create only the required AWS resources but 
 ### 4. Terraform Apply
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=trueshowLineNumbers=false language=json }
+:::code{showCopyAction=true showLineNumbers=false language=json }
 cd ~/environment/hub
 terraform init
 terraform apply --auto-approve
@@ -125,8 +125,6 @@ terraform apply --auto-approve
 <!-- prettier-ignore-end -->
 
 ### 5. Validate the ESO Add-on
-
-
 
 We already have Gitea repository information in AWS Secret Manager. We will create an External Secret to copy from AWS Secret eks-blueprints-workshop-gitops-addons to Kubernetes secret-addon secret.
 
@@ -171,7 +169,7 @@ Create External Secret
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl apply -f ~/environment/basic/eso.yaml
+kubectl apply -f ~/environment/basic/eso.yaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 
@@ -180,7 +178,7 @@ If you see an error like "Error from server (InternalError): error when creating
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl apply -f ~/environment/basic/eso.yaml
+kubectl apply -f ~/environment/basic/eso.yaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 
@@ -188,7 +186,7 @@ Validate Kubernetes Secret
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-kubectl get secrets secret-addon -oyaml
+kubectl get secrets secret-addon -oyaml --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 

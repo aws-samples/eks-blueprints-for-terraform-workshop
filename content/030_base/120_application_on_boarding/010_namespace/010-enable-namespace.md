@@ -122,8 +122,6 @@ cp $BASE_DIR/solution/gitops/platform/config/workload/webstore/namespace/values/
 :::
 <!-- prettier-ignore-end -->
 
-![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
-
 :::expand{header="Check the file content:"}
 
 ```bash
@@ -131,6 +129,8 @@ code $GITOPS_DIR/platform/config/webstore/namespace/values/default-values.yaml
 ```
 
 :::
+
+![namespace-helm](/static/images/namespace-webstore-defalut-values.jpg)
 
 ### 3. Enable hub cluster for webstore workload
 
@@ -203,7 +203,7 @@ With this setup, the webstore namespace and its policies (like LimitRange and Ne
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
-kubectl get ns --context hub-cluster
+kubectl get ns --context hub-cluster --context hub-cluster
 :::
 <!-- prettier-ignore-end -->
 

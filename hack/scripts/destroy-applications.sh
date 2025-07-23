@@ -9,14 +9,16 @@ set -uo pipefail
 kubectl  --context hub-cluster patch applicationset bootstrap -n argocd --type=json -p='[{"op": "remove", "path": "/spec/template/spec/syncPolicy"}]'
 
 #Clean Workloads
-kubectl  --context hub-cluster delete applicationset -n argocd workload --cascade=foreground
+kubectl  --context hub-cluster delete applicationset -n argocd create-deployment-dev-webstore create-deployment-staging-webstore create-deployment-prod-webstore  --cascade=foreground
+kubectl  --context hub-cluster delete applicationset -n argocd create-deployment 
 #Clean namespaces
-kubectl  --context hub-cluster delete applicationset -n argocd namespace --cascade=foreground
-#Clea projects
+kubectl  --context hub-cluster delete applicationset -n argocd create-namespace-env-webstore --cascade=foreground
+kubectl  --context hub-cluster delete applicationset -n argocd create-namespace --cascade=foreground
+
+#Clean projects
 kubectl  --context hub-cluster delete applicationset -n argocd argoprojects --cascade=foreground
 #Clean addons (but the have preserve On)
-kubectl  --context hub-cluster delete applicationset -n argocd cluster-addons --cascade=foreground
+kubectl  --context hub-cluster delete applicationset -n argocd create-cluster-addons --cascade=foreground
 
 #Clean app of apps
 kubectl  --context hub-cluster delete applicationset -n argocd bootstrap --cascade=foreground
-

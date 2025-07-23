@@ -25,7 +25,7 @@ phases:
         BUCKET_NAME=${TFSTATE_BUCKET_NAME}
         BASE_DIR=${CODEBUILD_SRC_DIR}
         WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}
-        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}
+        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}
         IS_WS=${IS_WS:-false}
         GITEA_PASSWORD=${GITEA_PASSWORD}
 
@@ -55,6 +55,17 @@ phases:
         }
         EOT
 
+        # VPC backend config
+        cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf
+        terraform {
+          backend "s3" {
+            bucket         = "$BUCKET_NAME"
+            key            = "vpc/terraform.tfstate"
+            region         = "$AWS_REGION"
+          }
+        }
+        EOT
+
         GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
         for i in $(seq 1 60);
         do
@@ -76,6 +87,9 @@ phases:
 
           # Project Creation
           DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh
+          
+          # VPC Creation
+          DEBUG=1 $BASE_DIR/terraform/vpc/deploy.sh
         fi
   post_build:
     commands:

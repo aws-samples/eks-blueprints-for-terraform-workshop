@@ -40,7 +40,7 @@ In this chapter you will copy these values into annotations so that they can be 
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-cat <<'EOF' >> ~/environment/hub/git_data.tf
+cat <<'EOF' >> ~/environment/hub/main.tf
 
 # Retrieve Git repository metadata from AWS Secrets Manager for platform, workload, and addon repositories
 
@@ -173,7 +173,7 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 5. Validate update to labels and addons
+### 5. Validate update to Annotations
 
 Go to **Settings > Clusters > hub-cluster** in the Argo CD dashboard and examine the hub-cluster object. This will confirm that GitOps Bridge has successfully updated the Annotations.
 

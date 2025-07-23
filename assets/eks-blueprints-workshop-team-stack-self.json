@@ -195,6 +195,100 @@
            }
           ]
          ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           }
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           },
+           ":*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":logs:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":log-group:/aws/codebuild/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           }
+          ]
+         ]
         }
        ]
       },
@@ -207,30 +301,80 @@
         "codebuild:UpdateReport"
        ],
        "Effect": "Allow",
-       "Resource": {
-        "Fn::Join": [
-         "",
-         [
-          "arn:",
-          {
-           "Ref": "AWS::Partition"
-          },
-          ":codebuild:",
-          {
-           "Ref": "AWS::Region"
-          },
-          ":",
-          {
-           "Ref": "AWS::AccountId"
-          },
-          ":report-group/",
-          {
-           "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
-          },
-          "-*"
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSCOMMONStackDeployProject74D43BC6"
+           },
+           "-*"
+          ]
          ]
-        ]
-       }
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+           },
+           "-*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":codebuild:",
+           {
+            "Ref": "AWS::Region"
+           },
+           ":",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":report-group/",
+           {
+            "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+           },
+           "-*"
+          ]
+         ]
+        }
+       ]
       }
      ],
      "Version": "2012-10-17"
@@ -853,13 +997,13 @@
               "DomainName"
              ]
             },
-            "codeServerVersion": "4.93.1",
+            "codeServerVersion": "4.100.1",
             "waitConditionHandleUrl": {
              "Ref": "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44"
             },
             "customBootstrapScript": {
              "Fn::Sub": [
-              "#!/bin/bash\nset -x\nsudo sh -c \"echo LANG=en_US.utf-8 >> /etc/environment\"\nsudo sh -c \"echo LC_ALL=en_US.UTF-8 >> /etc/environment\"\n# . /home/ec2-user/.bashrc\nsudo yum -y install sqlite telnet jq strace tree gcc glibc-static python3 python3-pip gettext bash-completion npm zsh util-linux-user locate\necho '=== INSTALL and CONFIGURE default software components ==='\n\naws configure set cli_pager \"\"\n\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport ACCOUNTID=$(aws sts get-caller-identity | jq -r .Account)\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport ASSETS_BUCKET_NAME=${AssetsBucketName} # Coming from Fn.Sub\nexport ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub\nexport BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub\nexport WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub\nexport WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub\nexport BASE_DIR=/home/ec2-user/eks-blueprints-for-terraform-workshop\nexport GITOPS_DIR=/home/ec2-user/environment/gitops-repos\nexport ENVIRONMENT_DIR=/home/ec2-user/environment\nexport GOROOT=/usr/local/go\n\n# This is to go around problem with circular dependency\naws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite\n\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\n  echo \"the service is not found: $host\"\n  exit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -o /dev/null -L -w ''%{http_code}'' http://$host/home)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb-argocd\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -k -o /dev/null -L -w ''%{http_code}'' http://$host/)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb-argocd\n\nsudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl\nsudo chmod +x /usr/bin/kubectl\n\nsudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64\nsudo chmod +x /usr/bin/argocd\n\nsudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64\nsudo chmod +x /usr/local/bin/kubectl-argo-rollouts\n\ncurl --silent --location \"https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz\" | tar xz -C /tmp\nsudo mv -f /tmp/linux-amd64/helm /usr/bin\nsudo chmod +x /usr/bin/helm\n\nsudo curl --silent --location -o /tmp/terraform.zip \"https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip\"\ncd /tmp && unzip -o /tmp/terraform.zip && cd -\nchmod +x /tmp/terraform\nsudo mv -f /tmp/terraform /usr/bin\n\nsudo curl --silent --location \"https://go.dev/dl/go1.23.1.linux-amd64.tar.gz\" | sudo tar xz -C /usr/local\n\ncurl --silent --location \"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksctl\nsudo mv /tmp/eksctl /usr/local/bin\ncurl -sSL \"https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksdemo\nmv /tmp/eksdemo /usr/local/bin  \n\n\n\nsudo su - ec2-user <<EOF\nset -x\nexport | sort\n\naws configure set cli_pager \"\"\n\naws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNTID.dkr.ecr.$AWS_REGION.amazonaws.com\n\n# start of cloud9-init script\nkubectl completion bash >>  ~/.bash_completion\necho \"complete -F __start_kubectl k\" >> ~/.bash_completion\nargocd completion bash >>  ~/.bash_completion\nhelm completion bash >>  ~/.bash_completion\necho \"alias k=kubectl\" >> ~/.bashrc\necho \"alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'\" | tee -a ~/.bashrc\necho \"alias ll='ls -la'\" >> ~/.bashrc\n\necho \"alias ktx=kubectx\" >> ~/.bashrc\necho \"alias kctx=kubectx\" >> ~/.bashrc\necho \"alias kns=kubens\" >> ~/.bashrc\necho \"export TERM=xterm-color\" >> ~/.bashrc\n\necho \"alias code=/usr/lib/code-server/bin/code-server\" >> ~/.bashrc\necho \"complete -F __start_kubectl k\" >> ~/.bashrc\ncurl -sS https://webinstall.dev/k9s | bash\n\nhelm repo add eks https://aws.github.io/eks-charts\nhelm repo update\n\n#Install Krew and stern\n(\n  cd \\$(mktemp -d) && pwd &&\n  OS=\\$(uname | tr '[:upper:]' '[:lower:]') &&\n  ARCH=\\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' -e 's/aarch64$/arm64/') &&\n  KREW=krew-\\${!OS}_\\${!ARCH} && echo \\$KREW\n  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\\${!KREW}.tar.gz &&\n  tar zxvf \\${!KREW}.tar.gz &&\n  ./\\${!KREW} install krew\n)\necho \"export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\" | tee -a ~/.bashrc\nexport PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\nkubectl krew install stern\nkubectl krew install np-viewer \n\ngo install github.com/kyverno/chainsaw@latest\ngo install github.com/isovalent/aws-delete-vpc@latest\n\npip install pytest\npip install pytest_bdd boto3 kubernetes\n\ncurl -sfL https://direnv.net/install.sh | bash\n\n#Try Install some VsCode plugins\n/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform || true\n/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders || true\n/usr/lib/code-server/bin/code-server --install-extension amazonwebservices.amazon-q-vscode || true\n\n#Install Amazon Q\ncurl --proto '=https' --tlsv1.2 -sSf \"https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip\" -o \"/tmp/q.zip\"\nunzip /tmp/q.zip -d /tmp\n/tmp/q/install.sh --no-confirm\n\n#Install ag silver search\n## Install build dependencies\nsudo dnf install -y git gcc make pkg-config automake autoconf pcre-devel xz-devel zlib-devel\n## Clone the repository, build and install from source\ncd /tmp && git clone https://github.com/ggreer/the_silver_searcher.git && \\\ncd the_silver_searcher && \\\n./build.sh && \\\nsudo make install\n\n#Install fuzzy search\ngit clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\n~/.fzf/install --all  \n\n#Install zsh\nsudo -k chsh -s /bin/zsh ec2-user\njq '. + {\"terminal.integrated.defaultProfile.linux\": \"zsh\"}' /home/ec2-user/.local/share/code-server/User/settings.json > temp.json && mv temp.json /home/ec2-user/.local/share/code-server/User/settings.json\nrm -rf ~/.oh-my-zsh\n\nwget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh\nCHSH=no RUNZSH=no sh install.sh\n\ngit clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k\ngit clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting\ngit clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions\ngit clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search\n\n\n#Install workshop\nmkdir -p $BASE_DIR\ngit clone $WORKSHOP_GIT_URL $BASE_DIR\ncd $BASE_DIR\ngit checkout $WORKSHOP_GIT_BRANCH\n\ncp hack/.zshrc hack/.p10k.zsh ~/\n\n# Setup bashrc\nls -lt ~\nmkdir -p ~/.bashrc.d\ncp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/\n\n# Common backend config\ncat << EOT > $BASE_DIR/terraform/common/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"common/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n\n# # Hub backend config\n# cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"hub/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#   }\n# }\n# EOT\n\n\n# # Spokes backend config\n# cat << EOT > $BASE_DIR/terraform/spokes/backend_override.tf\n# terraform {\n#   backend \"s3\" {\n#     bucket         = \"$BUCKET_NAME\"\n#     key            = \"spokes/terraform.tfstate\"\n#     region         = \"$AWS_REGION\"\n#     workspace_key_prefix = \"spokes\"\n#   }\n# }\n# EOT\n\n\nEOF\n\n#install kubectx & kubens\nsudo rm -rf /opt/kubectx\nsudo git clone https://github.com/ahmetb/kubectx /opt/kubectx\nsudo ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx\nsudo ln -sf /opt/kubectx/kubens /usr/local/bin/kubens\n\n\nsudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_\n\nsource ~/.bashrc\n\n# end of cloud9-init script\n\necho '=== Configure .bashrc.d ==='\nif [[ ! -d \"/home/ec2-user/.bashrc.d\" ]]; then\n    sudo -H -u ec2-user bash -c \"mkdir -p ~/.bashrc.d\"\nfi\ncat << EOT > /home/ec2-user/.bashrc.d/env.bash\nexport ACCOUNTID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport AWS_DEFAULT_REGION=$AWS_REGION\nexport GOROOT=/usr/local/go\nexport ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME\nexport ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX\nexport BUCKET_NAME=$BUCKET_NAME\nexport WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL\nexport WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH\nexport BASE_DIR=$BASE_DIR\nexport GITOPS_DIR=$GITOPS_DIR\nEOT\n\nsudo -H -u ec2-user bash -c \"cat <<'EOF' >> ~/.bashrc \nfor file in ~/.bashrc.d/*.bash; do\n  source \"\\$file\" || true\ndone\nEOF\n\"\n\necho '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='\necho \"complete -C '/usr/local/bin/aws_completer' aws\" >> /home/ec2-user/.bashrc.d/aws.bash\necho '=== Run init script ==='\n# aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}cloud9-init.sh /tmp && bash /tmp/cloud9-init.sh\necho '=== CLEANING /home/ec2-user ==='\n# for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists\nchown -R ec2-user:ec2-user /home/ec2-user/\n#Don't reboot in ssm document, that break the execution\necho \"Bootstrap completed with return code $?\"",
+              "#!/bin/bash\nset -x\nsudo sh -c \"echo LANG=en_US.utf-8 >> /etc/environment\"\nsudo sh -c \"echo LC_ALL=en_US.UTF-8 >> /etc/environment\"\n# . /home/ec2-user/.bashrc\nsudo yum -y install sqlite telnet jq strace tree gcc glibc-static python3 python3-pip gettext bash-completion npm zsh util-linux-user locate\necho '=== INSTALL and CONFIGURE default software components ==='\n\naws configure set cli_pager \"\"\n\nexport TOKEN=$(curl -X PUT \"http://169.254.169.254/latest/api/token\" -H \"X-aws-ec2-metadata-token-ttl-seconds: 21600\")\nexport AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\\\" '{print $4}')\nexport ACCOUNTID=$(aws sts get-caller-identity | jq -r .Account)\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport ASSETS_BUCKET_NAME=${AssetsBucketName} # Coming from Fn.Sub\nexport ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub\nexport BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub\nexport WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub\nexport WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub\nexport BASE_DIR=/home/ec2-user/eks-blueprints-for-terraform-workshop\nexport GITOPS_DIR=/home/ec2-user/environment/gitops-repos\nexport ENVIRONMENT_DIR=/home/ec2-user/environment\nexport GOROOT=/usr/local/go\n\n# This is to go around problem with circular dependency\naws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite\n\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\n  echo \"the service is not found: $host\"\n  exit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -o /dev/null -L -w ''%{http_code}'' http://$host/home)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb\nsudo bash -c \"cat > /usr/local/bin/wait-for-lb-argocd\" <<'EOT'\n#!/bin/bash\nset -e\nexport host=$1\n\nif [ -z \"$host\" ]; then\necho \"the service is not found: $host\"\nexit\nfi\n\necho $host\n\nset -Eeuo pipefail\n\necho \"Waiting for $host...\"\n\nEXIT_CODE=0\n\ntimeout -s TERM 600 bash -c \\\n'while [[ \"$(curl -s -k -o /dev/null -L -w ''%{http_code}'' http://$host/)\" != \"200\" ]];\\\ndo sleep 5;\\\ndone' || EXIT_CODE=$?\n\nif [ $EXIT_CODE -ne 0 ]; then\necho \"Load balancer did not become available or return HTTP 200 for 600 seconds\"\nexit 1\nfi\n\necho \"You can now access http://$host\"\nEOT\nsudo chmod 755 /usr/local/bin/wait-for-lb-argocd\n\nsudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl\nsudo chmod +x /usr/bin/kubectl\n\nsudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64\nsudo chmod +x /usr/bin/argocd\n\nsudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64\nsudo chmod +x /usr/local/bin/kubectl-argo-rollouts\n\ncurl --silent --location \"https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz\" | tar xz -C /tmp\nsudo mv -f /tmp/linux-amd64/helm /usr/bin\nsudo chmod +x /usr/bin/helm\n\nsudo curl --silent --location -o /tmp/terraform.zip \"https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip\"\ncd /tmp && unzip -o /tmp/terraform.zip && cd -\nchmod +x /tmp/terraform\nsudo mv -f /tmp/terraform /usr/bin\n\nsudo curl --silent --location \"https://go.dev/dl/go1.23.1.linux-amd64.tar.gz\" | sudo tar xz -C /usr/local\n\ncurl --silent --location \"https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksctl\nsudo mv /tmp/eksctl /usr/local/bin\ncurl -sSL \"https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz\" | tar xz -C /tmp\nchmod +x /tmp/eksdemo\nmv /tmp/eksdemo /usr/local/bin  \n\n\n\nsudo su - ec2-user <<EOF\nset -x\nexport | sort\n\naws configure set cli_pager \"\"\n\naws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNTID.dkr.ecr.$AWS_REGION.amazonaws.com\n\n# start of cloud9-init script\nkubectl completion bash >>  ~/.bash_completion\necho \"complete -F __start_kubectl k\" >> ~/.bash_completion\nargocd completion bash >>  ~/.bash_completion\nhelm completion bash >>  ~/.bash_completion\necho \"alias k=kubectl\" >> ~/.bashrc\necho \"alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'\" | tee -a ~/.bashrc\necho \"alias ll='ls -la'\" >> ~/.bashrc\n\necho \"alias ktx=kubectx\" >> ~/.bashrc\necho \"alias kctx=kubectx\" >> ~/.bashrc\necho \"alias kns=kubens\" >> ~/.bashrc\necho \"export TERM=xterm-color\" >> ~/.bashrc\n\necho \"alias code=/usr/lib/code-server/bin/code-server\" >> ~/.bashrc\necho \"complete -F __start_kubectl k\" >> ~/.bashrc\ncurl -sS https://webinstall.dev/k9s | bash\n\nhelm repo add eks https://aws.github.io/eks-charts\nhelm repo update\n\n#Install Krew and stern\n(\n  cd \\$(mktemp -d) && pwd &&\n  OS=\\$(uname | tr '[:upper:]' '[:lower:]') &&\n  ARCH=\\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\\(arm\\)\\(64\\)\\?.*/\\1\\2/' -e 's/aarch64$/arm64/') &&\n  KREW=krew-\\${!OS}_\\${!ARCH} && echo \\$KREW\n  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\\${!KREW}.tar.gz &&\n  tar zxvf \\${!KREW}.tar.gz &&\n  ./\\${!KREW} install krew\n)\necho \"export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\" | tee -a ~/.bashrc\nexport PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH\nkubectl krew install stern\nkubectl krew install np-viewer \n\ngo install github.com/kyverno/chainsaw@latest\ngo install github.com/isovalent/aws-delete-vpc@latest\n\npip install pytest\npip install pytest_bdd boto3 kubernetes\n\ncurl -sfL https://direnv.net/install.sh | bash\n\n#Try Install some VsCode plugins\n/usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform || true\n/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders || true\n/usr/lib/code-server/bin/code-server --install-extension amazonwebservices.amazon-q-vscode || true\n\n#Install Amazon Q\ncurl --proto '=https' --tlsv1.2 -sSf \"https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip\" -o \"/tmp/q.zip\"\nunzip /tmp/q.zip -d /tmp\n/tmp/q/install.sh --no-confirm\n\n#Install ag silver search\n## Install build dependencies\nsudo dnf install -y git gcc make pkg-config automake autoconf pcre-devel xz-devel zlib-devel\n## Clone the repository, build and install from source\ncd /tmp && git clone https://github.com/ggreer/the_silver_searcher.git && \\\ncd the_silver_searcher && \\\n./build.sh && \\\nsudo make install\n\n#Install fuzzy search\ngit clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf\n~/.fzf/install --all  \n\n#Install zsh\nsudo -k chsh -s /bin/zsh ec2-user\njq '. + {\"terminal.integrated.defaultProfile.linux\": \"zsh\"}' /home/ec2-user/.local/share/code-server/User/settings.json > temp.json && mv temp.json /home/ec2-user/.local/share/code-server/User/settings.json\nrm -rf ~/.oh-my-zsh\n\nwget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh\nCHSH=no RUNZSH=no sh install.sh\n\ngit clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k\ngit clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting\ngit clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions\ngit clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search\n\n\n#Install workshop\nmkdir -p $BASE_DIR\ngit clone $WORKSHOP_GIT_URL $BASE_DIR\ncd $BASE_DIR\ngit checkout $WORKSHOP_GIT_BRANCH\n\ncp hack/.zshrc hack/.p10k.zsh ~/\n\n# Copy VPC folder and start VPC creation in background\ncp -r $BASE_DIR/terraform/vpc /home/ec2-user/environment/\n\n# cd /home/ec2-user/environment/vpc\n# nohup bash -c \"terraform init && terraform apply -auto-approve && echo 'VPC_CREATION_COMPLETE' > /tmp/vpc_status.flag\" > /tmp/vpc_creation.log 2>&1 &\n\n# Copy hub folder and start EKS cluster creation in background\ncp -r $BASE_DIR/terraform/hub /home/ec2-user/environment/\n\n\n# Copy spoke folder and start spoke cluster creation in background\ncp -r $BASE_DIR/terraform/spoke /home/ec2-user/environment/\ncd /home/ec2-user/environment/spoke\n\n# Setup bashrc\nls -lt ~\nmkdir -p ~/.bashrc.d\ncp $BASE_DIR/hack/.bashrc.d/* ~/.bashrc.d/\n\n# Common backend config\ncat << EOT > /home/ec2-user/environment/common/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"common/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n# VPC backend config\ncat << EOT > /home/ec2-user/environment/vpc/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"vpc/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n# Hub backend config\ncat << EOT > /home/ec2-user/environment/hub/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"hub/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n# Spoke backend config\ncat << EOT > /home/ec2-user/environment/spoke/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"spoke/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n# This is required during delete. \ncat << EOT > /home/ec2-user/eks-blueprints-for-terraform-workshop/terraform/common/backend_override.tf\nterraform {\n  backend \"s3\" {\n    bucket         = \"$BUCKET_NAME\"\n    key            = \"common/terraform.tfstate\"\n    region         = \"$AWS_REGION\"\n  }\n}\nEOT\n\n\nEOF\n\n#install kubectx & kubens\nsudo rm -rf /opt/kubectx\nsudo git clone https://github.com/ahmetb/kubectx /opt/kubectx\nsudo ln -sf /opt/kubectx/kubectx /usr/local/bin/kubectx\nsudo ln -sf /opt/kubectx/kubens /usr/local/bin/kubens\n\n\nsudo curl -L https://github.com/awslabs/eks-node-viewer/releases/download/v0.7.0/eks-node-viewer_Linux_x86_64 -o /usr/local/bin/eks-node-viewer  && sudo chmod +x $_\n\nsource ~/.bashrc\n\n# end of cloud9-init script\n\necho '=== Configure .bashrc.d ==='\nif [[ ! -d \"/home/ec2-user/.bashrc.d\" ]]; then\n    sudo -H -u ec2-user bash -c \"mkdir -p ~/.bashrc.d\"\nfi\ncat << EOT > /home/ec2-user/.bashrc.d/env.bash\nexport ACCOUNTID=$ACCOUNTID\nexport ACCOUNT_ID=$ACCOUNTID\nexport AWS_ACCOUNT_ID=$ACCOUNTID\nexport AWS_DEFAULT_REGION=$AWS_REGION\nexport GOROOT=/usr/local/go\nexport ASSETS_BUCKET_NAME=$ASSETS_BUCKET_NAME\nexport ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX\nexport BUCKET_NAME=$BUCKET_NAME\nexport WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL\nexport WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH\nexport BASE_DIR=$BASE_DIR\nexport GITOPS_DIR=$GITOPS_DIR\nEOT\n\nsudo -H -u ec2-user bash -c \"cat <<'EOF' >> ~/.bashrc \nfor file in ~/.bashrc.d/*.bash; do\n  source \"\\$file\" || true\ndone\nEOF\n\"\n\necho '=== CONFIGURE awscli and setting ENVIRONMENT VARS ==='\necho \"complete -C '/usr/local/bin/aws_completer' aws\" >> /home/ec2-user/.bashrc.d/aws.bash\necho '=== Run init script ==='\n# aws s3 cp s3://${AssetsBucketName}/${AssetsBucketPrefix}cloud9-init.sh /tmp && bash /tmp/cloud9-init.sh\necho '=== CLEANING /home/ec2-user ==='\n# for f in cloud9; do rm -rf /home/ec2-user/$f; done # cloud9 doesn't exists\nchown -R ec2-user:ec2-user /home/ec2-user/\n\n#Don't reboot in ssm document, that break the execution\necho \"Bootstrap completed with return code $?\"",
               {
                "BUCKET_NAME": {
                 "Ref": "TFStateBackendBucketF0FC9A9D"
@@ -1127,7 +1271,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-riv24}\n        IS_WS=${IS_WS:-false}\n        GITEA_PASSWORD=${GITEA_PASSWORD}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"eks-blueprints-workshop-tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # This gives access to the EKS cluster in terraform\n\n        # Common backend config\n\n        ls -la $BASE_DIR/terraform/common\n\n        cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"common/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n        for i in $(seq 1 60);\n        do\n          if [[ -z $GITEA_EXTERNAL_URL ]]; then\n            sleep 10\n            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n            echo $GITEA_EXTERNAL_URL\n          else\n            break\n          fi\n        done\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/hack/destroy.sh\n\n        else\n\n          # Project Creation\n          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING\"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n        IS_WS=${IS_WS:-false}\n        GITEA_PASSWORD=${GITEA_PASSWORD}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"eks-blueprints-workshop-tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # This gives access to the EKS cluster in terraform\n\n        # Common backend config\n\n        ls -la $BASE_DIR/terraform/common\n\n        cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"common/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        # VPC backend config\n        cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"vpc/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n        for i in $(seq 1 60);\n        do\n          if [[ -z $GITEA_EXTERNAL_URL ]]; then\n            sleep 10\n            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n            echo $GITEA_EXTERNAL_URL\n          else\n            break\n          fi\n        done\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/hack/destroy.sh\n\n        else\n\n          # Project Creation\n          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh\n          \n          # VPC Creation\n          DEBUG=1 $BASE_DIR/terraform/vpc/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING\"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -1367,7 +1511,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "379663857951e0f0a57a000b6979d19b"
+    "ContentHash": "8e86898aa5307a9decc159794d34de19"
    },
    "DependsOn": [
     "EKSWSCOMMONBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSCOMMONReportBuildFunction7684FC5473A8AD22",
@@ -1450,6 +1594,638 @@
      }
     ]
    }
+  },
+  "EKSWSHUBStackDeployProjectB79E3671": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "TFSTATE_BUCKET_NAME",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Ref": "TFStateBackendBucketF0FC9A9D"
+       }
+      },
+      {
+       "Name": "WORKSHOP_GIT_URL",
+       "Type": "PLAINTEXT",
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+      },
+      {
+       "Name": "WORKSHOP_GIT_BRANCH",
+       "Type": "PLAINTEXT",
+       "Value": "mainline"
+      },
+      {
+       "Name": "FORCE_DELETE_VPC",
+       "Type": "PLAINTEXT",
+       "Value": "true"
+      },
+      {
+       "Name": "GITEA_PASSWORD",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::GetAtt": [
+         "IDEBLUEIdePasswordExporterA384D1E9",
+         "password"
+        ]
+       }
+      },
+      {
+       "Name": "IS_WS",
+       "Type": "PLAINTEXT",
+       "Value": "false"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # Hub backend config\n        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"hub/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/hub/destroy.sh\n\n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/hub/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "Type": "NO_SOURCE"
+    },
+    "TimeoutInMinutes": 60
+   }
+  },
+  "EKSWSHUBStartBuildFunctionServiceRole47C5B33B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codebuild:StartBuild",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSHUBStackDeployProjectB79E3671",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE",
+    "Roles": [
+     {
+      "Ref": "EKSWSHUBStartBuildFunctionServiceRole47C5B33B"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBStartBuildFunction7B1F451A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n  try {\n    const projectName = event.ResourceProperties.ProjectName;\n    const codeBuildIamRoleArn = event.ResourceProperties.CodeBuildIamRoleArn\n\n    const codebuild = new AWS.CodeBuild();\n\n    console.log(`Starting new build of project ${projectName}`);\n\n    const { build } = await codebuild.startBuild({\n      projectName,\n      // Pass CFN related parameters through the build for extraction by the\n      // completion handler.\n      environmentVariablesOverride: [\n        {\n          name: 'CFN_RESPONSE_URL',\n          value: event.ResponseURL\n        },\n        {\n          name: 'CFN_STACK_ID',\n          value: event.StackId\n        },\n        {\n          name: 'CFN_REQUEST_ID',\n          value: event.RequestId\n        },\n        {\n          name: 'CFN_LOGICAL_RESOURCE_ID',\n          value: event.LogicalResourceId\n        },\n        {\n          name: 'REQUESTED_ACTION',\n          value: event.RequestType\n        },\n        {\n          name: 'RESOURCE_CODEBUILD_ROLE_ARN',\n          value: codeBuildIamRoleArn\n        }\n      ]\n    }).promise();\n    console.log(`Build id ${build.id} started - resource completion handled by EventBridge`);\n  } catch(error) {\n    console.error(error);\n    await respond(event, context, 'FAILED', { Error: error });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSHUBStartBuildFunctionServiceRole47C5B33B",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSHUBStartBuildFunctionServiceRoleDefaultPolicy60142BDE",
+    "EKSWSHUBStartBuildFunctionServiceRole47C5B33B"
+   ]
+  },
+  "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:ListBuildsForProject"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSHUBStackDeployProjectB79E3671",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "Roles": [
+     {
+      "Ref": "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBReportBuildFunctionD4882511": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n\n  const projectName = event['detail']['project-name'];\n\n  const codebuild = new AWS.CodeBuild();\n\n  const buildId = event['detail']['build-id'];\n  const { builds } = await codebuild.batchGetBuilds({\n    ids: [ buildId ]\n  }).promise();\n\n  console.log(JSON.stringify(builds, null, 4));\n\n  const build = builds[0];\n  // Fetch the CFN resource and response parameters from the build environment.\n  const environment = {};\n  build.environment.environmentVariables.forEach(e => environment[e.name] = e.value);\n\n  const response = {\n    ResponseURL: environment.CFN_RESPONSE_URL,\n    StackId: environment.CFN_STACK_ID,\n    LogicalResourceId: environment.CFN_LOGICAL_RESOURCE_ID,\n    RequestId: environment.CFN_REQUEST_ID\n  };\n\n  if (event['detail']['build-status'] === 'SUCCEEDED') {\n    await respond(response, context, 'SUCCESS', {}, 'build');\n  } else {\n    await respond(response, context, 'FAILED', { Error: 'Build failed' });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+   ]
+  },
+  "EKSWSHUBBuildCompleteRuleA0A3788F": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Build complete",
+    "EventPattern": {
+     "source": [
+      "aws.codebuild"
+     ],
+     "detail-type": [
+      "CodeBuild Build State Change"
+     ],
+     "detail": {
+      "build-status": [
+       "SUCCEEDED",
+       "FAILED",
+       "STOPPED"
+      ],
+      "project-name": [
+       {
+        "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+       }
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "EKSWSHUBReportBuildFunctionD4882511",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "EKSWSHUBBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSHUBReportBuildFunction56DCA7582390F184": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "EKSWSHUBReportBuildFunctionD4882511",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EKSWSHUBBuildCompleteRuleA0A3788F",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EKSWSHUBClusterStack2E920DC3": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "EKSWSHUBStartBuildFunction7B1F451A",
+      "Arn"
+     ]
+    },
+    "ProjectName": {
+     "Ref": "EKSWSHUBStackDeployProjectB79E3671"
+    },
+    "CodeBuildIamRoleArn": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "ContentHash": "a8009d087254e478597e1576d75cd954"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONClusterStackE20A043D",
+    "EKSWSHUBBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSHUBReportBuildFunction56DCA7582390F184",
+    "EKSWSHUBBuildCompleteRuleA0A3788F",
+    "EKSWSHUBReportBuildFunctionD4882511",
+    "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
+    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
+  },
+  "EKSWSSPOKEStackDeployProjectC79C3CCC": {
+   "Type": "AWS::CodeBuild::Project",
+   "Properties": {
+    "Artifacts": {
+     "Type": "NO_ARTIFACTS"
+    },
+    "Cache": {
+     "Type": "NO_CACHE"
+    },
+    "EncryptionKey": "alias/aws/s3",
+    "Environment": {
+     "ComputeType": "BUILD_GENERAL1_SMALL",
+     "EnvironmentVariables": [
+      {
+       "Name": "TFSTATE_BUCKET_NAME",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Ref": "TFStateBackendBucketF0FC9A9D"
+       }
+      },
+      {
+       "Name": "WORKSHOP_GIT_URL",
+       "Type": "PLAINTEXT",
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+      },
+      {
+       "Name": "WORKSHOP_GIT_BRANCH",
+       "Type": "PLAINTEXT",
+       "Value": "mainline"
+      },
+      {
+       "Name": "FORCE_DELETE_VPC",
+       "Type": "PLAINTEXT",
+       "Value": "true"
+      },
+      {
+       "Name": "GITEA_PASSWORD",
+       "Type": "PLAINTEXT",
+       "Value": {
+        "Fn::GetAtt": [
+         "IDEBLUEIdePasswordExporterA384D1E9",
+         "password"
+        ]
+       }
+      },
+      {
+       "Name": "IS_WS",
+       "Type": "PLAINTEXT",
+       "Value": "false"
+      }
+     ],
+     "Image": "aws/codebuild/amazonlinux2-x86_64-standard:4.0",
+     "ImagePullCredentialsType": "CODEBUILD",
+     "PrivilegedMode": false,
+     "Type": "LINUX_CONTAINER"
+    },
+    "ServiceRole": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "Source": {
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "Type": "NO_SOURCE"
+    },
+    "TimeoutInMinutes": 60
+   }
+  },
+  "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "codebuild:StartBuild",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSSPOKEStackDeployProjectC79C3CCC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B",
+    "Roles": [
+     {
+      "Ref": "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEStartBuildFunction5C34EB2E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n  try {\n    const projectName = event.ResourceProperties.ProjectName;\n    const codeBuildIamRoleArn = event.ResourceProperties.CodeBuildIamRoleArn\n\n    const codebuild = new AWS.CodeBuild();\n\n    console.log(`Starting new build of project ${projectName}`);\n\n    const { build } = await codebuild.startBuild({\n      projectName,\n      // Pass CFN related parameters through the build for extraction by the\n      // completion handler.\n      environmentVariablesOverride: [\n        {\n          name: 'CFN_RESPONSE_URL',\n          value: event.ResponseURL\n        },\n        {\n          name: 'CFN_STACK_ID',\n          value: event.StackId\n        },\n        {\n          name: 'CFN_REQUEST_ID',\n          value: event.RequestId\n        },\n        {\n          name: 'CFN_LOGICAL_RESOURCE_ID',\n          value: event.LogicalResourceId\n        },\n        {\n          name: 'REQUESTED_ACTION',\n          value: event.RequestType\n        },\n        {\n          name: 'RESOURCE_CODEBUILD_ROLE_ARN',\n          value: codeBuildIamRoleArn\n        }\n      ]\n    }).promise();\n    console.log(`Build id ${build.id} started - resource completion handled by EventBridge`);\n  } catch(error) {\n    console.error(error);\n    await respond(event, context, 'FAILED', { Error: error });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSSPOKEStartBuildFunctionServiceRoleDefaultPolicy1DF3034B",
+    "EKSWSSPOKEStartBuildFunctionServiceRole3F2372F0"
+   ]
+  },
+  "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:ListBuildsForProject"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "EKSWSSPOKEStackDeployProjectC79C3CCC",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "Roles": [
+     {
+      "Ref": "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEReportBuildFunctionCAD58231": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "// This function is based on the cfnresponse JS module that is published\n// by CloudFormation. It's an async function that makes coding much easier.\nconst respond = async function(event, context, responseStatus, responseData, physicalResourceId, noEcho) {\n  return new Promise((resolve, reject) => {\n    var responseBody = JSON.stringify({\n        Status: responseStatus,\n        Reason: \"See the details in CloudWatch Log Stream: \" + context.logGroupName + \" \" + context.logStreamName,\n        PhysicalResourceId: physicalResourceId || context.logStreamName,\n        StackId: event.StackId,\n        RequestId: event.RequestId,\n        LogicalResourceId: event.LogicalResourceId,\n        NoEcho: noEcho || false,\n        Data: responseData\n    });\n\n    console.log(\"Response body:\\\\n\", responseBody);\n\n    var https = require(\"https\");\n    var url = require(\"url\");\n\n    var parsedUrl = url.parse(event.ResponseURL);\n    var options = {\n        hostname: parsedUrl.hostname,\n        port: 443,\n        path: parsedUrl.path,\n        method: \"PUT\",\n        headers: {\n            \"content-type\": \"\",\n            \"content-length\": responseBody.length\n        }\n    };\n\n    var request = https.request(options, function(response) {\n        console.log(\"Status code: \" + response.statusCode);\n        console.log(\"Status message: \" + response.statusMessage);\n        resolve();\n    });\n\n    request.on(\"error\", function(error) {\n        console.log(\"respond(..) failed executing https.request(..): \" + error);\n        resolve();\n    });\n\n    request.write(responseBody);\n    request.end();\n  });\n};\nconst AWS = require('aws-sdk');\n\nexports.handler = async function (event, context) {\n  console.log(JSON.stringify(event, null, 4));\n\n  const projectName = event['detail']['project-name'];\n\n  const codebuild = new AWS.CodeBuild();\n\n  const buildId = event['detail']['build-id'];\n  const { builds } = await codebuild.batchGetBuilds({\n    ids: [ buildId ]\n  }).promise();\n\n  console.log(JSON.stringify(builds, null, 4));\n\n  const build = builds[0];\n  // Fetch the CFN resource and response parameters from the build environment.\n  const environment = {};\n  build.environment.environmentVariables.forEach(e => environment[e.name] = e.value);\n\n  const response = {\n    ResponseURL: environment.CFN_RESPONSE_URL,\n    StackId: environment.CFN_STACK_ID,\n    LogicalResourceId: environment.CFN_LOGICAL_RESOURCE_ID,\n    RequestId: environment.CFN_REQUEST_ID\n  };\n\n  if (event['detail']['build-status'] === 'SUCCEEDED') {\n    await respond(response, context, 'SUCCESS', {}, 'build');\n  } else {\n    await respond(response, context, 'FAILED', { Error: 'Build failed' });\n  }\n};\n"
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs16.x",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+   ]
+  },
+  "EKSWSSPOKEBuildCompleteRule8FB17505": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Build complete",
+    "EventPattern": {
+     "source": [
+      "aws.codebuild"
+     ],
+     "detail-type": [
+      "CodeBuild Build State Change"
+     ],
+     "detail": {
+      "build-status": [
+       "SUCCEEDED",
+       "FAILED",
+       "STOPPED"
+      ],
+      "project-name": [
+       {
+        "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+       }
+      ]
+     }
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "EKSWSSPOKEReportBuildFunctionCAD58231",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   }
+  },
+  "EKSWSSPOKEBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSSPOKEReportBuildFunction21F69DA8EC6BBC40": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEReportBuildFunctionCAD58231",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEBuildCompleteRule8FB17505",
+      "Arn"
+     ]
+    }
+   }
+  },
+  "EKSWSSPOKEClusterStackC01C0A32": {
+   "Type": "AWS::CloudFormation::CustomResource",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "EKSWSSPOKEStartBuildFunction5C34EB2E",
+      "Arn"
+     ]
+    },
+    "ProjectName": {
+     "Ref": "EKSWSSPOKEStackDeployProjectC79C3CCC"
+    },
+    "CodeBuildIamRoleArn": {
+     "Fn::GetAtt": [
+      "SharedRoleD1D02F7E",
+      "Arn"
+     ]
+    },
+    "ContentHash": "1d78cbd1c841aa6210c7088b57bae275"
+   },
+   "DependsOn": [
+    "EKSWSCOMMONClusterStackE20A043D",
+    "EKSWSSPOKEBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSSPOKEReportBuildFunction21F69DA8EC6BBC40",
+    "EKSWSSPOKEBuildCompleteRule8FB17505",
+    "EKSWSSPOKEReportBuildFunctionCAD58231",
+    "EKSWSSPOKEReportBuildFunctionServiceRoleDefaultPolicy3F61EA2F",
+    "EKSWSSPOKEReportBuildFunctionServiceRole06904BF3"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete"
   }
  },
  "Parameters": {

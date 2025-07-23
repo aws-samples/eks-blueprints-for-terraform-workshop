@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
     principals {
       type        = "AWS"
       identifiers = [data.aws_ssm_parameter.argocd_hub_role.value]
-    }
+    }  
   }
 }
 EOF
@@ -99,7 +99,6 @@ Grant Cluster Admin access to the spoke role.
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 sed -i '
 /access_entries = {/,/^  }/ {
-  s/workshop_attendee/eks_admin/
   /^  }/i\
 \
     gitops_role = {\
@@ -115,7 +114,6 @@ sed -i '
     }
 }
 ' ~/environment/spoke/main.tf
-
 :::
 <!-- prettier-ignore-end -->
 
@@ -188,19 +186,39 @@ EOF
 :::
 <!-- prettier-ignore-start -->
 
-### 7. Apply the changes
+### 7. Configure Hub Remote state
+
+We need to reference outputs from the hub module for hub-spoke connectivity in the spoke-staging cluster.
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=yaml}
+cat <<'EOF' >> ~/environment/spoke/remote_state.tf
+data "terraform_remote_state" "hub" {
+  backend = "s3"
+
+  config = {
+    bucket = "${data.aws_ssm_parameter.tfstate_bucket.value}"
+    key    = "hub/terraform.tfstate"
+    region = data.aws_region.current.name
+  }
+}
+EOF
+:::
+<!-- prettier-ignore-start -->
+
+### 8. Apply the changes
 
 <!-- prettier-ignore-start -->
 
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 cd ~/environment/spoke
 terraform init
+terraform workspace select staging
 terraform apply --auto-approve
 :::
 
 <!-- prettier-ignore-end -->
 
-### 8. Check Hub Cluster Configuration
+### 9. Check Hub Cluster Configuration
 
 After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the ArgoCD UI running on the hub cluster.
 

@@ -17,6 +17,7 @@ delete_vpc_endpoints
 
 # # clean everything else
 cd ~/environment/vpc/
+terraform init
 terraform destroy -auto-approve || true
 
 #Do it 2 tims to be sure to delete everything
