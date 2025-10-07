@@ -8,7 +8,7 @@ weight: 11
 
 **Note**: This workshop is compatible with any AWS Region where Amazon EKS is available. The default region will be the one configured on the machine/laptop from which we are running the installation.
 
-This workshop is hosted in the following GitHub repository under the `aws-samples` organization: https://github.com/aws-samples/fleet-management-on-amazon-eks-workshop/
+This workshop is hosted in the following GitHub repository under the `aws-samples` organization: https://github.com/aws-samples/eks-blueprints-for-terraform-workshop/
 
 ## Prerequisites
 
