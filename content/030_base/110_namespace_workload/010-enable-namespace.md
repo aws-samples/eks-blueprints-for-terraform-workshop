@@ -7,13 +7,13 @@ weight: 10
 
 ::video{id=\_TdKzq1jXhM}
 
-The goal of this chapter is to create an ArgoCD Application for each workload to manage namespace creation. This is a bootstrap-level application that deploys the manifests found in the `namespace` folder of each workload.
+The goal of this chapter is to create an Argo CD Application for each workload to manage namespace creation. This is a bootstrap-level application that deploys the manifests found in the `namespace` folder of each workload.
 
-For example, the `create-namespace-workload-a` ArgoCD Application will be responsible for deploying the manifests located in the `workload-a/namespace` folder.
+For example, the `create-namespace-workload-a` Argo CD Application will be responsible for deploying the manifests located in the `workload-a/namespace` folder.
 
 ![Namespace Automation](/static/images/namespace-automation.png)
 
-To create an ArgoCD namespace Application for each workload, we will use an ApplicationSet. In an earlier bootstrap chapter, you created an ArgoCD Application that continuously watches the `bootstrap/` folder in the platform Git repository. In this chapter, you'll add a namespace ApplicationSet to that folder.
+To create an Argo CD namespace Application for each workload, we will use an ApplicationSet. In an earlier bootstrap chapter, you created an Argo CD Application that continuously watches the `bootstrap/` folder in the platform Git repository. In this chapter, you'll add a namespace ApplicationSet to that folder.
 
 ![Bootstrap Namespace](/static/images/namespace-applicationset-bootstrap.png)
 
@@ -74,7 +74,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-This ApplicationSet initiates the creation of namespace-specific ArgoCD Applications for all workloads.
+This ApplicationSet initiates the creation of namespace-specific Argo CD Applications for all workloads.
 
 - **Line 12**: The matrix generator creates permutations by combining the outputs of its inner generators (git and cluster).
 - **Line 22**: The Git generator iterates through each folder under `config/*/namespace` in the platform Git repository.
@@ -93,7 +93,7 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-After pushing, navigate to the ArgoCD dashboard and open the bootstrap application. You should see the newly created create-namespace ApplicationSet.
+After pushing, navigate to the Argo CD dashboard and open the bootstrap application. You should see the newly created create-namespace ApplicationSet.
 
 :::alert{header=Note type=warning}
 The 'create-namespace' applicationset will become visible after a few minutes.

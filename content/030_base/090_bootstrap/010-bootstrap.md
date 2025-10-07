@@ -15,7 +15,7 @@ In upcoming chapters you will add files to this folder for addon, namespace and 
 
 # Create the Bootstrap ApplicationSet
 
-The ApplicationSet creates a new ArgoCD Application named "bootstrap" that points to the platform/bootstrap directory in the platform Git repository.
+The ApplicationSet creates a new Argo CD Application named "bootstrap" that points to the platform/bootstrap directory in the platform Git repository.
 
 ### 1. Create the Bootstrap ApplicationSet
 
@@ -60,7 +60,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-Note Lines 22–24 use annotations from the ArgoCD cluster secret.
+Note Lines 22–24 use annotations from the Argo CD cluster secret.
 
 You can check values in your current environment.
 
@@ -106,7 +106,7 @@ We created a variable to reference bootstrap ApplicationSet in the previous step
 sed -i "s/#enableapps //g" ~/environment/hub/main.tf
 ```
 
-The code provided above uncomments GitOps Bridge to create the ArgoCD Application. In this case, it creates the bootstrap Application.
+The code provided above uncomments GitOps Bridge to create the Argo CD Application. In this case, it creates the bootstrap Application.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=false language=yaml highlightLines='10-10'}
@@ -188,9 +188,9 @@ cd ~/environment/hub
 terraform apply --auto-approve
 ```
 
-### Validate the Bootstrap Application in ArgoCD
+### Validate the Bootstrap Application in Argo CD
 
-Navigate to the ArgoCD dashboard in the UI and click on **Applications** to validate that the **bootstrap** Application was created successfully. The bootstrap ArgoCD Application is currently configured to point to the `bootstrap` folder in our platform Git repository.
+Navigate to the Argo CD dashboard in the UI and click on **Applications** to validate that the **bootstrap** Application was created successfully. The bootstrap Argo CD Application is currently configured to point to the `bootstrap` folder in our platform Git repository.
 ![bootstrap-application](/static/images/bootstrap-application.jpg)
 
 The folder is currently empty. In the upcoming chapters, you'll populate it with ApplicationSet files for add-ons, namespaces, projects, and workloads.

@@ -7,20 +7,20 @@ weight: 10
 
 ::video{id=p3_gHW9QX2g}
 
-In this chapter you will create a role that is assumed by ArgoCD service accounts. This role will have assume role permission for other roles.
+In this chapter you will create a role that is assumed by Argo CD service accounts. This role will have assume role permission for other roles.
 
 ![Hub Role](/static/images/hub-spoke-hub-role.png)
 
-### 1. Create ArgoCD Hub Role
+### 1. Create Argo CD Hub Role
 
 Now, let's create the IAM role and associated resources:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='24,60,66,73' }
-# Variable to save the ArgoCD Role in SSM Parameters
+# Variable to save the Argo CD Role in SSM Parameters
 cat <<'EOF' >> ~/environment/hub/variables.tf
 variable "ssm_parameter_name_argocd_role_suffix" {
-  description = "SSM parameter name for ArgoCD role"
+  description = "SSM parameter name for Argo CD role"
   type        = string
   default     = "argocd-central-role"
 }
@@ -29,7 +29,7 @@ EOF
 
 cat <<'EOF' >> ~/environment/hub/pod-identity.tf
 ################################################################################
-# ArgoCD EKS Pod Identity Association
+# Argo CD EKS Pod Identity Association
 ################################################################################
 resource "aws_iam_role" "argocd_hub" {
   name_prefix = "${local.context_prefix}-argocd-hub"
@@ -102,7 +102,7 @@ EOF
 
 Line 14: Both AssumeRole and TagSession are required for pod identity  
 Line 50: Store hub role ARN in a parameter store. Spoke Cluster terraform module looks the parameter for the arn. It needs this to create trust with the spoke  
-Line 56-63: Associate the role with the ArgoCD service accounts
+Line 56-63: Associate the role with the Argo CD service accounts
 
 ### 2. Apply Terraform
 
@@ -116,9 +116,9 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 3. Restart ArgoCD Pods to Apply Pod Identity
+### 3. Restart Argo CD Pods to Apply Pod Identity
 
-When we initially installed ArgoCD, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the ArgoCD pods so they get configured for pod identity:
+When we initially installed Argo CD, there was no pod identity association. The pod identity was added in this chapter. Let's recreate the Argo CD pods so they get configured for pod identity:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }

@@ -7,7 +7,7 @@ weight: 20
 
 ::video{id=Fp0eTwzJIq0}
 
-In an earlier chapter, you used the GitOps Bridge Terraform module to install ArgoCD and inject the required labels and annotations into the cluster.
+In an earlier chapter, you used the GitOps Bridge Terraform module to install Argo CD and inject the required labels and annotations into the cluster.
 
 In this chapter, you’ll take the next step: using the GitOps Bridge Helm chart to automate the installation and lifecycle management of cluster add-ons.
 

@@ -7,8 +7,8 @@ weight: 20
 
 ::video{id=KKHVP2Ogq64}
 
-In the previous chapter, you deployed an application using an ArgoCD Application object to the hub-cluster.
-To deploy the same application to the spoke-cluster, you would need to create another ArgoCD Application manually.
+In the previous chapter, you deployed an application using an Argo CD Application object to the hub-cluster.
+To deploy the same application to the spoke-cluster, you would need to create another Argo CD Application manually.
 
 ![With ApplicationSet](/static/images/without-applicationset.png)
 
@@ -16,13 +16,13 @@ Instead of doing that every time, Argo CD offers a more scalable and automated s
 
 ![With ApplicationSet](/static/images/with-applicationset.png)
 
-Think of an ApplicationSet as a factory for ArgoCD Applications. It defines a template and uses generators to create multiple Application objects.
+Think of an ApplicationSet as a factory for Argo CD Applications. It defines a template and uses generators to create multiple Application objects.
 
 ![ApplicationSet Template](/static/images/applicationset-template.png)
 
 # Static List Generator
 
-Let’s create an ApplicationSet that deploys the guestbook ArgoCD Application to list of clusters. In this example to hub-cluster.
+Let’s create an ApplicationSet that deploys the guestbook Argo CD Application to list of clusters. In this example to hub-cluster.
 
 ### 1. Create guestbook ApplicationSet
 
@@ -77,7 +77,7 @@ code ~/environment/basics/guestbookApplicationSet.yaml
 :::
 <!-- prettier-ignore-end -->
 
-Navigate to the gitea Dashboard and copy HTTPS url of the application repository(eks-blueprints-workshop-gitops-apps).
+Navigate to the gitea Dashboard and copy HTTPS url of the application repository (eks-blueprints-workshop-gitops-apps).
 
 :::alert{header="Gitea Dashboard URL"}
 You execute the following command in the terminal for gitea url.
@@ -111,7 +111,7 @@ kubectl apply -f ~/environment/basics/guestbookApplicationSet.yaml
 
 ### 5. Verify Application
 
-Navigate to the ArgoCD web UI. You should see the guestbook ArgoCD Application listed.
+Navigate to the Argo CD web UI. You should see the guestbook Argo CD Application listed.
 
 ![ApplicationSet Guestbook](/static/images/applicationset-guestbook.png)
 
@@ -142,11 +142,11 @@ It may take a few minutes to delete resources.
 
 The static list generator requires you to manually add each cluster. A better approach is to dynamically select clusters using the Cluster generator, which selects clusters based on labels.
 
-ArgoCD supports different types of [Generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix and more, to dynamically generate Applications.
+Argo CD supports different types of [Generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix and more, to dynamically generate Applications.
 
 ## Cluster Generator
 
-Let's explore how the Cluster generator works. The Cluster generator selects clusters based on **labels** defined on the cluster object. You can view labels navigating to ArgoCD dashboard > Settings > Clusters > hub-cluster:
+Let's explore how the Cluster generator works. The Cluster generator selects clusters based on **labels** defined on the cluster object. You can view labels navigating to Argo CD dashboard > Settings > Clusters > hub-cluster:
 
 ![Hub Cluster Labels](/static/images/hubcluster-initial-labels.png)
 
@@ -154,7 +154,7 @@ These labels are created by GitOps Bridge.
 
 Labels are similar to AWS tags. For example, in AWS you can designate a role for an EC2 instance using tags like app=webserver or app=appserver. These tags help identify the role or purpose of the instance.
 
-Labels in ArgoCD work in a similar way. You can assign labels to clusters to indicate their role, environment, or purpose. For instance, labeling a cluster with workload_webstore=true(indicating it can deploy the Webstore app) or environment=staging( indicating it should receive staging versions) allows tools like Argo CD ApplicationSet to target the right clusters dynamically based on these roles.
+Labels in Argo CD work in a similar way. You can assign labels to clusters to indicate their role, environment, or purpose. For instance, labeling a cluster with workload_webstore=true (indicating it can deploy the Webstore app) or environment=staging (indicating it should receive staging versions) allows tools like Argo CD ApplicationSet to target the right clusters dynamically based on these roles.
 
 Let's look at a few examples of how to use labels with the Cluster generator.
 
@@ -188,6 +188,6 @@ The following generator creates 2 applications because 2 cluster labels match th
 
 ![applicationset](/static/images/applicationset-workloads.png)
 
-If you update the labels on a cluster, the ApplicationSet controller will **dynamically** generate new ArgoCD Applications or delete existing ones based on the updated label values.
+If you update the labels on a cluster, the ApplicationSet controller will **dynamically** generate new Argo CD Applications or delete existing ones based on the updated label values.
 
 For example, in the scenario above, if you set workloads=true on the hub-cluster, the ApplicationSet will automatically generate an additional Application targeting that cluster.

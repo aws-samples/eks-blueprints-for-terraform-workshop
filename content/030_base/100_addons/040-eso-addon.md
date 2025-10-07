@@ -1,5 +1,5 @@
 ---
-title: "Install External Secrets Operator(ESO) Addon"
+title: "Install External Secrets Operator (ESO) Addon"
 weight: 40
 ---
 

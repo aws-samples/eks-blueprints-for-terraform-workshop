@@ -7,16 +7,16 @@ weight: 10
 
 ::video{id=m2Yr-cjrGE0}
 
-Earlier in the "Application" chapter, you updated manually repoURL in the ArgoCD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata, from annotations on cluster objects.
+Earlier in the "Application" chapter, you updated manually repoURL in the Argo CD Application manifest. To make this more dynamic and reusable, you can use an ApplicationSet that pulls environment values like repoURL from metadata, from annotations on cluster objects.
 
-Annotations are key-value pairs attached to ArgoCD cluster object.
-The hub-cluster already includes annotations injected by GitOps Bridge. You can view these by navigating to ArgoCD Dashboard > Settings > Clusters > hub-cluster.
+Annotations are key-value pairs attached to Argo CD cluster object.
+The hub-cluster already includes annotations injected by GitOps Bridge. You can view these by navigating to Argo CD Dashboard > Settings > Clusters > hub-cluster.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-metadata.png)
 
 > Labels can be used to find collections of objects that satisfy generator conditions. Annotations provide additional information like repo URL.
 
-In upcoming chapters, you'll create an ApplicationSet that references Git repositories. ArgoCD lets you reference these repositories dynamically using annotations. For example to reference workload_repo_url annotation:
+In upcoming chapters, you'll create an ApplicationSet that references Git repositories. Argo CD lets you reference these repositories dynamically using annotations. For example to reference workload_repo_url annotation:
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=false highlightLines='7'}
@@ -30,11 +30,11 @@ template:
 :::
 <!-- prettier-ignore-end -->
 
-Information about repositories (platform,workloads,addons) is already populated in AWS Secrets(eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
+Information about repositories (platform,workloads,addons) is already populated in AWS Secrets (eks-blueprints-workshop-gitops-platform,eks-blueprints-workshop-gitops-workloads,eks-blueprints-workshop-gitops-addons). The following is AWS Secret values from eks-blueprints-workshop-gitops-platform . This secret stores metadata for the platform Git repository.
 
 ![Git Secrets](/static/images/git-secrets.png)
 
-In this chapter you will copy these values into annotations so that they can be referenced in ArgoCD ApplicationSet.
+In this chapter you will copy these values into annotations so that they can be referenced in Argo CD ApplicationSet.
 
 ### 1. Reference Secrets Manager
 
@@ -140,7 +140,7 @@ EOF
 
 ### 3. Inject Annotations
 
-The annotations are applied to the hub-cluster object using the GitOps Bridge module. Use the following command to uncomment the metadata line( line 7) and enable annotation injection:
+The annotations are applied to the hub-cluster object using the GitOps Bridge module. Use the following command to uncomment the metadata line (line 7) and enable annotation injection:
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=true showLineNumbers=false}
@@ -148,7 +148,7 @@ sed -i "s/#enableannotation//g" ~/environment/hub/main.tf
 :::
 <!-- prettier-ignore-end -->
 
-The command above uncomments the metadata line( line 7) in main.tf, enabling annotation injection.
+The command above uncomments the metadata line (line 7) in main.tf, enabling annotation injection.
 
 <!-- prettier-ignore-start -->
 :::code{language=yml showCopyAction=false showLineNumbers=true highlightLines='7'}

@@ -11,7 +11,7 @@ In this chapter, you will configure the spoke-staging cluster so that it can be 
 
 ### 1. Spoke-Staging Access to Hub Cluster
 
-The spoke-staging Terraform needs access to the hub cluster to register itself( ArgoCD cluster object) as a managed cluster.
+The spoke-staging Terraform needs access to the hub cluster to register itself (Argo CD cluster object) as a managed cluster.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
@@ -43,7 +43,7 @@ Retrieve the hub role ARN from the SSM parameter. This role is required in the t
 :::code{showCopyAction=true showLineNumbers=false language=yaml}
 cat <<'EOF' >> ~/environment/spoke/variables.tf
 variable "ssm_parameter_name_argocd_role_suffix" {
-  description = "SSM parameter name for ArgoCD role"
+  description = "SSM parameter name for Argo CD role"
   type        = string
   default     = "argocd-central-role"
 }
@@ -66,7 +66,7 @@ EOF
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='15'}
 cat <<'EOF' >> ~/environment/spoke/main.tf
 ################################################################################
-# ArgoCD EKS Access
+# Argo CD EKS Access
 ################################################################################
 resource "aws_iam_role" "spoke" {
   name_prefix =  "${local.name}-argocd-spoke"
@@ -117,7 +117,7 @@ sed -i '
 :::
 <!-- prettier-ignore-end -->
 
-### 5. Register Spoke-Staging cluster with Hub ArgoCD
+### 5. Register Spoke-Staging cluster with Hub Argo CD
 
 ![Staging Cluster Registration](/static/images/hub-spoke-cluster-object.png)
 
@@ -131,7 +131,7 @@ module "gitops_bridge_bootstrap_hub" {
   source  = "gitops-bridge-dev/gitops-bridge/helm"
   version = "0.0.1"
 
-  # The ArgoCD remote cluster secret is deployed on the hub cluster, not on spoke clusters
+  # The Argo CD remote cluster secret is deployed on the hub cluster, not on spoke clusters
   providers = {
     kubernetes = kubernetes.hub
   }
@@ -163,7 +163,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-Line 15: Does not install ArgoCD on the spoke cluster
+Line 15: Does not install Argo CD on the spoke cluster
 
 ### 6. Allow Hub Nodes to access the Spoke cluster
 
@@ -220,6 +220,6 @@ terraform apply --auto-approve
 
 ### 9. Check Hub Cluster Configuration
 
-After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the ArgoCD UI running on the hub cluster.
+After applying the changes, the spoke-staging cluster should appear in the Settings → Clusters section of the Argo CD UI running on the hub cluster.
 
 ![Staging Cluster](/static/images/spoke-staging-cluster.png)

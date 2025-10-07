@@ -102,7 +102,7 @@ It can take a few minutes for the namespaces to be created.
 Wait a few minutes and try again.
 :::
 
-With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using ArgoCD and Helm, driven by simple Git changes.
+With this setup, the webstore namespace and its policies (like LimitRange and NetworkPolicies) are automatically managed using Argo CD and Helm, driven by simple Git changes.
 
 ```bash
 kubectl get ns --context spoke-staging
@@ -176,6 +176,6 @@ metadata:
 
 :::
 
-You can also see the application namespace-spoke-webstore on the ArgoCD dashboard.
+You can also see the application namespace-spoke-webstore on the Argo CD dashboard.
 
 ![namespace-hub-webstore](/static/images/namespace-hub-webstore.png)
