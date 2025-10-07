@@ -7,13 +7,13 @@ weight: 20
 
 ::video{id=WQTL4_zfFBo}
 
-Similar to namespace automation in the previous chapter, the goal of this chapter is to create an ArgoCD Application for each workload to manage workload deployment. This is a bootstrap-level application that deploys the manifests found in the `deployment` folder of each workload.
+Similar to namespace automation in the previous chapter, the goal of this chapter is to create an Argo CD Application for each workload to manage workload deployment. This is a bootstrap-level application that deploys the manifests found in the `deployment` folder of each workload.
 
-For example, the `create-deployment-workload-a` ArgoCD Application will be responsible for deploying the manifests located in the `workload-a/deployment` folder.
+For example, the `create-deployment-workload-a` Argo CD Application will be responsible for deploying the manifests located in the `workload-a/deployment` folder.
 
 ![Workload Automation](/static/images/workload-automation.png)
 
-To create an ArgoCD Deployment Application for each workload, we will use an ApplicationSet. In an earlier bootstrap chapter, you created an ArgoCD Application that continuously watches the `bootstrap/` folder in the platform Git repository. In this chapter, you'll add a Deployment ApplicationSet to that folder.
+To create an Argo CD Deployment Application for each workload, we will use an ApplicationSet. In an earlier bootstrap chapter, you created an Argo CD Application that continuously watches the `bootstrap/` folder in the platform Git repository. In this chapter, you'll add a Deployment ApplicationSet to that folder.
 
 ### 1. Create bootstrap workload applicationset
 
@@ -72,7 +72,7 @@ EOF
 :::
 <!-- prettier-ignore-end -->
 
-This ApplicationSet initiates the creation of deployment-specific ArgoCD Applications for all workloads.
+This ApplicationSet initiates the creation of deployment-specific Argo CD Applications for all workloads.
 
 - **Line 12**: The matrix generator creates permutations by combining the outputs of its inner generators (git and cluster).
 - **Line 22**: The Git generator iterates through each folder under `config/*/deployment` in the platform Git repository.

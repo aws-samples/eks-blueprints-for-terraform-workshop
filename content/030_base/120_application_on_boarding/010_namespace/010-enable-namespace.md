@@ -7,7 +7,7 @@ weight: 10
 
 ::video{id=HPQvdbKVGmo}
 
-In this chapter, you will onboard Webstore application to create environment(dev) specific namespaces (ui,orders,checkout,carts,catalog,assets).
+In this chapter, you will onboard Webstore application to create environment (dev) specific namespaces (ui,orders,checkout,carts,catalog,assets).
 
 Building on the automation in the 'Namespace and Workload Automation>Namespace automation' chapter, we’ll add a new folder at `config/webstore/namespace` in the platform Git repository. When this folder and its manifest are pushed to Git, the existing create-namespace ApplicationSet will:
 

@@ -1,5 +1,5 @@
 ---
-title: "Hub-Spoke ArgoCD Deployment"
+title: "Hub-Spoke Argo CD Deployment"
 weight: 40
 ---
 

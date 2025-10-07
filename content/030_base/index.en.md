@@ -3,7 +3,7 @@ title: "Standalone Argo CD Deployment"
 weight: 30
 ---
 
-In this module, you will deploy a **self-contained ArgoCD** instance within a single Amazon EKS cluster. This standalone setup is ideal for managing resources within a single cluster, where Argo CD is co-located with the workloads and Kubernetes addons it manages.
+In this module, you will deploy a **self-contained Argo CD** instance within a single Amazon EKS cluster. This standalone setup is ideal for managing resources within a single cluster, where Argo CD is co-located with the workloads and Kubernetes addons it manages.
 
 ![Standalone](/static/images/standalone-argocd.png)
 

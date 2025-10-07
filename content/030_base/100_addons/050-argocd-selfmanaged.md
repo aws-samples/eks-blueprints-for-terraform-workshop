@@ -1,5 +1,5 @@
 ---
-title: "Self-Manage ArgoCD as an Addon"
+title: "Self-Manage Argo CD as an Addon"
 weight: 50
 ---
 
@@ -7,11 +7,11 @@ weight: 50
 
 ::video{id=v-WLsiTiiP8}
 
-Initially, ArgoCD was installed using the GitOps Bridge Terraform module. However, ArgoCD can also be managed as a GitOps-managed add-on—just like any other add-on.
+Initially, Argo CD was installed using the GitOps Bridge Terraform module. However, Argo CD can also be managed as a GitOps-managed add-on—just like any other add-on.
 
-By enabling ArgoCD as an add-on, we allow it to manage its own lifecycle. This enables declarative upgrades, configuration changes, and even clean removal, all via GitOps.
+By enabling Argo CD as an add-on, we allow it to manage its own lifecycle. This enables declarative upgrades, configuration changes, and even clean removal, all via GitOps.
 
-### 1. Set ArgoCD label
+### 1. Set Argo CD label
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml }
@@ -47,16 +47,16 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 3. Validate ArgoCD add-on
+### 3. Validate Argo CD add-on
 
-You should now see the ArgoCD application itself listed in the dashboard, managed like other addons.
+You should now see the Argo CD application itself listed in the dashboard, managed like other addons.
 
 ![argocd-values](/static/images/argocd-selfmanage.png)
 
 :::alert{header=Note type=warning}
-When ArgoCD redeploys itself, the connection will be temporarily lost as the target pod is renewed. It may take a **few minutes** for the ArgoCD Dashboard to re-establish the connection.
+When Argo CD redeploys itself, the connection will be temporarily lost as the target pod is renewed. It may take a **few minutes** for the Argo CD Dashboard to re-establish the connection.
 :::
 
 :::alert{header=Congratulations type=success}
-We are now managing our ArgoCD system with ArgoCD!
+We are now managing our Argo CD system with Argo CD!
 :::

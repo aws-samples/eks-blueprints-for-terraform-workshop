@@ -11,7 +11,7 @@ In this chapter application team ![Developer Task](/static/images/developer-task
 
 So far, we’ve created the staging namespace for the Webstore workload, but we haven’t deployed the staging Webstore application itself yet.
 
-This chapter builds on the namespace automation introduced in the **"Webstore Workload Onboarding > workload > Automate Webstore Deployment"** chapter, which already configured ArgoCD to deploy both staging and prod environment.
+This chapter builds on the namespace automation introduced in the **"Webstore Workload Onboarding > workload > Automate Webstore Deployment"** chapter, which already configured Argo CD to deploy both staging and prod environment.
 
 ![Webstore Workload Folders](/static/images/create-deployment-allenv-webstore.png)
 
@@ -45,7 +45,7 @@ git push
 ### 3. Validate the deployment
 
 :::alert{header="Important" type="warning"}
-It takes a few minutes for ArgoCD to synchronize, and then for Karpenter to provision the additional node.
+It takes a few minutes for Argo CD to synchronize, and then for Karpenter to provision the additional node.
 It also takes a few minutes for the load balancer to be provisioned correctly.
 :::
 

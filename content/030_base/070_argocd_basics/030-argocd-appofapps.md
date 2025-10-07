@@ -16,16 +16,16 @@ In real-world organizations, deploying an application involves multiple teams. L
 - ![Developers](/static/images/developer-task.png) **Developers**: Responsible for application code and Kubernetes manifests for their workload.
 - ![Platform](/static/images/platform-task.png) **Platform Team**: Responsible for infrastructure (VPC, clusters, addons), namespace creation (quotas, limits, policies), and automating workload deployments.
 
-To enable clear separation of responsibilities and automation, ArgoCD users often adopt the App of Apps pattern.
+To enable clear separation of responsibilities and automation, Argo CD users often adopt the App of Apps pattern.
 
 ### What is the App of Apps Pattern?
 
-Normally, an ArgoCD Application is used to deploy Kubernetes manifests.
+Normally, an Argo CD Application is used to deploy Kubernetes manifests.
 For example, in earlier chapters, you saw how a guestbook Application deployed Deployment and Service resources directly to the hub-cluster.
 
 ![App of Apps Guestbook](/static/images/appofapps-guestbook.png)
 
-The **App of Apps** pattern in ArgoCD is a strategy where a single _parent_ `Application` deploys multiple _child_ `Applications/ApplicationSets`. For example, the webstore parent Application deploys Applications for the ui, assets, carts microservices.
+The **App of Apps** pattern in Argo CD is a strategy where a single _parent_ `Application` deploys multiple _child_ `Applications/ApplicationSets`. For example, the webstore parent Application deploys Applications for the ui, assets, carts microservices.
 
 ![App of Apps Webstore](/static/images/appofapps-webstore-concept.png)
 
@@ -86,7 +86,7 @@ spec:
 - **Lines 13–14**: Traverses all subdirectories under `webstore/`.
 
 The Git generator scans the webstore/ directory in the developer repo and finds six subfolders—one for each microservice (ui, orders, checkout, carts, catalog, assets).
-This results in six generator values, and for each value, ArgoCD creates a child Application using the template section.
+This results in six generator values, and for each value, Argo CD creates a child Application using the template section.
 
 #### Template
 

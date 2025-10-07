@@ -37,7 +37,7 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 3. Validate Label in ArgoCD
+### 3. Validate Label in Argo CD
 
 Navigate to **Argo CD > Settings > hub-cluster**. You should see the label `enable_ingress_nginx=true`.
 
@@ -45,7 +45,7 @@ Navigate to **Argo CD > Settings > hub-cluster**. You should see the label `enab
 
 ### 4. Validate Nginx Application addon
 
-Navigate to ArgoCD dashboard>Applications>cluster-addon. You can see addon-ingress-nginx-hub-cluster ApplicationSet.
+Navigate to Argo CD dashboard>Applications>cluster-addon. You can see addon-ingress-nginx-hub-cluster ApplicationSet.
 
 ![Enable Nginx](/static/images/nginx-application.png)
 

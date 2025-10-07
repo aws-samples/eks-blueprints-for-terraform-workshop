@@ -94,10 +94,10 @@ Webstore folder structure.
 
 Webstore workload has
 
-- 6 microservices( assets, carts, catalog, checkout, orders, ui)
+- 6 microservices ( assets, carts, catalog, checkout, orders, ui)
 - Each microservice has
   - base: directory holds the common configuration that applies to all environments.
-  - environment specific directories(dev,staging,prod) hold environment specific configurations, allowing for easy override and customization
+  - environment specific directories (dev,staging,prod) hold environment specific configurations, allowing for easy override and customization
 - To deploy webstore dev version, you have to deploy all microservices kustomization.yaml in dev folder
 
 ### 2. Git commit
@@ -117,11 +117,11 @@ git push
 The 'create-deployment-webstore' application will become visible after a few minutes.
 :::
 
-You can navigate to the ArgoCD dashboard> Applications> bootstrap to see Workload specific ArgoCD application i.e. create-deployment-webstore.
+You can navigate to the Argo CD dashboard> Applications> bootstrap to see Workload specific Argo CD application i.e. create-deployment-webstore.
 
 ![Create Deployment Webstore](/static/images/create-deployment-webstore.png)
 
-If you click on create-deployment-webstore then you will see dev specific ArgoCD Application i.e create-deployment-dev-webstore. This is the application you added in this chapter. This applicationset is ready to create ArgoCD Application for workload/webstore/\*/dev folders. It has not deployed any application as there is no code in the application repository yet.
+If you click on create-deployment-webstore then you will see dev specific Argo CD Application i.e create-deployment-dev-webstore. This is the application you added in this chapter. This applicationset is ready to create Argo CD Application for workload/webstore/\*/dev folders. It has not deployed any application as there is no code in the application repository yet.
 
 ![Webstore Workload Folders](/static/images/create-deployment-dev-webstore.png)
 

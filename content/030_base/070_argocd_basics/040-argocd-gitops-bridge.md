@@ -12,7 +12,7 @@ In the previous chapter, you deployed a single application using an Argo CD Appl
 - You need to deploy them to multiple environments like dev and uat
 - You want to scale this process without overwhelming the platform team?
 
-This is where the App of Apps pattern comes in. In this example you want to deploy E-Commerce(ecomm) app with 3 microservices( auth, orders, payments)
+This is where the App of Apps pattern comes in. In this example you want to deploy E-Commerce (ecomm) app with 3 microservices (auth, orders, payments)
 
 ### Basic Setup Without App of Apps
 
@@ -57,7 +57,7 @@ Then the platform team creates a single root Application like this:
 
 And finally, a root.yaml Application is created to sync everything in the appofapps/ folder.
 
-Let's say you need to deploy a microservices application(auth, orders,payments) to dev and UAT environment. Developer can create these ArgoCD Application objects and send them to platform team to deploy the application.
+Let's say you need to deploy a microservices application (auth, orders, payments) to dev and UAT environment. Developer can create these Argo CD Application objects and send them to platform team to deploy the application.
 
 ├── dev/
 ├── auth.yaml
@@ -70,7 +70,7 @@ Let's say you need to deploy a microservices application(auth, orders,payments) 
 
 Let's see how this can be automated.
 
-Developers still responsible to create ArgoCD application for each environment. These are stored in an application git repository. They also create env deployment files dev-apps.yaml and uat-apps.yaml. These application set point to Application in corresponding folders.
+Developers still responsible to create Argo CD application for each environment. These are stored in an application git repository. They also create env deployment files dev-apps.yaml and uat-apps.yaml. These application set point to Application in corresponding folders.
 
 ├── dev/
 ├── auth.yaml
@@ -84,7 +84,7 @@ Developers still responsible to create ArgoCD application for each environment. 
 ├── dev-apps.yaml
 └── uat-apps.yaml
 
-To deploy an application, platform team creates an ArgoCD Application for each application.
+To deploy an application, platform team creates an Argo CD Application for each application.
 
 ├── appofapps/
 └── ecomm.yaml
