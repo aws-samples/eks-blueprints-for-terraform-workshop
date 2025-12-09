@@ -22,7 +22,7 @@ provider "kubernetes" {
 
 locals{
   context_prefix   = var.project_context_prefix
-  name            = "spoke-${terraform.workspace}"
+  name            = "argocd-spoke-${terraform.workspace}"
   region          = data.aws_region.current.id
   cluster_version = var.kubernetes_version
   enable_irsa = var.enable_irsa

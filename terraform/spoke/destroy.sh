@@ -11,6 +11,8 @@ echo "Destroying Spoke EKS cluster resources"
 # Initialize Terraform
 terraform -chdir=$SCRIPTDIR init --upgrade
 
+terraform -chdir=$SCRIPTDIR workspace select ${WORKSPACE:-dev}
+
 terraform -chdir=$SCRIPTDIR destroy -auto-approve
 
 if [[ ${PIPESTATUS[0]} -eq 0 ]]; then

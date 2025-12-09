@@ -22,13 +22,13 @@ locals {
 
   vpcs = {
     hub = {
-      name_suffix = "${local.name}-hub"
+      name = "${local.name}-hub"
     }
     spoke_dev = {
-      name_suffix = "${local.name}-spoke-dev"
+      name = "${local.name}-spoke-dev"
     }
     spoke_prod = {
-      name_suffix = "${local.name}-spoke-prod"
+      name = "${local.name}-spoke-prod"
     }
   }
 
@@ -41,7 +41,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0.0"
 
-  name = "each.value.name"
+  name = each.value.name
   cidr = local.vpc_cidr
 
   azs             = local.azs

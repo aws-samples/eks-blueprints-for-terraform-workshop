@@ -222,12 +222,13 @@ export class TeamStack extends WorkshopStudioTeamStack {
     });
     hubRunner.customResource.node.addDependency(commonRunner.customResource);
 
-    const spokeRunner = new CodeBuildCustomResource(this, "EKSWSSPOKE", {
+    const spokeDevRunner = new CodeBuildCustomResource(this, "EKSWSSPOKEDEV", {
       buildspec: buildspecSpoke,
       codeBuildTimeout: cdk.Duration.minutes(60),
       computeType: codebuild.ComputeType.SMALL,
       environmentVariables: {
         TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+        WORKSPACE: { value: "dev" },
         WORKSHOP_GIT_URL: {
           value:
             process.env.WORKSHOP_GIT_URL ||
@@ -249,7 +250,37 @@ export class TeamStack extends WorkshopStudioTeamStack {
       role: sharedRole,
       //removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
-    spokeRunner.customResource.node.addDependency(commonRunner.customResource);
+    spokeDevRunner.customResource.node.addDependency(commonRunner.customResource);
+
+    const spokeProdRunner = new CodeBuildCustomResource(this, "EKSWSSPOKEPROD", {
+      buildspec: buildspecSpoke,
+      codeBuildTimeout: cdk.Duration.minutes(60),
+      computeType: codebuild.ComputeType.SMALL,
+      environmentVariables: {
+        TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+        WORKSPACE: { value: "prod" },
+        WORKSHOP_GIT_URL: {
+          value:
+            process.env.WORKSHOP_GIT_URL ||
+            "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+        },
+        WORKSHOP_GIT_BRANCH: {
+          value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+        },
+        FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
+        GITEA_PASSWORD: { value: ide.getIdePassword() },
+        IS_WS: {
+          value:
+            this.getCdkSynthMode() == CdkSynthMode.SynthWorkshopStudio
+              ? "true"
+              : "false",
+        },
+      },
+      buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
+      role: sharedRole,
+      //removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    spokeProdRunner.customResource.node.addDependency(commonRunner.customResource);
 
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });
