@@ -24,10 +24,10 @@ locals {
     hub = {
       name = "${local.name}-hub"
     }
-    spoke_dev = {
+    dev = {
       name = "${local.name}-spoke-dev"
     }
-    spoke_prod = {
+    prod = {
       name = "${local.name}-spoke-prod"
     }
   }
