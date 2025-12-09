@@ -155,7 +155,7 @@ locals{
       aws_region = local.region
       aws_account_id = data.aws_caller_identity.current.account_id
       aws_vpc_id = local.vpc_id
-      aws_vpc_name = data.terraform_remote_state.vpc.outputs.vpc_name
+      aws_vpc_name = data.terraform_remote_state.vpc.outputs.vpc_names["${terraform.workspace}"]
     },
     {
       #enableirsarole argocd_iam_role_arn = aws_iam_role.argocd_hub.arn
