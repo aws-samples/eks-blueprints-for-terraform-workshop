@@ -1043,7 +1043,7 @@
                 "Ref": "AssetsBucketPrefix"
                },
                "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-               "WORKSHOP_GIT_BRANCH": "mainline"
+               "WORKSHOP_GIT_BRANCH": "capability"
               }
              ]
             },
@@ -1260,7 +1260,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "capability"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1647,7 +1647,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "capability"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1682,7 +1682,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-capability}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # Hub backend config\n        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"hub/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/hub/destroy.sh\n\n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/hub/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # Hub backend config\n        cat << EOT > $BASE_DIR/terraform/hub/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"hub/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/hub/destroy.sh\n\n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/hub/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -1922,7 +1922,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "6e7ea43cd685c900d11c02ba54278e2d"
+    "ContentHash": "a8009d087254e478597e1576d75cd954"
    },
    "DependsOn": [
     "EKSWSCOMMONClusterStackE20A043D",
@@ -1968,7 +1968,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "capability"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2003,7 +2003,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-capability}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -2243,7 +2243,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "32dfc031271aa5e998e5fb9722e5ac39"
+    "ContentHash": "040000c57b1f66c031e25ee302f149c3"
    },
    "DependsOn": [
     "EKSWSCOMMONClusterStackE20A043D",
@@ -2289,7 +2289,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "capability"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2324,7 +2324,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-capability}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -2564,7 +2564,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "32dfc031271aa5e998e5fb9722e5ac39"
+    "ContentHash": "040000c57b1f66c031e25ee302f149c3"
    },
    "DependsOn": [
     "EKSWSCOMMONClusterStackE20A043D",

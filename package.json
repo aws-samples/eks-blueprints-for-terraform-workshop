@@ -8,8 +8,8 @@
     "cdk"
   ],
   "scripts": {
-    "synth-self": "CDK_SYNTH_MODE=SELF_SERVE_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=mainline FORCE_DELETE_VPC=true WORKSHOP_ID=28c283c1-1d60-43fa-a604-4e983e0e8038 yarn workspace cdk cdk synth",
-    "synth-studio": "CDK_SYNTH_MODE=WS_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=mainline FORCE_DELETE_VPC= yarn workspace cdk cdk synth",
+    "synth-self": "CDK_SYNTH_MODE=SELF_SERVE_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=capability FORCE_DELETE_VPC=true WORKSHOP_ID=28c283c1-1d60-43fa-a604-4e983e0e8038 yarn workspace cdk cdk synth",
+    "synth-studio": "CDK_SYNTH_MODE=WS_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=capability FORCE_DELETE_VPC= yarn workspace cdk cdk synth",
     "synth-self-custom": "CDK_SYNTH_MODE=SELF_SERVE_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=$(git branch --show-current) FORCE_DELETE_VPC=true WORKSHOP_ID=28c283c1-1d60-43fa-a604-4e983e0e8038 yarn workspace cdk cdk synth",
     "synth-studio-custom": "CDK_SYNTH_MODE=WS_SYNTH WORKSHOP_GIT_URL= WORKSHOP_GIT_BRANCH=$(git branch --show-current) FORCE_DELETE_VPC= yarn workspace cdk cdk synth",
     "generate-cfn-self": "yarn synth-self && cp cdk/cdk.out/eks-blueprints-workshop.template.json ./assets/eks-blueprints-workshop-team-stack-self.json && cp cdk/cdk.out/CentralAccountStack.template.json ./assets/eks-blueprints-workshop-central-stack-self.json",
