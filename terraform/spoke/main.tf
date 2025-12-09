@@ -50,9 +50,9 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
 
-  cluster_name                   = local.name
-  cluster_version                = local.cluster_version
-  cluster_endpoint_public_access = true
+  name                   = local.name
+  kubernetes_version     = local.cluster_version
+  endpoint_public_access = true
 
   authentication_mode = local.authentication_mode
 
@@ -83,7 +83,7 @@ module "eks" {
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
-  cluster_compute_config = {
+  compute_config = {
     enabled    = true
     node_pools = ["general-purpose","system"]
   }
