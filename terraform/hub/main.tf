@@ -157,35 +157,70 @@ resource "terraform_data" "validate_sso" {
 }
 
 ################################################################################
-# SSO - Create  ArgoCD Admin
+# SSO - Create AWS Managed Microsoft AD and integrate with Identity Center
 ################################################################################
 
-resource "aws_identitystore_group" "this" {
-  display_name      = "ArgocdAdmins"
-  description       = "ArgocdAdmins"
-  identity_store_id = local.sso_identity_store_id
+# Create AWS Managed Microsoft AD
+resource "aws_directory_service_directory" "main" {
+  name     = "argocd.local"
+  password = "TempPassword123!"
+  size     = "Small"
+  type     = "MicrosoftAD"
+
+  vpc_settings {
+    vpc_id     = local.vpc_id
+    subnet_ids = local.private_subnets
+  }
+
+  tags = local.tags
 }
 
-# Create ArgoCD admin user
-resource "aws_identitystore_user" "argocd_admin" {
-  identity_store_id = local.sso_identity_store_id
-  
-  display_name = "ArgoCD Admin"
-  user_name    = "argocdadmin"
-  
-  name {
-    given_name  = "ArgoCD"
-    family_name = "Admin"
+# Configure Identity Center to use the Managed AD as identity source
+resource "aws_ssoadmin_identity_source" "ad" {
+  depends_on   = [terraform_data.validate_sso, aws_directory_service_directory.main]
+  instance_arn = local.sso_instance_arn
+
+  identity_source {
+    active_directory {
+      directory_id = aws_directory_service_directory.main.id
+    }
   }
 }
 
-# Add user to ArgoCD Admins group
-resource "aws_identitystore_group_membership" "argocd_admin" {
-  identity_store_id = local.sso_identity_store_id
-  group_id          = aws_identitystore_group.this.group_id
-  member_id         = aws_identitystore_user.argocd_admin.user_id
-}
+# Create AD users and groups via PowerShell commands
+resource "terraform_data" "create_ad_users" {
+  depends_on = [aws_directory_service_directory.main]
 
+  provisioner "local-exec" {
+    command = <<-EOT
+      # Wait for AD to be ready
+      echo "Waiting for Managed AD to be ready..."
+      while true; do
+        STATUS=$(aws ds describe-directories --directory-ids ${aws_directory_service_directory.main.id} --query 'DirectoryDescriptions[0].Stage' --output text --region ${local.region})
+        if [ "$STATUS" = "Active" ]; then
+          echo "Managed AD is ready"
+          break
+        fi
+        echo "AD Status: $STATUS, waiting..."
+        sleep 30
+      done
+
+      # Get AD admin credentials and endpoints
+      AD_ID=${aws_directory_service_directory.main.id}
+      AD_DNS=$(aws ds describe-directories --directory-ids $AD_ID --query 'DirectoryDescriptions[0].DnsIpAddrs[0]' --output text --region ${local.region})
+      
+      echo "AD Directory ID: $AD_ID"
+      echo "AD DNS: $AD_DNS"
+      echo "Use AWS Systems Manager Session Manager to connect to a domain-joined EC2 instance"
+      echo "Then run PowerShell commands to create users and groups"
+      echo ""
+      echo "PowerShell commands to run on domain-joined instance:"
+      echo "New-ADGroup -Name 'ArgocdAdmins' -GroupScope Global -GroupCategory Security"
+      echo "New-ADUser -Name 'argocdadmin' -UserPrincipalName 'argocdadmin@argocd.local' -AccountPassword (ConvertTo-SecureString 'argocdonaws' -AsPlainText -Force) -Enabled \$true"
+      echo "Add-ADGroupMember -Identity 'ArgocdAdmins' -Members 'argocdadmin'"
+    EOT
+  }
+}
 
 ################################################################################
 # EKS Capability - Create IAM role for ArgoCD capability
@@ -231,7 +266,7 @@ resource "aws_eks_capability" "argocd" {
       
       rbac_role_mapping {
         identity {
-          id   = aws_identitystore_group.this.group_id
+          id   = "ArgocdAdmins"  # AD group name
           type = "SSO_GROUP"
         }
         role = "ADMIN"
@@ -240,9 +275,8 @@ resource "aws_eks_capability" "argocd" {
   }
 
   depends_on = [
-    aws_identitystore_group.this,
-    aws_identitystore_user.argocd_admin,
-    aws_identitystore_group_membership.argocd_admin,
+    aws_ssoadmin_identity_source.ad,
+    terraform_data.create_ad_users,
     terraform_data.validate_sso
   ]
 
