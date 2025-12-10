@@ -157,87 +157,62 @@ resource "terraform_data" "validate_sso" {
 }
 
 ################################################################################
-# SSO - Create AWS Managed Microsoft AD and integrate with Identity Center
+# Cognito User Pool for Identity Center integration
 ################################################################################
 
-# Create AWS Managed Microsoft AD
-resource "aws_directory_service_directory" "main" {
-  name     = "argocd.local"
-  password = "TempPassword123!"
-  size     = "Small"
-  type     = "MicrosoftAD"
+# Random suffix for unique domain
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
 
-  vpc_settings {
-    vpc_id     = local.vpc_id
-    subnet_ids = slice(local.private_subnets, 0, 2)  # Take only first 2 subnets
+# Cognito User Pool
+resource "aws_cognito_user_pool" "workshop" {
+  name = "argocd-workshop-users"
+  
+  password_policy {
+    minimum_length    = 8
+    require_lowercase = false
+    require_numbers   = false
+    require_symbols   = false
+    require_uppercase = false
+  }
+
+  admin_create_user_config {
+    allow_admin_create_user_only = true
   }
 
   tags = local.tags
 }
 
-# Configure Identity Center to use the Managed AD as identity source
-resource "terraform_data" "configure_ad_identity_source" {
-  depends_on = [terraform_data.validate_sso, aws_directory_service_directory.main]
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      # Wait for AD to be ready first
-      echo "Waiting for Managed AD to be ready..."
-      while true; do
-        STATUS=$(aws ds describe-directories --directory-ids ${aws_directory_service_directory.main.id} --query 'DirectoryDescriptions[0].Stage' --output text --region ${local.region})
-        if [ "$STATUS" = "Active" ]; then
-          echo "Managed AD is ready"
-          break
-        fi
-        echo "AD Status: $STATUS, waiting..."
-        sleep 30
-      done
-
-      # Configure Identity Center to use Active Directory
-      echo "Configuring Identity Center to use Active Directory..."
-      aws sso-admin put-identity-source \
-        --instance-arn ${local.sso_instance_arn} \
-        --identity-source ActiveDirectoryIdentitySource='{DirectoryId=${aws_directory_service_directory.main.id}}' \
-        --region ${local.region}
-      
-      echo "Identity source configured successfully"
-    EOT
-  }
+# Cognito User Pool Domain
+resource "aws_cognito_user_pool_domain" "workshop" {
+  domain       = "argocd-workshop-${random_string.suffix.result}"
+  user_pool_id = aws_cognito_user_pool.workshop.id
 }
 
-# Create AD users and groups via PowerShell commands
-resource "terraform_data" "create_ad_users" {
-  depends_on = [aws_directory_service_directory.main]
+# ArgoCD Admins Group
+resource "aws_cognito_user_group" "argocd_admins" {
+  name         = "ArgocdAdmins"
+  user_pool_id = aws_cognito_user_pool.workshop.id
+  description  = "ArgoCD administrators group"
+}
 
-  provisioner "local-exec" {
-    command = <<-EOT
-      # Wait for AD to be ready
-      echo "Waiting for Managed AD to be ready..."
-      while true; do
-        STATUS=$(aws ds describe-directories --directory-ids ${aws_directory_service_directory.main.id} --query 'DirectoryDescriptions[0].Stage' --output text --region ${local.region})
-        if [ "$STATUS" = "Active" ]; then
-          echo "Managed AD is ready"
-          break
-        fi
-        echo "AD Status: $STATUS, waiting..."
-        sleep 30
-      done
+# ArgoCD Admin User
+resource "aws_cognito_user" "argocd_admin" {
+  user_pool_id = aws_cognito_user_pool.workshop.id
+  username     = "argocdadmin"
+  
+  password = "argocdonaws"
+  permanent_password = true
+}
 
-      # Get AD admin credentials and endpoints
-      AD_ID=${aws_directory_service_directory.main.id}
-      AD_DNS=$(aws ds describe-directories --directory-ids $AD_ID --query 'DirectoryDescriptions[0].DnsIpAddrs[0]' --output text --region ${local.region})
-      
-      echo "AD Directory ID: $AD_ID"
-      echo "AD DNS: $AD_DNS"
-      echo "Use AWS Systems Manager Session Manager to connect to a domain-joined EC2 instance"
-      echo "Then run PowerShell commands to create users and groups"
-      echo ""
-      echo "PowerShell commands to run on domain-joined instance:"
-      echo "New-ADGroup -Name 'ArgocdAdmins' -GroupScope Global -GroupCategory Security"
-      echo "New-ADUser -Name 'argocdadmin' -UserPrincipalName 'argocdadmin@argocd.local' -AccountPassword (ConvertTo-SecureString 'argocdonaws' -AsPlainText -Force) -Enabled \$true"
-      echo "Add-ADGroupMember -Identity 'ArgocdAdmins' -Members 'argocdadmin'"
-    EOT
-  }
+# Group Membership
+resource "aws_cognito_user_in_group" "argocd_admin_membership" {
+  user_pool_id = aws_cognito_user_pool.workshop.id
+  group_name   = aws_cognito_user_group.argocd_admins.name
+  username     = aws_cognito_user.argocd_admin.username
 }
 
 ################################################################################
@@ -284,7 +259,7 @@ resource "aws_eks_capability" "argocd" {
       
       rbac_role_mapping {
         identity {
-          id   = "ArgocdAdmins"  # AD group name
+          id   = "ArgocdAdmins"  # Cognito group name
           type = "SSO_GROUP"
         }
         role = "ADMIN"
@@ -293,9 +268,8 @@ resource "aws_eks_capability" "argocd" {
   }
 
   depends_on = [
-    terraform_data.configure_ad_identity_source,
-    terraform_data.create_ad_users,
-    terraform_data.validate_sso
+    terraform_data.validate_sso,
+    aws_cognito_user_pool.workshop
   ]
 
   tags = local.tags
