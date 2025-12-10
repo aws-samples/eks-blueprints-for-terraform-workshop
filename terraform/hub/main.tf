@@ -226,8 +226,23 @@ resource "aws_eks_capability" "argocd" {
         idc_instance_arn = local.sso_instance_arn
       }
       namespace = "argocd"
+      
+      rbac_role_mapping {
+        identity {
+          id   = aws_identitystore_group.this.group_id
+          type = "SSO_GROUP"
+        }
+        role = "ADMIN"
+      }
     }
   }
+
+  depends_on = [
+    aws_identitystore_group.this,
+    aws_identitystore_user.argocd_admin,
+    aws_identitystore_group_membership.argocd_admin,
+    terraform_data.validate_sso
+  ]
 
   tags = local.tags
 }
