@@ -157,61 +157,43 @@ resource "terraform_data" "validate_sso" {
 }
 
 ################################################################################
-# Cognito User Pool for Identity Center integration
+# Identity Center Users and Groups
 ################################################################################
 
-# Random suffix for unique domain
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-  upper   = false
+# Create ArgoCD Admins Group in Identity Center
+resource "aws_identitystore_group" "argocd_admins" {
+  identity_store_id = local.sso_identity_store_id
+  display_name      = "ArgocdAdmins"
+  description       = "ArgoCD administrators group"
+
+  depends_on = [terraform_data.validate_sso]
 }
 
-# Cognito User Pool
-resource "aws_cognito_user_pool" "workshop" {
-  name = "argocd-workshop-users"
+# Create ArgoCD Admin User in Identity Center
+resource "aws_identitystore_user" "argocd_admin" {
+  identity_store_id = local.sso_identity_store_id
   
-  password_policy {
-    minimum_length    = 8
-    require_lowercase = false
-    require_numbers   = false
-    require_symbols   = false
-    require_uppercase = false
+  display_name = "ArgoCD Admin"
+  user_name    = "argocdadmin"
+  
+  name {
+    given_name  = "ArgoCD"
+    family_name = "Admin"
+  }
+  
+  emails {
+    value   = "patilsb@amazon.com"
+    primary = true
   }
 
-  admin_create_user_config {
-    allow_admin_create_user_only = true
-  }
-
-  tags = local.tags
+  depends_on = [terraform_data.validate_sso]
 }
 
-# Cognito User Pool Domain
-resource "aws_cognito_user_pool_domain" "workshop" {
-  domain       = "argocd-workshop-${random_string.suffix.result}"
-  user_pool_id = aws_cognito_user_pool.workshop.id
-}
-
-# ArgoCD Admins Group
-resource "aws_cognito_user_group" "argocd_admins" {
-  name         = "ArgocdAdmins"
-  user_pool_id = aws_cognito_user_pool.workshop.id
-  description  = "ArgoCD administrators group"
-}
-
-# ArgoCD Admin User
-resource "aws_cognito_user" "argocd_admin" {
-  user_pool_id = aws_cognito_user_pool.workshop.id
-  username     = "argocdadmin"
-  
-  password = "argocdonaws"
-}
-
-# Group Membership
-resource "aws_cognito_user_in_group" "argocd_admin_membership" {
-  user_pool_id = aws_cognito_user_pool.workshop.id
-  group_name   = aws_cognito_user_group.argocd_admins.name
-  username     = aws_cognito_user.argocd_admin.username
+# Add user to group
+resource "aws_identitystore_group_membership" "argocd_admin_membership" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.argocd_admins.group_id
+  member_id         = aws_identitystore_user.argocd_admin.user_id
 }
 
 ################################################################################
@@ -258,7 +240,7 @@ resource "aws_eks_capability" "argocd" {
       
       rbac_role_mapping {
         identity {
-          id   = "ArgocdAdmins"  # Cognito group name
+          id   = aws_identitystore_group.argocd_admins.group_id
           type = "SSO_GROUP"
         }
         role = "ADMIN"
@@ -268,7 +250,8 @@ resource "aws_eks_capability" "argocd" {
 
   depends_on = [
     terraform_data.validate_sso,
-    aws_cognito_user_pool.workshop
+    aws_identitystore_group.argocd_admins,
+    aws_identitystore_user.argocd_admin
   ]
 
   tags = local.tags
