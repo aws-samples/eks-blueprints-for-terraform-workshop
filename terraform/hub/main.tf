@@ -90,3 +90,109 @@ module "eks" {
 
   tags = local.tags
 }
+
+
+################################################################################
+# SSO - Enable IAM Identity Center if not already enabled
+################################################################################
+resource "terraform_data" "enable_sso" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      if ! aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
+        echo "Enabling IAM Identity Center..."
+        aws sso-admin create-instance --region ${local.region}
+      else
+        echo "IAM Identity Center already enabled"
+      fi
+    EOT
+  }
+}
+
+# Get SSO instance details
+data "aws_ssoadmin_instances" "main" {
+  depends_on = [terraform_data.enable_sso]
+}
+
+locals {
+  sso_instance_arn      = tolist(data.aws_ssoadmin_instances.main.arns)[0]
+  sso_identity_store_id = tolist(data.aws_ssoadmin_instances.main.identity_store_ids)[0]
+}
+
+################################################################################
+# SSO - Create  ArgoCD Admin
+################################################################################
+
+resource "aws_identitystore_group" "this" {
+  display_name      = "ArgocdAdmins"
+  description       = "ArgocdAdmins"
+  identity_store_id = local.sso_identity_store_id
+}
+
+# Create ArgoCD admin user
+resource "aws_identitystore_user" "argocd_admin" {
+  identity_store_id = local.sso_identity_store_id
+  
+  display_name = "ArgoCD Admin"
+  user_name    = "argocdadmin"
+  
+  name {
+    given_name  = "ArgoCD"
+    family_name = "Admin"
+  }
+}
+
+# Add user to ArgoCD Admins group
+resource "aws_identitystore_group_membership" "argocd_admin" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.this.group_id
+  member_id         = aws_identitystore_user.argocd_admin.user_id
+}
+
+
+################################################################################
+# EKS Capability - Create IAM role for ArgoCD capability
+################################################################################
+resource "aws_iam_role" "eks_capability_argocd" {
+  name = "AmazonEKSCapabilityArgoCDRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "capabilities.eks.amazonaws.com"
+        }
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+      }
+    ]
+  })
+
+  tags = local.tags
+}
+
+################################################################################
+# Enable ArgoCD capability
+################################################################################
+resource "aws_eks_capability" "argocd" {
+  cluster_name              = module.eks.cluster_name
+  capability_name           = "argocd"
+  type                      = "ARGOCD"
+  role_arn                  = aws_iam_role.eks_capability_argocd.arn
+  delete_propagation_policy = "RETAIN"
+
+  configuration {
+    argo_cd {
+      aws_idc {
+        idc_instance_arn = local.sso_instance_arn
+      }
+      namespace = "argocd"
+    }
+  }
+
+  tags = local.tags
+}
+
