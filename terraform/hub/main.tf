@@ -176,14 +176,32 @@ resource "aws_directory_service_directory" "main" {
 }
 
 # Configure Identity Center to use the Managed AD as identity source
-resource "aws_ssoadmin_identity_source" "ad" {
-  depends_on   = [terraform_data.validate_sso, aws_directory_service_directory.main]
-  instance_arn = local.sso_instance_arn
+resource "terraform_data" "configure_ad_identity_source" {
+  depends_on = [terraform_data.validate_sso, aws_directory_service_directory.main]
 
-  identity_source {
-    active_directory {
-      directory_id = aws_directory_service_directory.main.id
-    }
+  provisioner "local-exec" {
+    command = <<-EOT
+      # Wait for AD to be ready first
+      echo "Waiting for Managed AD to be ready..."
+      while true; do
+        STATUS=$(aws ds describe-directories --directory-ids ${aws_directory_service_directory.main.id} --query 'DirectoryDescriptions[0].Stage' --output text --region ${local.region})
+        if [ "$STATUS" = "Active" ]; then
+          echo "Managed AD is ready"
+          break
+        fi
+        echo "AD Status: $STATUS, waiting..."
+        sleep 30
+      done
+
+      # Configure Identity Center to use Active Directory
+      echo "Configuring Identity Center to use Active Directory..."
+      aws sso-admin put-identity-source \
+        --instance-arn ${local.sso_instance_arn} \
+        --identity-source ActiveDirectoryIdentitySource='{DirectoryId=${aws_directory_service_directory.main.id}}' \
+        --region ${local.region}
+      
+      echo "Identity source configured successfully"
+    EOT
   }
 }
 
@@ -275,7 +293,7 @@ resource "aws_eks_capability" "argocd" {
   }
 
   depends_on = [
-    aws_ssoadmin_identity_source.ad,
+    terraform_data.configure_ad_identity_source,
     terraform_data.create_ad_users,
     terraform_data.validate_sso
   ]
