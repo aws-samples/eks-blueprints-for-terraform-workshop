@@ -169,7 +169,7 @@ resource "aws_directory_service_directory" "main" {
 
   vpc_settings {
     vpc_id     = local.vpc_id
-    subnet_ids = local.private_subnets
+    subnet_ids = slice(local.private_subnets, 0, 2)  # Take only first 2 subnets
   }
 
   tags = local.tags
