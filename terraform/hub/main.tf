@@ -98,24 +98,60 @@ module "eks" {
 resource "terraform_data" "enable_sso" {
   provisioner "local-exec" {
     command = <<-EOT
+      set -e
+      echo "Checking SSO status in region ${local.region}..."
+      
       if ! aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
         echo "Enabling IAM Identity Center..."
         aws sso-admin create-instance --region ${local.region}
+        
+        # Wait for SSO to be ready
+        echo "Waiting for SSO to be ready..."
+        for i in {1..30}; do
+          if aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
+            echo "SSO is ready"
+            break
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 10
+        done
       else
         echo "IAM Identity Center already enabled"
       fi
+      
+      # Verify SSO is working
+      aws sso-admin list-instances --region ${local.region} --output json
     EOT
   }
 }
 
-# Get SSO instance details
+# Get SSO instance details with validation
 data "aws_ssoadmin_instances" "main" {
   depends_on = [terraform_data.enable_sso]
 }
 
+# Validate that we have SSO instances
 locals {
-  sso_instance_arn      = tolist(data.aws_ssoadmin_instances.main.arns)[0]
-  sso_identity_store_id = tolist(data.aws_ssoadmin_instances.main.identity_store_ids)[0]
+  sso_instances_count   = length(data.aws_ssoadmin_instances.main.arns)
+  sso_instance_arn      = local.sso_instances_count > 0 ? tolist(data.aws_ssoadmin_instances.main.arns)[0] : ""
+  sso_identity_store_id = local.sso_instances_count > 0 ? tolist(data.aws_ssoadmin_instances.main.identity_store_ids)[0] : ""
+}
+
+# Validation check
+resource "terraform_data" "validate_sso" {
+  depends_on = [data.aws_ssoadmin_instances.main]
+  
+  lifecycle {
+    precondition {
+      condition     = local.sso_instances_count > 0
+      error_message = "No SSO instances found. SSO enablement may have failed."
+    }
+    
+    precondition {
+      condition     = local.sso_identity_store_id != ""
+      error_message = "SSO identity store ID is empty. SSO may not be properly configured."
+    }
+  }
 }
 
 ################################################################################
