@@ -205,7 +205,6 @@ resource "aws_cognito_user" "argocd_admin" {
   username     = "argocdadmin"
   
   password = "argocdonaws"
-  permanent_password = true
 }
 
 # Group Membership
