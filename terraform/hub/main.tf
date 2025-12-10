@@ -107,12 +107,14 @@ resource "terraform_data" "enable_sso" {
         
         # Wait for SSO to be ready
         echo "Waiting for SSO to be ready..."
-        for i in {1..30}; do
-          if aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
-            echo "SSO is ready"
+        for i in {1..60}; do
+          if aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances[] | select(.Status == "ACTIVE")' > /dev/null 2>&1; then
+            echo "SSO is ready - printing instance details:"
+            aws sso-admin list-instances --region ${local.region} --output json
+            sleep 5  # Extra buffer
             break
           fi
-          echo "Waiting... ($i/30)"
+          echo "Waiting for SSO to become ACTIVE... ($i/60)"
           sleep 10
         done
       else
