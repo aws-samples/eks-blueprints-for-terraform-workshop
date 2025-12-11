@@ -2,24 +2,27 @@
 
 locals {
   gitops_repos = {
-    addons = {
-      name     = var.gitops_addons_repo_name
-      basepath = var.gitops_addons_basepath
-      path     = var.gitops_addons_path
-      revision = var.gitops_addons_revision
+    retail-store-app = {
+      name     = var.gitops_retail_store_app_repo_name
+      # basepath = var.gitops_addons_basepath
+      # path     = var.gitops_addons_path
+      # revision = var.gitops_addons_revision
     }
+
+    retail-store-manifest = {
+      name     = var.gitops_retail_store_manifest_repo_name
+      # basepath = var.gitops_workload_basepath
+      # path     = var.gitops_workload_path
+      # revision = var.gitops_workload_revision
+    }
+
     platform = {
       name     = var.gitops_platform_repo_name
-      basepath = var.gitops_platform_basepath
-      path     = var.gitops_platform_path
-      revision = var.gitops_platform_revision
+      # basepath = var.gitops_platform_basepath
+      # path     = var.gitops_platform_path
+      # revision = var.gitops_platform_revision
     }
-    workloads = {
-      name     = var.gitops_workload_repo_name
-      basepath = var.gitops_workload_basepath
-      path     = var.gitops_workload_path
-      revision = var.gitops_workload_revision
-    }
+
 
   }
   gitea_user = var.gitea_user
@@ -49,10 +52,10 @@ resource "aws_secretsmanager_secret_version" "git_secrets_version" {
     password    = local.gitea_password
     url         = local.git_secrets_urls[each.key]
     org         = local.git_secrets_version_locals.org
-    repo        = "${local.git_secrets_version_locals.repo_prefix}${local.gitops_repos[each.key].name}"
-    basepath    = local.gitops_repos[each.key].basepath
-    path        = local.gitops_repos[each.key].path
-    revision    = local.gitops_repos[each.key].revision
+    # repo        = "${local.git_secrets_version_locals.repo_prefix}${local.gitops_repos[each.key].name}"
+    # basepath    = local.gitops_repos[each.key].basepath
+    # path        = local.gitops_repos[each.key].path
+    # revision    = local.gitops_repos[each.key].revision
   })
 }
 

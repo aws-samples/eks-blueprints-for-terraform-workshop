@@ -1,0 +1,7 @@
+analyzer:
+  skip_excluded: true
+excludes:
+  scopes:
+    - pattern: "devDependencies"
+      reason: "DEV_DEPENDENCY_OF"
+      comment: "Packages for development only."

@@ -1,0 +1,19 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,metrics,prometheus
+
+server:
+  port: ${port:8080}
+
+retail:
+  cart:
+    persistence:
+      provider: "in-memory"
+      dynamodb:
+        endpoint:
+        create-table: false
+        table-name: Items
+
+otel.sdk.disabled: true

@@ -1,7 +1,7 @@
 variable "project_context_prefix" {
   description = "Prefix for project"
   type        = string
-  default     = "eks-blueprints-workshop-gitops"
+  default     = "argocd-workshop"
 }
 
 variable "secret_name_ssh_secrets" {
@@ -11,57 +11,63 @@ variable "secret_name_ssh_secrets" {
 }
 
 
-variable "gitops_addons_repo_name" {
-  description = "Git repository name for addons"
-  default     = "eks-blueprints-workshop-gitops-addons"
-}
-variable "gitops_addons_basepath" {
-  description = "Git repository base path for addons"
-  default     = ""
-}
-variable "gitops_addons_path" {
-  description = "Git repository path for addons"
-  default     = "bootstrap"
-}
-variable "gitops_addons_revision" {
-  description = "Git repository revision/branch/ref for addons"
-  default     = "HEAD"
-}
+# variable "gitops_addons_repo_name" {
+#   description = "Git repository name for addons"
+#   default     = "argocd-workshop-gitops-addons"
+# }
+# variable "gitops_addons_basepath" {
+#   description = "Git repository base path for addons"
+#   default     = ""
+# }
+# variable "gitops_addons_path" {
+#   description = "Git repository path for addons"
+#   default     = "bootstrap"
+# }
+# variable "gitops_addons_revision" {
+#   description = "Git repository revision/branch/ref for addons"
+#   default     = "HEAD"
+# }
 
 variable "gitops_platform_repo_name" {
   description = "Git repository name for platform"
-  default     = "eks-blueprints-workshop-gitops-platform"
+  default     = "platform"
 }
-variable "gitops_platform_basepath" {
-  description = "Git repository base path for platform"
-  default     = ""
-}
-variable "gitops_platform_path" {
-  description = "Git repository path for workload"
-  default     = "bootstrap"
-}
-variable "gitops_platform_revision" {
-  description = "Git repository revision/branch/ref for workload"
-  default     = "HEAD"
-}
+# variable "gitops_platform_basepath" {
+#   description = "Git repository base path for platform"
+#   default     = ""
+# }
+# variable "gitops_platform_path" {
+#   description = "Git repository path for workload"
+#   default     = "bootstrap"
+# }
+# variable "gitops_platform_revision" {
+#   description = "Git repository revision/branch/ref for workload"
+#   default     = "HEAD"
+# }
 
 
-variable "gitops_workload_repo_name" {
+variable "gitops_retail_store_app_repo_name" {
   description = "Git repository name for workload"
-  default     = "eks-blueprints-workshop-gitops-apps"
+  default     = "retail-store-app"
 }
-variable "gitops_workload_basepath" {
-  description = "Git repository base path for workload"
-  default     = ""
+# variable "gitops__retail_store_app_repo_basepath" {
+#   description = "Git repository base path for workload"
+#   default     = ""
+# }
+# variable "gitops__retail_store_app_repo_path" {
+#   description = "Git repository path for workload"
+#   default     = ""
+# }
+# variable "gitops__retail_store_app_repo_revision" {
+#   description = "Git repository revision/branch/ref for workload"
+#   default     = "HEAD"
+# }
+
+variable "gitops_retail_store_manifest_repo_name" {
+  description = "Git repository name for workload"
+  default     = "retail-store-manifest"
 }
-variable "gitops_workload_path" {
-  description = "Git repository path for workload"
-  default     = ""
-}
-variable "gitops_workload_revision" {
-  description = "Git repository revision/branch/ref for workload"
-  default     = "HEAD"
-}
+
 
 variable "ssm_parameter_name_argocd_role_suffix" {
   description = "SSM parameter name for ArgoCD role"

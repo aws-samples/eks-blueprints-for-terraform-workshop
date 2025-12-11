@@ -1,0 +1,14 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "description": "TODO",
+  "main": "conf.js",
+  "scripts": {
+    "execute": "cypress run"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "cypress": "^13.17.0"
+  }
+}
