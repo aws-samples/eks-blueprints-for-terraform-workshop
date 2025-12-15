@@ -1,4 +1,4 @@
 ---
-title: "ArgoCD Access"
+title: "Bootstrap"
 weight: 20
 ---

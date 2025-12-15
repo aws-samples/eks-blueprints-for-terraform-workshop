@@ -9,16 +9,19 @@ setup_argocd_context() {
     
     echo "Setting up ArgoCD context for cluster: $cluster_name with context: $context_name"
     
-    # Update kubeconfig for the cluster
-    aws eks update-kubeconfig --name $cluster_name --region ${AWS_REGION:-us-west-2}
+    # Update kubeconfig for the cluster with custom alias
+    aws eks update-kubeconfig \
+      --name $cluster_name \
+      --region ${AWS_REGION:-us-west-2} \
+      --alias $context_name
     
     # Set kubectl context
-    kubectl config use-context arn:aws:eks:${AWS_REGION:-us-west-2}:$(aws sts get-caller-identity --query Account --output text):cluster/$cluster_name
+    kubectl config use-context "$context_name"
     
     # Verify connection
     kubectl get nodes
     
-    echo "Successfully configured context for $cluster_name"
+    echo "Successfully configured context: $context_name for cluster: $cluster_name"
     echo "---"
 }
 
@@ -31,36 +34,81 @@ update_templates() {
     
     echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
     
+    # Get secrets for platform repo
+    PLATFORM_URL="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .url)"
+    GIT_USER="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .username)"
+    GIT_PASS="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .password)"
+    
+    echo "Platform URL: $PLATFORM_URL"
+    echo "Git User: $GIT_USER"
+    
     # Update hub-cluster.yaml template
     TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster.yaml"
     
     if [ -f "$TEMPLATE_FILE" ]; then
-        sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$TEMPLATE_FILE"
-        echo "Updated $TEMPLATE_FILE with hub cluster ARN"
+        sed -i.bak \
+            -e "s|<<arn>>|$HUB_CLUSTER_ARN|g" \
+            -e "s|<<platform_url>>|$PLATFORM_URL|g" \
+            "$TEMPLATE_FILE"
+        echo "Updated $TEMPLATE_FILE with hub cluster ARN and platform URL"
     else
         echo "Warning: Template file $TEMPLATE_FILE not found"
     fi
-    
-    # Get secrets for platform repo
-    gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX:-eks-blueprints-workshop}-platform --query SecretString --output text | jq -r .url)"
-    GIT_USER="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX:-eks-blueprints-workshop}-retail-store-manifest --query SecretString --output text | jq -r .username)"
-    GIT_PASS="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX:-eks-blueprints-workshop}-retail-store-manifest --query SecretString --output text | jq -r .password)"
-    
-    echo "Platform URL: $gitops_platform_url"
-    echo "Git User: $GIT_USER"
     
     # Update platform-repo.yaml template
     PLATFORM_REPO_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo.yaml"
     
     if [ -f "$PLATFORM_REPO_TEMPLATE" ]; then
         sed -i.bak \
-            -e "s|<<url>>|$gitops_platform_url|g" \
+            -e "s|<<url>>|$PLATFORM_URL|g" \
             -e "s|<<user>>|$GIT_USER|g" \
             -e "s|<<password>>|$GIT_PASS|g" \
             "$PLATFORM_REPO_TEMPLATE"
         echo "Updated $PLATFORM_REPO_TEMPLATE with platform repo credentials"
     else
         echo "Warning: Template file $PLATFORM_REPO_TEMPLATE not found"
+    fi
+    
+    # Update hub-cluster-values.yaml template
+    HUB_CLUSTER_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster-values.yaml"
+    
+    if [ -f "$HUB_CLUSTER_VALUES_TEMPLATE" ]; then
+        sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_VALUES_TEMPLATE"
+        echo "Updated $HUB_CLUSTER_VALUES_TEMPLATE with hub cluster ARN"
+    else
+        echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
+    fi
+    
+    # Get secret ARN for platform_repo_credentials
+    PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id platform_repo_credentials --query 'ARN' --output text)
+    
+    # Update platform-repo-values.yaml template
+    PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo-values.yaml"
+    
+    if [ -f "$PLATFORM_REPO_VALUES_TEMPLATE" ]; then
+        sed -i.bak \
+            -e "s|<<url>>|$PLATFORM_URL|g" \
+            -e "s|<<secret_arn>>|$PLATFORM_REPO_SECRET_ARN|g" \
+            "$PLATFORM_REPO_VALUES_TEMPLATE"
+        echo "Updated $PLATFORM_REPO_VALUES_TEMPLATE with platform URL and secret ARN"
+    else
+        echo "Warning: Template file $PLATFORM_REPO_VALUES_TEMPLATE not found"
+    fi
+    
+    # Get retail store manifest URL from secret
+    RETAIL_STORE_URL="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest --query SecretString --output text | jq -r .url)"
+    
+    # Update retail-store-manifest-repo-values.yaml template
+    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-manifest-repo-values.yaml"
+    
+    if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
+        sed -i.bak \
+            -e "s|<<url>>|$RETAIL_STORE_URL|g" \
+            -e "s|<<secret_arn>>|$PLATFORM_REPO_SECRET_ARN|g" \
+            "$RETAIL_STORE_VALUES_TEMPLATE"
+        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store URL and secret ARN"
+    else
+        echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
     
     echo "Template updates completed"
@@ -70,12 +118,12 @@ update_templates() {
 echo "Starting ArgoCD template setup..."
 
 # Setup contexts for all clusters
-setup_argocd_context "argocd-hub" "hub"
+
 setup_argocd_context "argocd-spoke-dev" "dev" 
 setup_argocd_context "argocd-spoke-prod" "prod"
+setup_argocd_context "argocd-hub" "hub"
 
 # Update template files
 update_templates
 
 echo "All ArgoCD contexts configured and templates updated successfully!"
-

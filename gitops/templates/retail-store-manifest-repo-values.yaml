@@ -1,0 +1,3 @@
+url: <<url>>
+secretArn: <<secret_arn>>
+project: default

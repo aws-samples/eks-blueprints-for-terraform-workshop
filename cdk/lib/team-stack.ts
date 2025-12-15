@@ -137,7 +137,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       content: {
         schemaVersion: "2.2",
         description: "Setup Git",
-        parameters: {},
+        parameters: {},      
         mainSteps: [
           {
             action: "aws:runShellScript",
@@ -182,21 +182,6 @@ export class TeamStack extends WorkshopStudioTeamStack {
         ],
       },
     });
-
-    const association = new cdk.aws_ssm.CfnAssociation(
-      this,
-      "SetupGitAssociation",
-      {
-        associationName: "SetupGitAssociation",
-        name: ssmDocument.ref,
-        targets: [
-          {
-            key: "tag:aws:cloudformation:stack-name",
-            values: [this.stackName, "eks-blueprints-workshop-team-stack"],
-          },
-        ],
-      },
-    );
 
     const hubRunner = new CodeBuildCustomResource(this, "EKSWSHUB", {
       buildspec: buildspecHub,
