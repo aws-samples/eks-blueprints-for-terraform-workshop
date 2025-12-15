@@ -1,0 +1,8 @@
+# Required values
+clusterName: ""  # Name for the cluster (used in secret name)
+
+# Optional values with defaults
+server: "https://kubernetes.default.svc"  # Kubernetes API server URL
+config: '{"tlsClientConfig":{"insecure":false}}'  # TLS configuration
+labels: {}       # Additional labels to apply
+annotations: {}  # Additional annotations to apply

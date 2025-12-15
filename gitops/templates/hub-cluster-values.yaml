@@ -1,0 +1,6 @@
+server: arn:aws:eks:us-west-2:077295700911:cluster/argocd-hub
+config: '{"tlsClientConfig":{"insecure":false}}'
+labels:
+  cluster-role: hub
+  environment: production
+annotations: {}

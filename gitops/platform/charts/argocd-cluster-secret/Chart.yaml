@@ -1,0 +1,10 @@
+apiVersion: v2
+name: argocd-cluster-secret
+description: Helm chart for provisioning ArgoCD cluster secrets
+version: 0.1.0
+appVersion: "1.0"
+keywords:
+  - argocd
+  - gitops
+  - cluster
+  - secret

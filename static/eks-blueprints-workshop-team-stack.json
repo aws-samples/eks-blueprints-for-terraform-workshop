@@ -1573,6 +1573,12 @@
          "    if [ -f \"$DIRECTORY/setup-git.sh\" ]; then",
          "      echo \"Found setup-git.sh. Executing...\"",
          "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+         "      if [ -f \"$DIRECTORY/setup-template.sh\" ]; then",
+         "        echo \"Found setup-template.sh. Executing...\"",
+         "        sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=eks-blueprints-workshop AWS_REGION=us-west-2 '$DIRECTORY/setup-template.sh'\"",
+         "      else",
+         "        echo \"Warning: setup-template.sh not found in $DIRECTORY\"",
+         "      fi",
          "      exit 0",
          "    else",
          "      echo \"Error: setup-git.sh not found in $DIRECTORY\"",
@@ -1598,7 +1604,10 @@
     "UpdateMethod": "NewVersion"
    },
    "DependsOn": [
-    "EKSWSCOMMONClusterStackE20A043D"
+    "EKSWSCOMMONClusterStackE20A043D",
+    "EKSWSHUBClusterStack2E920DC3",
+    "EKSWSSPOKEDEVClusterStackCD2B8E76",
+    "EKSWSSPOKEPRODClusterStackCE677D7A"
    ]
   },
   "SetupGitAssociation": {

@@ -156,6 +156,12 @@ export class TeamStack extends WorkshopStudioTeamStack {
                 '    if [ -f "$DIRECTORY/setup-git.sh" ]; then',
                 '      echo "Found setup-git.sh. Executing..."',
                 "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+                '      if [ -f "$DIRECTORY/setup-template.sh" ]; then',
+                '        echo "Found setup-template.sh. Executing..."',
+                "        sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=eks-blueprints-workshop AWS_REGION=us-west-2 '$DIRECTORY/setup-template.sh'\"",
+                "      else",
+                '        echo "Warning: setup-template.sh not found in $DIRECTORY"',
+                "      fi",
                 "      exit 0",
                 "    else",
                 '      echo "Error: setup-git.sh not found in $DIRECTORY"',
@@ -177,7 +183,6 @@ export class TeamStack extends WorkshopStudioTeamStack {
       },
     });
 
-    ssmDocument.node.addDependency(commonRunner.customResource);
     const association = new cdk.aws_ssm.CfnAssociation(
       this,
       "SetupGitAssociation",
@@ -289,6 +294,11 @@ export class TeamStack extends WorkshopStudioTeamStack {
     spokeProdRunner.customResource.node.addDependency(
       commonRunner.customResource,
     );
+
+    ssmDocument.node.addDependency(commonRunner.customResource);
+    ssmDocument.node.addDependency(hubRunner.customResource);
+    ssmDocument.node.addDependency(spokeDevRunner.customResource);
+    ssmDocument.node.addDependency(spokeProdRunner.customResource);
 
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });

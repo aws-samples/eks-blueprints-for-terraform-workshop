@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: boostrap
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: arn:aws:eks:us-west-2:077295700911:cluster/argocd-hub
+  project: default
+  source:
+    path: bootstrap
+    repoURL: https://d2o5zlyqv1l5cr.cloudfront.net/gitea/workshop-user/platform.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      enabled: true

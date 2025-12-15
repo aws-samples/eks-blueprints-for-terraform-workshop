@@ -174,7 +174,7 @@ resource "aws_identitystore_user" "argocd_admin" {
   identity_store_id = local.sso_identity_store_id
   
   display_name = "ArgoCD Admin"
-  user_name    = "argocdadmin"
+  user_name    = "argoadmin"
   
   name {
     given_name  = "ArgoCD"
