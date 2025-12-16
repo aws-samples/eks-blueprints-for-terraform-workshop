@@ -181,10 +181,6 @@ resource "aws_identitystore_user" "argocd_admin" {
     family_name = "Admin"
   }
   
-  emails {
-    value   = "patilsb@amazon.com"
-    primary = true
-  }
 
   depends_on = [terraform_data.validate_sso]
 }

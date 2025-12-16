@@ -42,7 +42,7 @@ phases:
         terraform {
           backend "s3" {
             bucket         = "$BUCKET_NAME"
-            key            = "spoke-${WORKSPACE}/terraform.tfstate"
+            key            = "spoke/terraform.tfstate"
             region         = "$AWS_REGION"
           }
         }

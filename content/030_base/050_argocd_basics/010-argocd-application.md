@@ -50,7 +50,7 @@ spec:
   project: default
   # Source of the application manifests
   source:
-    repoURL: https://github.com/argoproj/argocd-example-apps.git)
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
     path: guestbook
   destination:
     name: hub
