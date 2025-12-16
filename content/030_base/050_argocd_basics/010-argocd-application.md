@@ -50,10 +50,10 @@ spec:
   project: default
   # Source of the application manifests
   source:
-    repoURL: <<APP REPO URL>> 
+    repoURL: https://github.com/argoproj/argocd-example-apps.git)
     path: guestbook
   destination:
-    name: <<CLUSTER NAME>>
+    name: hub
     namespace: guestbook   
   syncPolicy:
     automated: 
