@@ -30,7 +30,7 @@ variable "secret_name_ssh_secrets" {
 
 variable "gitops_platform_repo_name" {
   description = "Git repository name for platform"
-  default     = "platform"
+  default     = "platform-repo"
 }
 # variable "gitops_platform_basepath" {
 #   description = "Git repository base path for platform"
@@ -48,7 +48,7 @@ variable "gitops_platform_repo_name" {
 
 variable "gitops_retail_store_app_repo_name" {
   description = "Git repository name for workload"
-  default     = "retail-store-app"
+  default     = "retail-store-app-repo"
 }
 # variable "gitops__retail_store_app_repo_basepath" {
 #   description = "Git repository base path for workload"
@@ -65,7 +65,7 @@ variable "gitops_retail_store_app_repo_name" {
 
 variable "gitops_retail_store_manifest_repo_name" {
   description = "Git repository name for workload"
-  default     = "retail-store-manifest"
+  default     = "retail-store-manifest-repo"
 }
 
 

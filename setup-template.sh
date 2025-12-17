@@ -120,9 +120,9 @@ update_templates() {
         echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
     fi
     
-    # Get secret ARN for platform_repo_credentials
+    # Get secret ARN for argocd-workshop-platform-repo
     for i in {1..10}; do
-        if PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id platform_repo_credentials --query 'ARN' --output text 2>/dev/null); then
+        if PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-platform-repo --query 'ARN' --output text 2>/dev/null); then
             break
         fi
         echo "Attempt $i: Platform repo credentials secret not found, waiting 30 seconds..."
