@@ -2600,6 +2600,24 @@
    ],
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
+  },
+  "SetupGitAssociation": {
+   "Type": "AWS::SSM::Association",
+   "Properties": {
+    "AssociationName": "SetupGitAssociation",
+    "Name": {
+     "Ref": "SetupGit"
+    },
+    "Targets": [
+     {
+      "Key": "tag:aws:cloudformation:stack-name",
+      "Values": [
+       "eks-blueprints-workshop",
+       "eks-blueprints-workshop-team-stack"
+      ]
+     }
+    ]
+   }
   }
  },
  "Outputs": {

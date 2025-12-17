@@ -318,6 +318,21 @@ export class TeamStack extends WorkshopStudioTeamStack {
     ssmDocument.node.addDependency(spokeDevRunner.customResource);
     ssmDocument.node.addDependency(spokeProdRunner.customResource);
 
+    const association = new cdk.aws_ssm.CfnAssociation(
+      this,
+      "SetupGitAssociation",
+      {
+        associationName: "SetupGitAssociation",
+        name: ssmDocument.ref,
+        targets: [
+          {
+            key: "tag:aws:cloudformation:stack-name",
+            values: [this.stackName, "eks-blueprints-workshop-team-stack"],
+          },
+        ],
+      },
+    );
+
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });
   }
