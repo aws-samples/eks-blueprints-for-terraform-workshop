@@ -2,21 +2,21 @@
 
 locals {
   gitops_repos = {
-    retail-store-app = {
+    retail-store-app-repo = {
       name     = var.gitops_retail_store_app_repo_name
       # basepath = var.gitops_addons_basepath
       # path     = var.gitops_addons_path
       # revision = var.gitops_addons_revision
     }
 
-    retail-store-manifest = {
+    retail-store-manifest-repo = {
       name     = var.gitops_retail_store_manifest_repo_name
       # basepath = var.gitops_workload_basepath
       # path     = var.gitops_workload_path
       # revision = var.gitops_workload_revision
     }
 
-    platform = {
+    platform-repo = {
       name     = var.gitops_platform_repo_name
       # basepath = var.gitops_platform_basepath
       # path     = var.gitops_platform_path
