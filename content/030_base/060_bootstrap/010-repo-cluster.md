@@ -3,7 +3,7 @@ title: "Register Hub Cluster & Platform Repository"
 weight: 10
 ---
 
-### 1. Register Hub Cluster 
+### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }

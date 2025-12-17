@@ -1619,13 +1619,46 @@
          "    sudo su - ec2-user -c \"ls -la '$DIRECTORY'\"",
          "    if [ -f \"$DIRECTORY/setup-git.sh\" ]; then",
          "      echo \"Found setup-git.sh. Executing...\"",
-         "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+         "      echo \"DEBUG: About to execute setup-git.sh\"",
+         "      echo \"DEBUG: Current directory: $(pwd)\"",
+         "      echo \"DEBUG: Current user: $(whoami)\"",
+         "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\" > /tmp/setup-git.log 2>&1",
+         "      SETUP_GIT_EXIT_CODE=$?",
+         "      echo \"DEBUG: setup-git.sh completed with exit code: $SETUP_GIT_EXIT_CODE\"",
+         "      echo \"DEBUG: Last 20 lines of setup-git.sh output:\"",
+         "      tail -20 /tmp/setup-git.log",
+         "      if [ $SETUP_GIT_EXIT_CODE -ne 0 ]; then",
+         "        echo \"ERROR: setup-git.sh failed\"",
+         "        cat /tmp/setup-git.log",
+         "        exit $SETUP_GIT_EXIT_CODE",
+         "      fi",
+         "      echo \"DEBUG: Checking for setup-template.sh...\"",
+         "      ls -la \"$DIRECTORY/setup-template.sh\"",
          "      if [ -f \"$DIRECTORY/setup-template.sh\" ]; then",
+         "        echo \"DEBUG: Found setup-template.sh. File details:\"",
+         "        ls -la \"$DIRECTORY/setup-template.sh\"",
+         "        echo \"DEBUG: File permissions and ownership look good\"",
          "        echo \"Found setup-template.sh. Executing...\"",
-         "        sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=eks-blueprints-workshop AWS_REGION=us-west-2 '$DIRECTORY/setup-template.sh'\"",
+         "        echo \"DEBUG: About to run setup-template.sh with env vars\"",
+         "        sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=eks-blueprints-workshop AWS_REGION=us-west-2 '$DIRECTORY/setup-template.sh'\" > /tmp/setup-template.log 2>&1",
+         "        SETUP_TEMPLATE_EXIT_CODE=$?",
+         "        echo \"DEBUG: setup-template.sh completed with exit code: $SETUP_TEMPLATE_EXIT_CODE\"",
+         "        echo \"DEBUG: Last 20 lines of setup-template.sh output:\"",
+         "        tail -20 /tmp/setup-template.log",
+         "        if [ $SETUP_TEMPLATE_EXIT_CODE -ne 0 ]; then",
+         "          echo \"ERROR: setup-template.sh failed\"",
+         "          cat /tmp/setup-template.log",
+         "          exit $SETUP_TEMPLATE_EXIT_CODE",
+         "        fi",
          "      else",
+         "        echo \"DEBUG: setup-template.sh NOT found\"",
+         "        echo \"DEBUG: Directory contents:\"",
+         "        ls -la \"$DIRECTORY/\"",
          "        echo \"Warning: setup-template.sh not found in $DIRECTORY\"",
          "      fi",
+         "      echo \"DEBUG: Final log file sizes:\"",
+         "      ls -la /tmp/setup-*.log",
+         "      echo \"DEBUG: Both scripts completed successfully\"",
          "      exit 0",
          "    else",
          "      echo \"Error: setup-git.sh not found in $DIRECTORY\"",
@@ -1656,24 +1689,6 @@
     "EKSWSSPOKEDEVClusterStackCD2B8E76",
     "EKSWSSPOKEPRODClusterStackCE677D7A"
    ]
-  },
-  "SetupGitAssociation": {
-   "Type": "AWS::SSM::Association",
-   "Properties": {
-    "AssociationName": "SetupGitAssociation",
-    "Name": {
-     "Ref": "SetupGit"
-    },
-    "Targets": [
-     {
-      "Key": "tag:aws:cloudformation:stack-name",
-      "Values": [
-       "eks-blueprints-workshop",
-       "eks-blueprints-workshop-team-stack"
-      ]
-     }
-    ]
-   }
   },
   "EKSWSHUBStackDeployProjectB79E3671": {
    "Type": "AWS::CodeBuild::Project",
@@ -2059,7 +2074,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -2299,7 +2314,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "040000c57b1f66c031e25ee302f149c3"
+    "ContentHash": "1d78cbd1c841aa6210c7088b57bae275"
    },
    "DependsOn": [
     "EKSWSCOMMONClusterStackE20A043D",
@@ -2380,7 +2395,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke-${WORKSPACE}/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        # This gives access to the EKS cluster in terraform\n\n        # Spokes backend config\n        cat << EOT > $BASE_DIR/terraform/spoke/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"spoke/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        mkdir -p ~/.ssh\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/terraform/spoke/destroy.sh \n        else\n          # Project Creation\n          DEBUG=1 $BASE_DIR/terraform/spoke/deploy.sh \n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING \"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -2620,7 +2635,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "040000c57b1f66c031e25ee302f149c3"
+    "ContentHash": "1d78cbd1c841aa6210c7088b57bae275"
    },
    "DependsOn": [
     "EKSWSCOMMONClusterStackE20A043D",

@@ -137,7 +137,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       content: {
         schemaVersion: "2.2",
         description: "Setup Git",
-        parameters: {},      
+        parameters: {},
         mainSteps: [
           {
             action: "aws:runShellScript",

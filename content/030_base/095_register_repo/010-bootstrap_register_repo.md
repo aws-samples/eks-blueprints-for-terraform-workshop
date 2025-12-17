@@ -3,9 +3,7 @@ title: "Bootstrap the Cluster Repository"
 weight: 10
 ---
 
-
-
-### 1. Register Hub Cluster 
+### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -17,7 +15,6 @@ git commit -m "add bootstrap repo registration"
 git push 
 :::
 <!-- prettier-ignore-end -->
-
 
 ### 2. Copy Values
 
@@ -32,11 +29,6 @@ git commit -m "add platform registration values"
 git push 
 :::
 <!-- prettier-ignore-end -->
-
-
-
-
-
 
 <!-- cspell:disable-next-line -->
 

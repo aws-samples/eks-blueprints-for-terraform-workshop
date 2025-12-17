@@ -3,7 +3,7 @@ title: "Access ArgoCD Dashboard"
 weight: 20
 ---
 
-Access ArgoCD Dashboard 
+Access ArgoCD Dashboard
 
 ![Navigate ArgoCD Capabilities](/static/images/access/argocd_capabilties_navigate.png)
 
@@ -20,4 +20,3 @@ Access ArgoCD Dashboard
 <!-- ![Set New Password](/static/images/access/set_new_password.png) -->
 
 ![Argo Dashboard](/static/images/access/argo_dashboard.png)
-

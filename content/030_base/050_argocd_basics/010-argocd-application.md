@@ -25,8 +25,7 @@ In this section you will create guestbook ArgoCD application. It will deploy the
 
 ![ArgoCD Application](/static/images/argocd-application.png)
 
-
-### 1. Register Hub Cluster 
+### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -37,7 +36,6 @@ kubectl create ns guestbook --context hub
 kubectl apply -f ./guestbook.yaml
 :::
 <!-- prettier-ignore-end -->
-
 
 ### 1. Create guestbook ArgoCD Application
 
