@@ -1,5 +1,5 @@
 ---
-title: "Bootstrap"
+title: "Bootstrap Cluster Reigstraion"
 weight: 90
 ---
 

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: cluster-config
+  name: register-repo
   namespace: argocd
 spec:
   goTemplate: true
@@ -16,7 +16,7 @@ spec:
           repoURL: '{{ .metadata.annotations.platform_url }}'
           revision: HEAD
           directories:
-          - path: cluster-config/*
+          - path: register-repo/*
   template:
     metadata:
       name: '{{ .path.basename }}'
@@ -25,15 +25,11 @@ spec:
       project: default
       source:
         repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/argocd-cluster-secret
+        path: charts/argocd-repo-secret
         targetRevision: HEAD
         helm:
-          parameters:
-          - name: clusterName
-            value: '{{ .path.basename }}'
           valueFiles:
-          - '../../cluster-config/values.yaml'
-          - '../../cluster-config/{{ .path.basename }}/values.yaml'
+          - '../../register-repo/{{ .path.basename }}/values.yaml'
       destination:
         server: '{{ .server }}'
         namespace: argocd

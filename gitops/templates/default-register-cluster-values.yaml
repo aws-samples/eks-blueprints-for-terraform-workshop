@@ -1,0 +1,4 @@
+config: '{"tlsClientConfig":{"insecure":false}}'
+annotations:
+  platform_url: <<url>>
+

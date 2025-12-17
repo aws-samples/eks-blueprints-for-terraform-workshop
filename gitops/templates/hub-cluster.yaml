@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   labels:
     argocd.argoproj.io/secret-type: cluster
+    cluster-role: hub
   annotations:
     platform_url: <<platform_url>>
 type: Opaque

@@ -6,11 +6,11 @@ metadata:
 spec:
   destination:
     namespace: argocd
-    server: arn:aws:eks:us-west-2:077295700911:cluster/argocd-hub
+    name: hub
   project: default
   source:
     path: bootstrap
-    repoURL: https://d2o5zlyqv1l5cr.cloudfront.net/gitea/workshop-user/platform.git
+    repoURL: <<url>>
     targetRevision: HEAD
   syncPolicy:
     automated:

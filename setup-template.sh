@@ -111,6 +111,36 @@ update_templates() {
         echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
     
+    # Update bootstrap.yaml template
+    BOOTSTRAP_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap.yaml"
+    
+    if [ -f "$BOOTSTRAP_TEMPLATE" ]; then
+        sed -i.bak "s|<<url>>|$PLATFORM_URL|g" "$BOOTSTRAP_TEMPLATE"
+        echo "Updated $BOOTSTRAP_TEMPLATE with platform URL"
+    else
+        echo "Warning: Template file $BOOTSTRAP_TEMPLATE not found"
+    fi
+    
+    # Update hub-register-cluster-values.yaml template
+    HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-register-cluster-values.yaml"
+    
+    if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
+        sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $HUB_CLUSTER_REG_VALUES_TEMPLATE with hub cluster ARN"
+    else
+        echo "Warning: Template file $HUB_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
+    
+    # Update default-register-cluster-values.yaml template
+    DEFAULT_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/default-register-cluster-values.yaml"
+    
+    if [ -f "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE" ]; then
+        sed -i.bak "s|<<url>>|$PLATFORM_URL|g" "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE with platform URL"
+    else
+        echo "Warning: Template file $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
+    
     echo "Template updates completed"
     echo "---"
 }
@@ -127,3 +157,14 @@ setup_argocd_context "argocd-hub" "hub"
 update_templates
 
 echo "All ArgoCD contexts configured and templates updated successfully!"
+
+# Initialize Terraform in hub and spoke directories
+echo "Initializing Terraform in hub directory..."
+cd ~/environment/hub
+terraform init
+
+echo "Initializing Terraform in spoke directory..."
+cd ~/environment/spoke
+terraform init
+
+echo "Terraform initialization completed!"

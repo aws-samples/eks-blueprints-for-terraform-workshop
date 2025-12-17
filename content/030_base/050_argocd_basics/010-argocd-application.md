@@ -25,6 +25,20 @@ In this section you will create guestbook ArgoCD application. It will deploy the
 
 ![ArgoCD Application](/static/images/argocd-application.png)
 
+
+### 1. Register Hub Cluster 
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+mkdir -p "${GITOPS_DIR}/basics"
+cp -r /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster.yaml "~/environment/basics"
+cd ${GITOPS_DIR}/basics
+kubectl create ns guestbook --context hub
+kubectl apply -f ./guestbook.yaml
+:::
+<!-- prettier-ignore-end -->
+
+
 ### 1. Create guestbook ArgoCD Application
 
 An ArgoCD **Application** is a special Kubernetes object(CRD) that tells ArgoCD what to deploy from Git and where to deploy it. It keeps checking the actual state in your cluster and automatically syncs it to match what’s in Git.
@@ -38,7 +52,6 @@ In the example below, we have placeholders for source (line 13) and destination(
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=json highlightLines='13,16'}
-mkdir -p ~/environment/basics
 cd ~/environment/basics
 cat <<'EOF' >> ~/environment/basics/guestbook.yaml
 apiVersion: argoproj.io/v1alpha1

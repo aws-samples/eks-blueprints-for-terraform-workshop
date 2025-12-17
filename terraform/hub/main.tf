@@ -253,3 +253,12 @@ resource "aws_eks_capability" "argocd" {
   tags = local.tags
 }
 
+resource "aws_eks_access_policy_association" "AmazonEKSClusterAdminPolicy" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = aws_iam_role.eks_capability_argocd.arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  
+  access_scope {
+    type      = "cluster"
+  }
+}

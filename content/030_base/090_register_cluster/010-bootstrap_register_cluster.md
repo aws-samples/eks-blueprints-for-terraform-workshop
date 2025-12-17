@@ -1,13 +1,46 @@
 ---
-title: "Bootstrap the Platform Repository"
+title: "Bootstrap the Cluster Repository"
 weight: 10
 ---
+
+
+
+### 1. Register Hub Cluster 
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster.yaml $GITOPS_DIR/platform/bootstrap
+cd ${GITOPS_DIR}/platform/bootstrap
+git add .
+git commit -m "add bootstrap cluster registration"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+
+### 2. Copy Values
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+mkdir -p $GITOPS_DIR/platform/register-cluster/hub
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/hub-register-cluster-values.yaml $GITOPS_DIR/platform/register-cluster/hub/values.yaml
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/default-register-cluster-values.yaml $GITOPS_DIR/platform/register-cluster/values.yaml
+cd $GITOPS_DIR/platform
+git add .
+git commit -m "add hub cluster registration values and default registration values"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+
+
 
 <!-- cspell:disable-next-line -->
 
 ::video{id=pqw8FHhTiQY}
 
-We’ll configure an application to watch a folder - bootstrap in your platform Git repository. Any files in this folder get processed automatically.
+We'll configure an application to watch a folder - bootstrap in your platform Git repository. Any files in this folder get processed automatically.
 
 ![Hub Cluster Updated Metadata](/static/images/bootstrap-empty.png)
 
@@ -130,7 +163,7 @@ module "gitops_bridge_bootstrap" {
 
 ### 1. Add fleet_member label variable
 
-The ApplicationSet cluster generator (line 16) filters clusters that have the label fleet_member = hub. Let’s add this label to the hub cluster definition.
+The ApplicationSet cluster generator (line 16) filters clusters that have the label fleet_member = hub. Let's add this label to the hub cluster definition.
 
 ![Hub Cluster Metadata](/static/images/hubcluster-initial-labels.png)
 
