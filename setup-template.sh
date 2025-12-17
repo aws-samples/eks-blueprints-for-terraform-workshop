@@ -29,21 +29,62 @@ setup_argocd_context() {
 update_templates() {
     echo "Updating template files with cluster ARNs and secrets..."
     
-    # Get ARN for argocd-hub cluster
-    HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text)
+    # Retry logic for getting hub cluster ARN
+    for i in {1..10}; do
+        if HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text 2>/dev/null); then
+            echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
+            break
+        fi
+        echo "Attempt $i: Hub cluster not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get hub cluster ARN after 10 attempts"
+            return 1
+        fi
+    done
     
-    echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
+    # Retry logic for getting platform secrets
+    for i in {1..10}; do
+        if PLATFORM_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .url); then
+            break
+        fi
+        echo "Attempt $i: Platform secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get platform URL after 10 attempts"
+            return 1
+        fi
+    done
     
-    # Get secrets for platform repo
-    PLATFORM_URL="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .url)"
-    GIT_USER="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .username)"
-    GIT_PASS="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text | jq -r .password)"
+    for i in {1..10}; do
+        if GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .username); then
+            break
+        fi
+        echo "Attempt $i: Platform secret username not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get git username after 10 attempts"
+            return 1
+        fi
+    done
+    
+    for i in {1..10}; do
+        if GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .password); then
+            break
+        fi
+        echo "Attempt $i: Platform secret password not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get git password after 10 attempts"
+            return 1
+        fi
+    done
     
     echo "Platform URL: $PLATFORM_URL"
     echo "Git User: $GIT_USER"
     
-    # Update hub-cluster.yaml template
-    TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster.yaml"
+    # Update register-hub-cluster.yaml template
+    TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-hub-cluster.yaml"
     
     if [ -f "$TEMPLATE_FILE" ]; then
         sed -i.bak \
@@ -55,8 +96,8 @@ update_templates() {
         echo "Warning: Template file $TEMPLATE_FILE not found"
     fi
     
-    # Update platform-repo.yaml template
-    PLATFORM_REPO_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo.yaml"
+    # Update register-platform-repo.yaml template
+    PLATFORM_REPO_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-platform-repo.yaml"
     
     if [ -f "$PLATFORM_REPO_TEMPLATE" ]; then
         sed -i.bak \
@@ -80,7 +121,17 @@ update_templates() {
     fi
     
     # Get secret ARN for platform_repo_credentials
-    PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id platform_repo_credentials --query 'ARN' --output text)
+    for i in {1..10}; do
+        if PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id platform_repo_credentials --query 'ARN' --output text 2>/dev/null); then
+            break
+        fi
+        echo "Attempt $i: Platform repo credentials secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get platform repo secret ARN after 10 attempts"
+            return 1
+        fi
+    done
     
     # Update platform-repo-values.yaml template
     PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo-values.yaml"
@@ -96,7 +147,17 @@ update_templates() {
     fi
     
     # Get retail store manifest URL from secret
-    RETAIL_STORE_URL="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest --query SecretString --output text | jq -r .url)"
+    for i in {1..10}; do
+        if RETAIL_STORE_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest --query SecretString --output text 2>/dev/null | jq -r .url); then
+            break
+        fi
+        echo "Attempt $i: Retail store manifest secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get retail store URL after 10 attempts"
+            return 1
+        fi
+    done
     
     # Update retail-store-manifest-repo-values.yaml template
     RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-manifest-repo-values.yaml"
