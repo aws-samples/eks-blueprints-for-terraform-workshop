@@ -45,7 +45,7 @@ update_templates() {
     
     # Retry logic for getting platform secrets
     for i in {1..10}; do
-        if PLATFORM_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .url); then
+        if PLATFORM_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .url); then
             break
         fi
         echo "Attempt $i: Platform secret not found, waiting 30 seconds..."
@@ -57,7 +57,7 @@ update_templates() {
     done
     
     for i in {1..10}; do
-        if GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .username); then
+        if GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .username); then
             break
         fi
         echo "Attempt $i: Platform secret username not found, waiting 30 seconds..."
@@ -69,7 +69,7 @@ update_templates() {
     done
     
     for i in {1..10}; do
-        if GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform --query SecretString --output text 2>/dev/null | jq -r .password); then
+        if GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .password); then
             break
         fi
         echo "Attempt $i: Platform secret password not found, waiting 30 seconds..."
@@ -148,7 +148,7 @@ update_templates() {
     
     # Get retail store manifest URL from secret
     for i in {1..10}; do
-        if RETAIL_STORE_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest --query SecretString --output text 2>/dev/null | jq -r .url); then
+        if RETAIL_STORE_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest-repo --query SecretString --output text 2>/dev/null | jq -r .url); then
             break
         fi
         echo "Attempt $i: Retail store manifest secret not found, waiting 30 seconds..."
