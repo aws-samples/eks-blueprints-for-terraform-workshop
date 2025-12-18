@@ -1,4 +1,4 @@
-name: webstore
+name: retail-store
 labels:
   environment: control-plane
 namespaces:

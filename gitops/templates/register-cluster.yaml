@@ -19,7 +19,7 @@ spec:
           - path: register-cluster/*
   template:
     metadata:
-      name: '{{ .path.basename }}-register-cluster'
+      name: 'register-cluster-{{ .path.basename }}'
       namespace: argocd
     spec:
       project: default

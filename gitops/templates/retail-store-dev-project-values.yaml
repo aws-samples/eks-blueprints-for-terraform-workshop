@@ -9,19 +9,19 @@ projects:
   description: Team Project
   destinations:
   - namespace: carts
-    name: hub
+    name: dev
   - namespace: catalog
-    name: hub
+    name: dev
   - namespace: checkout
-    name: hub
+    name: dev
   - namespace: orders
-    name: hub
+    name: dev
   - namespace: rabbitmq
-    name: hub
+    name: dev
   - namespace: ui
-    name: hub
+    name: dev
   - namespace: assets
-    name: hub
+    name: dev
   # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
   namespaceResourceBlacklist:
   - group: ''

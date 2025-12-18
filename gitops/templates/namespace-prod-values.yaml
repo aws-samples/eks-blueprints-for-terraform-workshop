@@ -2,8 +2,6 @@ namespaces:
   carts:
     limitRanges:
       - name: default
-        labels:
-          app.kubernetes.io/created-by: staging-team
         limits:
           - type: Container
             default:

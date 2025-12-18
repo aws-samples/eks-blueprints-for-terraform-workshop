@@ -171,6 +171,16 @@ update_templates() {
     else
         echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
+
+    # Update retail-store-environments.yaml template
+    RETAIL_STORE_ENV_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-environments.yaml"
+    
+    if [ -f "$RETAIL_STORE_ENV_TEMPLATE" ]; then
+        sed -i.bak "s|<<url>>|$RETAIL_STORE_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
+        echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store URL"
+    else
+        echo "Warning: Template file $RETAIL_STORE_ENV_TEMPLATE not found"
+    fi
     
     # Update bootstrap.yaml template
     BOOTSTRAP_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap.yaml"

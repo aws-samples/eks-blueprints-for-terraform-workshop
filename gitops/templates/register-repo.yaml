@@ -19,7 +19,7 @@ spec:
           - path: register-repo/*
   template:
     metadata:
-      name: '{{ .path.basename }}'
+      name: 'register-repo-{{ .path.basename }}'
       namespace: argocd
     spec:
       project: default
