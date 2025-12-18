@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: register-repo
+  name: register-team
   namespace: argocd
 spec:
   goTemplate: true
@@ -16,7 +16,7 @@ spec:
           repoURL: '{{ .metadata.annotations.platform_url }}'
           revision: HEAD
           directories:
-          - path: register-repo/*
+          - path: team/*
   template:
     metadata:
       name: '{{ .path.basename }}'
@@ -25,13 +25,13 @@ spec:
       project: default
       source:
         repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/argocd-repo-secret
+        path: charts/register-team
         targetRevision: HEAD
         helm:
           valueFiles:
-          - '../../register-repo/{{ .path.basename }}/values.yaml'
+          - '../../team/{{ .path.basename }}/environments.yaml'
           parameters:
-          - name: repoName
+          - name: teamName
             value: '{{ .path.basename }}'
       destination:
         server: '{{ .server }}'

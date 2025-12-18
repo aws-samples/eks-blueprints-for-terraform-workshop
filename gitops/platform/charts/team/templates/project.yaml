@@ -1,0 +1,61 @@
+
+{{- $team := .Values.teamName -}}
+{{- $repo := .Values.repo -}}
+{{- $envs := .Values.environments | default list -}}
+
+{{/* =========================
+     PROD PROJECT
+     ========================= */}}
+{{- $teamProject := printf "%s-project" $team -}}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $teamProject }}
+  namespace: argocd
+  labels:
+    team: {{ $team | quote }}
+spec:
+  description: "Argo CD project for team {{ $team }}"
+
+  # Git source for this team
+  sourceRepos:
+    - {{ $repo | quote }}
+
+  # All prod destinations (anything that's not env.name == "prod")
+  destinations:
+{{- range $env := $envs }}
+    - name: {{ $env.cluster | quote }}
+      server: "*"
+{{- end }}
+
+  # You can tighten this later
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  roles:
+    # Operators (like your "developer" example) – can sync + get
+    - name: operator
+      description: "Operators can sync and view applications in prod"
+      policies:
+        - p, proj:{{ $teamProject }}:operator, applications, sync, {{ $teamProject }}/*, allow
+        - p, proj:{{ $teamProject }}:operator, applications, get,  {{ $teamProject }}/*, allow
+      groups:
+        - {{ $operatorGroup | quote }}
+
+    # Admins – full access in prod
+    - name: admin
+      description: "Admins have full access in prod"
+      policies:
+        - p, proj:{{ $teamProject }}:admin, applications, *, {{ $teamProject }}/*, allow
+      groups:
+        - {{ $adminGroup | quote }}
+
+    # Viewers – read-only
+    - name: viewer
+      description: "View-only access to prod applications"
+      policies:
+        - p, proj:{{ $teamProject }}:viewer, applications, get, {{ $teamProject }}/*, allow
+      groups:
+        - {{ $viewerGroup | quote }}
+

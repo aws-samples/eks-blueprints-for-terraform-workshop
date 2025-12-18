@@ -1,0 +1,69 @@
+
+{{- $workload := .Values.workloadName -}}
+{{- $repo := .Values.repo -}}
+{{- $envs := .Values.environments | default list -}}
+
+{{- $adminGroup    := printf "team-%s-nonprod-admins"    $workload -}}
+{{- $operatorGroup := printf "team-%s-nonprod-operators" $workload -}}
+{{- $viewerGroup   := printf "team-%s-nonprod-viewers"   $workload -}}
+
+{{/* =========================
+     NON-PROD PROJECT
+     ========================= */}}
+{{- $nonprodProject := printf "%s-nonprod" $workload -}}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $nonprodProject }}
+  namespace: argocd
+  labels:
+    team: {{ $workload | quote }}
+    env: "nonprod"
+spec:
+  description: "Non-prod Argo CD project for team {{ $workload }}"
+
+  # Git source for this workload
+  sourceRepos:
+    - {{ $repo | quote }}
+
+  # All non-prod destinations (anything that's not env.name == "prod")
+  destinations:
+{{- range $env := $envs }}
+{{- if ne $env.name "prod" }}
+    - name: {{ $env.cluster | quote }}
+      namespace: "*"
+      server: "*"
+{{- end }}
+{{- end }}
+
+  # You can tighten this later
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  roles:
+    # Operators (like your "developer" example) – can sync + get
+    - name: operator
+      description: "Operators can sync and view applications in non-prod"
+      policies:
+        - p, proj:{{ $nonprodProject }}:operator, applications, sync, {{ $nonprodProject }}/*, allow
+        - p, proj:{{ $nonprodProject }}:operator, applications, get,  {{ $nonprodProject }}/*, allow
+      groups:
+        - {{ $operatorGroup | quote }}
+
+    # Admins – full access in non-prod
+    - name: admin
+      description: "Admins have full access in non-prod"
+      policies:
+        - p, proj:{{ $nonprodProject }}:admin, applications, *, {{ $nonprodProject }}/*, allow
+      groups:
+        - {{ $adminGroup | quote }}
+
+    # Viewers – read-only
+    - name: viewer
+      description: "View-only access to non-prod applications"
+      policies:
+        - p, proj:{{ $nonprodProject }}:viewer, applications, get, {{ $nonprodProject }}/*, allow
+      groups:
+        - {{ $viewerGroup | quote }}
+

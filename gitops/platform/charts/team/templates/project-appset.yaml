@@ -1,0 +1,49 @@
+{{- $team := .Values.teamName -}}
+{{- $envs := .Values.environments | default list -}}
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $team }}-project
+  namespace: argocd
+  labels:
+    team: {{ $team | quote }}
+spec:
+  goTemplate: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - list:
+          elements:
+{{- range $env := $envs }}
+          - env: {{ $env.name | quote }}
+            cluster: {{ $env.cluster | quote }}
+{{- end }}
+  template:
+    metadata:
+      name: 'project-{{ $team }}-{{ .env }}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: '{{ .metadata.annotations.platform_url }}'
+        path: charts/register-project
+        targetRevision: HEAD
+        helm:
+          releaseName: '{{ $team }}-{{ .env }}'
+          valueFiles:
+          - '$values/{{ metadata.annotations.platform_repo_basepath }}teams/{{ path.basename }}/argoproject-{{ metadata.labels.environment }}-values.yaml'
+          parameters:
+            - name: "projects[0].sourceRepos[0]"
+              value: {{ .Values.repo | quote }}
+      destination:
+        name: '{{ .cluster }}'
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

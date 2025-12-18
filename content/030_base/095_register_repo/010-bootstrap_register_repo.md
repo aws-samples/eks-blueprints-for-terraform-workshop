@@ -1,5 +1,5 @@
 ---
-title: "Bootstrap the Cluster Repository"
+title: "Bootstrap Repo Registration"
 weight: 10
 ---
 
