@@ -31,8 +31,7 @@ spec:
       name: 'team-{{ $team }}-deployment-{{`{{ index .path.segments 0 }}`}}-{{ $env.env }}'      
       namespace: argocd
     spec:
-      # project: "{{ $team }}-{{`{{ .env }}`}}"
-      project: default
+      project: "{{ $team }}-{{$env.env }}"
       source:
         repoURL: "{{ $.Values.repo }}"
         targetRevision: HEAD  

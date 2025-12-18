@@ -1,17 +1,48 @@
 ---
-title: "Bootstrap the Cluster Repository"
+title: "Onboard team"
 weight: 10
 ---
+
+
+
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/register-team.yaml $GITOPS_DIR/platform/bootstrap
+cd ${GITOPS_DIR}/platform/bootstrap
+git add .
+git commit -m "add bootstrap repo registration"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+mkdir -p ~/environment/gitops-repos/platform/register-team/retail-store
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-environments.yaml ~/environment/gitops-repos/platform/register-team/retail-store/environments.yaml
+mkdir -p ~/environment/gitops-repos/platform/register-team/retail-store/namespace
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/namespace/* ~/environment/gitops-repos/platform/register-team/retail-store/namespace
+mkdir -p ~/environment/gitops-repos/platform/register-team/retail-store/project
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/project/* ~/environment/gitops-repos/platform/register-team/retail-store/project
+cd ${GITOPS_DIR}/platform
+git add .
+git commit -m "add bootstrap repo registration"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+
 
 ### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
-cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/register-cluster.yaml $GITOPS_DIR/platform/bootstrap
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/register-repo.yaml $GITOPS_DIR/platform/bootstrap
 cd ${GITOPS_DIR}/platform/bootstrap
 git add .
-git commit -m "add bootstrap cluster registration"
+git commit -m "add bootstrap repo registration"
 git push 
 :::
 <!-- prettier-ignore-end -->
@@ -20,15 +51,12 @@ git push
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-mkdir -p $GITOPS_DIR/platform/register-cluster/hub
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/hub-register-cluster-values.yaml $GITOPS_DIR/platform/register-cluster/hub/values.yaml
-mkdir -p $GITOPS_DIR/platform/register-cluster/dev
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/dev-register-cluster-values.yaml $GITOPS_DIR/platform/register-cluster/dev/values.yaml
+mkdir -p $GITOPS_DIR/platform/register-repo/platform
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml $GITOPS_DIR/platform/register-repo/platform/values.yaml
 
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/default-register-cluster-values.yaml $GITOPS_DIR/platform/register-cluster/values.yaml
 cd $GITOPS_DIR/platform
 git add .
-git commit -m "add hub cluster registration values and default registration values"
+git commit -m "add platform registration values"
 git push 
 :::
 <!-- prettier-ignore-end -->

@@ -1,5 +1,2 @@
 serverARN: <<arn>>
 config: '{"tlsClientConfig":{"insecure":false}}'
-labels:
-  cluster-role: hub
-annotations: {}

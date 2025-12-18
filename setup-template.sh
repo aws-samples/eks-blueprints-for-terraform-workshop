@@ -181,6 +181,26 @@ update_templates() {
     else
         echo "Warning: Template file $RETAIL_STORE_ENV_TEMPLATE not found"
     fi
+
+    # Update dev-register-cluster-values.yaml template
+    DEV_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/dev-register-cluster-values.yaml"
+    
+    if [ -f "$DEV_CLUSTER_REG_VALUES_TEMPLATE" ]; then
+        sed -i.bak "s|<<arn>>|argocd-spoke-dev|g" "$DEV_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $DEV_CLUSTER_REG_VALUES_TEMPLATE with cluster name"
+    else
+        echo "Warning: Template file $DEV_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
+
+    # Update prod-register-cluster-values.yaml template
+    PROD_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/prod-register-cluster-values.yaml"
+    
+    if [ -f "$PROD_CLUSTER_REG_VALUES_TEMPLATE" ]; then
+        sed -i.bak "s|<<arn>>|argocd-spoke-prod|g" "$PROD_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $PROD_CLUSTER_REG_VALUES_TEMPLATE with cluster name"
+    else
+        echo "Warning: Template file $PROD_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
     
     # Update bootstrap.yaml template
     BOOTSTRAP_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/bootstrap.yaml"

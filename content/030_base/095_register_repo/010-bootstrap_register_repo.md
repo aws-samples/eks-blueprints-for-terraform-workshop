@@ -8,7 +8,7 @@ weight: 10
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
-cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo.yaml $GITOPS_DIR/platform/bootstrap
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/register-repo.yaml $GITOPS_DIR/platform/bootstrap
 cd ${GITOPS_DIR}/platform/bootstrap
 git add .
 git commit -m "add bootstrap repo registration"
@@ -21,11 +21,25 @@ git push
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 mkdir -p $GITOPS_DIR/platform/register-repo/platform
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo-values.yaml $GITOPS_DIR/platform/register-repo/platform/values.yaml
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml $GITOPS_DIR/platform/register-repo/platform/values.yaml
 
 cd $GITOPS_DIR/platform
 git add .
 git commit -m "add platform registration values"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+
+###3. Copy Manifest values
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-manifest
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-manifest-repo-values.yaml $GITOPS_DIR/platform/register-repo/retail-store-manifest/values.yaml
+
+cd $GITOPS_DIR/platform
+git add .
+git commit -m "add retail-store-manifest-repo-values.yaml"
 git push 
 :::
 <!-- prettier-ignore-end -->
