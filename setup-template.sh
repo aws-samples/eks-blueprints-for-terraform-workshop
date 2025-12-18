@@ -83,8 +83,8 @@ update_templates() {
     echo "Platform URL: $PLATFORM_URL"
     echo "Git User: $GIT_USER"
     
-    # Update register-hub-cluster.yaml template
-    TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-hub-cluster.yaml"
+    # Update register-hub-cluster-manual.yaml template
+    TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/register-hub-cluster-manual.yaml"
     
     if [ -f "$TEMPLATE_FILE" ]; then
         sed -i.bak \
@@ -96,8 +96,8 @@ update_templates() {
         echo "Warning: Template file $TEMPLATE_FILE not found"
     fi
     
-    # Update register-platform-repo.yaml template
-    PLATFORM_REPO_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-platform-repo.yaml"
+    # Update register-platform-repo-manual.yaml template
+    PLATFORM_REPO_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/register-platform-repo-manual.yaml"
     
     if [ -f "$PLATFORM_REPO_TEMPLATE" ]; then
         sed -i.bak \
@@ -120,9 +120,9 @@ update_templates() {
         echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
     fi
     
-    # Get secret ARN for argocd-workshop-platform-repo
+    # Get secret ARN for gitea_repo_credentials
     for i in {1..10}; do
-        if PLATFORM_REPO_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-platform-repo --query 'ARN' --output text 2>/dev/null); then
+        if GITEA_REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id gitea_repo_credentials --query 'ARN' --output text 2>/dev/null); then
             break
         fi
         echo "Attempt $i: Platform repo credentials secret not found, waiting 30 seconds..."
@@ -134,12 +134,12 @@ update_templates() {
     done
     
     # Update platform-repo-values.yaml template
-    PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/platform-repo-values.yaml"
+    PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml"
     
     if [ -f "$PLATFORM_REPO_VALUES_TEMPLATE" ]; then
         sed -i.bak \
             -e "s|<<url>>|$PLATFORM_URL|g" \
-            -e "s|<<secret_arn>>|$PLATFORM_REPO_SECRET_ARN|g" \
+            -e "s|<<secret_arn>>|$GITEA_REPO_CREDENTIALS_SECRET_ARN|g" \
             "$PLATFORM_REPO_VALUES_TEMPLATE"
         echo "Updated $PLATFORM_REPO_VALUES_TEMPLATE with platform URL and secret ARN"
     else
@@ -160,12 +160,12 @@ update_templates() {
     done
     
     # Update retail-store-manifest-repo-values.yaml template
-    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-manifest-repo-values.yaml"
+    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-manifest-repo-values.yaml"
     
     if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
         sed -i.bak \
             -e "s|<<url>>|$RETAIL_STORE_URL|g" \
-            -e "s|<<secret_arn>>|$PLATFORM_REPO_SECRET_ARN|g" \
+            -e "s|<<secret_arn>>|$GITEA_REPO_CREDENTIALS_SECRET_ARN|g" \
             "$RETAIL_STORE_VALUES_TEMPLATE"
         echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store URL and secret ARN"
     else
@@ -183,7 +183,7 @@ update_templates() {
     fi
     
     # Update bootstrap.yaml template
-    BOOTSTRAP_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap.yaml"
+    BOOTSTRAP_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/bootstrap/bootstrap.yaml"
     
     if [ -f "$BOOTSTRAP_TEMPLATE" ]; then
         sed -i.bak "s|<<url>>|$PLATFORM_URL|g" "$BOOTSTRAP_TEMPLATE"
@@ -193,7 +193,7 @@ update_templates() {
     fi
     
     # Update hub-register-cluster-values.yaml template
-    HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-register-cluster-values.yaml"
+    HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/hub-register-cluster-values.yaml"
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
         sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_REG_VALUES_TEMPLATE"
@@ -203,7 +203,7 @@ update_templates() {
     fi
     
     # Update default-register-cluster-values.yaml template
-    DEFAULT_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/default-register-cluster-values.yaml"
+    DEFAULT_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/default-register-cluster-values.yaml"
     
     if [ -f "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE" ]; then
         sed -i.bak "s|<<url>>|$PLATFORM_URL|g" "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE"

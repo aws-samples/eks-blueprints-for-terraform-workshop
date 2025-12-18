@@ -8,9 +8,9 @@ weight: 10
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
-cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-hub-cluster.yaml ~/environment/basics
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/register-hub-cluster-manual.yaml ~/environment/basics
 cd ~/environment/basics
-kubectl apply -f register-hub-cluster.yaml
+kubectl apply -f register-hub-cluster-manual.yaml
 :::
 <!-- prettier-ignore-end -->
 
@@ -19,8 +19,8 @@ kubectl apply -f register-hub-cluster.yaml
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
-cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-platform-repo.yaml ~/environment/basics
+cp  /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/register-platform-repo-manual.yaml ~/environment/basics
 cd ~/environment/basics
-kubectl apply -f register-platform-repo.yaml
+kubectl apply -f register-platform-repo-manual.yaml
 :::
 <!-- prettier-ignore-end -->

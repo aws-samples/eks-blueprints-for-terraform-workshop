@@ -59,3 +59,15 @@ resource "aws_secretsmanager_secret_version" "git_secrets_version" {
   })
 }
 
+resource "aws_secretsmanager_secret" "gitea_credentials" {
+  name        = "gitea_repo_credentials"
+  description = "Gitea repo credentials for Argo CD"
+}
+
+resource "aws_secretsmanager_secret_version" "gitea_credentials" {
+  secret_id = aws_secretsmanager_secret.gitea_credentials.id
+  secret_string = jsonencode({
+    username = local.gitea_user
+    token    = local.gitea_password
+  })
+}
