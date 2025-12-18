@@ -1,0 +1,16 @@
+namespaces:
+  carts:
+    limitRanges:
+      - name: default
+        labels:
+          app.kubernetes.io/created-by: staging-team
+        limits:
+          - type: Container
+            default:
+              cpu: "1000m"        # 500m × 2
+            defaultRequest:
+              cpu: "1000m"        # 500m × 2
+            max:
+              cpu: "4"            # 2 × 2
+            min:
+              cpu: "200m"         # 100m × 2

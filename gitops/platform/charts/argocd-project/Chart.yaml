@@ -1,0 +1,14 @@
+apiVersion: v2
+description: A Helm chart for managing additional Argo CD Applications and Projects
+home: https://github.com/argoproj/argo-helm
+icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
+keywords:
+- argoproj
+- argocd
+- gitops
+maintainers:
+- name: argoproj
+  url: https://argoproj.github.io/
+name: argocd-apps
+type: application
+version: 1.4.1

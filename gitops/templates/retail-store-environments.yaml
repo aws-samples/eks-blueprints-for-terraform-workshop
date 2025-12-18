@@ -1,0 +1,4 @@
+repo: <<arn>>
+environments:
+  - env: dev
+    cluster: hub

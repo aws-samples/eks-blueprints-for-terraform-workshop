@@ -4,7 +4,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ $team }}-project
+  name: team-{{ $team }}-project
   namespace: argocd
   labels:
     team: {{ $team | quote }}
@@ -20,28 +20,34 @@ spec:
       - list:
           elements:
 {{- range $env := $envs }}
-          - env: {{ $env.name | quote }}
-            cluster: {{ $env.cluster | quote }}
+          - env: {{ $env.env | quote }}
+            destCluster: {{ $env.cluster | quote }}
 {{- end }}
   template:
     metadata:
-      name: 'project-{{ $team }}-{{ .env }}'
+      name: 'team-{{ $team }}-project-{{`{{ .env }}`}}'
       namespace: argocd
     spec:
       project: default
-      source:
-        repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/register-project
+      sources:
+      - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
+        path: charts/argocd-project
         targetRevision: HEAD
         helm:
-          releaseName: '{{ $team }}-{{ .env }}'
+          releaseName: '{{ $team }}-{{`{{ .env }}`}}'
           valueFiles:
-          - '$values/{{ metadata.annotations.platform_repo_basepath }}teams/{{ path.basename }}/argoproject-{{ metadata.labels.environment }}-values.yaml'
+          - '$values/register-team/{{ $team }}/project/{{`{{ .env }}`}}-values.yaml'
           parameters:
             - name: "projects[0].sourceRepos[0]"
               value: {{ .Values.repo | quote }}
+            - name: "projects[0].name"
+              value: '{{ $team }}-{{`{{ .env }}`}}'              
+      - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
+        path: .
+        targetRevision: HEAD
+        ref: values
       destination:
-        name: '{{ .cluster }}'
+        name: '{{`{{ .name }}`}}'
         namespace: argocd
       syncPolicy:
         automated:

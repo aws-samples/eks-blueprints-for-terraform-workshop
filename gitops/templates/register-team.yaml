@@ -16,25 +16,25 @@ spec:
           repoURL: '{{ .metadata.annotations.platform_url }}'
           revision: HEAD
           directories:
-          - path: team/*
+          - path: register-team/*
   template:
     metadata:
-      name: '{{ .path.basename }}'
+      name: 'team-{{ .path.basename }}'
       namespace: argocd
     spec:
       project: default
       source:
         repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/register-team
+        path: charts/team
         targetRevision: HEAD
         helm:
           valueFiles:
-          - '../../team/{{ .path.basename }}/environments.yaml'
+          - '../../register-team/{{ .path.basename }}/environments.yaml'
           parameters:
           - name: teamName
             value: '{{ .path.basename }}'
       destination:
-        server: '{{ .server }}'
+        name: '{{ .name }}'
         namespace: argocd
       syncPolicy:
         automated:
