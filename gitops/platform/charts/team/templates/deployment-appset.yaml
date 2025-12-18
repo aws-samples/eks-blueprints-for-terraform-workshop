@@ -1,0 +1,54 @@
+{{- $team := .Values.teamName -}}
+{{- range $env := .Values.environments }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "team-{{ $team }}-deployment-{{ $env.env }}"
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+
+      - git:
+          repoURL: "{{ $.Values.repo }}"
+          revision: HEAD
+          directories:
+            # <service>/<env>, e.g. /ui/dev
+            - path: "*/{{$env.env }}"
+
+  template:
+    template:
+    metadata:
+      name: 'team-{{ $team }}-deployment-{{`{{ index .path.segments 0 }}`}}-{{ $env.env }}'      
+      namespace: argocd
+    spec:
+      # project: "{{ $team }}-{{`{{ .env }}`}}"
+      project: default
+      source:
+        repoURL: "{{ $.Values.repo }}"
+        targetRevision: HEAD  
+        path: "{{`{{ .path.path }}`}}"
+
+      destination:
+        # per-env cluster from environments.json
+        name: "{{ $env.cluster }}"
+        namespace: "{{`{{ index .path.segments 0 }}`}}"
+        # you can add namespace if you want per-env namespaces:
+        # namespace: "{{ $.Values.workloadName }}-{{ $env.name }}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+{{- end }}
+
+
