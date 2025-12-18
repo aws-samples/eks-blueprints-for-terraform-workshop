@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: register-team
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - git:
+          repoURL: '{{ .metadata.annotations.platform_url }}'
+          revision: HEAD
+          directories:
+          - path: register-team/*
+  template:
+    metadata:
+      name: 'team-{{ .path.basename }}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: '{{ .metadata.annotations.platform_url }}'
+        path: charts/team
+        targetRevision: HEAD
+        helm:
+          valueFiles:
+          - '../../register-team/{{ .path.basename }}/environments.yaml'
+          parameters:
+          - name: teamName
+            value: '{{ .path.basename }}'
+      destination:
+        name: '{{ .name }}'
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

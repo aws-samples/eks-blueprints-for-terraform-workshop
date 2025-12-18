@@ -1,0 +1,4 @@
+config: '{"tlsClientConfig":{"insecure":false}}'
+annotations:
+  platform_url: https://d31kw8sen635v6.cloudfront.net/gitea/workshop-user/platform
+

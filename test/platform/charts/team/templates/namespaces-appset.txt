@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "{{ .Values.workloadName }}-namespaces"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  # 1. Generate one record per environment from .Values.environments
+  generators:
+    - list:
+        elements:
+{{- range .Values.environments }}
+          - env: {{ .name | quote }}
+            cluster: {{ .cluster | quote }}
+{{- end }}
+
+  # 2. Template for each generated environment
+  template:
+    metadata:
+      name: "{{ .Values.workloadName }}-namespace-{{`{{ .env }}`}}"
+
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/satishbpatil/control-plane
+        targetRevision: HEAD
+        path: charts/namespace
+        helm:
+          ignoreMissingValueFiles: true
+          values: |
+            workloadName: "{{ .Values.workloadName }}"
+            environment: "{{`{{ .env }}`}}"
+          valueFiles:
+            - "../../workload/{{ .Values.workloadName }}/namespace/default-values.yaml"
+            - "../../workload/{{ .Values.workloadName }}/namespace/{{`{{ .env }}`}}-values.yaml"
+
+      destination:
+        name: "{{`{{ .cluster }}`}}"
+        # namespace: argocd
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

@@ -1,0 +1,3 @@
+url: https://d31kw8sen635v6.cloudfront.net/gitea/workshop-user/platform
+secretArn: arn:aws:secretsmanager:us-west-2:713026498976:secret:argocd-workshop-platform-repo-Hi2dZg
+project: default

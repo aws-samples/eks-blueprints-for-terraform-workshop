@@ -1,0 +1,14 @@
+1. Repository secret has been created: repo-{{ .Values.repoName }}
+
+2. The secret contains:
+   - Repository URL: {{ .Values.url }}
+   - Secrets Manager ARN: {{ .Values.secretArn }}
+   - ArgoCD Project: {{ .Values.project | default "default" }}
+
+3. ArgoCD will automatically discover this repository and use the credentials from AWS Secrets Manager.
+
+4. To verify the secret was created:
+   kubectl get secret repo-{{ .Values.repoName }} -n {{ .Release.Namespace | default "argocd" }}
+
+5. To view the secret details:
+   kubectl describe secret repo-{{ .Values.repoName }} -n {{ .Release.Namespace | default "argocd" }}

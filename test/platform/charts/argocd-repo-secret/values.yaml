@@ -1,0 +1,7 @@
+# Required values
+repoName: ""  # Name for the repository (used in secret name)
+url: ""       # Git repository URL
+secretArn: "" # AWS Secrets Manager ARN containing credentials
+
+# Optional values
+project: "default"  # ArgoCD project name (defaults to "default")

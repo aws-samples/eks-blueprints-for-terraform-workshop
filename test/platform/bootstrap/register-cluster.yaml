@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: register-cluster
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - git:
+          repoURL: '{{ .metadata.annotations.platform_url }}'
+          revision: HEAD
+          directories:
+          - path: register-cluster/*
+  template:
+    metadata:
+      name: '{{ .path.basename }}-register-cluster'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: '{{ .metadata.annotations.platform_url }}'
+        path: charts/argocd-cluster-secret
+        targetRevision: HEAD
+        helm:
+          parameters:
+          - name: clusterName
+            value: '{{ .path.basename }}'
+          valueFiles:
+          - '../../register-cluster/values.yaml'
+          - '../../register-cluster/{{ .path.basename }}/values.yaml'
+      destination:
+        server: '{{ .server }}'
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
