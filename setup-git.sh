@@ -18,6 +18,10 @@ gitops_retail_store_app_url="$(aws secretsmanager get-secret-value --secret-id $
 gitops_retail_store_manifest_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-manifest-repo --query SecretString --output text | jq -r .url)"
 gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .url)"
 gitops_guestbook_manifest_url="${gitops_org_url}/workshop-user/guestbook-manifest"
+
+# Get AWS account ID and region for ECR operations
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=$(aws configure get region)
 GIT_USER="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-manifest-repo --query SecretString --output text | jq -r .username)"
 GIT_PASS="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-manifest-repo --query SecretString --output text | jq -r .password)"
 # gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-addons --query SecretString --output text | jq -r .url)"
