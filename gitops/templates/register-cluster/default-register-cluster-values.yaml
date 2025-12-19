@@ -1,4 +1,5 @@
 config: '{"tlsClientConfig":{"insecure":false}}'
 annotations:
   platform_url: <<url>>
+  oci_registry_url: <<oci_registry_url>>
 

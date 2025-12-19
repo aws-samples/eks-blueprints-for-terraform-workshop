@@ -226,8 +226,14 @@ update_templates() {
     DEFAULT_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/default-register-cluster-values.yaml"
     
     if [ -f "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE" ]; then
-        sed -i.bak "s|<<url>>|$PLATFORM_URL|g" "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE"
-        echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE with platform URL"
+        # Get ECR registry URL
+        ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+        
+        sed -i.bak \
+            -e "s|<<url>>|$PLATFORM_URL|g" \
+            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
+            "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE with platform URL and ECR registry URL"
     else
         echo "Warning: Template file $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE not found"
     fi

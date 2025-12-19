@@ -23,16 +23,19 @@ spec:
       namespace: argocd
     spec:
       project: default
-      source:
-        repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/argocd-repo-secret
-        targetRevision: HEAD
+      sources:
+      - repoURL: '{{ .metadata.annotations.oci_registry_url }}/platform'
+        chart: argocd-repo-secret
+        targetRevision: 0.1.0
         helm:
-          valueFiles:
-          - '../../register-repo/{{ .path.basename }}/values.yaml'
           parameters:
           - name: repoName
             value: '{{ .path.basename }}'
+          valueFiles:
+          - $values/register-repo/{{ .path.basename }}/values.yaml
+      - repoURL: '{{ .metadata.annotations.platform_url }}'
+        targetRevision: HEAD
+        ref: values
       destination:
         server: '{{ .server }}'
         namespace: argocd

@@ -23,17 +23,20 @@ spec:
       namespace: argocd
     spec:
       project: default
-      source:
-        repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/argocd-cluster-secret
-        targetRevision: HEAD
+      sources:
+      - repoURL: '{{ .metadata.annotations.oci_registry_url }}/platform'
+        chart: argocd-cluster-secret
+        targetRevision: 0.1.0
         helm:
           parameters:
           - name: clusterName
             value: '{{ .path.basename }}'
           valueFiles:
-          - '../../register-cluster/values.yaml'
-          - '../../register-cluster/{{ .path.basename }}/values.yaml'
+          - $values/register-cluster/values.yaml
+          - $values/register-cluster/{{ .path.basename }}/values.yaml
+      - repoURL: '{{ .metadata.annotations.platform_url }}'
+        targetRevision: HEAD
+        ref: values
       destination:
         server: '{{ .server }}'
         namespace: argocd
