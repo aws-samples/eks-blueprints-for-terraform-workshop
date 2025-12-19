@@ -9,6 +9,6 @@ keywords:
 maintainers:
 - name: argoproj
   url: https://argoproj.github.io/
-name: argocd-apps
+name: argocd-project
 type: application
 version: 1.4.1

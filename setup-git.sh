@@ -78,6 +78,21 @@ git -C ${GITOPS_DIR}/guestbook-manifest add . || true
 git -C ${GITOPS_DIR}/guestbook-manifest commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/guestbook-manifest push -u origin main -f || true
 
+# Push existing Helm charts to ECR
+echo "Pushing Helm charts to ECR..."
+cd ${ROOTDIR}
+
+# Login to ECR
+aws ecr get-login-password --region $AWS_REGION | helm registry login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+# Push all charts to ECR
+for chart in gitops/helm/*.tgz; do
+  echo "Pushing $chart to ECR..."
+  helm push "$chart" oci://$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+done
+
+echo "All Helm charts pushed to ECR successfully!"
+
 # # populate addons repository
 # git init ${GITOPS_DIR}/addons
 # git -C ${GITOPS_DIR}/addons remote add origin ${gitops_addons_url}
