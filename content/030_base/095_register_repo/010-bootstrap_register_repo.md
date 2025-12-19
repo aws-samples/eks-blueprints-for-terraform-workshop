@@ -30,8 +30,8 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
 ###3. Copy Manifest values
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-manifest

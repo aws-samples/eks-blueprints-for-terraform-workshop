@@ -3,9 +3,6 @@ title: "Onboard team"
 weight: 10
 ---
 
-
-
-
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
@@ -31,8 +28,6 @@ git commit -m "add bootstrap repo registration"
 git push 
 :::
 <!-- prettier-ignore-end -->
-
-
 
 ### 1. Register Hub Cluster
 

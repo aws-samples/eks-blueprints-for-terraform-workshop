@@ -3,7 +3,6 @@ title: "Bootstrap Repo Registration"
 weight: 10
 ---
 
-
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=yaml  }
 resource "aws_eks_access_entry" "argocd_admin" {
@@ -35,7 +34,6 @@ terraform apply --auto-approve
 
 :::
 <!-- prettier-ignore-end -->
-
 
 ### 1. Register Hub Cluster
 
