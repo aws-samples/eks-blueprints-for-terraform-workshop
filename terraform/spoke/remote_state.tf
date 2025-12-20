@@ -8,15 +8,15 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-data "terraform_remote_state" "hub" {
-  backend = "s3"
+# data "terraform_remote_state" "hub" {
+#   backend = "s3"
 
-  config = {
-    bucket = "${data.aws_ssm_parameter.tfstate_bucket.value}"
-    key    = "hub/terraform.tfstate"
-    region = data.aws_region.current.name
-  }
-}
+#   config = {
+#     bucket = "${data.aws_ssm_parameter.tfstate_bucket.value}"
+#     key    = "hub/terraform.tfstate"
+#     region = data.aws_region.current.name
+#   }
+# }
 
 
 data "aws_ssm_parameter" "tfstate_bucket" {
