@@ -63,9 +63,9 @@ variable "gitops_retail_store_app_repo_name" {
 #   default     = "HEAD"
 # }
 
-variable "gitops_retail_store_manifest_repo_name" {
-  description = "Git repository name for workload"
-  default     = "retail-store-manifest"
+variable "gitops_retail_store_config_repo_name" {
+  description = "Git repository name for team config"
+  default     = "retail-store-config"
 }
 
 

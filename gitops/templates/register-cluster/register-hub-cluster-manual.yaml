@@ -8,6 +8,7 @@ metadata:
     cluster-role: hub
   annotations:
     platform_url: <<platform_url>>
+    oci_registry_url: <<oci_registry_url>>
 type: Opaque
 stringData:
   name: hub

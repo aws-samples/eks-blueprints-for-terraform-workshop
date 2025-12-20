@@ -30,20 +30,56 @@ update_templates() {
     echo "Updating template files with cluster ARNs and secrets..."
     
     # Retry logic for getting hub cluster ARN
-    # Get hub cluster ARN
-    HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text 2>/dev/null)
-    echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
+    for i in {1..10}; do
+        if HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text 2>/dev/null); then
+            echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
+            break
+        fi
+        echo "Attempt $i: Hub cluster not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get hub cluster ARN after 10 attempts"
+            return 1
+        fi
+    done
     
-    # Get repo org and credentials
-    REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)
-    PLATFORM_URL="$REPO_ORG/platform"
-    echo "Platform URL: $PLATFORM_URL"
+    # Retry logic for getting platform secrets from repo_org
+    for i in {1..10}; do
+        if REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo-org --query SecretString --output text 2>/dev/null | jq -r .REPO_ORG); then
+            PLATFORM_URL="$REPO_ORG/platform"
+            break
+        fi
+        echo "Attempt $i: Repo org secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get platform URL after 10 attempts"
+            return 1
+        fi
+    done
     
-    GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .username)
-    echo "Git User: $GIT_USER"
+    for i in {1..10}; do
+        if GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo-org --query SecretString --output text 2>/dev/null | jq -r .GIT_USER); then
+            break
+        fi
+        echo "Attempt $i: Repo org username not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get git username after 10 attempts"
+            return 1
+        fi
+    done
     
-    GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .token)
-    echo "Git credentials retrieved"
+    for i in {1..10}; do
+        if GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo-org --query SecretString --output text 2>/dev/null | jq -r .GIT_PASSWORD); then
+            break
+        fi
+        echo "Attempt $i: Platform secret password not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get git password after 10 attempts"
+            return 1
+        fi
+    done
     
     echo "Platform URL: $PLATFORM_URL"
     echo "Git User: $GIT_USER"
@@ -89,9 +125,18 @@ update_templates() {
         echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
     fi
     
-    # Get secret ARN for repo credentials
-    REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-repo --query 'ARN' --output text 2>/dev/null)
-    echo "Repo credentials secret ARN: $REPO_CREDENTIALS_SECRET_ARN"
+    # Get secret ARN for repo_credentials
+    for i in {1..10}; do
+        if REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-repo-credentials --query 'ARN' --output text 2>/dev/null); then
+            break
+        fi
+        echo "Attempt $i: Repo credentials secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get repo credentials secret ARN after 10 attempts"
+            return 1
+        fi
+    done
     
     # Update platform-repo-values.yaml template
     PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml"
@@ -106,18 +151,28 @@ update_templates() {
         echo "Warning: Template file $PLATFORM_REPO_VALUES_TEMPLATE not found"
     fi
     
-    # Update retail-store-config-repo-values.yaml template
-    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml"
+    # Get retail store manifest URL from secret
+    for i in {1..10}; do
+        if RETAIL_STORE_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest-repo --query SecretString --output text 2>/dev/null | jq -r .url); then
+            break
+        fi
+        echo "Attempt $i: Retail store manifest secret not found, waiting 30 seconds..."
+        sleep 30
+        if [ $i -eq 10 ]; then
+            echo "Error: Could not get retail store URL after 10 attempts"
+            return 1
+        fi
+    done
+    
+    # Update retail-store-manifest-repo-values.yaml template
+    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-manifest-repo-values.yaml"
     
     if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
-        # Construct retail store config URL from org
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
-        
         sed -i.bak \
-            -e "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            -e "s|<<url>>|$RETAIL_STORE_URL|g" \
             -e "s|<<secret_arn>>|$REPO_CREDENTIALS_SECRET_ARN|g" \
             "$RETAIL_STORE_VALUES_TEMPLATE"
-        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store config URL and secret ARN"
+        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store URL and secret ARN"
     else
         echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
@@ -181,7 +236,7 @@ update_templates() {
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
         # Get retail store config URL from repo_org secret
-        REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .REPO_ORG)
+        REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo-org --query SecretString --output text 2>/dev/null | jq -r .REPO_ORG)
         RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-manifest"
         
         # Get ECR registry URL

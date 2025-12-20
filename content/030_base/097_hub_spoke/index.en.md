@@ -1,5 +1,5 @@
 ---
-title: "Hub Spoke"
+title: "Onboard Team"
 weight: 97
 ---
 

@@ -3,6 +3,43 @@ title: "Bootstrap Repo Registration"
 weight: 10
 ---
 
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+cat <<'EOF' >> ~/environment/hub/main.tf
+################################################################################
+# IAM policy for Secrets Manager read access
+################################################################################
+resource "aws_iam_policy" "secrets_manager_readonly" {
+  name        = "secrets-manager-readonly-policy"
+  description = "Read-only access to Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_secrets_manager" {
+  role       = aws_iam_role.eks_capability_argocd.name
+  policy_arn = aws_iam_policy.secrets_manager_readonly.arn
+}
+EOF
+cd ~/environment/hub
+terraform apply --auto-approve
+:::
+<!-- prettier-ignore-end -->
+
+
+
 ### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
@@ -43,6 +80,11 @@ git commit -m "add retail-store-manifest-repo-values.yaml"
 git push 
 :::
 <!-- prettier-ignore-end -->
+
+
+
+
+
 
 <!-- cspell:disable-next-line -->
 

@@ -15,7 +15,7 @@ PROJECT_CONTEXT_PREFIX=${PROJECT_CONTEXT_PREFIX:-argocd-workshop}
 # Clone and initialize the gitops repositories
 gitops_org_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .org)"
 gitops_retail_store_app_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-app-repo --query SecretString --output text | jq -r .url)"
-gitops_retail_store_manifest_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-manifest-repo --query SecretString --output text | jq -r .url)"
+gitops_retail_store_config_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-config-repo --query SecretString --output text | jq -r .url)"
 gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .url)"
 gitops_guestbook_manifest_url="${gitops_org_url}/workshop-user/guestbook-manifest"
 GIT_USER="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .username)"
@@ -35,7 +35,7 @@ EOT
     git config --global init.defaultBranch main
 else
     gitops_retail_store_app_url=${gitops_retail_store_app_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
-    gitops_retail_store_manifest_url=${gitops_retail_store_manifest_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+    gitops_retail_store_config_url=${gitops_retail_store_config_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
     gitops_platform_url=${gitops_platform_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
     gitops_guestbook_manifest_url=${gitops_guestbook_manifest_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
 fi
@@ -52,13 +52,13 @@ git -C ${GITOPS_DIR}/retail-store-app add . || true
 git -C ${GITOPS_DIR}/retail-store-app commit -m  "initial commit" --allow-empty  || true
 git -C ${GITOPS_DIR}/retail-store-app push -u origin main -f  || true
 
-# populate retail-store-manifest repository
-git init ${GITOPS_DIR}/retail-store-manifest
-git -C ${GITOPS_DIR}/retail-store-manifest remote add origin ${gitops_retail_store_manifest_url}
-cp -r ${ROOTDIR}/gitops/retail-store-manifest/* ${GITOPS_DIR}/retail-store-manifest
-git -C ${GITOPS_DIR}/retail-store-manifest add . || true
-git -C ${GITOPS_DIR}/retail-store-manifest commit -m  "initial commit" --allow-empty  || true
-git -C ${GITOPS_DIR}/retail-store-manifest push -u origin main -f  || true
+# populate retail-store-config repository
+git init ${GITOPS_DIR}/retail-store-config
+git -C ${GITOPS_DIR}/retail-store-config remote add origin ${gitops_retail_store_config_url}
+cp -r ${ROOTDIR}/gitops/retail-store-config/* ${GITOPS_DIR}/retail-store-config
+git -C ${GITOPS_DIR}/retail-store-config add . || true
+git -C ${GITOPS_DIR}/retail-store-config commit -m  "initial commit" --allow-empty  || true
+git -C ${GITOPS_DIR}/retail-store-config push -u origin main -f  || true
 
 
 # populate platform repository

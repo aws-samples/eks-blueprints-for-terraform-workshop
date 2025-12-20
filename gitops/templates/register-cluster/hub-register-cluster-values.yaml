@@ -2,4 +2,7 @@ serverARN: <<arn>>
 config: '{"tlsClientConfig":{"insecure":false}}'
 labels:
   cluster-role: hub
-annotations: {}
+annotations:
+  platform_url: <<url>>
+  oci_registry_url: <<oci_registry_url>>
+  retail_store_config_url: <<retail_store_config_url>>
