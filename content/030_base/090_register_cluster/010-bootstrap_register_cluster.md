@@ -3,6 +3,44 @@ title: "Bootstrap the Cluster Repository"
 weight: 10
 ---
 
+### 3. ECR ReadOnly access 
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
+cat <<'EOF' >> ~/environment/hub/main.tf
+################################################################################
+# IAM policy for ECR Helm chart access
+################################################################################
+resource "aws_iam_policy" "ecr_helm_readonly" {
+  name        = "ecr-helm-readonly-policy"
+  description = "Read-only access to ECR for Helm charts"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "argocd_ecr_helm" {
+  role       = aws_iam_role.eks_capability_argocd.name
+  policy_arn = aws_iam_policy.ecr_helm_readonly.arn
+}
+EOF
+cd ~/environment/hub
+terraform apply --auto-approve
+:::
+<!-- prettier-ignore-end -->
+
+
 ### 1. Register Hub Cluster
 
 <!-- prettier-ignore-start -->
@@ -37,40 +75,7 @@ git push
 
 
 
-### 3. ECR ReadOnly access 
 
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=json }
-cat <<'EOF' >> ~/environment/hub/main.tf
-################################################################################
-# IAM policy for ECR Helm chart access
-################################################################################
-resource "aws_iam_policy" "ecr_helm_readonly" {
-  name        = "ecr-helm-readonly-policy"
-  description = "Read-only access to ECR for Helm charts"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchGetImage",
-          "ecr:GetDownloadUrlForLayer"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "argocd_ecr_helm" {
-  role       = aws_iam_role.eks_capability_argocd.name
-  policy_arn = aws_iam_policy.ecr_helm_readonly.arn
-}
-EOF
-:::
-<!-- prettier-ignore-end -->
 
 
 

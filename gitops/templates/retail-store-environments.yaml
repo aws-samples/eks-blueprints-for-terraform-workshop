@@ -1,4 +1,4 @@
 repo: <<url>>
 environments:
   - env: dev
-    cluster: hub
+    cluster: dev

@@ -13,13 +13,13 @@ echo $GITOPS_DIR
 
 PROJECT_CONTEXT_PREFIX=${PROJECT_CONTEXT_PREFIX:-argocd-workshop}
 # Clone and initialize the gitops repositories
-gitops_org_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .org)"
-gitops_retail_store_app_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-app-repo --query SecretString --output text | jq -r .url)"
-gitops_retail_store_config_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-retail-store-config-repo --query SecretString --output text | jq -r .url)"
-gitops_platform_url="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .url)"
+gitops_org_url="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)"
+gitops_retail_store_app_url="${gitops_org_url}/workshop-user/retail-store-app"
+gitops_retail_store_config_url="${gitops_org_url}/workshop-user/retail-store-config"
+gitops_platform_url="${gitops_org_url}/workshop-user/platform"
 gitops_guestbook_manifest_url="${gitops_org_url}/workshop-user/guestbook-manifest"
-GIT_USER="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .username)"
-GIT_PASS="$(aws secretsmanager get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-platform-repo --query SecretString --output text | jq -r .password)"
+GIT_USER="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text | jq -r .username)"
+GIT_PASS="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text | jq -r .token)"
 # gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-addons --query SecretString --output text | jq -r .url)"
 
 # if IDE_URL is set then setup

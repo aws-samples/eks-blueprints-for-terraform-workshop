@@ -40,7 +40,7 @@ terraform apply --auto-approve
 
 
 
-### 1. Register Hub Cluster
+### 1. Bootstrap Repo
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -53,7 +53,7 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-### 2. Copy Values
+### 2. Copy Platform Values
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -67,12 +67,12 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-###3. Copy Manifest values
+### 3. Copy retail-store-config values
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
-mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-manifest
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-manifest-repo-values.yaml $GITOPS_DIR/platform/register-repo/retail-store-manifest/values.yaml
+mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-config
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml $GITOPS_DIR/platform/register-repo/retail-store-config/values.yaml
 
 cd $GITOPS_DIR/platform
 git add .

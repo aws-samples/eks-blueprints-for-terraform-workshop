@@ -7,6 +7,19 @@ weight: 10
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
+
+cat <<'EOF' >> ~/environment/spoke/remote_state.tf
+ data "terraform_remote_state" "hub" {
+   backend = "s3"
+
+   config = {
+     bucket = "${data.aws_ssm_parameter.tfstate_bucket.value}"
+     key    = "hub/terraform.tfstate"
+     region = data.aws_region.current.name
+   }
+ }
+EOF
+
 cat <<'EOF' >> ~/environment/spoke/main.tf
 ################################################################################
 # IAM policy for Secrets Manager read access
@@ -34,16 +47,6 @@ terraform workspace select dev
 terraform apply --auto-approve
 terraform workspace select prod
 terraform apply --auto-approve
-:::
-<!-- prettier-ignore-end -->
-
-<!-- prettier-ignore-start -->
-cd ~/environment/spoke
-terraform workspace select dev
-terraform apply --auto-approve
-terraform workspace select prod
-terraform apply --auto-approve
-
 :::
 <!-- prettier-ignore-end -->
 

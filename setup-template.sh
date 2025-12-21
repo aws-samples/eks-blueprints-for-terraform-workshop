@@ -2,6 +2,10 @@
 
 set -e
 
+# Get AWS Account ID
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "AWS Account ID: $ACCOUNT_ID"
+
 # Function to setup ArgoCD context
 setup_argocd_context() {
     local cluster_name=$1
@@ -126,8 +130,11 @@ update_templates() {
     RETAIL_STORE_ENV_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-environments.yaml"
     
     if [ -f "$RETAIL_STORE_ENV_TEMPLATE" ]; then
-        sed -i.bak "s|<<url>>|$RETAIL_STORE_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
-        echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store URL"
+        # Construct retail store config URL from org
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
+        
+        sed -i.bak "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
+        echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store config URL"
     else
         echo "Warning: Template file $RETAIL_STORE_ENV_TEMPLATE not found"
     fi
@@ -180,9 +187,8 @@ update_templates() {
     HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/hub-register-cluster-values.yaml"
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
-        # Get retail store config URL from repo_org secret
-        REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .REPO_ORG)
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-manifest"
+        # Use already-fetched REPO_ORG and construct retail store config URL
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
         
         # Get ECR registry URL
         ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
