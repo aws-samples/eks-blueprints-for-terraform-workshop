@@ -12,17 +12,37 @@ GITOPS_DIR=${GITOPS_DIR:-$SCRIPTDIR/environment/gitops-repos}
 echo $GITOPS_DIR
 
 PROJECT_CONTEXT_PREFIX=${PROJECT_CONTEXT_PREFIX:-argocd-workshop}
+# Clone and initialize the gitops repositories
+gitops_org_url="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)"
+gitops_retail_store_app_url="${gitops_org_url}/workshop-user/retail-store-app"
+gitops_retail_store_config_url="${gitops_org_url}/workshop-user/retail-store-config"
+gitops_platform_url="${gitops_org_url}/workshop-user/platform"
+gitops_guestbook_manifest_url="${gitops_org_url}/workshop-user/guestbook-manifest"
+GIT_USER="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text | jq -r .username)"
+GIT_PASS="$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text | jq -r .token)"
+# gitops_addons_url="$(aws secretsmanager   get-secret-value --secret-id ${PROJECT_CONTEXT_PREFIX}-addons --query SecretString --output text | jq -r .url)"
 
-# Configure Git for CodeCommit
-git config --global credential.helper '!aws codecommit credential-helper $@'
-git config --global credential.UseHttpPath true
-git config --global init.defaultBranch main
+# if IDE_URL is set then setup
+if [[ -n "${IDE_URL:-}" ]]; then
+    echo "IDE_URL is set"
+    GIT_CREDS="$HOME/.git-credentials"
+    # Setup for HTTPs Gitea
+    GITEA_URL=${IDE_URL}/gitea
+cat > $GIT_CREDS << EOT
+${GITEA_URL/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+EOT
+    git config --global credential.helper 'store'
+    git config --global init.defaultBranch main
+else
+    gitops_retail_store_app_url=${gitops_retail_store_app_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+    gitops_retail_store_config_url=${gitops_retail_store_config_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+    gitops_platform_url=${gitops_platform_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+    gitops_guestbook_manifest_url=${gitops_guestbook_manifest_url/#https:\/\//https:\/\/"$GIT_USER":"$GIT_PASS"@}
+fi
 
-# CodeCommit repository URLs
-gitops_retail_store_app_url="https://git-codecommit.${AWS_REGION:-us-west-2}.amazonaws.com/v1/repos/retail-store-app"
-gitops_retail_store_config_url="https://git-codecommit.${AWS_REGION:-us-west-2}.amazonaws.com/v1/repos/retail-store-config"
-gitops_platform_url="https://git-codecommit.${AWS_REGION:-us-west-2}.amazonaws.com/v1/repos/platform"
-
+# Reset directory
+rm -rf ${GITOPS_DIR}
+mkdir -p ${GITOPS_DIR}
 
 # populate retail-store-app repository
 git init ${GITOPS_DIR}/retail-store-app
@@ -40,6 +60,7 @@ git -C ${GITOPS_DIR}/retail-store-config add . || true
 git -C ${GITOPS_DIR}/retail-store-config commit -m  "initial commit" --allow-empty  || true
 git -C ${GITOPS_DIR}/retail-store-config push -u origin main -f  || true
 
+
 # populate platform repository
 git init ${GITOPS_DIR}/platform
 git -C ${GITOPS_DIR}/platform remote add origin ${gitops_platform_url}
@@ -47,6 +68,15 @@ cp -r ${ROOTDIR}/gitops/platform/*  ${GITOPS_DIR}/platform/
 git -C ${GITOPS_DIR}/platform add . || true
 git -C ${GITOPS_DIR}/platform commit -m "initial commit" || true
 git -C ${GITOPS_DIR}/platform push -u origin main -f || true
+
+
+# populate guestbook-manfiest repository
+git init ${GITOPS_DIR}/guestbook-manifest
+git -C ${GITOPS_DIR}/guestbook-manifest remote add origin ${gitops_guestbook_manifest_url}
+cp -r ${ROOTDIR}/gitops/guestbook-manifest/*  ${GITOPS_DIR}/guestbook-manifest/
+git -C ${GITOPS_DIR}/guestbook-manifest add . || true
+git -C ${GITOPS_DIR}/guestbook-manifest commit -m "initial commit" || true
+git -C ${GITOPS_DIR}/guestbook-manifest push -u origin main -f || true
 
 # Push existing Helm charts to ECR
 echo "Pushing Helm charts to ECR..."
@@ -93,3 +123,12 @@ for chart in gitops/helm/retail-store/*.tgz; do
 done
 
 echo "All Helm charts pushed to ECR successfully!"
+
+# # populate addons repository
+# git init ${GITOPS_DIR}/addons
+# git -C ${GITOPS_DIR}/addons remote add origin ${gitops_addons_url}
+# cp -r ${ROOTDIR}/gitops/addons/* ${GITOPS_DIR}/addons/
+
+# git -C ${GITOPS_DIR}/addons add . || true
+# git -C ${GITOPS_DIR}/addons commit -m "initial commit" || true
+# git -C ${GITOPS_DIR}/addons push -u origin main -f  || true

@@ -2,7 +2,7 @@ name: retail-store
 labels:
   environment: control-plane
 namespaces:
-  carts:
+  cart:
     labels:
       additionalLabels:
         app.kubernetes.io/created-by: eks-workshop

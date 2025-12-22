@@ -1,5 +1,5 @@
 namespaces:
-  carts:
+  cart:
     limitRanges:
       - name: default
         limits:

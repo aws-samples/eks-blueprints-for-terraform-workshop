@@ -39,18 +39,10 @@ update_templates() {
     echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
     
     # Get repo org and credentials
-    REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)
-    PLATFORM_URL="$REPO_ORG/workshop-user/platform"
+    PLATFORM_URL="https://git-codecommit.${AWS_REGION}.amazonaws.com/v1/repos/platform"
+    RETAIL_STORE_CONFIG_URL="https://git-codecommit.${AWS_REGION}.amazonaws.com/v1/repos/retail-store-config"
     echo "Platform URL: $PLATFORM_URL"
-    
-    GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .username)
-    echo "Git User: $GIT_USER"
-    
-    GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .token)
-    echo "Git credentials retrieved"
-    
-    echo "Platform URL: $PLATFORM_URL"
-    echo "Git User: $GIT_USER"
+    echo "Retail Store Config URL: $RETAIL_STORE_CONFIG_URL"
     
     # Update register-hub-cluster-manual.yaml template
     TEMPLATE_FILE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/register-hub-cluster-manual.yaml"
@@ -75,10 +67,8 @@ update_templates() {
     if [ -f "$PLATFORM_REPO_TEMPLATE" ]; then
         sed -i.bak \
             -e "s|<<url>>|$PLATFORM_URL|g" \
-            -e "s|<<user>>|$GIT_USER|g" \
-            -e "s|<<password>>|$GIT_PASS|g" \
             "$PLATFORM_REPO_TEMPLATE"
-        echo "Updated $PLATFORM_REPO_TEMPLATE with platform repo credentials"
+        echo "Updated $PLATFORM_REPO_TEMPLATE with platform repo URL"
     else
         echo "Warning: Template file $PLATFORM_REPO_TEMPLATE not found"
     fi
@@ -93,9 +83,9 @@ update_templates() {
         echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
     fi
     
-    # Get secret ARN for repo credentials
-    REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-repo --query 'ARN' --output text 2>/dev/null)
-    echo "Repo credentials secret ARN: $REPO_CREDENTIALS_SECRET_ARN"
+    # Get secret ARN for repo credentials (if using AWS Secrets Manager for CodeCommit)
+    # Note: CodeCommit typically uses IAM authentication, not stored secrets
+    # REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-repo --query 'ARN' --output text 2>/dev/null || echo "")
     
     # Update platform-repo-values.yaml template
     PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml"
@@ -103,9 +93,8 @@ update_templates() {
     if [ -f "$PLATFORM_REPO_VALUES_TEMPLATE" ]; then
         sed -i.bak \
             -e "s|<<url>>|$PLATFORM_URL|g" \
-            -e "s|<<secret_arn>>|$REPO_CREDENTIALS_SECRET_ARN|g" \
             "$PLATFORM_REPO_VALUES_TEMPLATE"
-        echo "Updated $PLATFORM_REPO_VALUES_TEMPLATE with platform URL and secret ARN"
+        echo "Updated $PLATFORM_REPO_VALUES_TEMPLATE with platform URL"
     else
         echo "Warning: Template file $PLATFORM_REPO_VALUES_TEMPLATE not found"
     fi
@@ -114,14 +103,10 @@ update_templates() {
     RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml"
     
     if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
-        # Construct retail store config URL from org
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
-        
         sed -i.bak \
             -e "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" \
-            -e "s|<<secret_arn>>|$REPO_CREDENTIALS_SECRET_ARN|g" \
             "$RETAIL_STORE_VALUES_TEMPLATE"
-        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store config URL and secret ARN"
+        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store config URL"
     else
         echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
@@ -130,9 +115,6 @@ update_templates() {
     RETAIL_STORE_ENV_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-environments.yaml"
     
     if [ -f "$RETAIL_STORE_ENV_TEMPLATE" ]; then
-        # Construct retail store config URL from org
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
-        
         sed -i.bak "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
         echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store config URL"
     else
@@ -187,9 +169,6 @@ update_templates() {
     HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/hub-register-cluster-values.yaml"
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
-        # Use already-fetched REPO_ORG and construct retail store config URL
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
-        
         # Get ECR registry URL
         ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
         

@@ -4,11 +4,11 @@ variable "project_context_prefix" {
   default     = "argocd-workshop"
 }
 
-variable "secret_name_ssh_secrets" {
-  description = "Secret name for SSH secrets"
-  type        = string
-  default     = "git-ssh-secrets-blueprints-workshop"
-}
+# variable "secret_name_ssh_secrets" {
+#   description = "Secret name for SSH secrets"
+#   type        = string
+#   default     = "git-ssh-secrets-blueprints-workshop"
+# }
 
 
 # variable "gitops_addons_repo_name" {
@@ -28,10 +28,10 @@ variable "secret_name_ssh_secrets" {
 #   default     = "HEAD"
 # }
 
-variable "gitops_platform_repo_name" {
-  description = "Git repository name for platform"
-  default     = "platform"
-}
+# variable "gitops_platform_repo_name" {
+#   description = "Git repository name for platform"
+#   default     = "platform"
+# }
 # variable "gitops_platform_basepath" {
 #   description = "Git repository base path for platform"
 #   default     = ""
@@ -46,10 +46,10 @@ variable "gitops_platform_repo_name" {
 # }
 
 
-variable "gitops_retail_store_app_repo_name" {
-  description = "Git repository name for workload"
-  default     = "retail-store-app"
-}
+# variable "gitops_retail_store_app_repo_name" {
+#   description = "Git repository name for workload"
+#   default     = "retail-store-app"
+# }
 # variable "gitops__retail_store_app_repo_basepath" {
 #   description = "Git repository base path for workload"
 #   default     = ""
@@ -63,37 +63,37 @@ variable "gitops_retail_store_app_repo_name" {
 #   default     = "HEAD"
 # }
 
-variable "gitops_retail_store_config_repo_name" {
-  description = "Git repository name for team config"
-  default     = "retail-store-config"
-}
+# variable "gitops_retail_store_config_repo_name" {
+#   description = "Git repository name for team config"
+#   default     = "retail-store-config"
+# }
 
 
-variable "ssm_parameter_name_argocd_role_suffix" {
-  description = "SSM parameter name for ArgoCD role"
-  type        = string
-  default     = "argocd-central-role"
-}
+# variable "ssm_parameter_name_argocd_role_suffix" {
+#   description = "SSM parameter name for ArgoCD role"
+#   type        = string
+#   default     = "argocd-central-role"
+# }
 
 
-variable "gitea_user" {
-  description = "User to login on the Gitea instance"
-  type = string
-  default = "workshop-user"
-}
-variable "gitea_password" {
-  description = "Password to login on the Gitea instance"
-  type = string
-  sensitive = true
-}
-variable "gitea_external_url" {
-  description = "External url to access gitea"
-  type = string
-}
+# variable "gitea_user" {
+#   description = "User to login on the Gitea instance"
+#   type = string
+#   default = "workshop-user"
+# }
+# variable "gitea_password" {
+#   description = "Password to login on the Gitea instance"
+#   type = string
+#   sensitive = true
+# }
+# variable "gitea_external_url" {
+#   description = "External url to access gitea"
+#   type = string
+# }
 
-variable "gitea_repo_prefix" {
-  description = "Repo prefix"
-  type = string
-  default = "workshop-user/"
-}
+# variable "gitea_repo_prefix" {
+#   description = "Repo prefix"
+#   type = string
+#   default = "workshop-user/"
+# }
 

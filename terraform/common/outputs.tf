@@ -9,8 +9,8 @@
 #   description = "The names of the AWS Secrets for the Git repositories"
 # }
 
-output "gitops_user_name" {
-  value       = var.gitea_user
-  description = "Name of the IAM user created for GitOps access"
-}
+# output "gitops_user_name" {
+#   value       = var.gitea_user
+#   description = "Name of the IAM user created for GitOps access"
+# }
 

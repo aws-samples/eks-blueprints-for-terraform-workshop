@@ -43,17 +43,17 @@ phases:
 
         # Common backend config
 
-        ls -la $BASE_DIR/terraform/common
+        # ls -la $BASE_DIR/terraform/common
 
-        cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
-        terraform {
-          backend "s3" {
-            bucket         = "$BUCKET_NAME"
-            key            = "common/terraform.tfstate"
-            region         = "$AWS_REGION"
-          }
-        }
-        EOT
+        # cat << EOT > $BASE_DIR/terraform/common/backend_override.tf
+        # terraform {
+        #   backend "s3" {
+        #     bucket         = "$BUCKET_NAME"
+        #     key            = "common/terraform.tfstate"
+        #     region         = "$AWS_REGION"
+        #   }
+        # }
+        # EOT
 
         # VPC backend config
         cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf
@@ -86,7 +86,7 @@ phases:
         else
 
           # Project Creation
-          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh
+          # DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh
           
           # VPC Creation
           DEBUG=1 $BASE_DIR/terraform/vpc/deploy.sh

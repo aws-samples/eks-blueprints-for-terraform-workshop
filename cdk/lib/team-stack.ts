@@ -83,8 +83,8 @@ export class TeamStack extends WorkshopStudioTeamStack {
       role: sharedRole,
       terminalOnStartup: false,
       bootstrapTimeoutMinutes: 30,
-      enableGitea: true,
-      codeServerVersion: "4.100.1",
+      enableGitea: false,
+      codeServerVersion: "4.106.3",
     });
 
     // if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {

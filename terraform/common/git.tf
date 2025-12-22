@@ -72,28 +72,28 @@
 #   })
 # }
 
-locals {
-    git_secrets_version_locals = {
-      org         = "${var.gitea_external_url}"
-      repo_prefix = var.gitea_repo_prefix
-    }  
-}
+# locals {
+#     git_secrets_version_locals = {
+#       org         = "${var.gitea_external_url}"
+#       repo_prefix = var.gitea_repo_prefix
+#     }  
+# }
 
-resource "aws_secretsmanager_secret" "argocd_workshop_repo_org" {
-  name        = "argocd-workshop-repo"
-  description = "Gitea repo credentials for Argo CD"
-}
+# resource "aws_secretsmanager_secret" "argocd_workshop_repo_org" {
+#   name        = "argocd-workshop-repo"
+#   description = "Gitea repo credentials for Argo CD"
+# }
 
-resource "aws_secretsmanager_secret_version" "argocd_workshop_repo_org" {
-  secret_id = aws_secretsmanager_secret.argocd_workshop_repo_org.id
-  secret_string = jsonencode({
-    username    = var.gitea_user
-    token       = var.gitea_password
-    # url         = local.git_secrets_urls[each.key]
-    org           = local.git_secrets_version_locals.org
-    # repo        = "${local.git_secrets_version_locals.repo_prefix}${local.gitops_repos[each.key].name}"
-    # basepath    = local.gitops_repos[each.key].basepath
-    # path        = local.gitops_repos[each.key].path
-    # revision    = local.gitops_repos[each.key].revision
-  })
-}
+# resource "aws_secretsmanager_secret_version" "argocd_workshop_repo_org" {
+#   secret_id = aws_secretsmanager_secret.argocd_workshop_repo_org.id
+#   secret_string = jsonencode({
+#     username    = var.gitea_user
+#     token       = var.gitea_password
+#     # url         = local.git_secrets_urls[each.key]
+#     org           = local.git_secrets_version_locals.org
+#     # repo        = "${local.git_secrets_version_locals.repo_prefix}${local.gitops_repos[each.key].name}"
+#     # basepath    = local.gitops_repos[each.key].basepath
+#     # path        = local.gitops_repos[each.key].path
+#     # revision    = local.gitops_repos[each.key].revision
+#   })
+# }

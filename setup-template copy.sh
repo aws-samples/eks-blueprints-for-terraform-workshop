@@ -2,6 +2,10 @@
 
 set -e
 
+# Get AWS Account ID
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "AWS Account ID: $ACCOUNT_ID"
+
 # Function to setup ArgoCD context
 setup_argocd_context() {
     local cluster_name=$1
@@ -30,55 +34,20 @@ update_templates() {
     echo "Updating template files with cluster ARNs and secrets..."
     
     # Retry logic for getting hub cluster ARN
-    for i in {1..10}; do
-        if HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text 2>/dev/null); then
-            echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
-            break
-        fi
-        echo "Attempt $i: Hub cluster not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get hub cluster ARN after 10 attempts"
-            return 1
-        fi
-    done
+    # Get hub cluster ARN
+    HUB_CLUSTER_ARN=$(aws eks describe-cluster --name argocd-hub --region ${AWS_REGION:-us-west-2} --query 'cluster.arn' --output text 2>/dev/null)
+    echo "Hub cluster ARN: $HUB_CLUSTER_ARN"
     
-    # Retry logic for getting platform secrets
-    for i in {1..10}; do
-        if PLATFORM_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .url); then
-            break
-        fi
-        echo "Attempt $i: Platform secret not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get platform URL after 10 attempts"
-            return 1
-        fi
-    done
+    # Get repo org and credentials
+    REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)
+    PLATFORM_URL="$REPO_ORG/workshop-user/platform"
+    echo "Platform URL: $PLATFORM_URL"
     
-    for i in {1..10}; do
-        if GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .username); then
-            break
-        fi
-        echo "Attempt $i: Platform secret username not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get git username after 10 attempts"
-            return 1
-        fi
-    done
+    GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .username)
+    echo "Git User: $GIT_USER"
     
-    for i in {1..10}; do
-        if GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-platform-repo --query SecretString --output text 2>/dev/null | jq -r .password); then
-            break
-        fi
-        echo "Attempt $i: Platform secret password not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get git password after 10 attempts"
-            return 1
-        fi
-    done
+    GIT_PASS=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .token)
+    echo "Git credentials retrieved"
     
     echo "Platform URL: $PLATFORM_URL"
     echo "Git User: $GIT_USER"
@@ -124,18 +93,9 @@ update_templates() {
         echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
     fi
     
-    # Get secret ARN for gitea_repo_credentials
-    for i in {1..10}; do
-        if GITEA_REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id gitea_repo_credentials --query 'ARN' --output text 2>/dev/null); then
-            break
-        fi
-        echo "Attempt $i: Platform repo credentials secret not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get platform repo secret ARN after 10 attempts"
-            return 1
-        fi
-    done
+    # Get secret ARN for repo credentials
+    REPO_CREDENTIALS_SECRET_ARN=$(aws secretsmanager describe-secret --secret-id argocd-workshop-repo --query 'ARN' --output text 2>/dev/null)
+    echo "Repo credentials secret ARN: $REPO_CREDENTIALS_SECRET_ARN"
     
     # Update platform-repo-values.yaml template
     PLATFORM_REPO_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml"
@@ -143,35 +103,25 @@ update_templates() {
     if [ -f "$PLATFORM_REPO_VALUES_TEMPLATE" ]; then
         sed -i.bak \
             -e "s|<<url>>|$PLATFORM_URL|g" \
-            -e "s|<<secret_arn>>|$GITEA_REPO_CREDENTIALS_SECRET_ARN|g" \
+            -e "s|<<secret_arn>>|$REPO_CREDENTIALS_SECRET_ARN|g" \
             "$PLATFORM_REPO_VALUES_TEMPLATE"
         echo "Updated $PLATFORM_REPO_VALUES_TEMPLATE with platform URL and secret ARN"
     else
         echo "Warning: Template file $PLATFORM_REPO_VALUES_TEMPLATE not found"
     fi
     
-    # Get retail store manifest URL from secret
-    for i in {1..10}; do
-        if RETAIL_STORE_URL=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-retail-store-manifest-repo --query SecretString --output text 2>/dev/null | jq -r .url); then
-            break
-        fi
-        echo "Attempt $i: Retail store manifest secret not found, waiting 30 seconds..."
-        sleep 30
-        if [ $i -eq 10 ]; then
-            echo "Error: Could not get retail store URL after 10 attempts"
-            return 1
-        fi
-    done
-    
-    # Update retail-store-manifest-repo-values.yaml template
-    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-manifest-repo-values.yaml"
+    # Update retail-store-config-repo-values.yaml template
+    RETAIL_STORE_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml"
     
     if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
+        # Construct retail store config URL from org
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
+        
         sed -i.bak \
-            -e "s|<<url>>|$RETAIL_STORE_URL|g" \
-            -e "s|<<secret_arn>>|$GITEA_REPO_CREDENTIALS_SECRET_ARN|g" \
+            -e "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            -e "s|<<secret_arn>>|$REPO_CREDENTIALS_SECRET_ARN|g" \
             "$RETAIL_STORE_VALUES_TEMPLATE"
-        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store URL and secret ARN"
+        echo "Updated $RETAIL_STORE_VALUES_TEMPLATE with retail store config URL and secret ARN"
     else
         echo "Warning: Template file $RETAIL_STORE_VALUES_TEMPLATE not found"
     fi
@@ -180,8 +130,11 @@ update_templates() {
     RETAIL_STORE_ENV_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/retail-store-environments.yaml"
     
     if [ -f "$RETAIL_STORE_ENV_TEMPLATE" ]; then
-        sed -i.bak "s|<<url>>|$RETAIL_STORE_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
-        echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store URL"
+        # Construct retail store config URL from org
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
+        
+        sed -i.bak "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
+        echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store config URL"
     else
         echo "Warning: Template file $RETAIL_STORE_ENV_TEMPLATE not found"
     fi
@@ -234,8 +187,19 @@ update_templates() {
     HUB_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/hub-register-cluster-values.yaml"
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
-        sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_REG_VALUES_TEMPLATE"
-        echo "Updated $HUB_CLUSTER_REG_VALUES_TEMPLATE with hub cluster ARN"
+        # Use already-fetched REPO_ORG and construct retail store config URL
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
+        
+        # Get ECR registry URL
+        ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+        
+        sed -i.bak \
+            -e "s|<<arn>>|$HUB_CLUSTER_ARN|g" \
+            -e "s|<<url>>|$PLATFORM_URL|g" \
+            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
+            -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            "$HUB_CLUSTER_REG_VALUES_TEMPLATE"
+        echo "Updated $HUB_CLUSTER_REG_VALUES_TEMPLATE with hub cluster ARN, platform URL, ECR registry URL, and retail store config URL"
     else
         echo "Warning: Template file $HUB_CLUSTER_REG_VALUES_TEMPLATE not found"
     fi
@@ -244,16 +208,22 @@ update_templates() {
     DEFAULT_CLUSTER_REG_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/register-cluster/default-register-cluster-values.yaml"
     
     if [ -f "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE" ]; then
-        # Get ECR registry URL
-        ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
-        
-        sed -i.bak \
-            -e "s|<<url>>|$PLATFORM_URL|g" \
-            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
-            "$DEFAULT_CLUSTER_REG_VALUES_TEMPLATE"
-        echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE with platform URL and ECR registry URL"
+        echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE (no replacements needed)"
     else
         echo "Warning: Template file $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
+    
+    # Update dev-values.yaml template
+    DEV_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/dev-values.yaml"
+    
+    if [ -f "$DEV_VALUES_TEMPLATE" ]; then
+        sed -i.bak \
+            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
+            -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            "$DEV_VALUES_TEMPLATE"
+        echo "Updated $DEV_VALUES_TEMPLATE with ECR registry URL and retail store config URL"
+    else
+        echo "Warning: Template file $DEV_VALUES_TEMPLATE not found"
     fi
     
     echo "Template updates completed"
