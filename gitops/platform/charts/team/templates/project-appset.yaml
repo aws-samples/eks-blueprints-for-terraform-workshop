@@ -38,8 +38,8 @@ spec:
           valueFiles:
           - '$values/register-team/{{ $team }}/project/{{`{{ .env }}`}}-values.yaml'
           parameters:
-            - name: "projects[0].sourceRepos[0]"
-              value: {{ .Values.repo | quote }}
+            # - name: "projects[0].sourceRepos[0]"
+            #   value: {{ .Values.repo | quote }}
             - name: "projects[0].name"
               value: '{{ $team }}-{{`{{ .env }}`}}'              
       - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'

@@ -59,6 +59,9 @@ git push
 :::code{showCopyAction=true showLineNumbers=false language=json }
 mkdir -p $GITOPS_DIR/platform/register-repo/platform
 cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/platform-repo-values.yaml $GITOPS_DIR/platform/register-repo/platform/values.yaml
+mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-config
+cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml $GITOPS_DIR/platform/register-repo/retail-store-config/values.yaml
+
 
 cd $GITOPS_DIR/platform
 git add .
@@ -67,19 +70,7 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-### 3. Copy retail-store-config values
 
-<!-- prettier-ignore-start -->
-:::code{showCopyAction=true showLineNumbers=false language=json }
-mkdir -p $GITOPS_DIR/platform/register-repo/retail-store-config
-cp /home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/templates/register-repo/retail-store-config-repo-values.yaml $GITOPS_DIR/platform/register-repo/retail-store-config/values.yaml
-
-cd $GITOPS_DIR/platform
-git add .
-git commit -m "add retail-store-manifest-repo-values.yaml"
-git push 
-:::
-<!-- prettier-ignore-end -->
 
 
 

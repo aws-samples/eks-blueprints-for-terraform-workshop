@@ -23,7 +23,8 @@ resource "aws_iam_policy" "ecr_helm_readonly" {
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchGetImage",
-          "ecr:GetDownloadUrlForLayer"
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:ListImages"
         ]
         Resource = "*"
       }

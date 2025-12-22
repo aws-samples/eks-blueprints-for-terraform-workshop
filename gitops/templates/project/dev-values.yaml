@@ -4,12 +4,13 @@ projects:
   sourceRepos:
   - <<oci_registry_url>>
   - <<retail_store_config_url>>
+  - <<retail_store_config_url>>/retail-store/*
   namespace: argocd
   additionalLabels: {}
   additionalAnnotations: {}
   description: Team Project
   destinations:
-  - namespace: carts
+  - namespace: cart
     name: dev
   - namespace: catalog
     name: dev

@@ -17,44 +17,37 @@ spec:
           selector:
             matchLabels:
               cluster-role: hub
-
-      - git:
-          repoURL: "{{ $.Values.repo }}"
-          revision: HEAD
-          directories:
-            # <service>/<env>, e.g. /ui/dev
-            - path: "*/{{$env.env }}"
+      - list:
+          elements:
+          {{- range $service, $version := $env.versions }}
+          - service: "{{ $service }}"
+            version: "{{ $version }}"
+          {{- end }}
 
   template:
-    template:
     metadata:
-      name: 'team-{{ $team }}-deployment-{{`{{ index .path.segments 0 }}`}}-{{ $env.env }}'      
+      name: 'team-{{ $team }}-deployment-{{`{{ .service }}`}}-{{ $env.env }}'
       namespace: argocd
     spec:
-      project: "{{ $team }}-{{$env.env }}"
+      project: "{{ $team }}-{{ $env.env }}"
       sources:
       - repoURL: "{{ $.Values.repo }}"
-        targetRevision: HEAD  
-        path: "{{`{{ .path.path }}`}}"
+        targetRevision: HEAD
+        path: "{{`{{ .service }}`}}/{{ $env.env }}"
         ref: values
       - repoURL: "{{`{{ .metadata.annotations.oci_registry_url }}`}}"
-        chart: "{{ $team }}/{{`{{ index .path.segments 0 }}`}}"
-        targetRevision: "latest"
+        chart: "{{ $team }}/{{`{{ .service }}`}}"
+        targetRevision: "{{`{{ .version }}`}}"
         helm:
           valueFiles:
-          - "$values/values.yaml"
-
+          - "$values/{{`{{ .service }}`}}/{{ $env.env }}/values.yaml"
+      
       destination:
-        # per-env cluster from environments.json
         name: "{{ $env.cluster }}"
-        namespace: "{{`{{ index .path.segments 0 }}`}}"
-        # you can add namespace if you want per-env namespaces:
-        # namespace: "{{ $.Values.workloadName }}-{{ $env.name }}"
-
+        namespace: "{{`{{ .service }}`}}"
+      
       syncPolicy:
         automated:
           prune: true
-          selfHeal: true
+
 {{- end }}
-
-
