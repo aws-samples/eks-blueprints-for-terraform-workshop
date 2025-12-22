@@ -40,7 +40,7 @@ update_templates() {
     
     # Get repo org and credentials
     REPO_ORG=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .org)
-    PLATFORM_URL="$REPO_ORG/platform"
+    PLATFORM_URL="$REPO_ORG/workshop-user/platform"
     echo "Platform URL: $PLATFORM_URL"
     
     GIT_USER=$(aws secretsmanager get-secret-value --secret-id argocd-workshop-repo --query SecretString --output text 2>/dev/null | jq -r .username)
@@ -115,7 +115,7 @@ update_templates() {
     
     if [ -f "$RETAIL_STORE_VALUES_TEMPLATE" ]; then
         # Construct retail store config URL from org
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
         
         sed -i.bak \
             -e "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" \
@@ -131,7 +131,7 @@ update_templates() {
     
     if [ -f "$RETAIL_STORE_ENV_TEMPLATE" ]; then
         # Construct retail store config URL from org
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
         
         sed -i.bak "s|<<url>>|$RETAIL_STORE_CONFIG_URL|g" "$RETAIL_STORE_ENV_TEMPLATE"
         echo "Updated $RETAIL_STORE_ENV_TEMPLATE with retail store config URL"
@@ -188,7 +188,7 @@ update_templates() {
     
     if [ -f "$HUB_CLUSTER_REG_VALUES_TEMPLATE" ]; then
         # Use already-fetched REPO_ORG and construct retail store config URL
-        RETAIL_STORE_CONFIG_URL="$REPO_ORG/retail-store-config"
+        RETAIL_STORE_CONFIG_URL="$REPO_ORG/workshop-user/retail-store-config"
         
         # Get ECR registry URL
         ECR_REGISTRY_URL="$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
@@ -211,6 +211,19 @@ update_templates() {
         echo "Updated $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE (no replacements needed)"
     else
         echo "Warning: Template file $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE not found"
+    fi
+    
+    # Update dev-values.yaml template
+    DEV_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/dev-values.yaml"
+    
+    if [ -f "$DEV_VALUES_TEMPLATE" ]; then
+        sed -i.bak \
+            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
+            -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            "$DEV_VALUES_TEMPLATE"
+        echo "Updated $DEV_VALUES_TEMPLATE with ECR registry URL and retail store config URL"
+    else
+        echo "Warning: Template file $DEV_VALUES_TEMPLATE not found"
     fi
     
     echo "Template updates completed"

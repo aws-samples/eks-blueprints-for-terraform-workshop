@@ -9,7 +9,6 @@ type: Opaque
 stringData:
   type: git
   name: platform
-  project: default
   url: <<url>>
   username: <<user>>
   password: <<password>>

@@ -2,7 +2,8 @@
 projects:
 - name: retail-store
   sourceRepos:
-  - 'tobereplace'
+  - <<oci_registry_url>>
+  - <<retail_store_config_url>>
   namespace: argocd
   additionalLabels: {}
   additionalAnnotations: {}
