@@ -4,7 +4,7 @@ projects:
   sourceRepos:
   - <<oci_registry_url>>
   - <<retail_store_config_url>>
-  - <<retail_store_config_url>>/retail-store/*
+  - <<retail_store_config_url>>/*
   namespace: argocd
   additionalLabels: {}
   additionalAnnotations: {}

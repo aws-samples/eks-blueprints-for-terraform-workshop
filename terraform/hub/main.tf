@@ -263,3 +263,23 @@ resource "aws_eks_access_policy_association" "AmazonEKSClusterAdminPolicy" {
   }
 }
 
+resource "aws_codecommit_repository" "platform" {
+  repository_name = "platform"
+  description     = "Platform GitOps repository for Platform team"
+
+  tags = local.tags
+}
+
+resource "aws_codecommit_repository" "retail_store_app" {
+  repository_name = "retail-store-app"
+  description     = "Retail store application code repository"
+
+  tags = local.tags
+}
+
+resource "aws_codecommit_repository" "retail_store_config" {
+  repository_name = "retail-store-config"
+  description     = "Retail store configuration repository"
+
+  tags = local.tags
+}
