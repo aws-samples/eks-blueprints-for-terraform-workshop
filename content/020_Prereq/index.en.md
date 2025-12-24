@@ -5,8 +5,6 @@ weight: 10
 
 ### Prerequisites
 
-::video{id=7g0PJBIca6Y thumbnail="/static/images/thumbnail/prereq-gitops-principles.png"}
-
 1. Basic understanding of [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started) and Terraform [workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
 2. Basic understanding of [Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/) concepts including:
    - Applications
