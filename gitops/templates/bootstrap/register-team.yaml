@@ -23,16 +23,19 @@ spec:
       namespace: argocd
     spec:
       project: default
-      source:
-        repoURL: '{{ .metadata.annotations.platform_url }}'
-        path: charts/team
-        targetRevision: HEAD
+      sources:
+      - repoURL: '{{ .metadata.annotations.oci_registry_url }}/platform'
+        chart: team
+        targetRevision: 1.0.0
         helm:
-          valueFiles:
-          - '../../register-team/{{ .path.basename }}/environments.yaml'
           parameters:
           - name: teamName
             value: '{{ .path.basename }}'
+          valueFiles:
+          - $values/register-team/{{ .path.basename }}/environments.yaml          
+      - repoURL: '{{ .metadata.annotations.platform_url }}'
+        targetRevision: HEAD
+        ref: values
       destination:
         name: '{{ .name }}'
         namespace: argocd
