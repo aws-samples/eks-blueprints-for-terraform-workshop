@@ -3,8 +3,6 @@ title: "Bootstrap Repo Registration"
 weight: 10
 ---
 
-
-
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 
@@ -49,4 +47,3 @@ terraform workspace select prod
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
-

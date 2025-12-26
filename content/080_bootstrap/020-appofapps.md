@@ -2,6 +2,7 @@
 title: "Bootstrap"
 weight: 20
 ---
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
@@ -45,7 +46,6 @@ cd ~/environment/hub
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
-
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }

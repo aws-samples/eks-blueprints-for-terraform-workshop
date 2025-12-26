@@ -38,8 +38,6 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-
-
 ### 1. Bootstrap Repo
 
 <!-- prettier-ignore-start -->
@@ -69,13 +67,6 @@ git commit -m "add platform registration values"
 git push 
 :::
 <!-- prettier-ignore-end -->
-
-
-
-
-
-
-
 
 <!-- cspell:disable-next-line -->
 

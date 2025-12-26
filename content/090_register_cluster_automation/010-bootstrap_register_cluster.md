@@ -3,7 +3,7 @@ title: "Bootstrap the Cluster Repository"
 weight: 10
 ---
 
-### 1. ECR ReadOnly access 
+### 1. ECR ReadOnly access
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
@@ -40,7 +40,6 @@ cd ~/environment/hub
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
-
 
 ### 2. Register Hub Cluster
 

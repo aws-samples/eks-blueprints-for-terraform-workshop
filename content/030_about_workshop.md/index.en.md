@@ -3,7 +3,7 @@ title: "About workshop"
 weight: 30
 ---
 
-Precreated infrastructure
+Pre-created infrastructure
 
 What they are going to learn
 
