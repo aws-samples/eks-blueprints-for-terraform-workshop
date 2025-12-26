@@ -1,6 +1,6 @@
 ---
 title: "Clean up"
-weight: 90
+weight: 190
 ---
 
 In this workshop, we have created a VPC and multiple EKS clusters. Although the clusters were created using Terraform, the Applications were deployed using Argo CD.
