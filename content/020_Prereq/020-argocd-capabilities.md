@@ -3,7 +3,7 @@ title: "ArgoCD Capabilites"
 weight: 20
 ---
 
-::video{id=RXpc2xS8B24 }
+::video{id=2K6qntlUNmc }
 
 ### 1. What is it? 
 EKS managed ArgoCD capability where AWS handles the operational overhead of running ArgoCD for you.
@@ -18,6 +18,6 @@ EKS managed ArgoCD capability where AWS handles the operational overhead of runn
 2. CRDs (Application, ApplicationSet, AppProject) get installed in your EKS cluster
 3. You create and manage your ArgoCD applications in your cluster
 
-![Platform](/static/images/prereq/eks-argocd-capability.png) EKS Managed ArgoCD Capability
+![Platform](/static/images/prereq/eks-argocd-capability.png)
 
 You can find Comparing EKS Capability for Argo CD to self-managed ArgoCD [here](https://docs.aws.amazon.com/eks/latest/userguide/argocd-comparison.html).
