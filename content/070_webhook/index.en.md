@@ -1,5 +1,5 @@
 ---
-title: "On-Demand Reconciliation Time"
+title: "On-Demand Reconciliation"
 weight: 70
 ---
 
@@ -19,6 +19,6 @@ Options to trigger immediate sync:
 **Webhook Setup with CodeCommit:**
 CodeCommit generates EventBridge events for various activities (branch creation, commits, etc.). We'll configure EventBridge to listen specifically for commit events and automatically notify ArgoCD to reconcile the repository.
 
-![ArgoCD Webhook](/static/images/webhook.png)
+![ArgoCD Webhook](/static/images/webhook/webhook.png)
 
 This gives us quick feedback when we push changes to codecommit.

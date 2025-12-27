@@ -3,6 +3,22 @@ title: "Webhook Configuration"
 weight: 10
 ---
 
+This configuration sets up an automated webhook system that connects CodeCommit repositories to ArgoCD for on-demand synchronization.
+
+Key Components:
+
+1. API Destination & Connection: Creates a secure webhook endpoint that points to your managed ArgoCD instance (/api/webhook). 
+
+2. Two EventBridge Rules that monitor git commit event for retail-store-config and platform repository
+  
+3. IAM Role: Grants EventBridge permission to invoke the ArgoCD API destination when repository changes occur.
+
+4. Event Transformation: Converts CodeCommit events into the JSON format ArgoCD expects.
+
+The Flow:
+When you commit to either repository's main branch → CodeCommit generates an EventBridge event → EventBridge rule catches it → Transforms the payload → Calls ArgoCD webhook .
+
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 cat <<'EOF' >> ~/environment/hub/main.tf
