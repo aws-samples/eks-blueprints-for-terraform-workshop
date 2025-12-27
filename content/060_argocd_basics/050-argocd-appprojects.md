@@ -1,6 +1,6 @@
 ---
 title: "App of Apps Pattern"
-weight: 30
+weight: 50
 ---
 
 <!-- cspell:disable-next-line -->
