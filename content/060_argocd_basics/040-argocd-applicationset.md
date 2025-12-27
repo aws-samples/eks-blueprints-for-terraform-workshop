@@ -1,6 +1,6 @@
 ---
 title: "ApplicationSet"
-weight: 20
+weight: 40
 ---
 
 <!-- cspell:disable-next-line -->
