@@ -11,7 +11,7 @@ To deploy applications, ArgoCD needs to know which clusters it can target. We re
 
 We are going to register argocd-hub cluster with ArgoCD.
 
-![Register Hub Cluster](/static/images/register-hub-cluster-architecture.png)
+![Register Hub Cluster](/static/images/argobasics/register-hub-cluster-architecture.png)
 
 ### 1. Review Cluster Secret
 
@@ -58,7 +58,7 @@ kubectl apply -f register-hub-cluster-manual.yaml
 
 You can view all clusters in the ArgoCD dashboard under Settings > Clusters.
 
-![Validate Hub Cluster](/static/images/register-hub-cluster.png)
+![Validate Hub Cluster](/static/images/argobasics/register-hub-cluster.png)
 
  Note: Newly registered clusters show "Unknown" status until first deployment attempt.
 
