@@ -4,8 +4,7 @@ weight: 10
 ---
 
 <!-- cspell:disable-next-line -->
-
-<!-- ::video{id=DMJhqkbhjgo} -->
+::video{id=FCqAX2NjjBI}
 
 To deploy applications, ArgoCD needs to know which clusters it can target. We register clusters by creating Kubernetes secrets in the ArgoCD namespace.
 
