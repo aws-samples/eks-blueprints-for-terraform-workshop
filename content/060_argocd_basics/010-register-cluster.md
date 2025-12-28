@@ -4,6 +4,7 @@ weight: 10
 ---
 
 <!-- cspell:disable-next-line -->
+
 ::video{id=FCqAX2NjjBI}
 
 To deploy applications, ArgoCD needs to know which clusters it can target. We register clusters by creating Kubernetes secrets in the ArgoCD namespace.
@@ -37,8 +38,9 @@ stringData:
 <!-- prettier-ignore-end -->
 
 Key Components:
-- Line 7: ArgoCD requires label "argocd.argoproj.io/secret-type: cluster" in secret to be recognized as a cluster 
-- Line 14: Name of this cluster is hub. 
+
+- Line 7: ArgoCD requires label "argocd.argoproj.io/secret-type: cluster" in secret to be recognized as a cluster
+- Line 14: Name of this cluster is hub.
 - Line 15: Server should set to ARN of the cluster
 - **Authentication:** ArgoCD authenticates to the cluster using the EKS capability service-linked role(AmazonEKSCapabilityArgoCDRole), which has AmazonEKSClusterAdminPolicy configured through EKS access entries.
 
@@ -53,13 +55,14 @@ kubectl apply -f register-hub-cluster-manual.yaml
 :::
 <!-- prettier-ignore-end -->
 
-### 3. Validate Cluster 
+### 3. Validate Cluster
 
 You can view all clusters in the ArgoCD dashboard under Settings > Clusters.
 
 ![Validate Hub Cluster](/static/images/argobasics/register-hub-cluster.png)
 
- Note: Newly registered clusters show "Unknown" status until first deployment attempt.
+Note: Newly registered clusters show "Unknown" status until first deployment attempt.
 
 ### 4. Cross-Account & Private Clusters
+
 This same approach works for clusters in different AWS accounts, regions, and even private clusters without public API endpoints. The managed ArgoCD service handles connectivity automatically.
