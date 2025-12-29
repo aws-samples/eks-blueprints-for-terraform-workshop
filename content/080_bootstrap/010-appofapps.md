@@ -1,11 +1,17 @@
 ---
-title: "Bootstrap with App of Apps"
+title: "Bootstrap"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
+::video{id=T_QT9fR73os}
+
 In upcoming chapters, you will create ApplicationSets to register clusters and teams. Rather than creating these manually, we're going to automate them.
 
-This bootstrap step deploys the initial ArgoCD ApplicationSet that generates Application that acts as a "parent." It monitors our **Platform** Git repository's bootstrap folder and automatically deploys any new Application/ApplicationSets we add. 
+This bootstrap step deploys the initial ArgoCD ApplicationSet that generates Application that acts as a "parent." It monitors our **Platform** Git repository's bootstrap folder and automatically deploys any new Application/ApplicationSets we add.
+
+![Bootstrap](/static/images/bootstrap/bootstrap-architecture.png)
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='13,16,24,25' }
@@ -57,7 +63,6 @@ cd ~/environment/basics
 kubectl apply -f bootstrap.yaml
 :::
 <!-- prettier-ignore-end -->
-
 
 ### 2. Validate bootstrap Application
 

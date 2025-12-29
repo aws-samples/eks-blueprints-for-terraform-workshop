@@ -1,4 +1,6 @@
 ---
 title: "Bootstrap"
-weight: 60
+weight: 80
 ---
+
+In this chapter, we will kickstart GitOps automation with a boostrap application.

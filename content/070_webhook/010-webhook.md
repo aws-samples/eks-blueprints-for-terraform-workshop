@@ -3,6 +3,10 @@ title: "Webhook Configuration"
 weight: 10
 ---
 
+<!-- cspell:disable-next-line -->
+
+::video{id=OQZIlPwOOTY}
+
 This configuration sets up an automated webhook system that connects CodeCommit repositories to ArgoCD for on-demand synchronization.
 
 Key Components:
