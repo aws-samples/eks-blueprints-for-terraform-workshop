@@ -32,7 +32,6 @@ spec:
           - name: clusterName
             value: '{{ .path.basename }}'
           valueFiles:
-          - $values/register-cluster/values.yaml
           - $values/register-cluster/{{ .path.basename }}/values.yaml
       - repoURL: '{{ .metadata.annotations.platform_url }}'
         targetRevision: HEAD

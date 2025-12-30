@@ -1,2 +1,1 @@
 serverARN: <<arn>>
-config: '{"tlsClientConfig":{"insecure":false}}'
