@@ -2,8 +2,10 @@
 title: "Automate Team Registration"
 weight: 10
 ---
+<!-- cspell:disable-next-line -->
+::video{id=d2C7FR6i7G0}
 
-Team registration in ArgoCD involves automating namespace creation , ArgoCD Project creation and Deployment of applications to a cluster.
+Team registration involves creating namespaces, ArgoCD projects, and deploying applications to clusters. In this chapter, we will automate this process by managing team configurations through Git.
 
 ### How it works
 
@@ -14,10 +16,10 @@ We use a Helm chart( team) to package applicationsets that create namespace, Arg
 - Each team has its own sub-directory (e.g., /retail-store)
 - Each sub-directory contains namespace,project,environments values specific to that team.
 
-The enviornments.yaml is passed as values for the team helm chart. 
+<!-- The enviornments.yaml is passed as values for the team helm chart.  -->
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=false showLineNumbers=true language=yaml }
+<!-- :::code{showCopyAction=false showLineNumbers=true language=yaml }
 repo: <<url of the repo that contains values for each micorservice(retail-store-confg)>>
 environments:
   - env: dev
@@ -28,14 +30,14 @@ environments:
       catalog: "1.3.0"
       ui: "1.3.0"
       orders: "1.3.0"
-:::
+::: -->
 <!-- prettier-ignore-end -->
 
-Key Components:
+<!-- Key Components:
 - Line 1: url of the repo that contains values for each micorservice(retail-store-confg)
 - Line 2: Environment dev configuration to follow
 - Line 3: dev environment is targeted to dev eks cluster
-- Line 5-9: Version of microservice helm chart
+- Line 5-9: Version of microservice helm chart -->
 
 We will use an ApplicationSet that will "scan" our Git folders and dynamically generate an Argo CD Application for every team it finds.
 

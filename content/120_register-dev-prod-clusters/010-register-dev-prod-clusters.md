@@ -2,6 +2,9 @@
 title: "Register Dev & Prod Clusters"
 weight: 10
 ---
+<!-- cspell:disable-next-line -->
+::video{id=9pn7un5BrlQ}
+
 
 Now that we have established hub-spoke access, we need to register the dev and prod clusters with ArgoCD so it can deploy applications to these environments. This step activates the cluster registration automation we set up earlier.
 
