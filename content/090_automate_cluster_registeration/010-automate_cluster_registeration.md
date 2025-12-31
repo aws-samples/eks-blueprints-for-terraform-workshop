@@ -2,10 +2,12 @@
 title: "Automate Cluster Registration"
 weight: 10
 ---
+<!-- cspell:disable-next-line -->
+::video{id=Oclo78ladi8}
 
-Cluster registration in ArgoCD involves providing the EKS API Server ARN via Kubernetes Secrets. ArgoCD uses these secrets to manage and deploy applications to target clusters.
+ArgoCD manages and deploys applications on  clusters. To do this, it needs cluster connection information. This information is provided through Kubernetes secrets. When these secrets with the proper labels, they automatically appear as available clusters under Settings > Clusters in the ArgoCD dashboard. In this chapter, we will automate cluster registration by managing this metadata through Git.
 
-In the previous "ArgoCD Basics/Register Cluster" chapter, we manually registered hub cluster using a one-time kubectl command. In this chapter, we transition to a GitOps-driven approach. By defining cluster metadata in Git, Argo CD will automatically detect and register new clusters as they are added to the repository. We will start by "re-registering" our Hub cluster so that its definition is fully managed by our Git source of truth
+In the "ArgoCD Basics/Register Cluster" chapter, we manually registered hub cluster using a one-time kubectl command. In this chapter, we transition to a GitOps-driven approach. We will test this automation by automatically registering the hub cluster through automation.
 
 ### How it works
 
@@ -95,10 +97,43 @@ Key Components:
 
 
 ### 1. Automate Cluster registration
+
+We'll deploy the register-cluster ApplicationSet to the bootstrap folder. The bootstrap ApplicationSet (created in the previous chapter) monitors this folder and will immediately deploy the new ApplicationSet, creating our cluster registration automation engine.
+
+This ApplicationSet will then scan the register-cluster/ folder for cluster configuration files and automatically register any clusters it finds.
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 # Copy register Cluster
 cp $WORKSHOP_DIR/gitops/templates/bootstrap/register-cluster.yaml $GITOPS_DIR/platform/bootstrap
+cd $GITOPS_DIR/platform
+git add .
+git commit -m "add cluster registration automation"
+git push 
+:::
+<!-- prettier-ignore-end -->
+
+
+### 2. Validate ApplicationSet Creation
+
+Navigate to the ArgoCD dashboard to verify that our cluster registration automation has been deployed successfully.
+
+1. Go to Applications view in ArgoCD dashboard
+2. Click on the bootstrap Application 
+3. You will see newly created register-cluster ApplicationSet
+
+::alert[You may need to refresh the ArgoCD dashboard to see newly created applications and resources]{header=Tip}
+
+![Register Cluster Folders](/static/images/register-cluster/register-cluster-appset-dashboard.png)
+
+In the next step, we'll add a cluster configuration to trigger the automation.
+
+### 3. Add hub cluster values
+
+Now we'll add hub cluster configuration to trigger our automation and demonstrate how it works.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=json }
 
 # Copy hub cluster values
 mkdir -p $GITOPS_DIR/platform/register-cluster/hub
@@ -110,8 +145,14 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-### 2. Validate Cluster registration
+The register-cluster ApplicationSet will detect the new `/hub` folder and automatically create a `register-cluster-hub` Application to deploy the cluster secret.
 
-Navigate to ArgoCD dashboard to validate cluster registration
+### 4. Validate Cluster registration
+
+Navigate to ArgoCD dashboard to see the automation in action.
+
+1. Go to Applications view in ArgoCD dashboard
+2. Click on the bootstrap Application. You should see register-cluster ApplicationSet now has newly created register-cluster-hub application.
+3. Hub cluster appears in Settings > Clusters (re-registered via GitOps)
 
 ![Register Cluster Hub Dashboard](/static/images/register-cluster/register-cluster-hub-dashboard.png)

@@ -104,3 +104,22 @@ EOF
 cd ~/environment/hub
 terraform apply --auto-approve
 :::
+
+### 5. Validate Service-Linked Role Access
+
+Navigate to the AWS Console to verify that the IAM policies have been successfully attached to the ArgoCD service-linked role.
+
+1. Go to IAM Console → Roles
+2. Search for AmazonEKSCapabilityArgoCDRole
+3. Click on the role to view its details
+4. Navigate to the Permissions tab
+5. Verify the following policies are attached:
+   - ✅ **codecommit-readonly-policy** (for Git repository access)
+   - ✅ **ecr-helm-readonly-policy** (for Helm chart access)
+ 
+This confirms that ArgoCD now has the necessary permissions to:
+- Pull from CodeCommit repositories (platform, retail-store-app, retail-store-config)
+- Access ECR registries for Helm charts and container images
+
+
+![Service Linked Role Access](/static/images/argobasics/register-repo-console.png)
