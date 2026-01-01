@@ -205,6 +205,19 @@ update_templates() {
         echo "Warning: Template file $DEV_VALUES_TEMPLATE not found"
     fi
     
+    # Update prod-values.yaml template
+    PROD_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/prod-values.yaml"
+    
+    if [ -f "$PROD_VALUES_TEMPLATE" ]; then
+        sed -i.bak \
+            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
+            -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            "$PROD_VALUES_TEMPLATE"
+        echo "Updated $PROD_VALUES_TEMPLATE with ECR registry URL and retail store config URL"
+    else
+        echo "Warning: Template file $PROD_VALUES_TEMPLATE not found"
+    fi
+    
     echo "Template updates completed"
     echo "---"
 }

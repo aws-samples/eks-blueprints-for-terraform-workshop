@@ -84,7 +84,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
       terminalOnStartup: false,
       bootstrapTimeoutMinutes: 30,
       enableGitea: false,
-      codeServerVersion: "4.106.3",
+      codeServerVersion: "4.107.0",
     });
 
     // if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {

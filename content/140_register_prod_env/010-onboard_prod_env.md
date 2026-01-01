@@ -28,6 +28,7 @@ Let's extend the retail-store team to the prod environment:
 
 # Append Prod environment configuration to existing environments.yaml
 cat <<'EOF' >> $GITOPS_DIR/platform/register-team/retail-store/environments.yaml
+
   - env: prod
     cluster: prod
     versions:
@@ -70,7 +71,8 @@ After pushing the prod configuration:
 ### Values Hierarchy in Action
 
 The namespace configuration demonstrates the values hierarchy:
-```yaml
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=bash }
 # default-values.yaml (base configuration)
 resources:
   requests:
@@ -85,7 +87,7 @@ resources:
   limits:
     memory: "512Mi"    # Add limits for prod
     cpu: "500m"
-```
+:::
 
 ### Verification
 
