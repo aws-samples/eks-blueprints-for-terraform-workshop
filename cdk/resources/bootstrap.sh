@@ -24,7 +24,7 @@ export ENVIRONMENT_DIR=/home/ec2-user/environment
 export GOROOT=/usr/local/go
 
 # This is to go around problem with circular dependency
-aws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite
+# aws ssm put-parameter --type String --name EksBlueprintGiteaExternalUrl --value $GITEA_EXTERNAL_URL --overwrite
 
 sudo bash -c "cat > /usr/local/bin/wait-for-lb" <<'EOT'
 #!/bin/bash

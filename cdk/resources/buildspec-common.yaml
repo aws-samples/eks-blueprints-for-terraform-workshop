@@ -66,17 +66,18 @@ phases:
         }
         EOT
 
-        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
-        for i in $(seq 1 60);
-        do
-          if [[ -z $GITEA_EXTERNAL_URL ]]; then
-            sleep 10
-            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
-            echo $GITEA_EXTERNAL_URL
-          else
-            break
-          fi
-        done
+        # Gitea is not used any more. CodeCommit is used.i s
+        # GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
+        # for i in $(seq 1 60);
+        # do
+        #   if [[ -z $GITEA_EXTERNAL_URL ]]; then
+        #     sleep 10
+        #     GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name "EksBlueprintGiteaExternalUrl" --query "Parameter.Value" --output text || true)
+        #     echo $GITEA_EXTERNAL_URL
+        #   else
+        #     break
+        #   fi
+        # done
 
         if [[ $REQUESTED_ACTION == 'Delete' ]]; then
 
