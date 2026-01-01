@@ -2,10 +2,12 @@
 title: "Automate Cluster Registration"
 weight: 10
 ---
+
 <!-- cspell:disable-next-line -->
+
 ::video{id=Oclo78ladi8}
 
-ArgoCD manages and deploys applications on  clusters. To do this, it needs cluster connection information. This information is provided through Kubernetes secrets. When these secrets with the proper labels, they automatically appear as available clusters under Settings > Clusters in the ArgoCD dashboard. In this chapter, we will automate cluster registration by managing this metadata through Git.
+ArgoCD manages and deploys applications on clusters. To do this, it needs cluster connection information. This information is provided through Kubernetes secrets. When these secrets with the proper labels, they automatically appear as available clusters under Settings > Clusters in the ArgoCD dashboard. In this chapter, we will automate cluster registration by managing this metadata through Git.
 
 In the "ArgoCD Basics/Register Cluster" chapter, we manually registered hub cluster using a one-time kubectl command. In this chapter, we transition to a GitOps-driven approach. We will test this automation by automatically registering the hub cluster through automation.
 
@@ -113,13 +115,12 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
 ### 2. Validate ApplicationSet Creation
 
 Navigate to the ArgoCD dashboard to verify that our cluster registration automation has been deployed successfully.
 
 1. Go to Applications view in ArgoCD dashboard
-2. Click on the bootstrap Application 
+2. Click on the bootstrap Application
 3. You will see newly created register-cluster ApplicationSet
 
 ::alert[You may need to refresh the ArgoCD dashboard to see newly created applications and resources]{header=Tip}

@@ -2,7 +2,9 @@
 title: "Automate Team Registration"
 weight: 10
 ---
+
 <!-- cspell:disable-next-line -->
+
 ::video{id=d2C7FR6i7G0}
 
 Team registration involves creating namespaces, ArgoCD projects, and deploying applications to clusters. In this chapter, we will automate this process by managing team configurations through Git.
@@ -20,7 +22,7 @@ We use a Helm chart( team) to package applicationsets that create namespace, Arg
 
 <!-- prettier-ignore-start -->
 <!-- :::code{showCopyAction=false showLineNumbers=true language=yaml }
-repo: <<url of the repo that contains values for each micorservice(retail-store-confg)>>
+repo: <<url of the repo that contains values for each microservice(retail-store-config)>>
 environments:
   - env: dev
     cluster: dev
@@ -34,7 +36,7 @@ environments:
 <!-- prettier-ignore-end -->
 
 <!-- Key Components:
-- Line 1: url of the repo that contains values for each micorservice(retail-store-confg)
+- Line 1: url of the repo that contains values for each microservice(retail-store-config)
 - Line 2: Environment dev configuration to follow
 - Line 3: dev environment is targeted to dev eks cluster
 - Line 5-9: Version of microservice helm chart -->
@@ -94,6 +96,7 @@ spec:
 <!-- prettier-ignore-end -->
 
 Key Components:
+
 - Line 14: Uses a Cluster Generator to target clusters labeled cluster-role: hub
 - Line 16: Uses the platform URL defined in the Hub cluster's annotations
 - Line 19: Select all folders under register-team
@@ -102,9 +105,8 @@ Key Components:
 - Line 29: Helm Chart version
 - Line 35: Pick up team specific values in environments.yaml
 
-
-
 ### 1. Automate Cluster registration
+
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=json }
 # Copy register Cluster

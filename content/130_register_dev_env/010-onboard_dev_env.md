@@ -8,6 +8,7 @@ Now that we have registered our dev and prod clusters, we can onboard our first 
 ### What is Team Onboarding?
 
 Team onboarding in a GitOps platform involves:
+
 - Namespace Creation: Isolated environment for team resources
 - ArgoCD Project: Scoped permissions and policies for the team
 - Application Deployment: Automated deployment of team's microservices
@@ -26,6 +27,7 @@ In the "Automate Team Registration" chapter, we set up an ApplicationSet that mo
 ### Team Structure
 
 The retail-store team configuration includes:
+
 - **environments.yaml**: Defines which applications to deploy and their versions
 - **namespace/**: Kubernetes namespace configuration with values hierarchy
   - `default-values.yaml`: Base namespace configuration (RBAC, quotas, policies)
@@ -34,9 +36,11 @@ The retail-store team configuration includes:
 - **project/**: ArgoCD project settings and policies
 
 The namespace Helm chart uses a **values hierarchy** where:
+
 1. **Base Configuration**: `default-values.yaml` provides common settings for all environments
 2. **Environment Overrides**: `<<env>>-values.yaml` files override specific values per environment
 3. **Merge Strategy**: Environment-specific values take precedence over defaults
+
 - project/: ArgoCD project settings and policies
 
 ### Implementation
@@ -87,25 +91,30 @@ After pushing the team configuration:
 Check the onboarding progress in ArgoCD:
 
 #### Applications View:
+
 - ✅ `register-team-retail-store` - Team onboarding Application (should be Synced)
 - ✅ `retail-store-dev-*` - Individual microservice Applications (cart, catalog, etc.)
 
 #### Projects View:
+
 - ✅ `retail-store` - Team-specific project with scoped permissions
 
 #### Clusters View (dev cluster):
+
 - ✅ `retail-store` namespace created
 - ✅ Microservices deployed and running
 
 ### Accessing the Application
 
 Once deployed, you can access the retail-store application:
+
 1. Get the LoadBalancer URL from the `ui` service in the `retail-store` namespace
 2. Navigate to the URL to see the running e-commerce application
 
 ### Next Steps
 
 With the dev environment successfully onboarded, you can:
+
 - Deploy updates by modifying application versions in `environments.yaml`
 - Onboard additional teams using the same pattern
 - Extend to production environments following similar processes

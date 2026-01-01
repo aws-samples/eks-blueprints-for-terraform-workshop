@@ -2,14 +2,17 @@
 title: "Hub-Spoke Access"
 weight: 10
 ---
+
 <!-- cspell:disable-next-line -->
+
 ::video{id=lBqPKBSzFg8}
 
-Hub-Spoke access  involves granting the ArgoCD Capability running on the hub cluster access to spoke clusters (dev and prod). This enables ArgoCD to deploy and manage applications across multiple clusters from a centralized control plane.
+Hub-Spoke access involves granting the ArgoCD Capability running on the hub cluster access to spoke clusters (dev and prod). This enables ArgoCD to deploy and manage applications across multiple clusters from a centralized control plane.
 
 ### The Challenge
 
 ArgoCD running on the hub cluster needs permissions to:
+
 - Create and manage Kubernetes resources on spoke clusters
 - Deploy applications to dev and prod environments
 - Monitor application health across all clusters
@@ -25,8 +28,9 @@ We configure cross-cluster access using AWS EKS Access Entries, which provide a 
 ### 1. Implementation Steps
 
 The configuration uses:
+
 - Remote State Data Source: Retrieves the ArgoCD service role ARN from hub cluster
-- EKS Access Entry: Grants the service role access to spoke clusters  
+- EKS Access Entry: Grants the service role access to spoke clusters
 - Cluster Admin Policy: Provides full administrative permissions on spoke clusters
 
 <!-- prettier-ignore-start -->

@@ -2,18 +2,19 @@
 title: "Register Dev & Prod Clusters"
 weight: 10
 ---
-<!-- cspell:disable-next-line -->
-::video{id=9pn7un5BrlQ}
 
+<!-- cspell:disable-next-line -->
+
+::video{id=9pn7un5BrlQ}
 
 Now that we have established hub-spoke access, we need to register the dev and prod clusters with ArgoCD so it can deploy applications to these environments. This step activates the cluster registration automation we set up earlier.
 
 ### Why Register Dev & Prod Clusters?
 
 In upcoming chapters, we'll deploy applications to dev and prod environments. ArgoCD needs to know about these clusters to:
-- Deploy applications to the correct target environments
-- Monitor application health across all clusters  
 
+- Deploy applications to the correct target environments
+- Monitor application health across all clusters
 
 ### How the Automation Works
 
@@ -46,17 +47,12 @@ git push
 :::
 <!-- prettier-ignore-end -->
 
-
-
 ### Verification
 
 Navigate to ArgoCD dashboard **Settings > Clusters** to validate cluster registration. You should see:
+
 - ✅ **hub** (existing)
-- ✅ **dev** (newly registered)  
+- ✅ **dev** (newly registered)
 - ✅ **prod** (newly registered)
 
 ![Hub-Spoke Access Architecture](/static/images/register-dev-prod-clusters/register-dev-prod-clusters.png)
-
-
-
-

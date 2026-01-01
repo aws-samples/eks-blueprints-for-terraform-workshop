@@ -621,32 +621,6 @@
       "IpProtocol": "-1"
      }
     ],
-    "SecurityGroupIngress": [
-     {
-      "CidrIp": {
-       "Fn::GetAtt": [
-        "IDEBLUEIdeVPCBE756D0B",
-        "CidrBlock"
-       ]
-      },
-      "Description": "Gitea API from VPC",
-      "FromPort": 9999,
-      "IpProtocol": "tcp",
-      "ToPort": 9999
-     },
-     {
-      "CidrIp": {
-       "Fn::GetAtt": [
-        "IDEBLUEIdeVPCBE756D0B",
-        "CidrBlock"
-       ]
-      },
-      "Description": "Gitea SSH from VPC",
-      "FromPort": 2222,
-      "IpProtocol": "tcp",
-      "ToPort": 2222
-     }
-    ],
     "VpcId": {
      "Ref": "IDEBLUEIdeVPCBE756D0B"
     }
@@ -1025,7 +999,7 @@
               "DomainName"
              ]
             },
-            "codeServerVersion": "4.100.1",
+            "codeServerVersion": "4.107.0",
             "waitConditionHandleUrl": {
              "Ref": "IDEBLUEIdeBootstrapWaitConditionHandleAC3C4B44"
             },
@@ -1047,7 +1021,7 @@
               }
              ]
             },
-            "installGitea": "dnf install -y nerdctl cni-plugins\nmkdir -p /gitea/config /gitea/data\n\necho '\nversion: \"2\"\n\nservices:\n  gitea:\n    image: gitea/gitea:1.22-rootless\n    restart: always\n    volumes:\n      - /gitea/data:/var/lib/gitea\n      - /gitea/config:/etc/gitea\n      - /etc/timezone:/etc/timezone:ro\n      - /etc/localtime:/etc/localtime:ro\n    ports:\n      - \"9999:3000\"\n      - \"2222:2222\"\n' > gitea.yaml\n\necho \"\nAPP_NAME = Gitea: Git with a cup of tea\nRUN_MODE = prod\nRUN_USER = git\nWORK_PATH = /var/lib/gitea\n\n[repository]\nROOT = /var/lib/gitea/git/repositories\nENABLE_PUSH_CREATE_USER = true\nDISABLE_HTTP_GIT = false\n\n[repository.local]\nLOCAL_COPY_PATH = /var/lib/gitea/tmp/local-repo\n\n[repository.upload]\nTEMP_PATH = /var/lib/gitea/uploads\n\n[server]\nAPP_DATA_PATH = /var/lib/gitea\nDOMAIN = $EC2_PRIVATE_IP\nSSH_DOMAIN = $EC2_PRIVATE_IP\nSSH_CREATE_AUTHORIZED_KEYS_FILE=false\nHTTP_PORT = 3000\nROOT_URL = http://$EC2_PRIVATE_IP:9000/gitea\nDISABLE_SSH = false\nSSH_PORT = 2222\nSSH_LISTEN_PORT = 2222\nSTART_SSH_SERVER = true\nLFS_START_SERVER = true\nOFFLINE_MODE = true\n\n[database]\nPATH = /var/lib/gitea/gitea.db\nDB_TYPE = sqlite3\nHOST = localhost:3306\nNAME = gitea\nUSER = root\nPASSWD = \nLOG_SQL = false\nSCHEMA = \nSSL_MODE = disable\n\n[indexer]\nISSUE_INDEXER_PATH = /var/lib/gitea/indexers/issues.bleve\n\n[session]\nPROVIDER_CONFIG = /var/lib/gitea/sessions\nPROVIDER = file\n\n[picture]\nAVATAR_UPLOAD_PATH = /var/lib/gitea/avatars\nREPOSITORY_AVATAR_UPLOAD_PATH = /var/lib/gitea/repo-avatars\n\n[attachment]\nPATH = /var/lib/gitea/attachments\n\n[log]\nMODE = console\nLEVEL = info\nROOT_PATH = /var/lib/gitea/log\n\n[security]\nINSTALL_LOCK = true\nSECRET_KEY = \nREVERSE_PROXY_LIMIT = 1\nREVERSE_PROXY_TRUSTED_PROXIES = *\nPASSWORD_HASH_ALGO = pbkdf2\n\n[service]\nDISABLE_REGISTRATION = true\nREQUIRE_SIGNIN_VIEW = true\nREGISTER_EMAIL_CONFIRM = false\nENABLE_NOTIFY_MAIL = false\nALLOW_ONLY_EXTERNAL_REGISTRATION = false\nENABLE_CAPTCHA = false\nDEFAULT_KEEP_EMAIL_PRIVATE = false\nDEFAULT_ALLOW_CREATE_ORGANIZATION = true\nDEFAULT_ENABLE_TIMETRACKING = true\nNO_REPLY_ADDRESS = noreply.localhost\n\n[lfs]\nPATH = /var/lib/gitea/git/lfs\n\n[mailer]\nENABLED = false\n\n[cron.update_checker]\nENABLED = false\n\n[repository.pull-request]\nDEFAULT_MERGE_STYLE = merge\n\n[repository.signing]\nDEFAULT_TRUST_MODEL = committer\n\n\" > /gitea/config/app.ini\nchown -R 1000:1000 /gitea\nsudo nerdctl compose -f gitea.yaml up -d --quiet-pull\n\n# We need to be idempotent and check for locked database\nwhile true; do\n    CONTAINER=$(sudo nerdctl compose -f gitea.yaml ps --format json | jq .[].Name) # Name is <folder>-<compose-name>-1\n\n    if [ ! -z \"$CONTAINER\" ]; then\n      STATUS=$(sudo nerdctl exec $CONTAINER -- sh -c \"gitea admin user create --username workshop-user --email workshop-user@example.com --password $IDE_PASSWORD 2>&1 || exit 0\")\n      [[ \"$STATUS\" =~ .*locked|no\\ such\\ table.* ]] || break\n    fi\n    sleep 5;\ndone\n\ntee -a /etc/caddy/Caddyfile <<EOF\nhttp://$IDE_DOMAIN:9000, http://localhost:9000 {\n  handle_path /proxy/9000/* {\n    reverse_proxy 127.0.0.1:9999\n  }\n\n  handle /* {\n    reverse_proxy 127.0.0.1:9999\n  }\n}\nEOF\n\n# We add the handle_path in the cloudfront site\nsed -i 's~#GITEA~handle_path /gitea/* { \\\n    reverse_proxy 127.0.0.1:9999 \\\n  }~' /etc/caddy/Caddyfile\n\nsystemctl restart caddy\n\nsleep 5\n\nsudo -u ec2-user bash -c 'git config --global user.email \"workshop-user@example.com\"'\nsudo -u ec2-user bash -c 'git config --global user.name \"Workshop User\"'\n\nsudo -u ec2-user bash -c 'touch ~/.ssh/config'\ntee /home/ec2-user/.ssh/config <<EOF\nHost $EC2_PRIVATE_IP\n  User git\n  Port 2222\n  IdentityFile /home/ec2-user/.ssh/id_rsa\n  IdentitiesOnly yes\nEOF\n\nsudo -u ec2-user bash -c 'chmod 600 ~/.ssh/*'\n\nPUB_KEY=$(sudo cat /home/ec2-user/.ssh/id_rsa.pub)\nTITLE=\"$(hostname)$(date +%s)\"\n\ncurl -X 'POST' \\\n  \"http://workshop-user:$IDE_PASSWORD@localhost:9000/api/v1/user/keys\" \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d \"{\n  \\\"key\\\": \\\"$PUB_KEY\\\",\n  \\\"read_only\\\": true,\n  \\\"title\\\": \\\"$TITLE\\\"\n}\"\n\ntee /etc/profile.d/gitea.sh <<EOF\nexport GIT_SSH_ENDPOINT=\"$EC2_PRIVATE_IP:2222\"\nexport GITEA_API_ENDPOINT=\"http://$EC2_PRIVATE_IP:9000\"\nexport GITEA_EXTERNAL_URL=\"https://$IDE_DOMAIN/gitea\"\nexport GITEA_PASSWORD=\"$IDE_PASSWORD\"\nEOF\n\nsource /etc/profile.d/gitea.sh\n",
+            "installGitea": "",
             "splashUrl": "",
             "readmeUrl": "",
             "environmentContentsZip": "",
@@ -1295,7 +1269,7 @@
      ]
     },
     "Source": {
-     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n        IS_WS=${IS_WS:-false}\n        GITEA_PASSWORD=${GITEA_PASSWORD}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"eks-blueprints-workshop-tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # This gives access to the EKS cluster in terraform\n\n        # Common backend config\n\n        ls -la $BASE_DIR/terraform/common\n\n        cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"common/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        # VPC backend config\n        cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"vpc/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n        for i in $(seq 1 60);\n        do\n          if [[ -z $GITEA_EXTERNAL_URL ]]; then\n            sleep 10\n            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n            echo $GITEA_EXTERNAL_URL\n          else\n            break\n          fi\n        done\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/hack/destroy.sh\n\n        else\n\n          # Project Creation\n          DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh\n          \n          # VPC Creation\n          DEBUG=1 $BASE_DIR/terraform/vpc/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING\"\n",
+     "BuildSpec": "version: 0.2\nphases:\n  pre_build:\n    commands:\n      - |\n        yum install -y gettext\n        # Helm installation\n        curl --silent --location \"https://get.helm.sh/helm-v3.9.2-linux-amd64.tar.gz\" | tar xz -C /tmp\n        mv /tmp/linux-amd64/helm /usr/local/bin\n        chmod +x /usr/local/bin/helm\n        # Terraform installation\n        sudo yum install -y yum-utils\n        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo\n        sudo yum -y install terraform\n  build:\n    commands:\n      - |\n        set -x\n        set -e\n\n        aws configure set cli_pager \"\"\n\n        ACCOUNT_ID=$(aws sts get-caller-identity --query \"Account\" --output text)\n        BUCKET_NAME=${TFSTATE_BUCKET_NAME}\n        BASE_DIR=${CODEBUILD_SRC_DIR}\n        WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}\n        WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}\n        IS_WS=${IS_WS:-false}\n        GITEA_PASSWORD=${GITEA_PASSWORD}\n\n        env | sort\n\n        # clone and create CodeCommit repo\n        git clone $WORKSHOP_GIT_URL $BASE_DIR || true\n        cd $BASE_DIR\n        git checkout $WORKSHOP_GIT_BRANCH\n        cd -\n\n        aws ssm put-parameter --name \"eks-blueprints-workshop-tf-backend-bucket\" --type \"String\" --value \"$BUCKET_NAME\" --overwrite\n\n        # This gives access to the EKS cluster in terraform\n\n        # Common backend config\n\n        # ls -la $BASE_DIR/terraform/common\n\n        # cat << EOT > $BASE_DIR/terraform/common/backend_override.tf\n        # terraform {\n        #   backend \"s3\" {\n        #     bucket         = \"$BUCKET_NAME\"\n        #     key            = \"common/terraform.tfstate\"\n        #     region         = \"$AWS_REGION\"\n        #   }\n        # }\n        # EOT\n\n        # VPC backend config\n        cat << EOT > $BASE_DIR/terraform/vpc/backend_override.tf\n        terraform {\n          backend \"s3\" {\n            bucket         = \"$BUCKET_NAME\"\n            key            = \"vpc/terraform.tfstate\"\n            region         = \"$AWS_REGION\"\n          }\n        }\n        EOT\n\n        GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n        for i in $(seq 1 60);\n        do\n          if [[ -z $GITEA_EXTERNAL_URL ]]; then\n            sleep 10\n            GITEA_EXTERNAL_URL=$(aws ssm get-parameter --name \"EksBlueprintGiteaExternalUrl\" --query \"Parameter.Value\" --output text || true)\n            echo $GITEA_EXTERNAL_URL\n          else\n            break\n          fi\n        done\n\n        if [[ $REQUESTED_ACTION == 'Delete' ]]; then\n\n          # Cleanup scripts\n          DEBUG=1 $BASE_DIR/hack/destroy.sh\n\n        else\n\n          # Project Creation\n          # DEBUG=1 TF_VAR_gitea_external_url=$GITEA_EXTERNAL_URL TF_VAR_gitea_password=$GITEA_PASSWORD $BASE_DIR/terraform/common/deploy.sh\n          \n          # VPC Creation\n          DEBUG=1 $BASE_DIR/terraform/vpc/deploy.sh\n        fi\n  post_build:\n    commands:\n      - echo \">>> build status $CODEBUILD_BUILD_SUCCEEDING\"\n",
      "Type": "NO_SOURCE"
     },
     "TimeoutInMinutes": 60
@@ -1535,7 +1509,7 @@
       "Arn"
      ]
     },
-    "ContentHash": "8e86898aa5307a9decc159794d34de19"
+    "ContentHash": "996e2e58c836f0e3789af56ea0f02143"
    },
    "DependsOn": [
     "EKSWSCOMMONBuildCompleteRuleAllowEventRuleeksblueprintsworkshopEKSWSCOMMONReportBuildFunction7684FC5473A8AD22",
@@ -1576,8 +1550,24 @@
          "",
          "for ((i=1; i<=MAX_ATTEMPTS; i++)); do",
          "  if [ -d \"$DIRECTORY\" ]; then",
-         "    echo \"Directory $DIRECTORY exists. Proceeding with Git setup.\"",
+         "    echo \"Directory $DIRECTORY exists. Proceeding with setup.\"",
          "    sudo su - ec2-user -c \"ls -la '$DIRECTORY'\"",
+         "    if [ -f \"$DIRECTORY/pull-and-push-images.sh\" ]; then",
+         "      echo \"Found pull-and-push-images.sh. Executing...\"",
+         "      echo \"DEBUG: About to execute pull-and-push-images.sh\"",
+         "      sudo su - ec2-user -c \"AWS_REGION=$AWS_REGION '$DIRECTORY/pull-and-push-images.sh'\" > /tmp/pull-and-push-images.log 2>&1",
+         "      PULL_PUSH_EXIT_CODE=$?",
+         "      echo \"DEBUG: pull-and-push-images.sh completed with exit code: $PULL_PUSH_EXIT_CODE\"",
+         "      echo \"DEBUG: Last 20 lines of pull-and-push-images.sh output:\"",
+         "      tail -20 /tmp/pull-and-push-images.log",
+         "      if [ $PULL_PUSH_EXIT_CODE -ne 0 ]; then",
+         "        echo \"ERROR: pull-and-push-images.sh failed\"",
+         "        cat /tmp/pull-and-push-images.log",
+         "        exit $PULL_PUSH_EXIT_CODE",
+         "      fi",
+         "    else",
+         "      echo \"Warning: pull-and-push-images.sh not found in $DIRECTORY\"",
+         "    fi",
          "    if [ -f \"$DIRECTORY/setup-git.sh\" ]; then",
          "      echo \"Found setup-git.sh. Executing...\"",
          "      echo \"DEBUG: About to execute setup-git.sh\"",
