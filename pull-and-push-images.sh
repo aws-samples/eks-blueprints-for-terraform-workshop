@@ -25,6 +25,15 @@ aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --
 echo "✅ ECR login successful"
 echo ""
 
+# Create ECR repositories for container images first
+echo "🏗️  Creating ECR repositories for container images..."
+for service in "${SERVICES[@]}"; do
+    echo "Creating repository: retail-store/$service"
+    aws ecr create-repository --repository-name "retail-store/$service" --region "$AWS_REGION" 2>/dev/null || echo "Repository retail-store/$service already exists"
+done
+echo "✅ ECR repositories created"
+echo ""
+
 # Pull and push each service
 for service in "${SERVICES[@]}"; do
     echo "📥 Pulling $service from AWS public ECR..."
