@@ -58,7 +58,7 @@ echo ""
 
 # Update template files with ECR repository URLs
 echo "📝 Updating retail-store-config template files..."
-RETAIL_STORE_CONFIG_DIR="$HOME/eks-blueprints-for-terraform-workshop/gitops/retail-store-config"
+RETAIL_STORE_CONFIG_DIR="/home/ec2-user/eks-blueprints-for-terraform-workshop/gitops/retail-store-config"
 
 if [ -d "$RETAIL_STORE_CONFIG_DIR" ]; then
     for service in "${SERVICES[@]}"; do
