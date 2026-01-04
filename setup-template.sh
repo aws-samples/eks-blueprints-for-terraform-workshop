@@ -196,8 +196,8 @@ update_templates() {
     DEV_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/dev-values.yaml"
     
     if [ -f "$DEV_VALUES_TEMPLATE" ]; then
-        # Get Identity Store ID from ArgoCD capability
-        IDENTITY_STORE_ID=$(aws eks describe-capability --cluster-name argocd-hub --capability-name argocd --query 'capability.configuration.argoCd.awsIdc.idcInstanceArn' --output text | cut -d'/' -f2)
+        # Get Identity Store ID from SSO instances
+        IDENTITY_STORE_ID=$(aws sso-admin list-instances --query 'Instances[0].IdentityStoreId' --output text)
         
         # Find all group placeholders and replace them dynamically
         GROUP_PLACEHOLDERS=$(grep -o '<<[^<>]*Store[^<>]*>>' "$DEV_VALUES_TEMPLATE" | sort -u)
