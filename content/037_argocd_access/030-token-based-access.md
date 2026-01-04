@@ -9,12 +9,10 @@ ArgoCD supports token-based authentication for programmatic access and CLI usage
 
 ### Token Characteristics
 
-- **Duration**: Tokens are valid for 12 hours by default
+- **Duration**: Tokens are time bound. Tokens generated for an account are valid for 12 hours. It does not matter how 
 - **Scope**: Inherit the same permissions as the user who generated them
 - **Usage**: Primarily for CLI access and automation
 - **Security**: Should be treated as sensitive credentials
-
-## Generating Tokens
 
 ### Through ArgoCD Dashboard
 

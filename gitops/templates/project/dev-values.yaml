@@ -1,6 +1,6 @@
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
 projects:
-- name: retail-store
+- name: retail-store-dev
   sourceRepos:
   - <<oci_registry_url>>
   - <<retail_store_config_url>>
@@ -62,3 +62,40 @@ projects:
     kind: Ingress
   sourceNamespaces:
   - argocd
+  roles:
+  # Team Lead - Full access to dev environment
+  - name: team-lead
+    description: Team lead with full project access in dev environment
+    policies:
+    - p, proj:retail-store-dev:team-lead, applications, *, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:team-lead, repositories, *, *, allow
+    - p, proj:retail-store-dev:team-lead, clusters, get, *, allow
+    groups:
+    # RetailStoreTeamLeads UUID
+    - <<RetailStoreTeamLeads>>
+  # Developer - Create, sync, view applications in dev
+  - name: developer
+    description: Developer with limited access to dev environment
+    policies:
+    - p, proj:retail-store-dev:developer, applications, create, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, sync, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, action/*, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, repositories, get, *, allow
+    - p, proj:retail-store-dev:developer, clusters, get, *, allow
+    groups:
+    # RetailStoreDevelopers UUID
+    - <<RetailStoreDevelopers>>
+  # DevOps - Deployment management in dev
+  - name: devops
+    description: DevOps engineer with deployment permissions in dev environment
+    policies:
+    - p, proj:retail-store-dev:devops, applications, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, sync, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, action/*, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, override, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, repositories, get, *, allow
+    - p, proj:retail-store-dev:devops, clusters, get, *, allow
+    groups:
+    # RetailStoreDevOps UUID
+    - <<RetailStoreDevOps>>

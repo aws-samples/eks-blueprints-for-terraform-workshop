@@ -180,17 +180,127 @@ resource "aws_identitystore_user" "argocd_admin" {
     given_name  = "ArgoCD"
     family_name = "Admin"
   }
-  
-
   depends_on = [terraform_data.validate_sso]
 }
-
 # Add user to group
 resource "aws_identitystore_group_membership" "argocd_admin_membership" {
   identity_store_id = local.sso_identity_store_id
   group_id          = aws_identitystore_group.argocd_admins.group_id
   member_id         = aws_identitystore_user.argocd_admin.user_id
 }
+####### TeamLead #######
+resource "aws_identitystore_group" "retail_teamleads" {
+  identity_store_id = local.sso_identity_store_id
+  display_name      = "RetailStoreTeamLeads"
+  description       = "Retail-Store TeamLeads group"
+
+  depends_on = [terraform_data.validate_sso]
+}
+
+resource "aws_identitystore_user" "retail_teamlead" {
+  identity_store_id = local.sso_identity_store_id
+  
+  display_name = "Retail Teamlead"
+  user_name    = "retailteamlead"
+  
+  name {
+    given_name  = "Team"
+    family_name = "Lead"
+  }
+  depends_on = [terraform_data.validate_sso]
+}
+# Add user to group
+resource "aws_identitystore_group_membership" "argocd_retail_store_lead_membership" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.retail_teamleads.group_id
+  member_id         = aws_identitystore_user.retail_teamlead.user_id
+}
+
+####### Developer #######
+resource "aws_identitystore_group" "retail_developers" {
+  identity_store_id = local.sso_identity_store_id
+  display_name      = "RetailStoreDevelopers"
+  description       = "Retail-Store Developers group"
+
+  depends_on = [terraform_data.validate_sso]
+}
+
+resource "aws_identitystore_user" "retail_developer" {
+  identity_store_id = local.sso_identity_store_id
+  
+  display_name = "Retail Developer"
+  user_name    = "retaildev"
+  
+  name {
+    given_name  = "Dev"
+    family_name = "Dev"
+  }
+  depends_on = [terraform_data.validate_sso]
+}
+# Add user to group
+resource "aws_identitystore_group_membership" "argocd_retail_store_dev_membership" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.retail_developers.group_id
+  member_id         = aws_identitystore_user.retail_developer.user_id
+}
+
+####### DevOps #######
+resource "aws_identitystore_group" "retail_devops" {
+  identity_store_id = local.sso_identity_store_id
+  display_name      = "RetailStoreDevOps"
+  description       = "Retail-Store DevOps group"
+
+  depends_on = [terraform_data.validate_sso]
+}
+
+resource "aws_identitystore_user" "retail_devops" {
+  identity_store_id = local.sso_identity_store_id
+  
+  display_name = "Retail DevOps"
+  user_name    = "retaildevops"
+  
+  name {
+    given_name  = "DevOps"
+    family_name = "DevOps"
+  }
+  depends_on = [terraform_data.validate_sso]
+}
+# Add user to group
+resource "aws_identitystore_group_membership" "argocd_retail_store_devops_membership" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.retail_devops.group_id
+  member_id         = aws_identitystore_user.retail_devops.user_id
+}
+
+
+####### Prod Support #######
+resource "aws_identitystore_group" "retail_prod_support" {
+  identity_store_id = local.sso_identity_store_id
+  display_name      = "RetailStoreProdSupport"
+  description       = "Retail-Store Prod Support group"
+
+  depends_on = [terraform_data.validate_sso]
+}
+
+resource "aws_identitystore_user" "retail_prod_support" {
+  identity_store_id = local.sso_identity_store_id
+  
+  display_name = "Retail Prod Support"
+  user_name    = "retailprodsupport"
+  
+  name {
+    given_name  = "Retail Prod Support"
+    family_name = "Retail Prod Support"
+  }
+  depends_on = [terraform_data.validate_sso]
+}
+# Add user to group
+resource "aws_identitystore_group_membership" "argocd_retail_store_prod_support_membership" {
+  identity_store_id = local.sso_identity_store_id
+  group_id          = aws_identitystore_group.retail_prod_support.group_id
+  member_id         = aws_identitystore_user.retail_prod_support.user_id
+}
+
 
 ################################################################################
 # EKS Capability - Create IAM role for ArgoCD capability
@@ -262,6 +372,21 @@ resource "aws_eks_access_policy_association" "AmazonEKSClusterAdminPolicy" {
     type      = "cluster"
   }
 }
+
+resource "null_resource" "disable_assignment_requirement" {
+  depends_on = [aws_eks_capability.argocd]
+  
+  provisioner "local-exec" {
+    command = <<-EOT
+      APP_ARN=$(aws sso-admin list-applications --instance-arn ${data.aws_ssoadmin_instances.main.arns[0]} --query 'Applications[?contains(Name, `ArgoCD`)].ApplicationArn' --output text)
+      aws sso-admin put-application-assignment-configuration --application-arn $APP_ARN --no-assignment-required
+    EOT
+  }
+}
+
+###################
+# Codecommit repos
+#################
 
 resource "aws_codecommit_repository" "platform" {
   repository_name = "platform"

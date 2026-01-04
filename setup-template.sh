@@ -196,11 +196,36 @@ update_templates() {
     DEV_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/dev-values.yaml"
     
     if [ -f "$DEV_VALUES_TEMPLATE" ]; then
+        # Get Identity Store ID from ArgoCD capability
+        IDENTITY_STORE_ID=$(aws eks describe-capability --cluster-name argocd-hub --capability-name argocd --query 'capability.configuration.argoCd.awsIdc.idcInstanceArn' --output text | cut -d'/' -f2)
+        
+        # Find all group placeholders and replace them dynamically
+        GROUP_PLACEHOLDERS=$(grep -o '<<[^<>]*Store[^<>]*>>' "$DEV_VALUES_TEMPLATE" | sort -u)
+        
+        # Build sed replacement string
+        SED_REPLACEMENTS=""
+        for placeholder in $GROUP_PLACEHOLDERS; do
+            # Extract group name (remove << and >>)
+            GROUP_NAME=$(echo "$placeholder" | sed 's/<<//g' | sed 's/>>//g')
+            
+            # Get group UUID from Identity Center
+            GROUP_UUID=$(aws identitystore list-groups --identity-store-id $IDENTITY_STORE_ID --filters AttributePath=DisplayName,AttributeValue=$GROUP_NAME --query 'Groups[0].GroupId' --output text 2>/dev/null || echo "")
+            
+            if [ -n "$GROUP_UUID" ] && [ "$GROUP_UUID" != "None" ]; then
+                SED_REPLACEMENTS="$SED_REPLACEMENTS -e s|$placeholder|$GROUP_UUID|g"
+                echo "Found group $GROUP_NAME with UUID: $GROUP_UUID"
+            else
+                echo "Warning: Group $GROUP_NAME not found in Identity Center"
+            fi
+        done
+        
+        # Apply all replacements
         sed -i.bak \
             -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
             -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            $SED_REPLACEMENTS \
             "$DEV_VALUES_TEMPLATE"
-        echo "Updated $DEV_VALUES_TEMPLATE with ECR registry URL and retail store config URL"
+        echo "Updated $DEV_VALUES_TEMPLATE with ECR registry URL, retail store config URL, and IDC group UUIDs"
     else
         echo "Warning: Template file $DEV_VALUES_TEMPLATE not found"
     fi
@@ -209,11 +234,33 @@ update_templates() {
     PROD_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/prod-values.yaml"
     
     if [ -f "$PROD_VALUES_TEMPLATE" ]; then
+        # Find all group placeholders and replace them dynamically
+        GROUP_PLACEHOLDERS=$(grep -o '<<[^<>]*Store[^<>]*>>' "$PROD_VALUES_TEMPLATE" | sort -u)
+        
+        # Build sed replacement string
+        SED_REPLACEMENTS=""
+        for placeholder in $GROUP_PLACEHOLDERS; do
+            # Extract group name (remove << and >>)
+            GROUP_NAME=$(echo "$placeholder" | sed 's/<<//g' | sed 's/>>//g')
+            
+            # Get group UUID from Identity Center
+            GROUP_UUID=$(aws identitystore list-groups --identity-store-id $IDENTITY_STORE_ID --filters AttributePath=DisplayName,AttributeValue=$GROUP_NAME --query 'Groups[0].GroupId' --output text 2>/dev/null || echo "")
+            
+            if [ -n "$GROUP_UUID" ] && [ "$GROUP_UUID" != "None" ]; then
+                SED_REPLACEMENTS="$SED_REPLACEMENTS -e s|$placeholder|$GROUP_UUID|g"
+                echo "Found group $GROUP_NAME with UUID: $GROUP_UUID"
+            else
+                echo "Warning: Group $GROUP_NAME not found in Identity Center"
+            fi
+        done
+        
+        # Apply all replacements
         sed -i.bak \
             -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
             -e "s|<<retail_store_config_url>>|$RETAIL_STORE_CONFIG_URL|g" \
+            $SED_REPLACEMENTS \
             "$PROD_VALUES_TEMPLATE"
-        echo "Updated $PROD_VALUES_TEMPLATE with ECR registry URL and retail store config URL"
+        echo "Updated $PROD_VALUES_TEMPLATE with ECR registry URL, retail store config URL, and IDC group UUIDs"
     else
         echo "Warning: Template file $PROD_VALUES_TEMPLATE not found"
     fi

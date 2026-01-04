@@ -1,6 +1,6 @@
 # using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
 projects:
-- name: retail-store
+- name: retail-store-prod
   sourceRepos:
   - <<oci_registry_url>>
   - <<retail_store_config_url>>
@@ -62,3 +62,37 @@ projects:
     kind: Ingress
   sourceNamespaces:
   - argocd
+  roles:
+  # Team Lead - Full access to prod environment
+  - name: team-lead
+    description: Team lead with full project access in prod environment
+    policies:
+    - p, proj:retail-store-prod:team-lead, applications, *, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:team-lead, repositories, *, *, allow
+    - p, proj:retail-store-prod:team-lead, clusters, get, *, allow
+    groups:
+    # RetailStoreTeamLeads UUID
+    - <<RetailStoreTeamLeads>>
+  # DevOps - Deployment management in prod (more restricted than dev)
+  - name: devops
+    description: DevOps engineer with deployment permissions in prod environment
+    policies:
+    - p, proj:retail-store-prod:devops, applications, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, applications, sync, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, applications, action/*, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, repositories, get, *, allow
+    - p, proj:retail-store-prod:devops, clusters, get, *, allow
+    groups:
+    # RetailStoreDevOps UUID
+    - <<RetailStoreDevOps>>
+  # Production Support - Read-only with emergency sync capability
+  - name: prod-support
+    description: Production support with read access and emergency sync capability
+    policies:
+    - p, proj:retail-store-prod:prod-support, applications, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, applications, sync, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, repositories, get, *, allow
+    - p, proj:retail-store-prod:prod-support, clusters, get, *, allow
+    groups:
+    # RetailStoreProdSupport UUID
+    - <<RetailStoreProdSupport>>
