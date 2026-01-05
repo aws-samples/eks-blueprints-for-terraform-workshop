@@ -1,6 +1,7 @@
 ---
 title: "Project-Based Access Control - Dev Environment"
 weight: 20
+hidden: true
 ---
 
 ## Overview
