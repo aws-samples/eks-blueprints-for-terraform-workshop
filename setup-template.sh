@@ -74,14 +74,14 @@ update_templates() {
     fi
     
     # Update hub-cluster-values.yaml template
-    HUB_CLUSTER_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster-values.yaml"
+    # HUB_CLUSTER_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/hub-cluster-values.yaml"
     
-    if [ -f "$HUB_CLUSTER_VALUES_TEMPLATE" ]; then
-        sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_VALUES_TEMPLATE"
-        echo "Updated $HUB_CLUSTER_VALUES_TEMPLATE with hub cluster ARN"
-    else
-        echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
-    fi
+    # if [ -f "$HUB_CLUSTER_VALUES_TEMPLATE" ]; then
+    #     sed -i.bak "s|<<arn>>|$HUB_CLUSTER_ARN|g" "$HUB_CLUSTER_VALUES_TEMPLATE"
+    #     echo "Updated $HUB_CLUSTER_VALUES_TEMPLATE with hub cluster ARN"
+    # else
+    #     echo "Warning: Template file $HUB_CLUSTER_VALUES_TEMPLATE not found"
+    # fi
     
     # Get secret ARN for repo credentials (if using AWS Secrets Manager for CodeCommit)
     # Note: CodeCommit typically uses IAM authentication, not stored secrets
@@ -192,7 +192,7 @@ update_templates() {
         echo "Warning: Template file $DEFAULT_CLUSTER_REG_VALUES_TEMPLATE not found"
     fi
     
-    IDENTITY_STORE_ID=$(aws sso-admin list-instances --query 'Instances[0].IdentityStoreId' --output text)
+    IDENTITY_STORE_ID=$(aws sso-admin list-instances --query 'Instances[0].IdentityStoreId' | tr -d '"')
     echo "Identity Store ID: $IDENTITY_STORE_ID"    
     # Update dev-values.yaml template
     DEV_VALUES_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/dev-values.yaml"
