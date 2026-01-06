@@ -10,6 +10,7 @@ This chapter covers how to configure authentication for Amazon EKS managed ArgoC
 Users authenticate to ArgoCD to manage and interact with various ArgoCD objects and resources:
 
 Manage Core ArgoCD Objects
+
 - Applications: Deploy and manage Kubernetes applications using GitOps
 - ApplicationSets: Manage multiple applications across clusters and environments
 - Projects: Organize and scope access to applications and resources
@@ -17,9 +18,11 @@ Manage Core ArgoCD Objects
 - Clusters: Register and manage target Kubernetes clusters for deployments
 
 Configure Objects
+
 - Certificates: Manage TLS certificates for secure connections
 
 Operational Tasks
+
 - Application Sync: Deploy changes from Git to Kubernetes clusters
 - Health Monitoring: Monitor application health and status
 - Resource Management: View and manage Kubernetes resources
@@ -30,6 +33,7 @@ Operational Tasks
 Amazon EKS managed ArgoCD does not provide the ability to create local users. Instead, it integrates with AWS Identity Center (IDC) for user authentication.
 
 Key Points
+
 - No Local Users: ArgoCD cannot create or manage users directly
 - IDC Integration: All user authentication flows through AWS Identity Center
 - External Integration: IDC can integrate with existing identity providers like Active Directory or external providers like Ping, Okta etc
@@ -42,7 +46,4 @@ For this workshop, we have:
 - Not integrated with external identity providers
 - Created users and groups within IDC
 
-
-This chapter focuses on user authentication to ArgoCD (how users log in), not on how ArgoCD accesses AWS services and Kubernetes Clusters. 
-
-
+This chapter focuses on user authentication to ArgoCD (how users log in), not on how ArgoCD accesses AWS services and Kubernetes Clusters.

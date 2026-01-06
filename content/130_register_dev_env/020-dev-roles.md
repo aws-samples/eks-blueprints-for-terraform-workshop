@@ -13,6 +13,7 @@ This section demonstrates ArgoCD's project-based access control (RBAC) for the r
 The retail-store project in the dev environment has three distinct roles:
 
 ### **Team Lead Role**
+
 - **Group**: RetailStoreTeamLeads
 - **Permissions**: Full project access in dev environment
 - **Capabilities**:
@@ -22,7 +23,8 @@ The retail-store project in the dev environment has three distinct roles:
   - Complete control over dev environment
 
 ### **Developer Role**
-- **Group**: RetailStoreDevelopers  
+
+- **Group**: RetailStoreDevelopers
 - **Permissions**: Limited access focused on development workflow
 - **Capabilities**:
   - Create new applications for testing features
@@ -34,6 +36,7 @@ The retail-store project in the dev environment has three distinct roles:
   - Limited to retail-store project only
 
 ### **DevOps Role**
+
 - **Group**: RetailStoreDevOps
 - **Permissions**: Deployment and operational management
 - **Capabilities**:
@@ -46,30 +49,33 @@ The retail-store project in the dev environment has three distinct roles:
 ## Benefits of Project-Based Access
 
 ### **Granular Control**
+
 - Users only see applications they need to work with
 - Permissions are scoped to specific projects and environments
 - Reduces risk of accidental changes to unrelated applications
 
 ### **Environment Separation**
+
 - Dev roles are completely separate from production access
 - Developers can experiment freely without production risk
 - Clear boundaries between different environments
 
 ### **Team Collaboration**
+
 - Multiple developers can work on the same project
 - Different permission levels support various responsibilities
 - Team leads maintain oversight while enabling developer autonomy
 
 ## Role Comparison
 
-| Capability | Team Lead | Developer | DevOps |
-|------------|-----------|-----------|---------|
-| View Applications | ✅ | ✅ | ✅ |
-| Create Applications | ✅ | ✅ | ❌ |
-| Sync Applications | ✅ | ✅ | ✅ |
-| Delete Applications | ✅ | ❌ | ❌ |
-| Override Settings | ✅ | ❌ | ✅ |
-| Repository Access | ✅ | View Only | View Only |
+| Capability          | Team Lead | Developer | DevOps    |
+| ------------------- | --------- | --------- | --------- |
+| View Applications   | ✅        | ✅        | ✅        |
+| Create Applications | ✅        | ✅        | ❌        |
+| Sync Applications   | ✅        | ✅        | ✅        |
+| Delete Applications | ✅        | ❌        | ❌        |
+| Override Settings   | ✅        | ❌        | ✅        |
+| Repository Access   | ✅        | View Only | View Only |
 
 ## Next Steps
 

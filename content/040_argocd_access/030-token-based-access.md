@@ -11,7 +11,7 @@ ArgoCD cli is already installed for the workshop.
 
 ### Token Characteristics
 
-- Duration: Tokens are time bound. 
+- Duration: Tokens are time bound.
 - Scope: Inherit the same permissions as the user who generated them
 - Usage: Primarily for CLI access and automation
 - Security: Should be treated as sensitive credentials
@@ -19,15 +19,14 @@ ArgoCD cli is already installed for the workshop.
 ### Account Token ArgoCD Dashboard
 
 1. On ArgoCD dashboard, navigate to Settings → Accounts and select your account
-![Accounts Token](/static/images/access/accounts_token.png)
+   ![Accounts Token](/static/images/access/accounts_token.png)
 2. Select Generate New and copy the generated token
-![Accounts Token](/static/images/access/accounts_token_generate.png)
+   ![Accounts Token](/static/images/access/accounts_token_generate.png)
 3. On VSCode terminal set ARGOCD_AUTH_TOKEN to the generated token (starts with `eyJ...`)
 4. On VSCode terminal set ARGOCD_SERVER to api endpoint. To get the API type argocd_url on VSCode terminal.
-::alert[Copy Argo API endpoint without https://.]{header=Warning}
+   ::alert[Copy Argo API endpoint without https://.]{header=Warning}
 5. On VSCode terminal set ARGOCD_OPTS="--grpc-web"
-6. Execute  cli "argocd account get" to get account details
-
+6. Execute cli "argocd account get" to get account details
 
 Example
 
@@ -47,14 +46,11 @@ ID                                    ISSUED AT             EXPIRING AT
 :::
 <!-- prettier-ignore-end -->
 
-
 ### Token Security
 
 Security Best Practices:
+
 - Never share tokens in plain text
 - Store tokens securely (password managers, secure vaults)
 - Rotate tokens regularly
 - Revoke unused or compromised tokens immediately
-
-
-

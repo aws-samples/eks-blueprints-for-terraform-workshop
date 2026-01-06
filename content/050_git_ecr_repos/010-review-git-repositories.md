@@ -6,8 +6,9 @@ weight: 10
 Navigate to the AWS CodeCommit console( On AWS console, enter CodeCommit in the search bar ) to explore the three repositories that support our GitOps workflow.
 
 We have created 3 repositories to show separation of concerns:
+
 - Platform teams (platform repo) to manage infrastructure independently
-- Development teams (retail-store-app) to focus on application code  
+- Development teams (retail-store-app) to focus on application code
 - DevOps teams (retail-store-config) to control deployment configurations. This repo will be only accessible to those responsible for configuring the application.
 
 ![CodeCommit Repos](/static/images/git-ecr-repos/git-repos.png)
@@ -17,6 +18,7 @@ We have created 3 repositories to show separation of concerns:
 Purpose: Platform team automation and infrastructure management
 
 Contents:
+
 - Cluster automation scripts
 - Repository and team registration metadata
 - Platform-level Helm charts (deployed versions pushed to ECR)
@@ -30,6 +32,7 @@ Usage: Automates the registration of clusters, repositories, ArgoCD projects, na
 Purpose: Application development and source code management
 
 Contents:
+
 - Microservice source code (catalog, cart, checkout, orders, ui)
 - Application-level Helm charts
 - Docker image build configurations
@@ -43,6 +46,7 @@ Note: This repository is shown for completeness. We don't modify it during this 
 Purpose: Environment-specific configuration and deployment values
 
 Contents:
+
 - Helm chart values for different environments (dev, prod)
 - Environment-specific configurations
 - ArgoCD Application manifests
@@ -50,7 +54,3 @@ Contents:
 Ownership: DevOps teams manage environment configurations
 
 Usage: In upcoming chapters, we'll add and modify values for dev and prod environments through this repository.
-
-
-
-
