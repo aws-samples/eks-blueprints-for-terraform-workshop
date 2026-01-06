@@ -2,6 +2,7 @@
 title: "Review ECR Registry"
 weight: 20
 ---
+::alert[ No labs in this chapter.]{header=Tip}
 
 Navigate to the AWS ECR console( On AWS console, enter ECR in the search bar and Select Elastic Container Registry )) to explore the container registry that stores both Helm charts and container images for the retail store application.
 

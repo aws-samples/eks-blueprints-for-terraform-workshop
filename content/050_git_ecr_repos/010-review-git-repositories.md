@@ -3,6 +3,9 @@ title: "Review Git Repositories"
 weight: 10
 ---
 
+::alert[ No labs in this chapter.]{header=Tip}
+
+
 Navigate to the AWS CodeCommit console( On AWS console, enter CodeCommit in the search bar ) to explore the three repositories that support our GitOps workflow.
 
 We have created 3 repositories to show separation of concerns:

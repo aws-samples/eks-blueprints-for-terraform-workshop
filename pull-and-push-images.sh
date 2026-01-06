@@ -6,7 +6,7 @@
 set -e  # Exit on any error
 
 # Configuration
-VERSION=${1:-"0.2.0"}  # Using the available public version
+VERSION=${1:-"1.3.0"}  # Using the available public version
 SERVICES=("cart" "catalog" "checkout" "orders" "ui")
 
 # Get AWS Account ID and Region
