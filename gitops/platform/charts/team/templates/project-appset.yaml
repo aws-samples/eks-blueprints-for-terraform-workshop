@@ -28,7 +28,7 @@ spec:
       name: 'team-{{ $team }}-project-{{`{{ .env }}`}}'
       namespace: argocd
     spec:
-      project: default
+      project: admin-hub
       sources:
       - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
         path: charts/argocd-project

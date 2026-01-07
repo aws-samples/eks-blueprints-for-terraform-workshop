@@ -22,7 +22,7 @@ spec:
       name: 'register-cluster-{{ .path.basename }}'
       namespace: argocd
     spec:
-      project: default
+      project: admin-hub
       sources:
       - repoURL: '{{ .metadata.annotations.oci_registry_url }}/platform'
         chart: argocd-cluster-secret

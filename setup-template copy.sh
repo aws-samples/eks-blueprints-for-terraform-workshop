@@ -278,41 +278,6 @@ update_templates() {
         echo "Warning: Template file $PROD_VALUES_TEMPLATE not found"
     fi
     
-    # Update admin-project.yaml template
-    ADMIN_PROJECT_TEMPLATE="$HOME/eks-blueprints-for-terraform-workshop/gitops/templates/project/admin-project.yaml"
-    
-    if [ -f "$ADMIN_PROJECT_TEMPLATE" ]; then
-        # Find all group placeholders and replace them dynamically
-        GROUP_PLACEHOLDERS=$(grep -o '<<[^<>]*>>' "$ADMIN_PROJECT_TEMPLATE" | grep -v '<<oci_registry_url>>' | grep -v '<<platform_url>>' | sort -u)
-        
-        # Build sed replacement string for groups
-        SED_REPLACEMENTS=""
-        for placeholder in $GROUP_PLACEHOLDERS; do
-            # Extract group name (remove << and >>)
-            GROUP_NAME=$(echo "$placeholder" | sed 's/<<//g' | sed 's/>>//g')
-            
-            # Get group UUID from Identity Center
-            GROUP_UUID=$(aws identitystore list-groups --identity-store-id $IDENTITY_STORE_ID --filters AttributePath=DisplayName,AttributeValue=$GROUP_NAME --query 'Groups[0].GroupId' --output text 2>/dev/null || echo "")
-            
-            if [ -n "$GROUP_UUID" ] && [ "$GROUP_UUID" != "None" ]; then
-                SED_REPLACEMENTS="$SED_REPLACEMENTS -e s|$placeholder|$GROUP_UUID|g"
-                echo "Found group $GROUP_NAME with UUID: $GROUP_UUID"
-            else
-                echo "Warning: Group $GROUP_NAME not found in Identity Center"
-            fi
-        done
-        
-        # Apply all replacements
-        sed -i.bak \
-            -e "s|<<oci_registry_url>>|$ECR_REGISTRY_URL|g" \
-            -e "s|<<platform_url>>|$PLATFORM_URL|g" \
-            $SED_REPLACEMENTS \
-            "$ADMIN_PROJECT_TEMPLATE"
-        echo "Updated $ADMIN_PROJECT_TEMPLATE with ECR registry URL, platform URL, and IDC group UUIDs"
-    else
-        echo "Warning: Template file $ADMIN_PROJECT_TEMPLATE not found"
-    fi
-    
     echo "Template updates completed"
     echo "---"
 }

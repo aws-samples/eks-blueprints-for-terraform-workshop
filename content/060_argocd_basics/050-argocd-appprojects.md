@@ -91,6 +91,70 @@ Key Components:
 
 We will create retail-store projects in "Register Dev Environment" and "Register Prod Environment" chapters
 
+### 2. Admin Project
+
+Let's restrict admin project so that it has permissions to create objects required for automation. 
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='9,10,11,12,13'}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: admin-hub
+  namespace: argocd
+spec:
+  description: "Project for administrator hub management of Apps, AppSets, and Projects"
+  sourceRepos:
+  - 392638250061.dkr.ecr.us-west-2.amazonaws.com
+  - https://git-codecommit.us-west-2.amazonaws.com/v1/repos/platform
+  - https://git-codecommit.us-west-2.amazonaws.com/v1/repos/platform/*
+  destinations:
+  - namespace: argocd
+    name: hub 
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  
+  roles:
+  - name: admin-role
+    description: Full management of GitOps resources within this project
+    policies:
+    # Format: p, <role>, <resource>, <action>, <object>, <allow/deny>
+    
+    # 1. Manage Applications within this project
+    - p, proj:admin-hub:admin-role, applications, *, admin-hub/*, allow
+    
+    # 2. Manage ApplicationSets assigned to this project
+    - p, proj:admin-hub:admin-role, applicationsets, *, admin-hub/*, allow
+    
+    # 3. Manage the AppProject itself (Self-service updates)
+    - p, proj:admin-hub:admin-role, projects, *, admin-hub, allow
+    
+    groups:
+    - f8b1f360-b091-70df-4581-146091cb8ec4
+:::
+<!-- prettier-ignore-end -->
+
+Key Components:
+- Line 9: No source repos allowed
+- Line 10: Not allowed to deploy to any namespace
+- Line 11: Not allowed to deploy to any clusters
+- Line 12: All cluster actions are restricted
+- Line 13: All namespace actions are restricted
+
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+cd ~/environment/basics
+cp  $WORKSHOP_DIR/gitops/templates/project/admin-project.yaml ~/environment/basics
+kubectl apply -f admin-project.yaml
+:::
+<!-- prettier-ignore-end -->
+
+
+We will create retail-store projects in "Register Dev Environment" and "Register Prod Environment" chapters
+
+
 <!-- ### 2. Account Token Vs Project Token
 
 Account Tokens:

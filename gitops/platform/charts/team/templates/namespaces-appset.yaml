@@ -35,7 +35,7 @@ spec:
       name: "team-{{ .Values.teamName }}-namespace-{{`{{ .env }}`}}"
 
     spec:
-      project: default
+      project: admin-hub
       source:
         repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
         targetRevision: HEAD
