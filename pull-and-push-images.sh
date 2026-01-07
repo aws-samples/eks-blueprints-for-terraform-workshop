@@ -132,7 +132,7 @@ for chart in gitops/helm/retail-store/*.tgz; do
   if [ -f "$chart" ]; then
     # Extract chart name from filename (remove path, .tgz extension, and version)
     chart_name=$(basename "$chart" .tgz | sed 's/-[0-9]\+\.[0-9]\+\.[0-9]\+$//')
-    repo_name="retail-store/$chart_name"
+    repo_name="retail-store-charts/$chart_name"
     
     echo "Processing retail-store chart: $chart_name -> Repository: $repo_name"
     
@@ -141,7 +141,7 @@ for chart in gitops/helm/retail-store/*.tgz; do
     aws ecr create-repository --repository-name "$repo_name" --region "$AWS_REGION" 2>/dev/null || echo "Repository $repo_name already exists"
     
     echo "Pushing $chart to ECR..."
-    helm push "$chart" oci://$ECR_REGISTRY/retail-store
+    helm push "$chart" oci://$ECR_REGISTRY/retail-store-charts
   fi
 done
 

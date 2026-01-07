@@ -36,7 +36,7 @@ spec:
         path: "{{`{{ .service }}`}}/{{ $env.env }}"
         ref: values
       - repoURL: "{{`{{ .metadata.annotations.oci_registry_url }}`}}"
-        chart: "{{ $team }}/{{`{{ .service }}`}}"
+        chart: "{{ $team }}-charts/{{`{{ .service }}`}}"
         targetRevision: "{{`{{ .version }}`}}"
         helm:
           valueFiles:
