@@ -9,6 +9,10 @@ spec:
   goTemplate: true
   goTemplateOptions:
     - missingkey=error
+{{- if eq $env.env "prod" }}
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+{{- end }}
 
   generators:
   - matrix:
