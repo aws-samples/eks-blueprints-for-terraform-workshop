@@ -5,7 +5,7 @@ weight: 30
 
 <!-- cspell:disable-next-line -->
 
-<!-- ::video{id=DMJhqkbhjgo} -->
+::video{id=a-RCoZL5XTo}
 
 In ArgoCD an application is a custom Kubernetes resource (CRD) that declaratively defines how a set of manifests from a Git repository should be deployed to a target Kubernetes cluster
 
