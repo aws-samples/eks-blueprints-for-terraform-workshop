@@ -5,7 +5,8 @@ weight: 40
 
 <!-- cspell:disable-next-line -->
 
-<!-- ::video{id=KKHVP2Ogq64} -->
+::video{id=3u0P46nxyVE}
+
 
 Think of an ApplicationSet as a factory for ArgoCD Applications. It defines a template and uses generators to create multiple Application objects.
 
@@ -98,9 +99,9 @@ kubectl delete -f ~/environment/basics/guestbookApplicationSet.yaml
 
 ## Dynamic Generator
 
-The static list generator requires you to manually add each cluster. A better approach is to dynamically select clusters using the Cluster generator, which selects clusters based on labels.
+The previous example used a static list generator, which requires you to manually edit the ApplicationSet to add new values. This isn't truly automated.
 
-ArgoCD supports different types of [Generator](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix and more, to dynamically generate Applications.
+ArgoCD supports dynamic generators that automatically discover and generate Applications based on changing conditions. ArgoCD supports different types of [generators](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators/) like cluster, git, matrix, and more to dynamically generate Applications
 
 ## Cluster Generator
 

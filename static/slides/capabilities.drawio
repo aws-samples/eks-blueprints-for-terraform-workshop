@@ -1,4 +1,4 @@
-<mxfile host="drawio.corp.amazon.com" modified="2026-01-09T18:02:40.575Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" etag="5y6GJyiiByB-T_MnPOsR" version="21.7.4" type="device" pages="15">
+<mxfile host="drawio.corp.amazon.com" modified="2026-01-09T21:19:29.466Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" etag="jM2TOWlUq60-gU1JZmhq" version="21.7.4" type="device" pages="15">
   <diagram name="Page-1" id="LQH3nLCXH5ZWvmGfzoAv">
     <mxGraphModel dx="1419" dy="661" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -1193,6 +1193,27 @@
         <mxCell id="hZC6tfTy-WK-NIAgVI5J-5" value="&lt;b&gt;template&lt;/b&gt;&amp;nbsp;uses generator values to create applications&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
           <mxGeometry x="-411" y="2320" width="156" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="O4vG7RULzj7i1bM6SiRq-0" value="Git" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-274" y="2686" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="O4vG7RULzj7i1bM6SiRq-1" value="app-A" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.folder;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-222" y="2712" width="30" height="19.5" as="geometry" />
+        </mxCell>
+        <mxCell id="O4vG7RULzj7i1bM6SiRq-2" value="app-B" style="html=1;verticalLabelPosition=bottom;align=center;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=2;strokeColor=#0080F0;shadow=0;dashed=0;shape=mxgraph.ios7.icons.folder;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-222" y="2760" width="30" height="19.5" as="geometry" />
+        </mxCell>
+        <mxCell id="1MvVbIa_q2sJQpQvlPan-0" value="cluster-dev" style="sketch=0;html=1;dashed=0;whitespace=wrap;fillColor=#2875E2;strokeColor=#ffffff;points=[[0.005,0.63,0],[0.1,0.2,0],[0.9,0.2,0],[0.5,0,0],[0.995,0.63,0],[0.72,0.99,0],[0.5,1,0],[0.28,0.99,0]];verticalLabelPosition=bottom;align=center;verticalAlign=top;shape=mxgraph.kubernetes.icon;prIcon=secret;shadow=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-229" y="2854" width="31" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="1MvVbIa_q2sJQpQvlPan-1" value="Cluster" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-274" y="2821" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="1MvVbIa_q2sJQpQvlPan-2" value="cluster-prod" style="sketch=0;html=1;dashed=0;whitespace=wrap;fillColor=#2875E2;strokeColor=#ffffff;points=[[0.005,0.63,0],[0.1,0.2,0],[0.9,0.2,0],[0.5,0,0],[0.995,0.63,0],[0.72,0.99,0],[0.5,1,0],[0.28,0.99,0]];verticalLabelPosition=bottom;align=center;verticalAlign=top;shape=mxgraph.kubernetes.icon;prIcon=secret;shadow=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-227" y="2916" width="31" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="1MvVbIa_q2sJQpQvlPan-3" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;app-A, cluster-dev&lt;br&gt;app-A, cluster-prod&lt;br&gt;app-B, cluster-dev&lt;br&gt;app-B, cluster-prod&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="c35JNSyZtIK_8Cod19Va-1">
+          <mxGeometry x="-53" y="2771" width="182" height="122" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
@@ -1364,7 +1385,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="rnHQ2OStu59Dv7Xbt4JU" name="register-cluster">
-    <mxGraphModel dx="1819" dy="1061" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2059" dy="1095" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -2612,7 +2633,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" style="" parent="0" />
-        <mxCell id="a3xSPW9pNPGif_hXqNMA-1" value="&lt;div style=&quot;background-color: rgb(255, 255, 255); line-height: 18px;&quot;&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;Application&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="a3xSPW9pNPGif_hXqNMA-1" value="&lt;div style=&quot;background-color: rgb(255, 255, 255); line-height: 18px;&quot;&gt;&lt;font style=&quot;font-size: 36px;&quot;&gt;ApplicationSet&lt;/font&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="189" y="302" width="510" height="30" as="geometry" />
         </mxCell>
         <mxCell id="a3xSPW9pNPGif_hXqNMA-2" value="Satish Patil" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" parent="1" vertex="1">
