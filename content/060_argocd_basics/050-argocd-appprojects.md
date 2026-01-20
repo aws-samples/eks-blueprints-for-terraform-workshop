@@ -9,7 +9,7 @@ weight: 50
 
 ArgoCD Projects provide Governance mechanism.
 
-Tenancy refers to isolating access and resources between different groups or teams within the same ArgoCD instance. In this workshop, retail-store is a tenant. You can have other tenants like payments, ECommerce etc. Tenants are supported by different teams and don't share access. 
+ArgoCD supports multi-tenancy. Tenancy refers to isolating access and resources between different groups or teams within the same ArgoCD instance. In this workshop, retail-store is a tenant. You can have other tenants like payments, ECommerce etc. Tenants are supported by different teams and don't share access. 
 
 Within the same tenant also needs varying degrees of access. For example retail-store application team with different roles and access requirements:
 
@@ -155,7 +155,7 @@ kubectl apply -f admin-project.yaml
 We will create retail-store projects in "Register Dev Environment" and "Register Prod Environment" chapters
 
 
-<!-- ### 2. Account Token Vs Project Token
+### 3. Account Token Vs Project Token
 
 Account Tokens:
 - Scope: Global server access to all projects/apps the user has permissions for.
@@ -169,7 +169,3 @@ Project Tokens:
 - Duration: Configurable up to 1 year
 - Created from: Project Settings → Role Tokens
 
-Recommendation is to use Project Tokens as they limit scope of the token.
-
-
-### 3. Generate Project Token -->
