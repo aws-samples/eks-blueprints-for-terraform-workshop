@@ -5,7 +5,7 @@ weight: 50
 
 <!-- cspell:disable-next-line -->
 
-<!-- ::video{id=UGRG-jW7Pfk} -->
+::video{id=C_2Vy85lWV4}
 
 ArgoCD Projects provide Governance mechanism.
 
