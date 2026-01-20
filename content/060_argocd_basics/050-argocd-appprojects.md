@@ -58,7 +58,7 @@ status: {}
 
 ArgoCD application always belongs to a project. If you don't specify a project then it belongs to default project. You can't delete default project.
 
-Let's restrict default project so that it has no permissions. This will make all applicatons deployed assigned to a project that follow governance.
+Let's restrict default project so that it has no permissions. This will make all applications deployed assigned to a project that follow governance.
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=true language=yaml highlightLines='9,10,11,12,13'}
