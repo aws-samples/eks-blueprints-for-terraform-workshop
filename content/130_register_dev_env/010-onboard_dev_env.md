@@ -106,11 +106,13 @@ Check the onboarding progress in ArgoCD:
 
 ### Accessing the Application
 
-Once deployed, you can access the retail-store application:
+Once deployed, you can access the retail-store application from the terminal:
 
-1. Get the LoadBalancer URL from the `ui` service in the `retail-store` namespace
-2. Navigate to the URL to see the running e-commerce application
-
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+app_url_dev
+:::
+<!-- prettier-ignore-end -->
 ### Next Steps
 
 With the dev environment successfully onboarded, you can:

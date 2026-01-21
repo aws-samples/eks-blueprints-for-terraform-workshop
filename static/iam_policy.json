@@ -17,6 +17,7 @@
             "codecommit:*",
             "ds:*",
             "sso:*",
+            "events:*",
             "sso-directory:*",
             "iam:CreateRole",
             "iam:CreatePolicy",

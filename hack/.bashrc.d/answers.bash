@@ -32,8 +32,8 @@ function deploy_prod (){
   git -C $GITOPS_DIR/apps push
 }
 
-function argo_url (){
-  wait-for-lb-argocd $(kubectl --context hub-cluster get svc -n argocd  argocd-server -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+function argocd_url (){
+	aws eks describe-capability --cluster-name argocd-hub --capability-name argocd --query 'capability.configuration.argoCd.serverUrl' --output text
 }
 
 function app_url_dev (){

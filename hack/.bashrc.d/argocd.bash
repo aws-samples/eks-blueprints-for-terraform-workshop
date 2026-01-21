@@ -25,7 +25,7 @@
 # 	argocd_credentials hub-cluster 
 # }
 
-function argocd_url (){
-	aws eks describe-capability --cluster-name argocd-hub --capability-name argocd --query 'capability.configuration.argoCd.serverUrl' --output text
-}
+# function argocd_url (){
+# 	aws eks describe-capability --cluster-name argocd-hub --capability-name argocd --query 'capability.configuration.argoCd.serverUrl' --output text
+# }
 
