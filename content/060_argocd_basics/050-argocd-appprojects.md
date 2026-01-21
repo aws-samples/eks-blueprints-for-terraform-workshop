@@ -9,19 +9,21 @@ weight: 50
 
 ArgoCD Projects provide Governance mechanism.
 
-ArgoCD supports multi-tenancy. Tenancy refers to isolating access and resources between different groups or teams within the same ArgoCD instance. In this workshop, retail-store is a tenant. You can have other tenants like payments, ECommerce etc. Tenants are supported by different teams and don't share access. 
+ArgoCD supports multi-tenancy. Tenancy refers to isolating access and resources between different groups or teams within the same ArgoCD instance. In this workshop, retail-store is a tenant. You can have other tenants like payments, ECommerce etc. Tenants are supported by different teams and don't share access.
 
 Within the same tenant also needs varying degrees of access. For example retail-store application team with different roles and access requirements:
 
 Team Structure:
+
 - Team Leads: Need access to both dev and prod environments for oversight and troubleshooting
-- Developers: Only need access to dev environment for daily development work  
-- Production Support: Can only monitor health in prod environment. Does not have privilege to create or delete applications 
+- Developers: Only need access to dev environment for daily development work
+- Production Support: Can only monitor health in prod environment. Does not have privilege to create or delete applications
 - DevOps: Can only Sync Applications in Production
 
 You can achieve this access management with ArgoCD AppProjects.
 
 With an Argo CD Project:
+
 - Restrict the sources of content that can be used (Git, Helm, etc.)
 - Restrict where Argo CD Applications can be deployed to (clusters and namespaces)
 - Restrict which Kubernetes objects can be deployed (Deployments, services,CRDs, NetworkPolicies, etc.)
@@ -151,21 +153,19 @@ kubectl apply -f admin-project.yaml
 :::
 <!-- prettier-ignore-end -->
 
-
 We will create retail-store projects in "Register Dev Environment" and "Register Prod Environment" chapters
-
 
 ### 3. Account Token Vs Project Token
 
 Account Tokens:
+
 - Scope: Global server access to all projects/apps the user has permissions for.
 - Duration: Fixed 12 hours
 - Created from: User Settings → Tokens
-You can find more info about Account Token in "Token-Based Access" chapter.
+  You can find more info about Account Token in "Token-Based Access" chapter.
 
 Project Tokens:
 
 - Scope: Limited to single project only
 - Duration: Configurable up to 1 year
 - Created from: Project Settings → Role Tokens
-

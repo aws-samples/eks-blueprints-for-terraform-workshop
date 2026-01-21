@@ -7,7 +7,6 @@ weight: 40
 
 ::video{id=3u0P46nxyVE}
 
-
 Think of an ApplicationSet as a factory for ArgoCD Applications. It defines a template and uses generators to create multiple Application objects.
 
 ![Factory](/static/images/argobasics/factory-applicationset.png)

@@ -10,15 +10,14 @@ This workshop specifically focuses on **AWS EKS's managed ArgoCD capability** - 
 ### What You'll Learn
 
 **Managed Service Benefits:**
+
 - Enable ArgoCD capability with a single Terraform configuration
 - Leverage AWS-managed ArgoCD with automatic updates and scaling
 - Integrate seamlessly with AWS services (CodeCommit, ECR, IAM, SSO)
 
 **Enterprise GitOps Patterns:**
+
 - Implement hub-spoke architecture for multi-cluster management
 - Set up multi-tenant environments using ArgoCD Projects
 - Automate team onboarding and cluster registration
 - Configure role-based access control with AWS SSO integration
-
-
-
