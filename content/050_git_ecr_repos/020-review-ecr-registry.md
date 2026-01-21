@@ -25,6 +25,5 @@ Usage: These charts are used by the platform team to bootstrap and for automatin
 
 Purpose: Application Helm charts and container images
 
-![ECR Image](/static/images/git-ecr-repos/ecr-image.png)
 
 This registry serves as the single source of truth for all deployment artifacts in our GitOps pipeline.

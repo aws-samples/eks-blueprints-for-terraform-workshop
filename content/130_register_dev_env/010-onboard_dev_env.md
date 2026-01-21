@@ -28,7 +28,7 @@ In the "Automate Team Registration" chapter, we set up an ApplicationSet that mo
 
 The retail-store team configuration includes:
 
-- **environments.yaml**: Defines which applications to deploy and their versions
+- **environments.yaml**: Defines which applications(helm charts) to deploy and their versions
 - **namespace/**: Kubernetes namespace configuration with values hierarchy
   - `default-values.yaml`: Base namespace configuration (RBAC, quotas, policies)
   - `dev-values.yaml`: Dev-specific overrides (optional)
