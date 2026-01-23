@@ -21,6 +21,8 @@ spec:
     metadata:
       name: 'team-{{ .path.basename }}'
       namespace: argocd
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: /register-team      
     spec:
       project: admin-hub
       sources:

@@ -21,6 +21,8 @@ spec:
     metadata:
       name: 'register-cluster-{{ .path.basename }}'
       namespace: argocd
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: /register-cluster      
     spec:
       project: admin-hub
       sources:

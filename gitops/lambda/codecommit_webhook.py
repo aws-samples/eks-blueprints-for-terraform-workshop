@@ -39,13 +39,13 @@ def lambda_handler(event, context):
     payload = {
         "ref": "refs/heads/main",
         "repository": {
-            "html_url": f"https://git-codecommit.us-west-2.amazonaws.com/{repo_name}",
+            "html_url": f"https://git-codecommit.us-west-2.amazonaws.com/v1/repos/{repo_name}",
             "default_branch": branch
         },
-        "head_commit": {
+        "commits":[ {
             "id": commit_id,
             "modified": changed_files
-        }
+        }]
     }
 
     # 5. Send to Argo CD

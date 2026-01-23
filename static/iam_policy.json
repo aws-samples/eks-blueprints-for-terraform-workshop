@@ -16,6 +16,7 @@
             "s3:*",
             "codecommit:*",
             "ds:*",
+            "lambda:*",
             "sso:*",
             "events:*",
             "sso-directory:*",
