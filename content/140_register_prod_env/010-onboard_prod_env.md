@@ -1,13 +1,6 @@
 ---
-title: "Onboard Prod Environment"
+title: "Register Prod Environment"
 weight: 20
----
-
----
-
-title: "Onboard Prod Environment"
-weight: 20
-
 ---
 
 In the previous chapter, you onboarded the retail-store team to the dev environment. Now we'll extend their deployment to the production environment by adding prod configuration to their existing team setup.
@@ -68,7 +61,7 @@ After pushing the prod configuration:
 3. **Namespace Deployment**: Creates the `retail-store` namespace on prod cluster using:
    - **Base Configuration**: `default-values.yaml` (shared settings)
    - **Prod Overrides**: `prod-values.yaml` (production-specific settings like resource limits, security policies)
-4. **Project Updates**: Updates the `retail-store` ArgoCD project with prod permissions
+4. **Project Updates**: ArgoCD Prod project settings and policies
 5. **Application Deployment**: Deploys retail-store microservices to prod cluster
 
 ### Values Hierarchy in Action

@@ -44,7 +44,7 @@ The namespace Helm chart uses a **values hierarchy** where:
 2. **Environment Overrides**: `<<env>>-values.yaml` files override specific values per environment
 3. **Merge Strategy**: Environment-specific values take precedence over defaults
 
-- project/: ArgoCD project settings and policies
+- project/: ArgoCD Dev project settings and policies
 
 ### Implementation
 
