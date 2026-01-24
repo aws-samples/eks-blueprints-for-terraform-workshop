@@ -123,8 +123,6 @@ Navigate to the ArgoCD dashboard to verify that our cluster registration automat
 2. Click on the bootstrap Application
 3. You will see newly created register-cluster ApplicationSet
 
-::alert[You may need to refresh the ArgoCD dashboard to see newly created applications and resources]{header=Tip}
-
 ![Register Cluster Folders](/static/images/register-cluster/register-cluster-appset-dashboard.png)
 
 In the next step, we'll add a cluster configuration to trigger the automation.
@@ -151,6 +149,9 @@ The register-cluster ApplicationSet will detect the new `/hub` folder and automa
 ### 4. Validate Cluster registration
 
 Navigate to ArgoCD dashboard to see the automation in action.
+
+::alert[The register-cluster-hub application typically appears within 2-3 minutes. Refresh your browser to see the latest status.]{header=Warning}
+
 
 1. Go to Applications view in ArgoCD dashboard
 2. Click on the bootstrap Application. You should see register-cluster ApplicationSet now has newly created register-cluster-hub application.

@@ -1,13 +1,16 @@
 ---
-title: "Onboard Dev Environment"
+title: "Register Dev Environment"
 weight: 20
 ---
+<!-- cspell:disable-next-line -->
+::video{id=DEHzOZ4Wwzg}
 
-Now that we have registered our dev and prod clusters, we can onboard our first application team. In this chapter, we'll onboard the retail-store team to the dev environment, which will automatically create their namespace, ArgoCD project, and deploy their applications.
 
-### What is Team Onboarding?
+Now that we have registered our dev and prod clusters, we can register our first application team. In this chapter, we'll register the retail-store team to the dev environment, which will automatically create their namespace, ArgoCD project, and deploy their applications.
 
-Team onboarding in a GitOps platform involves:
+### What is Team Registeration?
+
+Team registering in a GitOps platform involves:
 
 - Namespace Creation: Isolated environment for team resources
 - ArgoCD Project: Scoped permissions and policies for the team
@@ -45,7 +48,7 @@ The namespace Helm chart uses a **values hierarchy** where:
 
 ### Implementation
 
-Let's onboard the retail-store team to the dev environment:
+Let's register the retail-store team to the dev environment:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash }
@@ -68,10 +71,10 @@ mkdir -p $GITOPS_DIR/platform/register-team/retail-store/project
 cp $WORKSHOP_DIR/gitops/templates/project/dev-values.yaml \
    $GITOPS_DIR/platform/register-team/retail-store/project/
 
-# Commit and push to trigger team onboarding
+# Commit and push to trigger team registering
 cd ${GITOPS_DIR}/platform
 git add .
-git commit -m "onboard retail-store team to dev environment"
+git commit -m "register retail-store team to dev environment"
 git push 
 :::
 <!-- prettier-ignore-end -->
@@ -88,11 +91,11 @@ After pushing the team configuration:
 
 ### Verification
 
-Check the onboarding progress in ArgoCD:
+Check the registering progress in ArgoCD:
 
 #### Applications View:
 
-- ✅ `register-team-retail-store` - Team onboarding Application (should be Synced)
+- ✅ `register-team-retail-store` - Team registering Application (should be Synced)
 - ✅ `retail-store-dev-*` - Individual microservice Applications (cart, catalog, etc.)
 
 #### Projects View:
@@ -115,10 +118,10 @@ app_url_dev
 <!-- prettier-ignore-end -->
 ### Next Steps
 
-With the dev environment successfully onboarded, you can:
+With the dev environment successfully registered, you can:
 
 - Deploy updates by modifying application versions in `environments.yaml`
-- Onboard additional teams using the same pattern
+- register additional teams using the same pattern
 - Extend to production environments following similar processes
 
 This demonstrates the power of GitOps automation - complex multi-service deployments triggered by simple Git commits.

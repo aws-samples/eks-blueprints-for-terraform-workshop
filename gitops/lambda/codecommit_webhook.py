@@ -36,13 +36,14 @@ def lambda_handler(event, context):
                 changed_files.append(diff['beforeBlob']['path'])
 
     # 4. Construct GitHub-compatible payload for Argo CD
+    region = event['Records'][0]['awsRegion']
     payload = {
         "ref": "refs/heads/main",
         "repository": {
-            "html_url": f"https://git-codecommit.us-west-2.amazonaws.com/v1/repos/{repo_name}",
+            "html_url": f"https://git-codecommit.{region}.amazonaws.com/{repo_name}",           
             "default_branch": branch
         },
-        "commits":[ {
+        "commits": [{
             "id": commit_id,
             "modified": changed_files
         }]
