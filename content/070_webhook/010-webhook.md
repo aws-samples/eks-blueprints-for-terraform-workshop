@@ -13,7 +13,6 @@ Key Components:
 
 2. Lambda Function: Processes CodeCommit events and sends formatted webhook payloads to ArgoCD.
 
-
 The Flow:
 When you commit to the platform repository's main branch → CodeCommit trigger fires → Lambda function executes → Retrieves commit details and changed files → Sends GitHub-compatible webhook to ArgoCD.
 
@@ -127,4 +126,3 @@ cd ~/environment/hub
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
-

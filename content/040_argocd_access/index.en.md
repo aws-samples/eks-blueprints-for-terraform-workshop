@@ -1,5 +1,5 @@
 ---
-title: "Accessing ArgoCD Dashboard & CLI"
+title: "Accessing ArgoCD"
 weight: 40
 ---
 

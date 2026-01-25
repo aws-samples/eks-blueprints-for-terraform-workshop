@@ -3,6 +3,10 @@ title: "Register Prod Environment"
 weight: 20
 ---
 
+<!-- cspell:disable-next-line -->
+
+::video{id=JD4z00Erkus}
+
 In the previous chapter, you onboarded the retail-store team to the dev environment. Now we'll extend their deployment to the production environment by adding prod configuration to their existing team setup.
 
 ### Multi-Environment Strategy
@@ -92,44 +96,36 @@ cpu: "500m"
 
 ### Verification
 
-Check the prod onboarding progress in ArgoCD:
+Check the prod onboarding progress in ArgoCD dashboard:
 
-#### **Applications View:**
+![Onboard Prod](/static/images/registerprod/registerprod.png)
 
-- ✅ `register-team-retail-store` - Team onboarding Application (should be Synced)
-- ✅ `retail-store-dev-*` - Dev microservice Applications (existing)
-- ✅ `retail-store-prod-*` - **New** prod microservice Applications (cart, catalog, etc.)
 
-#### **Projects View:**
+### Accessing the Application
 
-- ✅ `retail-store` - Team project now managing both dev and prod
+Once deployed, you can access the retail-store application from the terminal:
 
-#### **Clusters View:**
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+app_url_prod
+:::
+<!-- prettier-ignore-end -->
 
-- **Dev Cluster**: `retail-store` namespace (existing)
-- **Prod Cluster**: `retail-store` namespace (**newly created** with prod-specific settings)
+### Comparing Environment Configurations
 
-### Accessing the Applications
+You can see the differences between dev and prod environments by comparing their Helm values files.
 
-Once deployed, you can access the retail-store application in both environments:
-
-#### **Dev Environment:**
-
-1. Get the LoadBalancer URL from the `ui` service in dev cluster's `retail-store` namespace
-2. Navigate to the URL to see the dev e-commerce application
-
-#### **Prod Environment:**
-
-1. Get the LoadBalancer URL from the `ui` service in prod cluster's `retail-store` namespace
-2. Navigate to the URL to see the production e-commerce application
-
-### Next Steps
-
-With both dev and prod environments onboarded, you can:
-
-- **Version Management**: Update application versions independently per environment in `environments.yaml`
-- **Environment-Specific Configuration**: Modify `prod-values.yaml` for production-specific settings
-- **Team Scaling**: Onboard additional teams using the same multi-environment pattern
-- **GitOps Workflows**: Implement promotion workflows from dev to prod
-
-This demonstrates **enterprise-grade GitOps** - managing complex multi-environment deployments with environment-specific overrides through simple Git operations.
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+cd ~/environment/gitops-repos/retail-store-config
+for service in cart catalog checkout orders ui; do
+    echo "📦 $service:"
+    diff -u $service/dev/values.yaml $service/prod/values.yaml | \
+        grep -E '^[-+]' | \
+        grep -v '^[-+][-+][-+]' | \
+        sed 's/^-/  Dev:  /' | \
+        sed 's/^+/  Prod: /'
+    echo ""
+done
+:::
+<!-- prettier-ignore-end -->

@@ -3,7 +3,7 @@ title: "Token-Based Access"
 weight: 30
 ---
 
-::alert[This chapter covers account tokens. We recommend project-based tokens which provide better security through limited scope, as covered in the ArgoCD Basics>Project chapter.]{header=Alert}
+::alert[This chapter covers account tokens. We recommend project-based tokens which provide better security through limited scope, as covered in the "RBAC Access" chapter.]{header=Alert}
 
 ArgoCD supports token-based authentication for programmatic access and CLI usage. For example you can provide scoped down token for monitoring agent that only has access to health of applications or an Agentic Agent only has read only access.
 

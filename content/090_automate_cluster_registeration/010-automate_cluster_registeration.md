@@ -152,7 +152,6 @@ Navigate to ArgoCD dashboard to see the automation in action.
 
 ::alert[The register-cluster-hub application typically appears within 2-3 minutes. Refresh your browser to see the latest status.]{header=Warning}
 
-
 1. Go to Applications view in ArgoCD dashboard
 2. Click on the bootstrap Application. You should see register-cluster ApplicationSet now has newly created register-cluster-hub application.
 3. Hub cluster appears in Settings > Clusters (re-registered via GitOps)

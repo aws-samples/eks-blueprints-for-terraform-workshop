@@ -2,13 +2,14 @@
 title: "Register Dev Environment"
 weight: 20
 ---
-<!-- cspell:disable-next-line -->
-::video{id=DEHzOZ4Wwzg}
 
+<!-- cspell:disable-next-line -->
+
+::video{id=DEHzOZ4Wwzg}
 
 Now that we have registered our dev and prod clusters, we can register our first application team. In this chapter, we'll register the retail-store team to the dev environment, which will automatically create their namespace, ArgoCD project, and deploy their applications.
 
-### What is Team Registeration?
+### What is Team Registration?
 
 Team registering in a GitOps platform involves:
 
@@ -116,12 +117,3 @@ Once deployed, you can access the retail-store application from the terminal:
 app_url_dev
 :::
 <!-- prettier-ignore-end -->
-### Next Steps
-
-With the dev environment successfully registered, you can:
-
-- Deploy updates by modifying application versions in `environments.yaml`
-- register additional teams using the same pattern
-- Extend to production environments following similar processes
-
-This demonstrates the power of GitOps automation - complex multi-service deployments triggered by simple Git commits.

@@ -257,4 +257,3 @@ cd ~/environment/hub
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
-
