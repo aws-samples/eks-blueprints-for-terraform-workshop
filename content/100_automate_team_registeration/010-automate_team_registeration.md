@@ -124,3 +124,5 @@ git push
 Navigate to ArgoCD dashboard to validate register-team application
 
 ![Register Team Dashboard](/static/images/register-team/register-team-dashboard.png)
+
+We will register dev and prod teams in upcoming chapters.
