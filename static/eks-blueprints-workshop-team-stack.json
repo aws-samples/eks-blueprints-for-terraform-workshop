@@ -1017,7 +1017,7 @@
                 "Ref": "AssetsBucketPrefix"
                },
                "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-               "WORKSHOP_GIT_BRANCH": "capability"
+               "WORKSHOP_GIT_BRANCH": "main"
               }
              ]
             },
@@ -1234,7 +1234,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "capability"
+       "Value": "main"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1669,7 +1669,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "capability"
+       "Value": "main"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1990,7 +1990,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "capability"
+       "Value": "main"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2311,7 +2311,7 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "capability"
+       "Value": "main"
       },
       {
        "Name": "FORCE_DELETE_VPC",

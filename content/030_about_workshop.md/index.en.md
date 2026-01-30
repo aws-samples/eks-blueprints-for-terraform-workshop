@@ -1,6 +1,7 @@
 ---
 title: "About workshop"
 weight: 30
+hidden: true
 ---
 
 Pre-created infrastructure

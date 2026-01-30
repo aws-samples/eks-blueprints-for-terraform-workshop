@@ -10,15 +10,15 @@ weight: 10
 
 ## Running the workshop at an AWS Event
 
-::alert[If we are not currently participating in an AWS organized workshop event, this section does not apply. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}
+::alert[If You are not currently participating in an AWS organized workshop event, this section does not apply. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}
 
-For this workshop, we will be provided with an AWS account through AWS Workshop Studio. Our event staff will share a link to access it. AWS Workshop Studio enables AWS field teams to run Workshops, GameDays, Bootcamps, Immersion Days, and other events requiring hands-on access to AWS accounts.
+For this workshop, You will be provided with an AWS account through AWS Workshop Studio. Our event staff will share a link to access it. AWS Workshop Studio enables AWS field teams to run Workshops, GameDays, Bootcamps, Immersion Days, and other events requiring hands-on access to AWS accounts.
 
-::alert[If we are currently logged in to an AWS Account, we can log out using this [link](https://console.aws.amazon.com/console/logout!doLogout).]{header="Important" type="warning"}
+::alert[If you are currently logged in to an AWS Account, you can log out using this [link](https://console.aws.amazon.com/console/logout!doLogout).]{header="Important" type="warning"}
 
-### Access AWS Workshop Studio
+### Access AWS EKS ArgoCD Capability Workshop
 
-1. [Click here](https://catalog.us-east-1.prod.workshops.aws/join/) to access AWS Workshop Studio
+1. Please click on the URL provided by the event organizer.
 
 2. Choose a preferred sign-in method. For AWS Guided events, use the **Email OTP** method.
 
@@ -32,7 +32,7 @@ For this workshop, we will be provided with an AWS account through AWS Workshop 
 
 ![Workshop Studio Signin Terms](/static/images/setup_ws_signin3.png)
 
-5. After joining the event, we will see the workshop instructions. The console for our temporary AWS account can be accessed through the link in the sidebar.
+5. After joining the event, You will see the workshop instructions. The console for our workshop AWS account can be accessed through the link in the sidebar.
 
 ![Workshop Studio Signin Landing Page](/static/images/setup_ws_signin4.png)
 

@@ -68,8 +68,8 @@ projects:
     description: Team lead with full project access in dev environment
     policies:
     - p, proj:retail-store-dev:team-lead, applications, *, retail-store-dev/*, allow
-    - p, proj:retail-store-dev:team-lead, repositories, *, *, allow
-    - p, proj:retail-store-dev:team-lead, clusters, get, *, allow
+    - p, proj:retail-store-dev:team-lead, repositories, *, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:team-lead, clusters, get, retail-store-dev/*, allow
     groups:
     # RetailStoreTeamLeads UUID
     - <<RetailStoreTeamLeads>>
@@ -81,8 +81,8 @@ projects:
     - p, proj:retail-store-dev:developer, applications, get, retail-store-dev/*, allow
     - p, proj:retail-store-dev:developer, applications, sync, retail-store-dev/*, allow
     - p, proj:retail-store-dev:developer, applications, action/*, retail-store-dev/*, allow
-    - p, proj:retail-store-dev:developer, repositories, get, *, allow
-    - p, proj:retail-store-dev:developer, clusters, get, *, allow
+    - p, proj:retail-store-dev:developer, repositories, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, clusters, get, retail-store-dev/*, allow
     groups:
     # RetailStoreDevelopers UUID
     - <<RetailStoreDevelopers>>
@@ -94,8 +94,8 @@ projects:
     - p, proj:retail-store-dev:devops, applications, sync, retail-store-dev/*, allow
     - p, proj:retail-store-dev:devops, applications, action/*, retail-store-dev/*, allow
     - p, proj:retail-store-dev:devops, applications, override, retail-store-dev/*, allow
-    - p, proj:retail-store-dev:devops, repositories, get, *, allow
-    - p, proj:retail-store-dev:devops, clusters, get, *, allow
+    - p, proj:retail-store-dev:devops, repositories, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, clusters, get, retail-store-dev/*, allow
     groups:
     # RetailStoreDevOps UUID
     - <<RetailStoreDevOps>>

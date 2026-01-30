@@ -28,11 +28,9 @@ Steps to Disable MFA
    - Open AWS Console
    - Search for "Identity Center"
 
-2. Access Authentication Settings
-   - Go to Settings → Authentication
-   - Click "Configure" on "Multi-factor authentication"
+2. Select Configure MFA
 
-![SSO MFA Navigate](/static/images/argocd-authentication/sso_mfa_navigate.png)
+![Configure MFA](/static/images/argocd-authentication/sso_mfa_navigate.png)
 
 3. Disable MFA
    - Select "Never(disabled)" in MFA Settings

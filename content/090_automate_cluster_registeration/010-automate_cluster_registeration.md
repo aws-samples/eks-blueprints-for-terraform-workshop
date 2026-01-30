@@ -7,7 +7,7 @@ weight: 10
 
 ::video{id=Oclo78ladi8}
 
-ArgoCD manages and deploys applications on clusters. To do this, it needs cluster connection information. This information is provided through Kubernetes secrets. When these secrets with the proper labels, they automatically appear as available clusters under Settings > Clusters in the ArgoCD dashboard. In this chapter, we will automate cluster registration by managing this metadata through Git.
+ArgoCD manages and deploys applications on clusters. To do this, it needs cluster connection information. This information is provided through Kubernetes secrets. When these secrets are created with the proper labels, they automatically appear as available clusters under Settings > Clusters in the ArgoCD dashboard. In this chapter, we will automate cluster registration by managing this metadata through Git.
 
 In the "ArgoCD Basics/Register Cluster" chapter, we manually registered hub cluster using a one-time kubectl command. In this chapter, we transition to a GitOps-driven approach. We will test this automation by automatically registering the hub cluster through automation.
 

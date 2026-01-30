@@ -3,8 +3,6 @@ title: "Prerequisites"
 weight: 10
 ---
 
-### Prerequisites
-
 1. Basic understanding of [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started) and Terraform [workspaces](https://developer.hashicorp.com/terraform/language/state/workspaces)
 2. Basic understanding of [Argo CD](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/) concepts including:
    - Applications

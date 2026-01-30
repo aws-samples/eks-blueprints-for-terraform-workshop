@@ -36,4 +36,4 @@ To view Navigate to EKS>Clusters>argocd-hub>Capabilities>Argo CD on AWS Console
 
 ![argoadmin role ](/static/images/argocd-authentication/argocdadmins-role.png)
 
-You can get find best practices from the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/argocd-permissions.html#_best_practices)
+You can get find best practices for ArgoCD permissions in the [documentation](https://docs.aws.amazon.com/eks/latest/userguide/argocd-permissions.html#_best_practices)

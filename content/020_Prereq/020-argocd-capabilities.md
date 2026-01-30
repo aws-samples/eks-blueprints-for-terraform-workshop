@@ -9,7 +9,7 @@ weight: 20
 
 ### 1. What is it?
 
-EKS managed ArgoCD capability where AWS handles the operational overhead of running ArgoCD for you.
+EKS managed ArgoCD capability where AWS handles the operational overhead of running ArgoCD.
 
 ### 2. Key Benefits:
 

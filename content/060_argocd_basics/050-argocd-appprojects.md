@@ -98,7 +98,7 @@ We will create retail-store projects in "Register Dev Environment" and "Register
 Let's restrict admin project so that it has permissions to create objects required for automation. 
 
 <!-- prettier-ignore-start -->
-:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='9,10,11,12,13'}
+:::code{showCopyAction=false showLineNumbers=true language=yaml highlightLines='9,10,11,12,13,14,20,26,29.32,35'}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -107,7 +107,7 @@ metadata:
 spec:
   description: "Project for administrator hub management of Apps, AppSets, and Projects"
   sourceRepos:
-  - 392638250061.dkr.ecr.us-west-2.amazonaws.com
+  - XXXXXXXXXX.dkr.ecr.us-west-2.amazonaws.com
   - https://git-codecommit.us-west-2.amazonaws.com/v1/repos/platform
   - https://git-codecommit.us-west-2.amazonaws.com/v1/repos/platform/*
   destinations:
@@ -133,16 +133,18 @@ spec:
     - p, proj:admin-hub:admin-role, projects, *, admin-hub, allow
     
     groups:
-    - f8b1f360-b091-70df-4581-146091cb8ec4
+    - XXXXXXXX-b091-70df-4581-146091cb8ec4
 :::
 <!-- prettier-ignore-end -->
 
 Key Components:
-- Line 9: No source repos allowed
-- Line 10: Not allowed to deploy to any namespace
-- Line 11: Not allowed to deploy to any clusters
-- Line 12: All cluster actions are restricted
-- Line 13: All namespace actions are restricted
+- Line 9-11: Specifies allowed Git repositories (ECR and CodeCommit repos)
+- Line 12-14: Restricts deployments to argocd namespace in hub cluster only
+- Line 20: Defines the role with full management permissions
+- Line 26: Policy: Allows creating and managing Applications within this project
+- Line 29: Policy: Allows creating and managing ApplicationSets within this project
+- Line 32: Policy: Allows managing the AppProject itself 
+- Line 35: IAM Identity Center group ID for ArgocdAdmins
 
 
 <!-- prettier-ignore-start -->
@@ -154,18 +156,3 @@ kubectl apply -f admin-project.yaml
 <!-- prettier-ignore-end -->
 
 We will create retail-store projects in "Register Dev Environment" and "Register Prod Environment" chapters
-
-### 3. Account Token Vs Project Token
-
-Account Tokens:
-
-- Scope: Global server access to all projects/apps the user has permissions for.
-- Duration: Fixed 12 hours
-- Created from: User Settings → Tokens
-  You can find more info about Account Token in "Token-Based Access" chapter.
-
-Project Tokens:
-
-- Scope: Limited to single project only
-- Duration: Configurable up to 1 year
-- Created from: Project Settings → Role Tokens

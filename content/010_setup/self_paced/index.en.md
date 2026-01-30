@@ -1,6 +1,6 @@
 ---
 title: "In your AWS account"
-chapter: false
+hidden: true
 weight: 11
 ---
 

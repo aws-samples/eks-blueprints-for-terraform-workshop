@@ -94,26 +94,30 @@ After pushing the team configuration:
 
 Check the registering progress in ArgoCD:
 
-#### Applications View:
+Navigate to the ArgoCD dashboard. Click on bootstrap application and team-retail-store.
 
-- ✅ `register-team-retail-store` - Team registering Application (should be Synced)
-- ✅ `retail-store-dev-*` - Individual microservice Applications (cart, catalog, etc.)
+![Navigate Dev](/static/images/registerdev/navigate-dev.png)
 
-#### Projects View:
+::alert[It may take 3 minutes to show new applications created. Refresh the browser.]{header="Important" type="warning"}
 
-- ✅ `retail-store` - Team-specific project with scoped permissions
+![Navigate Dev](/static/images/registerdev/deployment-degraded.png)
 
-#### Clusters View (dev cluster):
+::alert[You may see deployment applicationset in degraded status. Team automation creates project, namespace and deployment at the same time. Deployments have reference to the project that is not yet available. It will find the project in next reconciliation in 3 minutes. Please Refresh the browser.]{header="Important" type="warning"}
 
-- ✅ `retail-store` namespace created
-- ✅ Microservices deployed and running
+![Navigate Dev](/static/images/registerdev/dev-onboarded.png)
 
 ### Accessing the Application
 
-Once deployed, you can access the retail-store application from the terminal:
+Once deployed, you can access the retail-store application:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash }
 app_url_dev
 :::
 <!-- prettier-ignore-end -->
+
+::alert[It may take 3 minutes to provision the load balancer.]{header="Important" type="warning"}
+
+Open the URL in your browser to see the retail-store application running in the dev environment.
+
+![Navigate Dev](/static/images/registerdev/access-dev.png)

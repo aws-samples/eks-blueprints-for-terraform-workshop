@@ -68,8 +68,8 @@ projects:
     description: Team lead with full project access in prod environment
     policies:
     - p, proj:retail-store-prod:team-lead, applications, *, retail-store-prod/*, allow
-    - p, proj:retail-store-prod:team-lead, repositories, *, *, allow
-    - p, proj:retail-store-prod:team-lead, clusters, get, *, allow
+    - p, proj:retail-store-prod:team-lead, repositories, *, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:team-lead, clusters, get, retail-store-prod/*, allow
     groups:
     # RetailStoreTeamLeads UUID
     - <<RetailStoreTeamLeads>>
@@ -80,8 +80,8 @@ projects:
     - p, proj:retail-store-prod:devops, applications, get, retail-store-prod/*, allow
     - p, proj:retail-store-prod:devops, applications, sync, retail-store-prod/*, allow
     - p, proj:retail-store-prod:devops, applications, action/*, retail-store-prod/*, allow
-    - p, proj:retail-store-prod:devops, repositories, get, *, allow
-    - p, proj:retail-store-prod:devops, clusters, get, *, allow
+    - p, proj:retail-store-prod:devops, repositories, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, clusters, get, retail-store-prod/*, allow
     groups:
     # RetailStoreDevOps UUID
     - <<RetailStoreDevOps>>
@@ -91,8 +91,8 @@ projects:
     policies:
     - p, proj:retail-store-prod:prod-support, applications, get, retail-store-prod/*, allow
     - p, proj:retail-store-prod:prod-support, applications, sync, retail-store-prod/*, allow
-    - p, proj:retail-store-prod:prod-support, repositories, get, *, allow
-    - p, proj:retail-store-prod:prod-support, clusters, get, *, allow
+    - p, proj:retail-store-prod:prod-support, repositories, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, clusters, get, retail-store-prod/*, allow
     groups:
     # RetailStoreProdSupport UUID
     - <<RetailStoreProdSupport>>

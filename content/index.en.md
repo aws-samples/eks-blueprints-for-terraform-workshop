@@ -1,9 +1,7 @@
 ---
-title: "ArgoCD on EKS"
+title: "AWS EKS ArgoCD Capability"
 weight: 0
 ---
-
-## AWS EKS ArgoCD Capability
 
 This workshop specifically focuses on **AWS EKS's managed ArgoCD capability** - a fully-managed GitOps service that eliminates the operational overhead of running ArgoCD yourself. Instead of installing and maintaining ArgoCD, you simply enable this capability on your EKS clusters and AWS handles the rest.
 

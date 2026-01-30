@@ -20,6 +20,7 @@
             "sso:*",
             "events:*",
             "sso-directory:*",
+            "identitystore:*",
             "iam:CreateRole",
             "iam:CreatePolicy",
             "iam:AttachRolePolicy",

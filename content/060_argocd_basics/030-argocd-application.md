@@ -48,13 +48,13 @@ Key Components:
 - Line 13: argoproj/argocd-example-apps repo on github
 - Line 14: "guestbook" folder in the repo.
 
-![ArgoCD Application Guestbook GitHub](/static/images/argobasics//github-guestbook.png)
+![ArgoCD Application Guestbook GitHub](/static/images/argobasics/github-guestbook.png)
 
 ### 2. Verify the Application
 
 Navigate to the ArgoCD Dashboard. You should see the guestbook application listed.
 
-![ArgoCD Application Guestbook](/static/images/argobasics//guestbook-ui.png)
+![ArgoCD Application Guestbook](/static/images/argobasics/guestbook-ui.png)
 
 You can click on the guestbook to see all the resources created by the guestbook Application.
 
@@ -75,3 +75,7 @@ Delete the application and its managed resources.
 kubectl delete -f ~/environment/basics/guestbook.yaml
 :::
 <!-- prettier-ignore-end -->
+
+Navigate to the ArgoCD Dashboard. You should not see the guestbook application listed.
+
+![ArgoCD Application Deleted](/static/images/argobasics/guestbook-ui-delete.png)

@@ -24,7 +24,7 @@ The Terminal will appear at the bottom of the screen. We will use this terminal 
 
 ![IDE Terminal](/static/images/10-IDE-Terminal.jpg)
 
-::::expand{header="Click here to see the list of tools and utilities that are bootstrapped to our IDE environment:"}
+<!-- ::::expand{header="Click here to see the list of tools and utilities that are bootstrapped to our IDE environment:"}
 
 - **kubectl**: The Kubernetes command-line tool that allows us to run commands against Kubernetes clusters. We can use kubectl to deploy applications, inspect and manage cluster resources, and view logs.
 - **helm**: Helm helps us manage Kubernetes applications — Helm Charts help us define, install, and upgrade even the most complex Kubernetes application.
@@ -39,6 +39,6 @@ The Terminal will appear at the bottom of the screen. We will use this terminal 
 - **c9**: Cloud9 CLI and tools (e.g., c9 open file.txt)
 - **[k9s](https://k9scli.io/)**: A terminal-based UI to interact with Kubernetes clusters. It continually watches Kubernetes for changes and offers subsequent commands to interact with observed resources.
 - **[eks-node-viewer](https://github.com/awslabs/eks-node-viewer)**: A tool for visualizing dynamic node usage within a cluster. It displays the scheduled pod resource requests vs the allocatable capacity on the node.
-- **aliases** (k, kgn, kgp, tfi, tfp, tfy): Type 'alias' to see them
+- **aliases** (k, kgn, kgp, tfi, tfp, tfy): Type 'alias' to see them -->
 
 ::::

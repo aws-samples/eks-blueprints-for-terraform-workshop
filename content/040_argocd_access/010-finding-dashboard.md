@@ -7,13 +7,13 @@ weight: 10
 
 You can access ArgoCD dashboard through vscode terminal shortcut or through AWS Console.
 
-### 1. VSCode Terminal shortcut
+### Method 1. VSCode Terminal shortcut
 
 Type argocd_url in the VSCode terminal. It will print the ArgoCD dashboard url. Open the link in a browser to open the dashboard.
 
 ![ArgoCD Dashboard Terminal](/static/images/access/argocd-dashboard-terminal.png)
 
-### 2. Accessing ArgoCD Through AWS Console
+### Method 2: AWS Console
 
 The ArgoCD dashboard is accessible through the AWS Console via the EKS service capabilities.
 

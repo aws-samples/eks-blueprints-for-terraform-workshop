@@ -9,7 +9,7 @@ This approach uses a Lambda function triggered directly by CodeCommit to send we
 
 Key Components:
 
-1. CodeCommit Trigger: Directly invokes Lambda when commits are pushed to the main branch.
+1. CodeCommit Trigger: Directly invokes Lambda function when commits are pushed to the main branch.
 
 2. Lambda Function: Processes CodeCommit events and sends formatted webhook payloads to ArgoCD.
 

@@ -98,6 +98,10 @@ cpu: "500m"
 
 Check the prod onboarding progress in ArgoCD dashboard:
 
+
+::alert[It may take 3 minutes to show new applications created. You may see deployment applicationset in degraded status. Team automation creates project, namespace and deployment at the same time. Deployments have reference to the project that is not yet available. It will find the project in next reconciliation in 3 minutes. Please Refresh the browser. ]{header="Important" type="warning"}
+
+
 ![Onboard Prod](/static/images/registerprod/registerprod.png)
 
 
@@ -127,5 +131,38 @@ for service in cart catalog checkout orders ui; do
         sed 's/^+/  Prod: /'
     echo ""
 done
+:::
+<!-- prettier-ignore-end -->
+
+The comparison shows key differences between dev and prod configurations:
+
+- **Replica Count**: All services run with 2 replicas in prod (vs 1 in dev) for high availability and load distribution
+- **UI Theme**: The UI uses different color themes - green for dev and blue for prod - making it easy to visually distinguish environments
+
+These environment-specific configurations demonstrate how the same application can be deployed with different settings based on operational requirements. Production prioritizes availability and performance, while dev focuses on resource efficiency.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=false showLineNumbers=false language=bash }
+📦 cart:
+  Dev:  replicaCount: 1
+  Prod: replicaCount: 2
+
+📦 catalog:
+  Dev:  replicaCount: 1
+  Prod: replicaCount: 2
+
+📦 checkout:
+  Dev:  replicaCount: 1
+  Prod: replicaCount: 2
+
+📦 orders:
+  Dev:  replicaCount: 1
+  Prod: replicaCount: 2
+
+📦 ui:
+  Dev:  replicaCount: 1
+  Prod: replicaCount: 2
+  Dev:    theme: green
+  Prod:   theme: blue
 :::
 <!-- prettier-ignore-end -->
