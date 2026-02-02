@@ -1,0 +1,57 @@
+{{- $team := .Values.teamName -}}
+{{- range $env := .Values.environments }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "team-{{ $team }}-deployment-{{ $env.env }}"
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+{{- if eq $env.env "prod" }}
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+{{- end }}
+
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - list:
+          elements:
+          {{- range $service, $version := $env.versions }}
+          - service: "{{ $service }}"
+            version: "{{ $version }}"
+          {{- end }}
+
+  template:
+    metadata:
+      name: 'team-{{ $team }}-deployment-{{`{{ .service }}`}}-{{ $env.env }}'
+      namespace: argocd
+    spec:
+      project: "{{ $team }}-{{ $env.env }}"
+      sources:
+      - repoURL: "{{ $.Values.repo }}"
+        targetRevision: HEAD
+        path: "{{`{{ .service }}`}}/{{ $env.env }}"
+        ref: values
+      - repoURL: "{{`{{ .metadata.annotations.oci_registry_url }}`}}"
+        chart: "{{ $team }}-charts/{{`{{ .service }}`}}"
+        targetRevision: "{{`{{ .version }}`}}"
+        helm:
+          valueFiles:
+          - "$values/{{`{{ .service }}`}}/{{ $env.env }}/values.yaml"
+      
+      destination:
+        name: "{{ $env.cluster }}"
+        namespace: "{{`{{ .service }}`}}"
+      
+      syncPolicy:
+        automated:
+          prune: true
+
+{{- end }}

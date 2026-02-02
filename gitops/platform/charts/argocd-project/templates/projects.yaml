@@ -1,0 +1,73 @@
+{{- range .Values.projects }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  {{- with .additionalAnnotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with .additionalLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: {{ .name }}
+  {{- with .namespace }}
+  namespace: {{ . }}
+  {{- end }}
+  {{- with .finalizers }}
+  finalizers:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .permitOnlyProjectScopedClusters }}
+  permitOnlyProjectScopedClusters: {{ . }}
+  {{- end }}
+  description: {{ .description }}
+  {{- with .sourceRepos }}
+  sourceRepos:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .destinations }}
+  destinations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .clusterResourceWhitelist }}
+  clusterResourceWhitelist:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .clusterResourceBlacklist }}
+  clusterResourceBlacklist:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .namespaceResourceBlacklist }}
+  namespaceResourceBlacklist:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .namespaceResourceWhitelist }}
+  namespaceResourceWhitelist:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .orphanedResources }}
+  orphanedResources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .roles }}
+  roles:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .syncWindows }}
+  syncWindows:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .signatureKeys }}
+  signatureKeys:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .sourceNamespaces }}
+  sourceNamespaces:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: admin-hub
+  namespace: argocd
+spec:
+  description: "Project for administrator hub management of Apps, AppSets, and Projects"
+  sourceRepos:
+  - <<oci_registry_url>>/*
+  - <<platform_url>>
+  - <<platform_url>>/*
+  destinations:
+  - namespace: '*'
+    name: '*'
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceNamespaces:
+  - argocd  
+  roles:
+  - name: admin-role
+    description: Full management of GitOps resources within this project
+    policies:
+    # Format: p, <role>, <resource>, <action>, <object>, <allow/deny>
+    
+    # 1. Manage Applications within this project
+    - p, proj:admin-hub:admin-role, applications, *, admin-hub/*, allow
+    
+    # 2. Manage ApplicationSets assigned to this project
+    - p, proj:admin-hub:admin-role, applicationsets, *, admin-hub/*, allow
+    
+    # 3. Manage the AppProject itself (Self-service updates)
+    - p, proj:admin-hub:admin-role, projects, *, admin-hub, allow
+    
+    groups:
+    # ArgocdAdmins UUID    
+    - <<ArgocdAdmins>>

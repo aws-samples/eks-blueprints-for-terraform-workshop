@@ -83,8 +83,8 @@ export class TeamStack extends WorkshopStudioTeamStack {
       role: sharedRole,
       terminalOnStartup: false,
       bootstrapTimeoutMinutes: 30,
-      enableGitea: true,
-      codeServerVersion: "4.100.1",
+      enableGitea: false,
+      codeServerVersion: "4.107.0",
     });
 
     // if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {
@@ -149,13 +149,76 @@ export class TeamStack extends WorkshopStudioTeamStack {
                 "WAIT_SECONDS=120",
                 "DIRECTORY='/home/ec2-user/eks-blueprints-for-terraform-workshop'",
                 "",
+                "# Get AWS region from instance metadata or AWS CLI",
+                'export TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" 2>/dev/null)',
+                "export AWS_REGION=$(curl -H \"X-aws-ec2-metadata-token: $TOKEN\" -s http://169.254.169.254/latest/dynamic/instance-identity/document 2>/dev/null | grep region | awk -F'\"' '{print $4}')",
+                "export AWS_REGION=${AWS_REGION:-us-west-2}",
+                "export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)",
+                'echo "Using AWS_REGION: $AWS_REGION"',
+                'echo "Using ACCOUNT_ID: $ACCOUNT_ID"',
+                "",
                 "for ((i=1; i<=MAX_ATTEMPTS; i++)); do",
                 '  if [ -d "$DIRECTORY" ]; then',
-                '    echo "Directory $DIRECTORY exists. Proceeding with Git setup."',
+                '    echo "Directory $DIRECTORY exists. Proceeding with setup."',
                 "    sudo su - ec2-user -c \"ls -la '$DIRECTORY'\"",
+                '    if [ -f "$DIRECTORY/pull-and-push-images.sh" ]; then',
+                '      echo "Found pull-and-push-images.sh. Executing..."',
+                '      echo "DEBUG: About to execute pull-and-push-images.sh"',
+                "      sudo su - ec2-user -c \"AWS_REGION=$AWS_REGION '$DIRECTORY/pull-and-push-images.sh'\" > /tmp/pull-and-push-images.log 2>&1",
+                "      PULL_PUSH_EXIT_CODE=$?",
+                '      echo "DEBUG: pull-and-push-images.sh completed with exit code: $PULL_PUSH_EXIT_CODE"',
+                '      echo "DEBUG: Last 20 lines of pull-and-push-images.sh output:"',
+                "      tail -20 /tmp/pull-and-push-images.log",
+                "      if [ $PULL_PUSH_EXIT_CODE -ne 0 ]; then",
+                '        echo "ERROR: pull-and-push-images.sh failed"',
+                "        cat /tmp/pull-and-push-images.log",
+                "        exit $PULL_PUSH_EXIT_CODE",
+                "      fi",
+                "    else",
+                '      echo "Warning: pull-and-push-images.sh not found in $DIRECTORY"',
+                "    fi",
                 '    if [ -f "$DIRECTORY/setup-git.sh" ]; then',
                 '      echo "Found setup-git.sh. Executing..."',
-                "      sudo su - ec2-user -c \"GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\"",
+                '      echo "DEBUG: About to execute setup-git.sh"',
+                '      echo "DEBUG: Current directory: $(pwd)"',
+                '      echo "DEBUG: Current user: $(whoami)"',
+                "      sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=argocd-workshop AWS_REGION=$AWS_REGION ACCOUNT_ID=$ACCOUNT_ID GITOPS_DIR=/home/ec2-user/environment/gitops-repos '$DIRECTORY/setup-git.sh'\" > /tmp/setup-git.log 2>&1",
+                "      SETUP_GIT_EXIT_CODE=$?",
+                '      echo "DEBUG: setup-git.sh completed with exit code: $SETUP_GIT_EXIT_CODE"',
+                '      echo "DEBUG: Last 20 lines of setup-git.sh output:"',
+                "      tail -20 /tmp/setup-git.log",
+                "      if [ $SETUP_GIT_EXIT_CODE -ne 0 ]; then",
+                '        echo "ERROR: setup-git.sh failed"',
+                "        cat /tmp/setup-git.log",
+                "        exit $SETUP_GIT_EXIT_CODE",
+                "      fi",
+                '      echo "DEBUG: Checking for setup-template.sh..."',
+                '      ls -la "$DIRECTORY/setup-template.sh"',
+                '      if [ -f "$DIRECTORY/setup-template.sh" ]; then',
+                '        echo "DEBUG: Found setup-template.sh. File details:"',
+                '        ls -la "$DIRECTORY/setup-template.sh"',
+                '        echo "DEBUG: File permissions and ownership look good"',
+                '        echo "Found setup-template.sh. Executing..."',
+                '        echo "DEBUG: About to run setup-template.sh with env vars"',
+                "        sudo su - ec2-user -c \"PROJECT_CONTEXT_PREFIX=argocd-workshop AWS_REGION=$AWS_REGION '$DIRECTORY/setup-template.sh'\" > /tmp/setup-template.log 2>&1",
+                "        SETUP_TEMPLATE_EXIT_CODE=$?",
+                '        echo "DEBUG: setup-template.sh completed with exit code: $SETUP_TEMPLATE_EXIT_CODE"',
+                '        echo "DEBUG: Last 20 lines of setup-template.sh output:"',
+                "        tail -20 /tmp/setup-template.log",
+                "        if [ $SETUP_TEMPLATE_EXIT_CODE -ne 0 ]; then",
+                '          echo "ERROR: setup-template.sh failed"',
+                "          cat /tmp/setup-template.log",
+                "          exit $SETUP_TEMPLATE_EXIT_CODE",
+                "        fi",
+                "      else",
+                '        echo "DEBUG: setup-template.sh NOT found"',
+                '        echo "DEBUG: Directory contents:"',
+                '        ls -la "$DIRECTORY/"',
+                '        echo "Warning: setup-template.sh not found in $DIRECTORY"',
+                "      fi",
+                '      echo "DEBUG: Final log file sizes:"',
+                "      ls -la /tmp/setup-*.log",
+                '      echo "DEBUG: Both scripts completed successfully"',
                 "      exit 0",
                 "    else",
                 '      echo "Error: setup-git.sh not found in $DIRECTORY"',
@@ -176,22 +239,6 @@ export class TeamStack extends WorkshopStudioTeamStack {
         ],
       },
     });
-
-    ssmDocument.node.addDependency(commonRunner.customResource);
-    const association = new cdk.aws_ssm.CfnAssociation(
-      this,
-      "SetupGitAssociation",
-      {
-        associationName: "SetupGitAssociation",
-        name: ssmDocument.ref,
-        targets: [
-          {
-            key: "tag:aws:cloudformation:stack-name",
-            values: [this.stackName, "eks-blueprints-workshop-team-stack"],
-          },
-        ],
-      },
-    );
 
     const hubRunner = new CodeBuildCustomResource(this, "EKSWSHUB", {
       buildspec: buildspecHub,
@@ -222,12 +269,13 @@ export class TeamStack extends WorkshopStudioTeamStack {
     });
     hubRunner.customResource.node.addDependency(commonRunner.customResource);
 
-    const spokeRunner = new CodeBuildCustomResource(this, "EKSWSSPOKE", {
+    const spokeDevRunner = new CodeBuildCustomResource(this, "EKSWSSPOKEDEV", {
       buildspec: buildspecSpoke,
       codeBuildTimeout: cdk.Duration.minutes(60),
       computeType: codebuild.ComputeType.SMALL,
       environmentVariables: {
         TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+        WORKSPACE: { value: "dev" },
         WORKSHOP_GIT_URL: {
           value:
             process.env.WORKSHOP_GIT_URL ||
@@ -249,7 +297,65 @@ export class TeamStack extends WorkshopStudioTeamStack {
       role: sharedRole,
       //removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
-    spokeRunner.customResource.node.addDependency(commonRunner.customResource);
+    spokeDevRunner.customResource.node.addDependency(
+      commonRunner.customResource,
+    );
+
+    const spokeProdRunner = new CodeBuildCustomResource(
+      this,
+      "EKSWSSPOKEPROD",
+      {
+        buildspec: buildspecSpoke,
+        codeBuildTimeout: cdk.Duration.minutes(60),
+        computeType: codebuild.ComputeType.SMALL,
+        environmentVariables: {
+          TFSTATE_BUCKET_NAME: { value: tfStateBackendBucket.bucketName },
+          WORKSPACE: { value: "prod" },
+          WORKSHOP_GIT_URL: {
+            value:
+              process.env.WORKSHOP_GIT_URL ||
+              "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
+          },
+          WORKSHOP_GIT_BRANCH: {
+            value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+          },
+          FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
+          GITEA_PASSWORD: { value: ide.getIdePassword() },
+          IS_WS: {
+            value:
+              this.getCdkSynthMode() == CdkSynthMode.SynthWorkshopStudio
+                ? "true"
+                : "false",
+          },
+        },
+        buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_4,
+        role: sharedRole,
+        //removalPolicy: cdk.RemovalPolicy.RETAIN,
+      },
+    );
+    spokeProdRunner.customResource.node.addDependency(
+      commonRunner.customResource,
+    );
+
+    ssmDocument.node.addDependency(commonRunner.customResource);
+    ssmDocument.node.addDependency(hubRunner.customResource);
+    ssmDocument.node.addDependency(spokeDevRunner.customResource);
+    ssmDocument.node.addDependency(spokeProdRunner.customResource);
+
+    const association = new cdk.aws_ssm.CfnAssociation(
+      this,
+      "SetupGitAssociation",
+      {
+        associationName: "SetupGitAssociation",
+        name: ssmDocument.ref,
+        targets: [
+          {
+            key: "tag:aws:cloudformation:stack-name",
+            values: [this.stackName, "eks-blueprints-workshop-team-stack"],
+          },
+        ],
+      },
+    );
 
     new cdk.CfnOutput(this, "IdeUrl", { value: ide.accessUrl });
     new cdk.CfnOutput(this, "IdePassword", { value: ide.getIdePassword() });

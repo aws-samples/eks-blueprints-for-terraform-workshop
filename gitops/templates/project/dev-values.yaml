@@ -1,0 +1,101 @@
+# using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
+projects:
+- name: retail-store-dev
+  sourceRepos:
+  - <<oci_registry_url>>
+  - <<retail_store_config_url>>
+  - <<retail_store_config_url>>/*
+  namespace: argocd
+  additionalLabels: {}
+  additionalAnnotations: {}
+  description: Team Project
+  destinations:
+  - namespace: cart
+    name: dev
+  - namespace: catalog
+    name: dev
+  - namespace: checkout
+    name: dev
+  - namespace: orders
+    name: dev
+  - namespace: rabbitmq
+    name: dev
+  - namespace: ui
+    name: dev
+  - namespace: assets
+    name: dev
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ResourceQuota
+  - group: ''
+    kind: LimitRange
+  - group: ''
+    kind: NetworkPolicy
+  # Deny all namespaced-scoped resources from being created, except for these
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: Pod
+  - group: 'apps'
+    kind: Deployment
+  - group: 'apps'
+    kind: StatefulSet
+  - group: 'apps'
+    kind: ReplicaSet
+  - group: ''
+    kind: Service
+  - group: ''
+    kind: ServiceAccount
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: 'rbac.authorization.k8s.io'
+    kind: RoleBinding
+  - group: 'rbac.authorization.k8s.io'
+    kind: Role
+  - group: 'dynamodb.services.k8s.aws'
+    kind: Table
+  - group: 'autoscaling'
+    kind: HorizontalPodAutoscaler
+  - group: 'networking.k8s.io'
+    kind: Ingress
+  sourceNamespaces:
+  - argocd
+  roles:
+  # Team Lead - Full access to dev environment
+  - name: team-lead
+    description: Team lead with full project access in dev environment
+    policies:
+    - p, proj:retail-store-dev:team-lead, applications, *, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:team-lead, repositories, *, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:team-lead, clusters, get, retail-store-dev/*, allow
+    groups:
+    # RetailStoreTeamLeads UUID
+    - <<RetailStoreTeamLeads>>
+  # Developer - Create, sync, view applications in dev
+  - name: developer
+    description: Developer with limited access to dev environment
+    policies:
+    - p, proj:retail-store-dev:developer, applications, create, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, sync, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, applications, action/*, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, repositories, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:developer, clusters, get, retail-store-dev/*, allow
+    groups:
+    # RetailStoreDevelopers UUID
+    - <<RetailStoreDevelopers>>
+  # DevOps - Deployment management in dev
+  - name: devops
+    description: DevOps engineer with deployment permissions in dev environment
+    policies:
+    - p, proj:retail-store-dev:devops, applications, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, sync, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, action/*, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, applications, override, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, repositories, get, retail-store-dev/*, allow
+    - p, proj:retail-store-dev:devops, clusters, get, retail-store-dev/*, allow
+    groups:
+    # RetailStoreDevOps UUID
+    - <<RetailStoreDevOps>>

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hub
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+    cluster-role: hub
+  annotations:
+    platform_url: <<platform_url>>
+    oci_registry_url: <<oci_registry_url>>
+type: Opaque
+stringData:
+  name: hub
+  server: <<arn>>
+  config: '{"tlsClientConfig":{"insecure":false}}'

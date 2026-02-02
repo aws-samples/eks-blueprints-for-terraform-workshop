@@ -1,0 +1,14 @@
+1. ArgoCD cluster secret has been created successfully!
+
+   Cluster Name: {{ .Values.clusterName }}
+   Server: {{ .Values.server }}
+   Namespace: {{ .Release.Namespace | default "argocd" }}
+
+2. The secret will be available as:
+   kubectl get secret cluster-{{ .Values.clusterName }} -n {{ .Release.Namespace | default "argocd" }}
+
+3. ArgoCD will automatically discover this cluster secret due to the label:
+   argocd.argoproj.io/secret-type: cluster
+
+4. Credentials will be retrieved from AWS Secrets Manager ARN:
+   {{ .Values.secretArn }}

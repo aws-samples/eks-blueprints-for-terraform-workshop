@@ -1,7 +1,7 @@
 variable "environment_name" {
   description = "The name of environment Infrastructure stack, feel free to rename it. Used for cluster and VPC names."
   type        = string
-  default     = "eks-blueprints-workshop"
+  default     = "argocd"
 }
 
 variable "vpc_cidr" {

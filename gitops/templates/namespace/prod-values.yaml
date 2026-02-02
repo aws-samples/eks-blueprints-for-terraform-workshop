@@ -1,0 +1,14 @@
+namespaces:
+  cart:
+    limitRanges:
+      - name: default
+        limits:
+          - type: Container
+            default:
+              cpu: "1000m"        # 500m × 2
+            defaultRequest:
+              cpu: "1000m"        # 500m × 2
+            max:
+              cpu: "4"            # 2 × 2
+            min:
+              cpu: "200m"         # 100m × 2

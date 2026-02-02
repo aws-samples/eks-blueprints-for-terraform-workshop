@@ -1,0 +1,7 @@
+serverARN: <<arn>>
+labels:
+  cluster-role: hub
+annotations:
+  platform_url: <<url>>
+  oci_registry_url: <<oci_registry_url>>
+  retail_store_config_url: <<retail_store_config_url>>

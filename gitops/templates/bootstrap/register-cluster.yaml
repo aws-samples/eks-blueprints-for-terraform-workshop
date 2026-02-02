@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: register-cluster
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - git:
+          repoURL: '{{ .metadata.annotations.platform_url }}'
+          revision: HEAD
+          directories:
+          - path: register-cluster/*
+  template:
+    metadata:
+      name: 'register-cluster-{{ .path.basename }}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: /register-cluster      
+    spec:
+      project: admin-hub
+      sources:
+      - repoURL: '{{ .metadata.annotations.oci_registry_url }}/platform'
+        chart: argocd-cluster-secret
+        targetRevision: 0.1.0
+        helm:
+          parameters:
+          - name: clusterName
+            value: '{{ .path.basename }}'
+          valueFiles:
+          - $values/register-cluster/{{ .path.basename }}/values.yaml
+      - repoURL: '{{ .metadata.annotations.platform_url }}'
+        targetRevision: HEAD
+        ref: values
+      destination:
+        server: '{{ .server }}'
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

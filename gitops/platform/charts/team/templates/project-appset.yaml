@@ -1,0 +1,55 @@
+{{- $team := .Values.teamName -}}
+{{- $envs := .Values.environments | default list -}}
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: team-{{ $team }}-project
+  namespace: argocd
+  labels:
+    team: {{ $team | quote }}
+spec:
+  goTemplate: true
+  generators:
+  - matrix:
+      generators:
+      - clusters:
+          selector:
+            matchLabels:
+              cluster-role: hub
+      - list:
+          elements:
+{{- range $env := $envs }}
+          - env: {{ $env.env | quote }}
+            destCluster: {{ $env.cluster | quote }}
+{{- end }}
+  template:
+    metadata:
+      name: 'team-{{ $team }}-project-{{`{{ .env }}`}}'
+      namespace: argocd
+    spec:
+      project: admin-hub
+      sources:
+      - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
+        path: charts/argocd-project
+        targetRevision: HEAD
+        helm:
+          releaseName: '{{ $team }}-{{`{{ .env }}`}}'
+          valueFiles:
+          - '$values/register-team/{{ $team }}/project/{{`{{ .env }}`}}-values.yaml'
+          parameters:
+            # - name: "projects[0].sourceRepos[0]"
+            #   value: {{ .Values.repo | quote }}
+            - name: "projects[0].name"
+              value: '{{ $team }}-{{`{{ .env }}`}}'              
+      - repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
+        path: .
+        targetRevision: HEAD
+        ref: values
+      destination:
+        name: '{{`{{ .name }}`}}'
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

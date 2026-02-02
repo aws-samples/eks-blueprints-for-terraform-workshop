@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bootstrap
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    name: hub
+  project: admin-hub
+  source:
+    path: bootstrap
+    repoURL: <<url>>
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      enabled: true

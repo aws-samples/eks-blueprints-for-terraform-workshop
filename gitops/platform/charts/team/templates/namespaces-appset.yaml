@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: "team-{{ .Values.teamName }}-namespace"
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  # 1. Generate one record per environment from .Values.environments
+  generators:
+    - list:
+        elements:
+{{- range .Values.environments }}
+          - env: {{ .env | quote }}
+            destCluster: {{ .cluster | quote }}
+{{- end }}
+
+  generators:
+    - matrix:
+        generators:
+          - clusters:
+              selector:
+                matchLabels:
+                  cluster-role: hub
+          - list:
+              elements:
+{{- range .Values.environments }}
+                - env: {{ .env | quote }}
+                  destCluster: {{ .cluster | quote }}
+{{- end }}
+
+  # 2. Template for each generated environment
+  template:
+    metadata:
+      name: "team-{{ .Values.teamName }}-namespace-{{`{{ .env }}`}}"
+
+    spec:
+      project: admin-hub
+      source:
+        repoURL: '{{`{{ .metadata.annotations.platform_url }}`}}'
+        targetRevision: HEAD
+        path: charts/namespace
+        helm:
+          ignoreMissingValueFiles: true
+          values: |
+            teamName: "{{ .Values.teamName }}"
+            environment: "{{`{{ .env }}`}}"
+          valueFiles:
+            - "../../register-team/{{ .Values.teamName }}/namespace/default-values.yaml"
+            - "../../register-team/{{ .Values.teamName }}/namespace/{{`{{ .env }}`}}-values.yaml"
+
+      destination:
+        name: "{{`{{ .destCluster }}`}}"
+        # namespace: argocd
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

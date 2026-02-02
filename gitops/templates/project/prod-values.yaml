@@ -1,0 +1,98 @@
+# using upstream argo chart https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps
+projects:
+- name: retail-store-prod
+  sourceRepos:
+  - <<oci_registry_url>>
+  - <<retail_store_config_url>>
+  - <<retail_store_config_url>>/*
+  namespace: argocd
+  additionalLabels: {}
+  additionalAnnotations: {}
+  description: Team Project
+  destinations:
+  - namespace: cart
+    name: prod
+  - namespace: catalog
+    name: prod
+  - namespace: checkout
+    name: prod
+  - namespace: orders
+    name: prod
+  - namespace: rabbitmq
+    name: prod
+  - namespace: ui
+    name: prod
+  - namespace: assets
+    name: prod
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ResourceQuota
+  - group: ''
+    kind: LimitRange
+  - group: ''
+    kind: NetworkPolicy
+  # Deny all namespaced-scoped resources from being created, except for these
+  namespaceResourceWhitelist:
+  - group: ''
+    kind: Pod
+  - group: 'apps'
+    kind: Deployment
+  - group: 'apps'
+    kind: StatefulSet
+  - group: 'apps'
+    kind: ReplicaSet
+  - group: ''
+    kind: Service
+  - group: ''
+    kind: ServiceAccount
+  - group: ''
+    kind: ConfigMap
+  - group: ''
+    kind: Secret
+  - group: 'rbac.authorization.k8s.io'
+    kind: RoleBinding
+  - group: 'rbac.authorization.k8s.io'
+    kind: Role
+  - group: 'dynamodb.services.k8s.aws'
+    kind: Table
+  - group: 'autoscaling'
+    kind: HorizontalPodAutoscaler
+  - group: 'networking.k8s.io'
+    kind: Ingress
+  sourceNamespaces:
+  - argocd
+  roles:
+  # Team Lead - Full access to prod environment
+  - name: team-lead
+    description: Team lead with full project access in prod environment
+    policies:
+    - p, proj:retail-store-prod:team-lead, applications, *, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:team-lead, repositories, *, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:team-lead, clusters, get, retail-store-prod/*, allow
+    groups:
+    # RetailStoreTeamLeads UUID
+    - <<RetailStoreTeamLeads>>
+  # DevOps - Deployment management in prod (more restricted than dev)
+  - name: devops
+    description: DevOps engineer with deployment permissions in prod environment
+    policies:
+    - p, proj:retail-store-prod:devops, applications, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, applications, sync, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, applications, action/*, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, repositories, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:devops, clusters, get, retail-store-prod/*, allow
+    groups:
+    # RetailStoreDevOps UUID
+    - <<RetailStoreDevOps>>
+  # Production Support - Read-only with emergency sync capability
+  - name: prod-support
+    description: Production support with read access and emergency sync capability
+    policies:
+    - p, proj:retail-store-prod:prod-support, applications, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, applications, sync, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, repositories, get, retail-store-prod/*, allow
+    - p, proj:retail-store-prod:prod-support, clusters, get, retail-store-prod/*, allow
+    groups:
+    # RetailStoreProdSupport UUID
+    - <<RetailStoreProdSupport>>

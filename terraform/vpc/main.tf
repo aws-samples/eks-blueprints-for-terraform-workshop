@@ -19,13 +19,29 @@ locals {
     Blueprint  = local.name
     GithubRepo = "github.com/aws-ia/terraform-aws-eks-blueprints"
   }
+
+  vpcs = {
+    hub = {
+      name = "${local.name}-hub"
+    }
+    dev = {
+      name = "${local.name}-spoke-dev"
+    }
+    prod = {
+      name = "${local.name}-spoke-prod"
+    }
+  }
+
 }
 
 module "vpc" {
+
+  for_each = local.vpcs
+
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0.0"
 
-  name = local.name
+  name = each.value.name
   cidr = local.vpc_cidr
 
   azs             = local.azs

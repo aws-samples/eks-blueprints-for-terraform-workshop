@@ -213,6 +213,33 @@ tasks:
         cd -
         rm content/review-style-guide.md
 
+  helm:
+    desc: Package all Helm charts and move to organized directories
+    cmds:
+      - mkdir -p gitops/helm/platform gitops/helm/retail-store
+      - |
+        # Package microservice charts to retail-store folder
+        for service in ui catalog cart orders checkout; do
+          if [ -d "gitops/retail-store-app/src/$service/chart" ]; then
+            echo "Packaging $service chart..."
+            helm package gitops/retail-store-app/src/$service/chart/
+            mv $service-*.tgz gitops/helm/retail-store/
+          fi
+        done
+      - |
+        # Package platform charts to platform folder
+        for chart in gitops/platform/charts/*/; do
+          if [ -f "$chart/Chart.yaml" ]; then
+            chart_name=$(basename "$chart")
+            echo "Packaging $chart_name chart..."
+            helm package "$chart"
+            mv $chart_name-*.tgz gitops/helm/platform/
+          fi
+        done
+      - echo "All Helm charts packaged in organized directories:"
+      - ls -la gitops/helm/platform/
+      - ls -la gitops/helm/retail-store/
+
 #yarn start ask --base-dir ~/projects/my-workshop/content \
 #  --question "Does the workshop content provide a well-structured introduction?" \
 #  lab1
