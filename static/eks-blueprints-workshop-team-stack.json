@@ -2330,6 +2330,11 @@
        "Value": "main"
       },
       {
+       "Name": "WORKSHOP_GIT_TAG",
+       "Type": "PLAINTEXT",
+       "Value": "v2.0.0"
+      },
+      {
        "Name": "FORCE_DELETE_VPC",
        "Type": "PLAINTEXT",
        "Value": "false"
