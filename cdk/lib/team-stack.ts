@@ -76,6 +76,7 @@ export class TeamStack extends WorkshopStudioTeamStack {
         process.env.WORKSHOP_GIT_URL ||
         "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
       WORKSHOP_GIT_BRANCH: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+      WORKSHOP_GIT_TAG: process.env.WORKSHOP_GIT_TAG || "v1.0.0",
     });
 
     const ide = new VSCodeIde(this, "IDE-BLUE", {
@@ -108,6 +109,9 @@ export class TeamStack extends WorkshopStudioTeamStack {
         },
         WORKSHOP_GIT_BRANCH: {
           value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+        },
+        WORKSHOP_GIT_TAG: {
+          value: process.env.WORKSHOP_GIT_TAG || "v1.0.0",
         },
         FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
         GITEA_PASSWORD: { value: ide.getIdePassword() },
@@ -254,6 +258,9 @@ export class TeamStack extends WorkshopStudioTeamStack {
         WORKSHOP_GIT_BRANCH: {
           value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
         },
+        WORKSHOP_GIT_TAG: {
+          value: process.env.WORKSHOP_GIT_TAG || "v1.0.0",
+        },
         FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
         GITEA_PASSWORD: { value: ide.getIdePassword() },
         IS_WS: {
@@ -283,6 +290,9 @@ export class TeamStack extends WorkshopStudioTeamStack {
         },
         WORKSHOP_GIT_BRANCH: {
           value: process.env.WORKSHOP_GIT_BRANCH || "vscode",
+        },
+        WORKSHOP_GIT_TAG: {
+          value: process.env.WORKSHOP_GIT_TAG || "v1.0.0",
         },
         FORCE_DELETE_VPC: { value: process.env.FORCE_DELETE_VPC || "false" },
         GITEA_PASSWORD: { value: ide.getIdePassword() },

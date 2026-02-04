@@ -26,13 +26,13 @@ phases:
         BASE_DIR=${CODEBUILD_SRC_DIR}
         WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL:-https://github.com/aws-samples/eks-blueprints-for-terraform-workshop}
         WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH:-mainline}
-
+        WORKSHOP_GIT_TAG=${WORKSHOP_GIT_TAG:-v1.0.0}
         env | sort
 
         # clone and create CodeCommit repo
         git clone $WORKSHOP_GIT_URL $BASE_DIR || true
         cd $BASE_DIR
-        git checkout $WORKSHOP_GIT_BRANCH
+        git checkout $WORKSHOP_GIT_TAG
         cd -
 
         aws ssm put-parameter --name "tf-backend-bucket" --type "String" --value "$BUCKET_NAME" --overwrite

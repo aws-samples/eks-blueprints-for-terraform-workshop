@@ -18,6 +18,7 @@ export ASSETS_BUCKET_PREFIX=${AssetsBucketPrefix} # Coming from Fn.Sub
 export BUCKET_NAME=${BUCKET_NAME} # Coming from Fn.Sub
 export WORKSHOP_GIT_URL=${WORKSHOP_GIT_URL} # Coming from Fn.Sub
 export WORKSHOP_GIT_BRANCH=${WORKSHOP_GIT_BRANCH} # Coming from Fn.Sub
+export WORKSHOP_GIT_TAG=${WORKSHOP_GIT_TAG} # Coming from Fn.Sub
 export BASE_DIR=/home/ec2-user/eks-blueprints-for-terraform-workshop
 export GITOPS_DIR=/home/ec2-user/environment/gitops-repos
 export ENVIRONMENT_DIR=/home/ec2-user/environment
@@ -211,7 +212,7 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh
 mkdir -p $BASE_DIR
 git clone $WORKSHOP_GIT_URL $BASE_DIR
 cd $BASE_DIR
-git checkout $WORKSHOP_GIT_BRANCH
+git checkout $WORKSHOP_GIT_TAG
 
 cp hack/.zshrc hack/.p10k.zsh ~/
 
@@ -320,6 +321,7 @@ export ASSETS_BUCKET_PREFIX=$ASSETS_BUCKET_PREFIX
 export BUCKET_NAME=$BUCKET_NAME
 export WORKSHOP_GIT_URL=$WORKSHOP_GIT_URL
 export WORKSHOP_GIT_BRANCH=$WORKSHOP_GIT_BRANCH
+export WORKSHOP_GIT_TAG=$WORKSHOP_GIT_TAG
 export BASE_DIR=$BASE_DIR
 export GITOPS_DIR=$GITOPS_DIR
 EOT

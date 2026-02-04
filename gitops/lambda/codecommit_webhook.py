@@ -40,7 +40,7 @@ def lambda_handler(event, context):
     payload = {
         "ref": "refs/heads/main",
         "repository": {
-            "html_url": f"https://git-codecommit.{region}.amazonaws.com/{repo_name}",           
+            "html_url": f"https://git-codecommit.{region}.amazonaws.com/v1/repos/{repo_name}",           
             "default_branch": branch
         },
         "commits": [{
