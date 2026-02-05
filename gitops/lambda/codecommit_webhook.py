@@ -1,6 +1,8 @@
 import boto3
 import json
 import urllib3
+import hmac
+import hashlib
 
 codecommit = boto3.client('codecommit')
 http = urllib3.PoolManager()
@@ -12,7 +14,12 @@ def lambda_handler(event, context):
     commit_id = event['Records'][0]['codecommit']['references'][0]['commit']
     full_ref = event['Records'][0]['codecommit']['references'][0]['ref']
     branch = full_ref.split('/')[-1]
-    hostname = event['Records'][0].get('customData')
+    
+    # Parse custom_data JSON
+    custom_data_str = event['Records'][0].get('customData')
+    custom_data = json.loads(custom_data_str)
+    hostname = custom_data['hostname']
+    secret = custom_data['secret']
     
     
     # 2. Get the parent commit to find differences
@@ -53,11 +60,17 @@ def lambda_handler(event, context):
     argo_url = hostname+"/api/webhook"
     encoded_data = json.dumps(payload).encode('utf-8')
     
+    signature = hmac.new(secret.encode(), encoded_data, hashlib.sha256).hexdigest()
+    
     response = http.request(
         'POST', 
         argo_url,
         body=encoded_data,
-        headers={'Content-Type': 'application/json', 'X-GitHub-Event': 'push'}
+        headers={
+            'Content-Type': 'application/json',
+            'X-GitHub-Event': 'push',
+            'X-Hub-Signature-256': f'sha256={signature}'
+        }
     )
 
     return {"status": response.status}
