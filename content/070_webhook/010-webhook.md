@@ -24,6 +24,12 @@ cat <<'EOF' >> ~/environment/hub/main.tf
 # Lambda Function for CodeCommit to ArgoCD Webhook
 ################################################################################
 
+# Generate webhook secret
+resource "random_password" "webhook_secret" {
+  length  = 32
+  special = false
+}
+
 # IAM Role for Lambda
 resource "aws_iam_role" "codecommit_webhook_lambda" {
   name = "codecommit-webhook-lambda-role"
@@ -117,8 +123,29 @@ resource "aws_codecommit_trigger" "platform_webhook" {
     name            = "commit"
     events          = ["updateReference"]
     destination_arn = aws_lambda_function.codecommit_webhook.arn
-    custom_data     = aws_eks_capability.argocd.configuration.0.argo_cd.0.server_url
+    custom_data     = jsonencode({
+      hostname = aws_eks_capability.argocd.configuration.0.argo_cd.0.server_url
+      secret   = random_password.webhook_secret.result
+    })
   }
+}
+
+# Update ArgoCD webhook secret
+resource "kubectl_manifest" "argocd_webhook_secret" {
+  force_conflicts   = true
+  server_side_apply = true
+  
+  yaml_body = <<-YAML
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: argocd-webhook-creds-secret
+      namespace: argocd
+    stringData:
+      webhook.github.secret: "${random_password.webhook_secret.result}"
+  YAML
+
+  depends_on = [aws_eks_capability.argocd]
 }
 EOF
 
