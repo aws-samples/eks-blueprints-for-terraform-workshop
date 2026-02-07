@@ -2,6 +2,9 @@
 title: "Webhook Configuration"
 weight: 10
 ---
+<!-- cspell:disable-next-line -->
+::video{id=6wAZruqKBsQ}
+
 
 This configuration sets up an automated webhook system that connects CodeCommit repositories to ArgoCD for on-demand synchronization.
 
@@ -13,8 +16,27 @@ Key Components:
 
 2. Lambda Function: Processes CodeCommit events and sends formatted webhook payloads to ArgoCD.
 
+3. Webhook Secret: A randomly generated secret used to sign webhook requests. For this workshop, we created publicly accessible ArgoCD. The webhook secret prevents public access by ensuring only authenticated requests from our Lambda function can trigger synchronization.
+
 The Flow:
 When you commit to the platform repository's main branch → CodeCommit trigger fires → Lambda function executes → Retrieves commit details and changed files → Sends GitHub-compatible webhook to ArgoCD.
+
+How Webhook Secret Protects:
+
+1. Request Authentication:
+   - Lambda signs payload with HMAC-SHA256 using the secret
+   - ArgoCD verifies signature matches
+   - Only requests with valid signatures are processed
+
+2. Integrity Verification:
+   - Signature is computed from the entire payload
+   - Any tampering invalidates the signature
+   - Ensures payload hasn't been modified in transit
+
+3. Shared Secret Model:
+   - Secret is known only to Lambda and ArgoCD
+   - Stored securely (Terraform state, K8s secret)
+   - Rotatable without code changes
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=terraform}
@@ -150,6 +172,7 @@ resource "kubectl_manifest" "argocd_webhook_secret" {
 EOF
 
 cd ~/environment/hub
+terraform init -upgrade
 terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
