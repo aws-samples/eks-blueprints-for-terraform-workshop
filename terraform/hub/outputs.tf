@@ -34,3 +34,10 @@ output "account_id" {
 output "eks_capability_argocd_arn" {
   value = aws_iam_role.eks_capability_argocd.arn
 }
+
+output "public_subnets" {
+  description = "Map of public subnet IDs"
+  value = {
+    for k, v in module.vpc : k => v.public_subnets
+  }
+}

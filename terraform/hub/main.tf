@@ -408,3 +408,257 @@ resource "aws_codecommit_repository" "retail_store_config" {
 
   tags = local.tags
 }
+
+################################################################################
+# GitLab EC2 + NLB + CodeConnections
+# Append this to terraform/hub/main.tf
+#
+# PREREQUISITE 1: Add public_subnets output to terraform/vpc/outputs.tf:
+#
+#   output "public_subnets" {
+#     description = "Map of public subnet IDs"
+#     value = {
+#       for k, v in module.vpc : k => v.public_subnets
+#     }
+#   }
+#
+# PREREQUISITE 2: Add tls provider to terraform/hub/versions.tf:
+#
+#   tls = {
+#     source  = "hashicorp/tls"
+#     version = ">= 4.0"
+#   }
+################################################################################
+
+################################################################################
+# ENI with known private IP (so cert can include IP SAN before instance exists)
+################################################################################
+resource "aws_network_interface" "gitlab" {
+  subnet_id       = local.private_subnets[0]
+  security_groups = [aws_security_group.gitlab.id]
+  tags = merge(local.tags, { Name = "${local.context_prefix}-gitlab" })
+}
+
+################################################################################
+# Self-Signed TLS Certificate (used by GitLab and CodeConnections)
+################################################################################
+resource "tls_private_key" "gitlab" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_self_signed_cert" "gitlab" {
+  private_key_pem = tls_private_key.gitlab.private_key_pem
+
+  subject {
+    common_name = "gitlab.internal"
+  }
+
+  dns_names = [
+    "gitlab.internal",
+  ]
+
+  ip_addresses = [
+    aws_network_interface.gitlab.private_ip,
+  ]
+
+  validity_period_hours = 8760 # 1 year
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+################################################################################
+# GitLab Security Group
+################################################################################
+resource "aws_security_group" "gitlab" {
+  name_prefix = "gitlab-"
+  vpc_id      = local.vpc_id
+  description = "Security group for GitLab EC2 instance"
+
+  ingress {
+    description = "HTTPS from anywhere (via NLB)"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.tags
+}
+
+################################################################################
+# NLB (Internet-facing)
+################################################################################
+resource "aws_lb" "gitlab" {
+  name               = "gitlab-nlb"
+  internal           = false
+  load_balancer_type = "network"
+  subnets            = data.terraform_remote_state.vpc.outputs.public_subnets["hub"]
+
+  tags = local.tags
+}
+
+resource "aws_lb_target_group" "gitlab" {
+  name        = "gitlab-tg"
+  port        = 443
+  protocol    = "TCP"
+  vpc_id      = local.vpc_id
+  target_type = "instance"
+
+  health_check {
+    protocol            = "TCP"
+    port                = 443
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    interval            = 30
+  }
+
+  tags = local.tags
+}
+
+resource "aws_lb_listener" "gitlab" {
+  load_balancer_arn = aws_lb.gitlab.arn
+  port              = 443
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.gitlab.arn
+  }
+}
+
+resource "aws_lb_target_group_attachment" "gitlab" {
+  target_group_arn = aws_lb_target_group.gitlab.arn
+  target_id        = aws_instance.gitlab.id
+  port             = 443
+}
+
+################################################################################
+# IAM Role for GitLab EC2
+################################################################################
+resource "aws_iam_role" "gitlab" {
+  name_prefix = "gitlab-"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "gitlab_ssm" {
+  role       = aws_iam_role.gitlab.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "gitlab" {
+  name_prefix = "gitlab-"
+  role        = aws_iam_role.gitlab.name
+}
+
+################################################################################
+# GitLab EC2 Instance
+################################################################################
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+resource "aws_instance" "gitlab" {
+  ami                  = data.aws_ami.al2023.id
+  instance_type        = "t2.large"
+  iam_instance_profile = aws_iam_instance_profile.gitlab.name
+
+  network_interface {
+    network_interface_id = aws_network_interface.gitlab.id
+    device_index         = 0
+  }
+
+  root_block_device {
+    volume_size = 30
+    volume_type = "gp3"
+  }
+
+  user_data = base64encode(templatefile("${path.module}/gitlab-userdata.sh", {
+    nlb_dns_name = aws_lb.gitlab.dns_name
+    tls_cert     = tls_self_signed_cert.gitlab.cert_pem
+    tls_key      = tls_private_key.gitlab.private_key_pem
+  }))
+
+  tags = merge(local.tags, {
+    Name = "${local.context_prefix}-gitlab"
+  })
+}
+
+
+
+################################################################################
+# CodeConnections - Host + Connection for GitLab
+################################################################################
+resource "aws_security_group" "codeconnections" {
+  name_prefix = "codeconnections-"
+  vpc_id      = local.vpc_id
+  description = "Security group for CodeConnections Host ENIs"
+
+  egress {
+    description = "HTTPS to GitLab"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [aws_security_group.gitlab.id]
+  }
+
+  tags = local.tags
+}
+
+# Allow GitLab to accept traffic from CodeConnections ENIs
+resource "aws_security_group_rule" "gitlab_from_codeconnections" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.codeconnections.id
+  security_group_id        = aws_security_group.gitlab.id
+  description              = "HTTPS from CodeConnections"
+}
+
+resource "aws_codestarconnections_host" "gitlab" {
+  name              = "gitlab-host"
+  provider_endpoint = "https://${aws_network_interface.gitlab.private_ip}"
+  provider_type     = "GitLabSelfManaged"
+
+  vpc_configuration {
+    vpc_id             = local.vpc_id
+    subnet_ids         = local.private_subnets
+    security_group_ids = [aws_security_group.codeconnections.id]
+    tls_certificate    = tls_self_signed_cert.gitlab.cert_pem
+  }
+}
+
+
