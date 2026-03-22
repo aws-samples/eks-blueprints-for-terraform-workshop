@@ -1064,8 +1064,8 @@
                },
                "AssetsBucketPrefix": "28c283c1-1d60-43fa-a604-4e983e0e8038/",
                "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-               "WORKSHOP_GIT_BRANCH": "main",
-               "WORKSHOP_GIT_TAG": "v2.0.1"
+               "WORKSHOP_GIT_BRANCH": "mainline",
+               "WORKSHOP_GIT_TAG": "gitlab"
               }
              ]
             },
@@ -1282,12 +1282,12 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "main"
+       "Value": "mainline"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v2.0.1"
+       "Value": "gitlab"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1722,12 +1722,12 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "main"
+       "Value": "mainline"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v2.0.1"
+       "Value": "gitlab"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2048,12 +2048,12 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "main"
+       "Value": "mainline"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v2.0.1"
+       "Value": "gitlab"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2374,12 +2374,12 @@
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "main"
+       "Value": "mainline"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v2.0.1"
+       "Value": "gitlab"
       },
       {
        "Name": "FORCE_DELETE_VPC",
