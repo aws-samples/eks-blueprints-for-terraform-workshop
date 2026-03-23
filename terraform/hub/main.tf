@@ -456,6 +456,7 @@ resource "tls_self_signed_cert" "gitlab" {
 
   dns_names = [
     "gitlab.internal",
+    aws_lb.gitlab.dns_name,
   ]
 
   ip_addresses = [
@@ -650,7 +651,9 @@ resource "aws_security_group_rule" "gitlab_from_codeconnections" {
 
 resource "aws_codestarconnections_host" "gitlab" {
   name              = "gitlab-host"
-  provider_endpoint = "https://${aws_network_interface.gitlab.private_ip}"
+  # In production, use a private endpoint (e.g. private IP or internal DNS) accessible via VPN.
+  # Using the internet-facing NLB here so workshop participants can complete the OAuth handshake from their browsers.
+  provider_endpoint = "https://${aws_lb.gitlab.dns_name}"
   provider_type     = "GitLabSelfManaged"
 
   vpc_configuration {

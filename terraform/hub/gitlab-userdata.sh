@@ -60,7 +60,7 @@ docker exec gitlab gitlab-rails runner '
     puts "SUCCESS: User created!"
     token = u.personal_access_tokens.create(
       name: "codeconnections",
-      scopes: ["api", "read_repository", "write_repository"],
+      scopes: ["api", "read_repository"],
       expires_at: 1.year.from_now
     )
     token.set_token("glpat-workshop-token-12345")
