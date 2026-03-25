@@ -628,11 +628,11 @@ resource "aws_security_group" "codeconnections" {
   description = "Security group for CodeConnections Host ENIs"
 
   egress {
-    description = "HTTPS to GitLab"
+    description = "HTTPS outbound"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    security_groups = [aws_security_group.gitlab.id]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = local.tags
