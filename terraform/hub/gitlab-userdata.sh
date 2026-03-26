@@ -75,8 +75,8 @@ docker exec gitlab gitlab-rails runner "
   user = User.find_by_username('gitlab')
   org = Organizations::Organization.default_organization
   project_params = {
-    name: 'my-new-repo',
-    path: 'my-new-repo',
+    name: 'guestbook',
+    path: 'guestbook',
     namespace_id: user.namespace.id,
     organization_id: org.id,
     visibility_level: Gitlab::VisibilityLevel::PRIVATE
@@ -91,7 +91,7 @@ docker exec gitlab gitlab-rails runner "
 # Add manifest files to repo
 docker exec gitlab gitlab-rails runner "
   user = User.find_by_username('gitlab')
-  project = Project.find_by_full_path('gitlab/my-new-repo')
+  project = Project.find_by_full_path('gitlab/guestbook')
 
   deploy_yaml = <<~YAML
     apiVersion: apps/v1
@@ -109,7 +109,7 @@ docker exec gitlab gitlab-rails runner "
             app: guestbook-ui
         spec:
           containers:
-          - image: gcr.io/heptio-images/ks-guestbook-demo:0.2
+          - image: quay.io/argoprojlabs/argocd-e2e-container:0.2
             name: guestbook-ui
             ports:
             - containerPort: 80
@@ -149,5 +149,33 @@ docker exec gitlab gitlab-rails runner "
   else
     puts 'ERROR: User gitlab not found.'
   end"
+
+# Create argocd-bot service account with Reporter (read-only) access to the repo
+docker exec gitlab gitlab-rails runner '
+  org = Organizations::Organization.first
+  bot = User.new(
+    username: "argocd-bot",
+    email: "argocd-bot@example.com",
+    name: "ArgoCD Bot",
+    password: "argocdonaws",
+    password_confirmation: "argocdonaws",
+    admin: false,
+    organization_id: org.id
+  )
+  bot.build_namespace(path: bot.username, name: bot.username, organization_id: org.id)
+  bot.skip_confirmation!
+  if bot.save
+    puts "SUCCESS: argocd-bot user created"
+    org.organization_users.create!(user: bot, access_level: :default)
+    project = Project.find_by_full_path("gitlab/guestbook")
+    member = project.add_member(bot, Gitlab::Access::REPORTER)
+    if member.persisted?
+      puts "SUCCESS: argocd-bot added as Reporter to #{project.full_path}"
+    else
+      puts "FAILED to add to project: #{member.errors.full_messages}"
+    end
+  else
+    puts "FAILED: #{bot.errors.full_messages}"
+  end'
 
 echo "GitLab setup complete!"
