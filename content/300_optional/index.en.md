@@ -1,7 +1,6 @@
 ---
 title: "Optional Labs"
-weight: 200
-hidden: true
+weight: 300
 ---
 
 Optional Labs
