@@ -49,6 +49,7 @@ docker exec gitlab gitlab-rails runner '
   settings.password_lowercase_required = false
   settings.password_uppercase_required = false
   settings.password_symbol_required = false
+  settings.password_dictionary_check = false
   settings.save!
   puts "SUCCESS: Password policy relaxed"
 '
@@ -175,7 +176,7 @@ docker exec gitlab gitlab-rails runner '
   )
   bot.build_namespace(path: bot.username, name: bot.username, organization_id: org.id)
   bot.skip_confirmation!
-  if bot.save
+  if bot.save(validate: false)
     puts "SUCCESS: argocd-bot user created"
     org.organization_users.create!(user: bot, access_level: :default)
     project = Project.find_by_full_path("gitlab/guestbook")
