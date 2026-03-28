@@ -42,6 +42,17 @@ until docker exec gitlab curl -skf https://localhost/gitlab/-/readiness > /dev/n
 done
 echo "GitLab is ready!"
 
+# Relax password policy for workshop users
+docker exec gitlab gitlab-rails runner '
+  settings = ApplicationSetting.current
+  settings.password_number_required = false
+  settings.password_lowercase_required = false
+  settings.password_uppercase_required = false
+  settings.password_symbol_required = false
+  settings.save!
+  puts "SUCCESS: Password policy relaxed"
+'
+
 # Create admin user and PAT
 docker exec gitlab gitlab-rails runner '
   org = Organizations::Organization.first
@@ -152,13 +163,6 @@ docker exec gitlab gitlab-rails runner "
 
 # Create argocd-bot service account with Reporter (read-only) access to the repo
 docker exec gitlab gitlab-rails runner '
-  settings = ApplicationSetting.current
-  settings.password_number_required = false
-  settings.password_lowercase_required = false
-  settings.password_uppercase_required = false
-  settings.password_symbol_required = false
-  settings.save!
-
   org = Organizations::Organization.first
   bot = User.new(
     username: "argocd-bot",
