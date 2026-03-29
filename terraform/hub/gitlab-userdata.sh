@@ -49,7 +49,6 @@ docker exec gitlab gitlab-rails runner '
   settings.password_lowercase_required = false
   settings.password_uppercase_required = false
   settings.password_symbol_required = false
-  settings.password_dictionary_check = false
   settings.save!
   puts "SUCCESS: Password policy relaxed"
 '
