@@ -71,7 +71,7 @@ Click **Create connection**.
 
 1. Select **GitLab Self Managed** as the provider
 2. Enter a connection name (e.g., `gitlab-connection`)
-3. Under **URL**, enter the host provider URL. You can get this from the terminal:
+3. Under **URL**, enter the "Endpoint" from Hosts tab or you can get this from the terminal:
    <!-- prettier-ignore-start -->
    :::code{showCopyAction=true showLineNumbers=false language=bash }
    gitlab_url
@@ -86,10 +86,92 @@ Click **Create connection**.
 
 The connection will be created in **Pending** status. Click **Update pending connection** to complete the OAuth handshake.
 
-This will redirect your browser to your GitLab instance. Log in with credentials **gitlab/argocdonaws** and click **Authorize** to grant CodeConnections access.
+This will redirect your browser to your GitLab instance. Log in with credentials **argocd-bot/argocdonaws** and click **Authorize AWS Connector for Gitlab Self-Managed** to grant CodeConnections access.
 
-<!-- TODO: Add screenshot of GitLab OAuth authorize page -->
+In the "Confirm Installation with Host Instance" dialog, click **Continue**.
 
-After authorization, the connection status should change from **Pending** to **Available**.
+When you clicked **Authorize**, CodeConnections used the OAuth application registered on your GitLab instance (during host setup) to obtain an OAuth token on behalf of the `argocd-bot` user. This token inherits the permissions of `argocd-bot` — which has Reporter (read-only) access to the `guestbook` repository. Going forward, any AWS service that uses this connection will access GitLab through this OAuth token, scoped to what `argocd-bot` can see and do.
 
-<!-- TODO: Add screenshot of connection in Available status -->
+After confirmation, the connection status should change from **Pending** to **Available**.
+
+::alert[The `argocd-bot` user has the **Reporter** role on the `guestbook` repository. This is a read-only role that allows cloning and pulling code, viewing pipelines, and browsing repository content — but cannot push, create branches, or merge. This follows the principle of least privilege, since ArgoCD only needs to read manifests from the repository.]{header="Note" type="info"}
+
+![Argocd bot token](/static/images/codeconnections/argocd-bot-token.png)
+
+## Validate CodeConnections
+
+Now that the connection is active, let's validate it end-to-end by deploying an application from the GitLab repository through CodeConnections. We'll grant the ArgoCD capability permission to use the connection, create an AppProject to scope access, and then create an Application that pulls manifests from the `guestbook` repo.
+
+### 5. Add CodeConnection access
+
+The ArgoCD capability role needs `codeconnections:UseConnection` permission to access repositories through the connection.
+
+<!-- prettier-ignore-start -->
+
+:::code{showCopyAction=true showLineNumbers=false language=bash}
+cat <<'EOF' >> ~/environment/hub/main.tf
+resource "aws_iam_role_policy" "argocd_codeconnection" {
+  name = "argocd-codeconnection-access"
+  role = aws_iam_role.eks_capability_argocd.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "codeconnections:UseConnection"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+EOF
+
+cd ~/environment/hub
+terraform apply --auto-approve
+:::
+<!-- prettier-ignore-end -->
+
+### 6. Create Project
+
+The `default` AppProject is locked down. We create a dedicated `codeconnections-demo` project that allows CodeConnections repo URLs as sources and restricts deployments to the hub cluster.
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+mkdir -p ~/environment/basics
+cd ~/environment/basics
+cp  $WORKSHOP_DIR/gitops/templates/project/codeconnections-demo.yaml ~/environment/basics
+kubectl apply -f codeconnections-demo.yaml.yaml
+:::
+<!-- prettier-ignore-end -->
+
+### 7. Create Application
+
+Navigate to the ArgoCD dashboard and click **+ NEW APP**. Enter the following values:
+
+| Field            | Value                               |
+| ---------------- | ----------------------------------- |
+| Application Name | `guestbook-codeconnections`         |
+| Project          | `codeconnections-demo`              |
+| Sync Policy      | `Automatic`                         |
+| Revision         | `HEAD`                              |
+| Path             | `.`                                 |
+| Cluster URL      | Select the `argocd-hub` cluster URL |
+| Namespace        | `default`                           |
+
+For the **Source** repository URL, run the following command in your terminal and paste the output:
+
+<!-- prettier-ignore-start -->
+:::code{showCopyAction=true showLineNumbers=false language=bash }
+codeconnection_url
+:::
+<!-- prettier-ignore-end -->
+
+This returns a URL in the format `https://codeconnections.<region>.amazonaws.com/git-http/<account-id>/<region>/<connection-id>/gitlab/guestbook.git`.
+
+Click **CREATE**.
+
+ArgoCD will use the CodeConnection to pull manifests from the GitLab `guestbook` repository and deploy the application to the hub cluster.
+
+<!-- TODO: Add screenshot of guestbook application synced -->

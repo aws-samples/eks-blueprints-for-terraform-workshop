@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: codeconnections-demo
+  namespace: argocd
+spec:
+  description: "Project for CodeConnections demo - access to GitLab repos via AWS CodeConnections"
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: '*'
+      name: hub
+  clusterResourceWhitelist: []
+  sourceNamespaces:
+    - argocd
