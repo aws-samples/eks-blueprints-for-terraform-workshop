@@ -3,7 +3,9 @@ title: "CodeConnections"
 weight: 010
 ---
 
-::alert[In this chapter, AWS CodeConnections is used to connect ArgoCD to a private GitLab repository. GitLab runs on a private network and CodeConnections accesses it through a VPC configuration. However, the CodeConnections OAuth setup requires your browser to reach GitLab directly to approve the connection. Since workshop participants don't have VPN access to the private network, GitLab is exposed via an internet-facing load balancer for this step. In your organization, you would complete the OAuth handshake from a machine on the private network (e.g., via VPN) and keep GitLab fully private ]{header="Important" type="warning"}
+In this chapter, you'll connect ArgoCD to a private GitLab repository using AWS CodeConnections. CodeConnections works by registering an OAuth application on your GitLab instance, then using OAuth tokens to securely access repositories. AWS manages the token lifecycle — including automatic renewal and secure storage — so there are no long-lived credentials to manage or rotate.
+
+::alert[In this chapter, AWS CodeConnections is used to connect ArgoCD to a private GitLab repository. GitLab runs on a private network and CodeConnections accesses it through a VPC configuration. However, the CodeConnections OAuth setup requires your browser to reach GitLab directly to approve the connection. Since workshop participants don't have VPN access to the private network, GitLab is exposed via an internet-facing network load balancer for this step. In your organization, you would complete the OAuth handshake from a machine on the private network and keep GitLab fully private. ]{header="Important" type="warning"}
 
 ### 1. Access the Gitlab
 
@@ -15,9 +17,11 @@ gitlab_url
 :::
 <!-- prettier-ignore-end -->
 
+![Gitlab Initial](/static/images/codeconnections/gitlab-initial.png)
+
 You will login with credentials **gitlab/argocdonaws**
 
-::alert[You'll see a browser warning about an untrusted certificate. This is expected — the workshop uses a self-signed cert. Proceed past the warning to access GitLab ]{header="Important" type="warning"}
+::alert[You'll see a browser warning about an untrusted certificate. This is expected — the workshop uses a self-signed cert. Proceed past the warning to access GitLab. ]{header="Important" type="warning"}
 
 On the left navigation select Projects. Then select "Gitlab Admin / guestbook" project.
 
@@ -83,6 +87,8 @@ Click **Create connection**.
 ![Create Connection Values](/static/images/codeconnections/create-connection-values.png)
 
 ### 4. Update Connection
+
+::alert[Before proceeding, make sure you are logged out of the GitLab console. If you're still logged in as the `gitlab` admin user, the OAuth authorization will use the admin's credentials instead of the dedicated service account, giving the connection full access to all repos. Log out first — the OAuth flow will prompt you to log in with the correct user.]{header="Important" type="warning"}
 
 The connection will be created in **Pending** status. Click **Update pending connection** to complete the OAuth handshake.
 
