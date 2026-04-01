@@ -86,9 +86,13 @@ Click **Create connection**.
 
 ![Create Connection Values](/static/images/codeconnections/create-connection-values.png)
 
-### 4. Update Connection
+### 4. Log out of GitLab
 
-::alert[Before proceeding, make sure you are logged out of the GitLab console. If you're still logged in as the `gitlab` admin user, the OAuth authorization will use the admin's credentials instead of the dedicated service account, giving the connection full access to all repos. Log out first — the OAuth flow will prompt you to log in with the correct user.]{header="Important" type="warning"}
+In the next step, you will authorize the OAuth application as the `argocd-bot` user. The OAuth authorization uses whichever GitLab user is currently logged in — if you stay logged in as the `gitlab` admin, the connection gets full access to all repos instead of the scoped access of `argocd-bot`. Log out of the GitLab console now before proceeding.
+
+![Gitlab Logoff](/static/images/codeconnections/gitlab-logoff.png)
+
+### 5. Update Connection
 
 The connection will be created in **Pending** status. Click **Update pending connection** to complete the OAuth handshake.
 
@@ -108,7 +112,7 @@ After confirmation, the connection status should change from **Pending** to **Av
 
 Now that the connection is active, let's validate it end-to-end by deploying an application from the GitLab repository through CodeConnections. We'll grant the ArgoCD capability permission to use the connection, create an AppProject to scope access, and then create an Application that pulls manifests from the `guestbook` repo.
 
-### 5. Add CodeConnection access
+### 6. Add CodeConnection access
 
 The ArgoCD capability role needs `codeconnections:UseConnection` permission to access repositories through the connection.
 
@@ -139,7 +143,7 @@ terraform apply --auto-approve
 :::
 <!-- prettier-ignore-end -->
 
-### 6. Create Project
+### 7. Create Project
 
 The `default` AppProject is locked down. We create a dedicated `codeconnections-demo` project that allows CodeConnections repo URLs as sources and restricts deployments to the hub cluster.
 
@@ -148,25 +152,28 @@ The `default` AppProject is locked down. We create a dedicated `codeconnections-
 mkdir -p ~/environment/basics
 cd ~/environment/basics
 cp  $WORKSHOP_DIR/gitops/templates/project/codeconnections-demo.yaml ~/environment/basics
-kubectl apply -f codeconnections-demo.yaml.yaml
+kubectl apply -f codeconnections-demo.yaml
 :::
 <!-- prettier-ignore-end -->
 
-### 7. Create Application
+### 8. Create Application
 
 Navigate to the ArgoCD dashboard and click **+ NEW APP**. Enter the following values:
 
-| Field            | Value                               |
-| ---------------- | ----------------------------------- |
-| Application Name | `guestbook-codeconnections`         |
-| Project          | `codeconnections-demo`              |
-| Sync Policy      | `Automatic`                         |
-| Revision         | `HEAD`                              |
-| Path             | `.`                                 |
-| Cluster URL      | Select the `argocd-hub` cluster URL |
-| Namespace        | `default`                           |
+![Guestbook Codeconnections](/static/images/codeconnections/guestbook-codeconnections.png)
 
-For the **Source** repository URL, run the following command in your terminal and paste the output:
+| Field            | Value                                            |
+| ---------------- | ------------------------------------------------ |
+| Application Name | `guestbook-codeconnections`                      |
+| Project          | `codeconnections-demo`                           |
+| Sync Policy      | `Automatic`                                      |
+| Repository URL   | Run `codeconnection_url` in terminal (see below) |
+| Revision         | `HEAD`                                           |
+| Path             | `.`                                              |
+| Cluster URL      | Select the `argocd-hub` cluster URL              |
+| Namespace        | `default`                                        |
+
+For the **Repository URL**, run the following command in your terminal and paste the output:
 
 <!-- prettier-ignore-start -->
 :::code{showCopyAction=true showLineNumbers=false language=bash }
