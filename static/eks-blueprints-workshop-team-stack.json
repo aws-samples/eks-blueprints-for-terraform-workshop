@@ -1018,7 +1018,7 @@
                },
                "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
                "WORKSHOP_GIT_BRANCH": "mainline",
-               "WORKSHOP_GIT_TAG": "gitlab"
+               "WORKSHOP_GIT_TAG": "v3.0.0"
               }
              ]
             },
@@ -1240,7 +1240,7 @@
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "gitlab"
+       "Value": "v3.0.0"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1680,7 +1680,7 @@
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "gitlab"
+       "Value": "v3.0.0"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2006,7 +2006,7 @@
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "gitlab"
+       "Value": "v3.0.0"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2332,7 +2332,7 @@
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "gitlab"
+       "Value": "v3.0.0"
       },
       {
        "Name": "FORCE_DELETE_VPC",

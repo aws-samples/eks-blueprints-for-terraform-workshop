@@ -3,6 +3,10 @@ title: "CodeConnections"
 weight: 010
 ---
 
+<!-- cspell:disable-next-line -->
+
+::video{id=7QJNx3T97AA}
+
 In this chapter, you'll connect ArgoCD to a private GitLab repository using AWS CodeConnections. CodeConnections works by registering an OAuth application on your GitLab instance, then using OAuth tokens to securely access repositories. AWS manages the token lifecycle — including automatic renewal and secure storage — so there are no long-lived credentials to manage or rotate.
 
 ::alert[In this chapter, AWS CodeConnections is used to connect ArgoCD to a private GitLab repository. GitLab runs on a private network and CodeConnections accesses it through a VPC configuration. However, the CodeConnections OAuth setup requires your browser to reach GitLab directly to approve the connection. Since workshop participants don't have VPN access to the private network, GitLab is exposed via an internet-facing network load balancer for this step. In your organization, you would complete the OAuth handshake from a machine on the private network and keep GitLab fully private. ]{header="Important" type="warning"}
