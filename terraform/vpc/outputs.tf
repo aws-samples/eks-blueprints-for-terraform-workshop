@@ -11,7 +11,12 @@ output "private_subnets" {
     for k, v in module.vpc : k => v.private_subnets
   }
 }
-
+output "public_subnets" {
+  description = "Map of public subnet IDs"
+  value = {
+    for k, v in module.vpc : k => v.public_subnets
+  }
+}
 
 output "vpc_names" {
   description = "Map of VPC names"

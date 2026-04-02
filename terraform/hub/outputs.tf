@@ -34,3 +34,4 @@ output "account_id" {
 output "eks_capability_argocd_arn" {
   value = aws_iam_role.eks_capability_argocd.arn
 }
+

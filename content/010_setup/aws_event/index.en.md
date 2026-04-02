@@ -10,8 +10,6 @@ weight: 10
 
 ## Running the workshop at an AWS Event
 
-::alert[If You are not currently participating in an AWS organized workshop event, this section does not apply. Please skip to setup [..on your own](../self_paced).]{header="Important" type="warning"}
-
 For this workshop, You will be provided with an AWS account through AWS Workshop Studio. Our event staff will share a link to access it. AWS Workshop Studio enables AWS field teams to run Workshops, GameDays, Bootcamps, Immersion Days, and other events requiring hands-on access to AWS accounts.
 
 ::alert[If you are currently logged in to an AWS Account, you can log out using this [link](https://console.aws.amazon.com/console/logout!doLogout).]{header="Important" type="warning"}

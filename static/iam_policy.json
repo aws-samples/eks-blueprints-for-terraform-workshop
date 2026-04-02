@@ -15,6 +15,7 @@
             "codebuild:*",
             "s3:*",
             "codecommit:*",
+            "codeconnections:*",
             "ds:*",
             "lambda:*",
             "sso:*",

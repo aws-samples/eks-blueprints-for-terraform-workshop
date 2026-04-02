@@ -2,9 +2,10 @@
 title: "Webhook Configuration"
 weight: 10
 ---
-<!-- cspell:disable-next-line -->
-::video{id=6wAZruqKBsQ}
 
+<!-- cspell:disable-next-line -->
+
+::video{id=6wAZruqKBsQ}
 
 This configuration sets up an automated webhook system that connects CodeCommit repositories to ArgoCD for on-demand synchronization.
 
@@ -24,11 +25,13 @@ When you commit to the platform repository's main branch → CodeCommit trigger 
 How Webhook Secret Protects:
 
 1. Request Authentication:
+
    - Lambda signs payload with HMAC-SHA256 using the secret
    - ArgoCD verifies signature matches
    - Only requests with valid signatures are processed
 
 2. Integrity Verification:
+
    - Signature is computed from the entire payload
    - Any tampering invalidates the signature
    - Ensures payload hasn't been modified in transit
