@@ -148,26 +148,26 @@ curl -sS https://webinstall.dev/k9s | bash
 helm repo add eks https://aws.github.io/eks-charts
 helm repo update
 
-#Install Krew and stern
-(
-  cd \$(mktemp -d) && pwd &&
-  OS=\$(uname | tr '[:upper:]' '[:lower:]') &&
-  ARCH=\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') &&
-  KREW=krew-\${!OS}_\${!ARCH} && echo \$KREW
-  curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\${!KREW}.tar.gz &&
-  tar zxvf \${!KREW}.tar.gz &&
-  ./\${!KREW} install krew
-)
-echo "export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH" | tee -a ~/.bashrc
-export PATH=${!KREW_ROOT:-/home/ec2-user/.krew}/bin:/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH
-kubectl krew install stern
-kubectl krew install np-viewer 
+# #Install Krew and stern
+# (
+#   cd \$(mktemp -d) && pwd &&
+#   OS=\$(uname | tr '[:upper:]' '[:lower:]') &&
+#   ARCH=\$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/') &&
+#   KREW=krew-\${!OS}_\${!ARCH} && echo \$KREW
+#   curl -fsSLO https://github.com/kubernetes-sigs/krew/releases/latest/download/\${!KREW}.tar.gz &&
+#   tar zxvf \${!KREW}.tar.gz &&
+#   ./\${!KREW} install krew
+# )
+# kubectl krew install stern
+# kubectl krew install np-viewer
+echo "export PATH=/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH" | tee -a ~/.bashrc
+export PATH=/home/ec2-user/.local/bin:/usr/local/go/bin:~/go/bin:$PATH
 
-go install github.com/kyverno/chainsaw@latest
+# go install github.com/kyverno/chainsaw@latest
 go install github.com/isovalent/aws-delete-vpc@latest
 
-pip install pytest
-pip install pytest_bdd boto3 kubernetes
+# pip install pytest
+# pip install pytest_bdd boto3 kubernetes
 
 curl -sfL https://direnv.net/install.sh | bash
 
