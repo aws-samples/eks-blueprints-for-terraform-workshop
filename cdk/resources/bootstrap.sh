@@ -93,11 +93,11 @@ sudo chmod 755 /usr/local/bin/wait-for-lb-argocd
 sudo curl --silent --location -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 sudo chmod +x /usr/bin/kubectl
 
-sudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64
-sudo chmod +x /usr/bin/argocd
+# sudo curl --silent --location -o /usr/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.2/argocd-linux-amd64
+# sudo chmod +x /usr/bin/argocd
 
-sudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
-sudo chmod +x /usr/local/bin/kubectl-argo-rollouts
+# sudo curl -Lo /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+# sudo chmod +x /usr/local/bin/kubectl-argo-rollouts
 
 curl --silent --location "https://get.helm.sh/helm-v3.10.1-linux-amd64.tar.gz" | tar xz -C /tmp
 sudo mv -f /tmp/linux-amd64/helm /usr/bin
@@ -108,14 +108,14 @@ cd /tmp && unzip -o /tmp/terraform.zip && cd -
 chmod +x /tmp/terraform
 sudo mv -f /tmp/terraform /usr/bin
 
-sudo curl --silent --location "https://go.dev/dl/go1.23.1.linux-amd64.tar.gz" | sudo tar xz -C /usr/local
+# sudo curl --silent --location "https://go.dev/dl/go1.23.1.linux-amd64.tar.gz" | sudo tar xz -C /usr/local
 
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-chmod +x /tmp/eksctl
-sudo mv /tmp/eksctl /usr/local/bin
-curl -sSL "https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz" | tar xz -C /tmp
-chmod +x /tmp/eksdemo
-mv /tmp/eksdemo /usr/local/bin  
+# curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+# chmod +x /tmp/eksctl
+# sudo mv /tmp/eksctl /usr/local/bin
+# curl -sSL "https://github.com/awslabs/eksdemo/releases/download/v0.12.0/eksdemo_Linux_x86_64.tar.gz" | tar xz -C /tmp
+# chmod +x /tmp/eksdemo
+# mv /tmp/eksdemo /usr/local/bin  
 
 
 
@@ -171,28 +171,49 @@ pip install pytest_bdd boto3 kubernetes
 
 curl -sfL https://direnv.net/install.sh | bash
 
+#Install Kiro CLI
+curl -fsSL https://cli.kiro.dev/install -o /tmp/install-kiro-cli.sh
+chown ec2-user:ec2-user /tmp/install-kiro-cli.sh
+sudo -u ec2-user bash /tmp/install-kiro-cli.sh 2>&1
+echo "Kiro CLI installed. Checking configuration"
+sudo -i -u ec2-user kiro-cli --version
+
+# Configure Kiro CLI to load MCP servers before prompting
+sudo -H -u ec2-user bash -c "/home/ec2-user/.local/bin/kiro-cli settings mcp.initTimeout 30000"
+
+# Set default agent to kiro_argo_agent
+sudo -H -u ec2-user bash -c "/home/ec2-user/.local/bin/kiro-cli settings chat.defaultAgent kiro_argo_agent"
+
+# Turn on experimental thinking mode in Kiro CLI
+sudo -H -u ec2-user bash -c "/home/ec2-user/.local/bin/kiro-cli settings chat.enableThinking true"
+
+# Set default model to Claude Sonnet 4.5
+sudo -H -u ec2-user bash -c "/home/ec2-user/.local/bin/kiro-cli settings chat.defaultModel 'claude-sonnet-4.5'"
+
+
+
 #Try Install some VsCode plugins
 /usr/lib/code-server/bin/code-server --install-extension hashicorp.terraform || true
-/usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders || true
-/usr/lib/code-server/bin/code-server --install-extension amazonwebservices.amazon-q-vscode || true
+# /usr/lib/code-server/bin/code-server --install-extension moshfeu.compare-folders || true
+# /usr/lib/code-server/bin/code-server --install-extension amazonwebservices.amazon-q-vscode || true
 
-#Install Amazon Q
-curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "/tmp/q.zip"
-unzip /tmp/q.zip -d /tmp
-/tmp/q/install.sh --no-confirm
+# #Install Amazon Q
+# curl --proto '=https' --tlsv1.2 -sSf "https://desktop-release.q.us-east-1.amazonaws.com/latest/q-x86_64-linux.zip" -o "/tmp/q.zip"
+# unzip /tmp/q.zip -d /tmp
+# /tmp/q/install.sh --no-confirm
 
-#Install ag silver search
-## Install build dependencies
-sudo dnf install -y git gcc make pkg-config automake autoconf pcre-devel xz-devel zlib-devel
-## Clone the repository, build and install from source
-cd /tmp && git clone https://github.com/ggreer/the_silver_searcher.git && \
-cd the_silver_searcher && \
-./build.sh && \
-sudo make install
+# #Install ag silver search
+# ## Install build dependencies
+# sudo dnf install -y git gcc make pkg-config automake autoconf pcre-devel xz-devel zlib-devel
+# ## Clone the repository, build and install from source
+# cd /tmp && git clone https://github.com/ggreer/the_silver_searcher.git && \
+# cd the_silver_searcher && \
+# ./build.sh && \
+# sudo make install
 
-#Install fuzzy search
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install --all  
+# #Install fuzzy search
+# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+# ~/.fzf/install --all  
 
 #Install zsh
 sudo -k chsh -s /bin/zsh ec2-user

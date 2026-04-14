@@ -5,6 +5,7 @@ import * as eks from "aws-cdk-lib/aws-eks";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 import { VSCodeIde } from "@workshop-cdk-constructs/vscode-ide";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
 import {
   CdkSynthMode,
   WorkshopStudioTeamStack,
@@ -86,6 +87,10 @@ export class TeamStack extends WorkshopStudioTeamStack {
       bootstrapTimeoutMinutes: 30,
       enableGitea: false,
       codeServerVersion: "4.107.0",
+      instanceType: ec2.InstanceType.of(
+        ec2.InstanceClass.M5,
+        ec2.InstanceSize.LARGE,
+      ),
     });
 
     // if (this.getCdkSynthMode() !== CdkSynthMode.SynthWorkshopStudio) {
