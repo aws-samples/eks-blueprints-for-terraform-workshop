@@ -93,44 +93,46 @@ module "eks" {
 
 
 ################################################################################
-# SSO - Enable IAM Identity Center if not already enabled
+# IAM Identity Center instance
+# Creation has moved to CDK (cdk/lib/team-stack.ts, sso.CfnInstance), which
+# creates it before this stack runs and deletes it after terraform destroy.
+# The block below is kept for reference only, e.g. for running outside
+# Workshop Studio, where Identity Center must already be enabled.
 ################################################################################
-resource "terraform_data" "enable_sso" {
-  provisioner "local-exec" {
-    command = <<-EOT
-      set -e
-      echo "Checking SSO status in region ${local.region}..."
-      
-      if ! aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
-        echo "Enabling IAM Identity Center..."
-        aws sso-admin create-instance --region ${local.region}
-        
-        # Wait for SSO to be ready
-        echo "Waiting for SSO to be ready..."
-        for i in {1..60}; do
-          if aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances[] | select(.Status == "ACTIVE")' > /dev/null 2>&1; then
-            echo "SSO is ready - printing instance details:"
-            aws sso-admin list-instances --region ${local.region} --output json
-            sleep 5  # Extra buffer
-            break
-          fi
-          echo "Waiting for SSO to become ACTIVE... ($i/60)"
-          sleep 10
-        done
-      else
-        echo "IAM Identity Center already enabled"
-      fi
-      
-      # Verify SSO is working
-      aws sso-admin list-instances --region ${local.region} --output json
-    EOT
-  }
-}
+# resource "terraform_data" "enable_sso" {
+#   provisioner "local-exec" {
+#     command = <<-EOT
+#       set -e
+#       echo "Checking SSO status in region ${local.region}..."
+#
+#       if ! aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances | length > 0' > /dev/null 2>&1; then
+#         echo "Enabling IAM Identity Center..."
+#         aws sso-admin create-instance --region ${local.region}
+#
+#         # Wait for SSO to be ready
+#         echo "Waiting for SSO to be ready..."
+#         for i in {1..60}; do
+#           if aws sso-admin list-instances --region ${local.region} --output json | jq -e '.Instances[] | select(.Status == "ACTIVE")' > /dev/null 2>&1; then
+#             echo "SSO is ready - printing instance details:"
+#             aws sso-admin list-instances --region ${local.region} --output json
+#             sleep 5  # Extra buffer
+#             break
+#           fi
+#           echo "Waiting for SSO to become ACTIVE... ($i/60)"
+#           sleep 10
+#         done
+#       else
+#         echo "IAM Identity Center already enabled"
+#       fi
+#
+#       # Verify SSO is working
+#       aws sso-admin list-instances --region ${local.region} --output json
+#     EOT
+#   }
+# }
 
-# Get SSO instance details with validation
-data "aws_ssoadmin_instances" "main" {
-  depends_on = [terraform_data.enable_sso]
-}
+# Look up the Identity Center instance created by CDK
+data "aws_ssoadmin_instances" "main" {}
 
 # Validate that we have SSO instances
 locals {
@@ -146,7 +148,7 @@ resource "terraform_data" "validate_sso" {
   lifecycle {
     precondition {
       condition     = local.sso_instances_count > 0
-      error_message = "No SSO instances found. SSO enablement may have failed."
+      error_message = "No SSO instances found. It should be created by the CDK stack (cdk/lib/team-stack.ts)."
     }
     
     precondition {

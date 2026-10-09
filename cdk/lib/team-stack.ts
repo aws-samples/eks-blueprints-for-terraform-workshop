@@ -3,6 +3,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import { aws_s3 as s3 } from "aws-cdk-lib";
 import * as eks from "aws-cdk-lib/aws-eks";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as sso from "aws-cdk-lib/aws-sso";
 import { Construct } from "constructs";
 import { VSCodeIde } from "@workshop-cdk-constructs/vscode-ide";
 import {
@@ -275,6 +276,16 @@ export class TeamStack extends WorkshopStudioTeamStack {
       //removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
     hubRunner.customResource.node.addDependency(commonRunner.customResource);
+
+    // Enable IAM Identity Center (Workshop Studio accounts only).
+    if (this.getCdkSynthMode() === CdkSynthMode.SynthWorkshopStudio) {
+      const idcInstance = new sso.CfnInstance(this, "IdentityCenterInstance", {
+        name: "eks-blueprints-workshop",
+        tags: [{ key: "Name", value: "eks-blueprints-workshop/IdentityCenter" }],
+      });
+      // Create the instance before hub terraform apply; delete it after hub terraform destroy.
+      hubRunner.customResource.node.addDependency(idcInstance);
+    }
 
     const spokeDevRunner = new CodeBuildCustomResource(this, "EKSWSSPOKEDEV", {
       buildspec: buildspecSpoke,
