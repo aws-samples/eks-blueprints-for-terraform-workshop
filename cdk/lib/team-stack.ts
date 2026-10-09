@@ -281,7 +281,9 @@ export class TeamStack extends WorkshopStudioTeamStack {
     if (this.getCdkSynthMode() === CdkSynthMode.SynthWorkshopStudio) {
       const idcInstance = new sso.CfnInstance(this, "IdentityCenterInstance", {
         name: "eks-blueprints-workshop",
-        tags: [{ key: "Name", value: "eks-blueprints-workshop/IdentityCenter" }],
+        tags: [
+          { key: "Name", value: "eks-blueprints-workshop/IdentityCenter" },
+        ],
       });
       // Create the instance before hub terraform apply; delete it after hub terraform destroy.
       hubRunner.customResource.node.addDependency(idcInstance);

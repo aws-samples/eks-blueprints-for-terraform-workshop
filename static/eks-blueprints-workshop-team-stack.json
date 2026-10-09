@@ -1016,9 +1016,9 @@
                "AssetsBucketPrefix": {
                 "Ref": "AssetsBucketPrefix"
                },
-               "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
-               "WORKSHOP_GIT_BRANCH": "mainline",
-               "WORKSHOP_GIT_TAG": "v3.0.0"
+               "WORKSHOP_GIT_URL": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop",
+               "WORKSHOP_GIT_BRANCH": "idc-instance-cdk",
+               "WORKSHOP_GIT_TAG": "idc-instance-cdk"
               }
              ]
             },
@@ -1230,17 +1230,17 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v3.0.0"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1670,17 +1670,17 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v3.0.0"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -1963,10 +1963,23 @@
     "EKSWSHUBBuildCompleteRuleA0A3788F",
     "EKSWSHUBReportBuildFunctionD4882511",
     "EKSWSHUBReportBuildFunctionServiceRoleDefaultPolicy141A1EFC",
-    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66"
+    "EKSWSHUBReportBuildFunctionServiceRoleA69C4D66",
+    "IdentityCenterInstance"
    ],
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete"
+  },
+  "IdentityCenterInstance": {
+   "Type": "AWS::SSO::Instance",
+   "Properties": {
+    "Name": "eks-blueprints-workshop",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "eks-blueprints-workshop/IdentityCenter"
+     }
+    ]
+   }
   },
   "EKSWSSPOKEDEVStackDeployProject18023A0D": {
    "Type": "AWS::CodeBuild::Project",
@@ -1996,17 +2009,17 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v3.0.0"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "FORCE_DELETE_VPC",
@@ -2322,17 +2335,17 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
        "Type": "PLAINTEXT",
-       "Value": "mainline"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "WORKSHOP_GIT_TAG",
        "Type": "PLAINTEXT",
-       "Value": "v3.0.0"
+       "Value": "idc-instance-cdk"
       },
       {
        "Name": "FORCE_DELETE_VPC",
