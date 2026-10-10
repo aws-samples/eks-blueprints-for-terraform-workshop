@@ -1016,7 +1016,7 @@
                "AssetsBucketPrefix": {
                 "Ref": "AssetsBucketPrefix"
                },
-               "WORKSHOP_GIT_URL": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop",
+               "WORKSHOP_GIT_URL": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop",
                "WORKSHOP_GIT_BRANCH": "idc-instance-cdk",
                "WORKSHOP_GIT_TAG": "idc-instance-cdk"
               }
@@ -1230,7 +1230,7 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
@@ -1670,7 +1670,7 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
@@ -2009,7 +2009,7 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
@@ -2335,7 +2335,7 @@
       {
        "Name": "WORKSHOP_GIT_URL",
        "Type": "PLAINTEXT",
-       "Value": "https://github.com/satishbpatil/eks-blueprints-for-terraform-workshop"
+       "Value": "https://github.com/aws-samples/eks-blueprints-for-terraform-workshop"
       },
       {
        "Name": "WORKSHOP_GIT_BRANCH",
