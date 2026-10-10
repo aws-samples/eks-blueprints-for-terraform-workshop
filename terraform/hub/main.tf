@@ -373,6 +373,8 @@ resource "aws_eks_access_policy_association" "AmazonEKSClusterAdminPolicy" {
   access_scope {
     type      = "cluster"
   }
+
+  depends_on = [aws_eks_capability.argocd]
 }
 
 resource "null_resource" "disable_assignment_requirement" {
