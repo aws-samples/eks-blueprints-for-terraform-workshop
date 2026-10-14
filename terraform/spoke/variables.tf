@@ -1,7 +1,7 @@
 variable "kubernetes_version" {
   description = "EKS version"
   type        = string
-  default     = "1.35"
+  default     = "1.37"
 }
 
 variable "eks_admin_role_name" {
