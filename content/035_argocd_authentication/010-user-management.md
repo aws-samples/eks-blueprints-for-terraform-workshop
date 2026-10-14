@@ -26,7 +26,7 @@ Steps to Disable MFA
 1. Navigate to Identity Center Console
 
    - Open AWS Console
-   - Search for "Identity Center"
+   - Search for "IAM Identity Center"
 
 2. Select Configure MFA
 

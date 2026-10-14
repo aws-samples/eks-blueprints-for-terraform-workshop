@@ -32,7 +32,11 @@ We will cover this in upcoming chapter
 
 We have assigned ArgocdAdmins group to built in "Admins" group. This makes argoadmin superuser.
 
-To view Navigate to EKS>Clusters>argocd-hub>Capabilities>Argo CD on AWS Console
+To view Navigate to EKS>Clusters>argocd-hub>Capabilities on AWS Console and select Argo CD
+
+![argoadmin role select ](/static/images/argocd-authentication/argocdadmins-role-select.png)
+
+Scroll down to Role assignment
 
 ![argoadmin role ](/static/images/argocd-authentication/argocdadmins-role.png)
 
