@@ -30,7 +30,8 @@ Steps to Disable MFA
 
 2. Select Configure MFA
 
-![Configure MFA](/static/images/argocd-authentication/sso_mfa_navigate.png)
+   - Select Settings>Authentication>Configure(Multi-factor authentication)
+     ![Configure MFA](/static/images/argocd-authentication/sso_mfa_navigate.png)
 
 3. Disable MFA
    - Select "Never(disabled)" in MFA Settings
