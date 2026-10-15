@@ -60,7 +60,7 @@ resource "aws_eks_access_entry" "argocd_admin" {
 
 resource "aws_eks_access_policy_association" "argocd_admin_policy" {
   cluster_name  = module.eks.cluster_name
-  principal_arn = data.terraform_remote_state.hub.outputs.eks_capability_argocd_arn
+  principal_arn = aws_eks_access_entry.argocd_admin.principal_arn
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
   access_scope {
